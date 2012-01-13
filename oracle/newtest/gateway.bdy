@@ -13,12 +13,7 @@ create or replace package body gateway is
 	end;
 
 	procedure listen is
-		ret_val pls_integer;
-		line    varchar2(1000);
-		pos     pls_integer;
-	
 		v_sql varchar2(100);
-	
 	begin
 		<<make_connection>>
 		begin
@@ -61,4 +56,3 @@ create or replace package body gateway is
 	end;
 end gateway;
 /
-
