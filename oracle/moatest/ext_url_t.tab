@@ -1,0 +1,13 @@
+create table EXT_URL_T
+(
+  DBU    VARCHAR2(30) default lower(sys_context('user','current_schema')) not null,
+  KEY    VARCHAR2(30) not null,
+  PREFIX VARCHAR2(1000) not null,
+  constraint PK_EXT_URL primary key (DBU, KEY)
+)
+organization index;
+comment on column EXT_URL_T.KEY
+  is '不能超过30,考虑到使用gac同步保存,也考虑到代码更精练';
+comment on column EXT_URL_T.PREFIX
+  is '完整的外部网址url前缀,不必是http://开头,也可是其他前缀';
+

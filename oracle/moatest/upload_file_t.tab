@@ -1,0 +1,30 @@
+create table UPLOAD_FILE_T
+(
+  NAME         VARCHAR2(128) not null,
+  MIME_TYPE    VARCHAR2(128),
+  DOC_SIZE     NUMBER,
+  DAD_CHARSET  VARCHAR2(128),
+  LAST_UPDATED DATE,
+  CONTENT_TYPE VARCHAR2(4) default 'BLOB',
+  BLOB_CONTENT BLOB
+)
+;
+comment on table UPLOAD_FILE_T
+  is '存放所有上传文件的表';
+comment on column UPLOAD_FILE_T.NAME
+  is 'pl/sql gateway 自动生成的唯一文档名，编码如(随机字符串/客户端原文件名)，用于下载时的 url。';
+comment on column UPLOAD_FILE_T.MIME_TYPE
+  is 'MIME类型';
+comment on column UPLOAD_FILE_T.DOC_SIZE
+  is '大小，字节数';
+comment on column UPLOAD_FILE_T.DAD_CHARSET
+  is 'reserved';
+comment on column UPLOAD_FILE_T.LAST_UPDATED
+  is '最后更新时间';
+comment on column UPLOAD_FILE_T.CONTENT_TYPE
+  is '内容存储类型，long raw 或是 blob，psp.web 只使用 blob类型';
+comment on column UPLOAD_FILE_T.BLOB_CONTENT
+  is '以 blob 方式存储的内容体';
+alter table UPLOAD_FILE_T
+  add constraint PK_UPLOAD_F primary key (NAME);
+

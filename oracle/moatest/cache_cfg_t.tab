@@ -1,0 +1,14 @@
+create table CACHE_CFG_T
+(
+  DB_USER   VARCHAR2(30) not null,
+  MIME_TYPE VARCHAR2(100) not null,
+  MAX_AGE   NUMBER(6) not null
+)
+;
+comment on column CACHE_CFG_T.DB_USER
+  is 'irp的算一个';
+comment on column CACHE_CFG_T.MAX_AGE
+  is '可以涵盖两年';
+alter table CACHE_CFG_T
+  add constraint PK_CACHE_CFG primary key (DB_USER, MIME_TYPE);
+

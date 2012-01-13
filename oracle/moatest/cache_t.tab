@@ -1,0 +1,39 @@
+create table CACHE_T
+(
+  DAD_NAME     VARCHAR2(30) not null,
+  DB_USER      VARCHAR2(30) not null,
+  PATH         VARCHAR2(100) not null,
+  QSTR         VARCHAR2(1000) not null,
+  CACHE_ID     NUMBER(8) not null,
+  REG_ID       NUMBER,
+  CREATED_DATE DATE not null,
+  LAST_UPDATED DATE,
+  EXPIRE_DATE  DATE,
+  HITS_SOFT    NUMBER(10) default 0 not null,
+  HITS_HARD    NUMBER(10) default 0 not null,
+  GENS         NUMBER(5) default 0 not null
+)
+;
+comment on column CACHE_T.CACHE_ID
+  is '对应的bfile名称';
+comment on column CACHE_T.REG_ID
+  is '对应的变化通知块的id';
+comment on column CACHE_T.CREATED_DATE
+  is '生成本条记录的时间';
+comment on column CACHE_T.LAST_UPDATED
+  is 'null 代表没有任何cache，有值代表本本版cache的创建时间';
+comment on column CACHE_T.EXPIRE_DATE
+  is 'expire模型,null 代表永远不失效,有值代表截至到指定时间cache有效，也高速客户端有效。';
+comment on column CACHE_T.HITS_SOFT
+  is 'cache命中的次数，直接使用304 not modified返回';
+comment on column CACHE_T.HITS_HARD
+  is 'cache命中的次数，需要将 cache file 取出返回';
+comment on column CACHE_T.GENS
+  is '生成的次数';
+alter table CACHE_T
+  add constraint PK_CACHE primary key (DAD_NAME, PATH, QSTR);
+alter table CACHE_T
+  add unique (CACHE_ID);
+alter table CACHE_T
+  add unique (REG_ID);
+

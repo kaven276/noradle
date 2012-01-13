@@ -1,0 +1,21 @@
+create table DIR_T
+(
+  DAD_NAME VARCHAR2(30) not null,
+  DB_USER  VARCHAR2(30) not null,
+  NAME     VARCHAR2(128) not null,
+  PARNAME  VARCHAR2(128)
+)
+;
+comment on column DIR_T.DAD_NAME
+  is '对应dad的文件系统';
+comment on column DIR_T.DB_USER
+  is '对应用户的文件系统';
+comment on column DIR_T.NAME
+  is '目录名称';
+comment on column DIR_T.PARNAME
+  is '父目录名称';
+alter table DIR_T
+  add constraint PK_DIR primary key (DAD_NAME, NAME);
+create index IDX_PAR on DIR_T (DAD_NAME, PARNAME)
+  compress;
+

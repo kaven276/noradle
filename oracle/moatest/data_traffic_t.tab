@@ -1,0 +1,28 @@
+create table DATA_TRAFFIC_T
+(
+  DAD        VARCHAR2(30),
+  BIND_ID    VARCHAR2(100) not null,
+  FIRST_TIME DATE not null,
+  LAST_TIME  DATE,
+  HIST_SIZE  NUMBER,
+  MONTH_SIZE NUMBER,
+  DAYS       NUMBER(4)
+)
+;
+comment on column DATA_TRAFFIC_T.DAD
+  is '记录是哪个dad的记录';
+comment on column DATA_TRAFFIC_T.BIND_ID
+  is '绑定到哪个标识上';
+comment on column DATA_TRAFFIC_T.FIRST_TIME
+  is '首次访问时间';
+comment on column DATA_TRAFFIC_T.LAST_TIME
+  is '最后访问时间';
+comment on column DATA_TRAFFIC_T.HIST_SIZE
+  is '历史流量累计,不含当月';
+comment on column DATA_TRAFFIC_T.MONTH_SIZE
+  is '当月浏览累计';
+comment on column DATA_TRAFFIC_T.DAYS
+  is '累计使用天数(一天内用过一次就算)';
+alter table DATA_TRAFFIC_T
+  add constraint PK_DATA_TRAFFIC_T primary key (BIND_ID, FIRST_TIME);
+

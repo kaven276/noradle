@@ -1,0 +1,18 @@
+create table DAD_T
+(
+  DAD_NAME   VARCHAR2(30) not null,
+  DB_USER    VARCHAR2(30) not null,
+  COMMENTS   VARCHAR2(100),
+  NLSLANG    VARCHAR2(100),
+  DISP_ORDER NUMBER(6),
+  SAFE_TIME  DATE,
+  MULTIPLEX  CHAR(1)
+)
+;
+comment on column DAD_T.SAFE_TIME
+  is '承诺在此日期之前不会升级静态文件';
+comment on column DAD_T.MULTIPLEX
+  is 'Y代表是多集团用户复用的情况';
+alter table DAD_T
+  add constraint PK_DAD primary key (DAD_NAME);
+

@@ -1,0 +1,7 @@
+create sequence S_CACHE_ID
+minvalue 0
+maxvalue 999999999999999999999999999
+start with 62
+increment by 1
+cache 20;
+

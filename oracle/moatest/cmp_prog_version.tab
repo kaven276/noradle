@@ -1,0 +1,41 @@
+create table CMP_PROG_VERSION
+(
+  OBJECT_SCHEMA VARCHAR2(30) not null,
+  OBJECT_NAME   VARCHAR2(30) not null,
+  OBJECT_TYPE   VARCHAR2(30) not null,
+  COMPILE_SCN   NUMBER not null,
+  COMPILE_TIME  DATE not null,
+  VERSION_CODE  VARCHAR2(30),
+  COMMENTS      VARCHAR2(2000),
+  SOURCE        CLOB,
+  DELTA         CLOB,
+  SID           NUMBER not null,
+  SERIAL        NUMBER not null,
+  HOST          VARCHAR2(100)
+)
+;
+comment on table CMP_PROG_VERSION
+  is '记录各个程序源文件的各个版本';
+comment on column CMP_PROG_VERSION.OBJECT_SCHEMA
+  is '对象所属的用户';
+comment on column CMP_PROG_VERSION.OBJECT_NAME
+  is '程序对象名称，如包名、包体名、过程和函数名等';
+comment on column CMP_PROG_VERSION.OBJECT_TYPE
+  is '对象类别，主要区分package/type的头和体';
+comment on column CMP_PROG_VERSION.COMPILE_SCN
+  is '本版本编译时的系统变更号';
+comment on column CMP_PROG_VERSION.COMPILE_TIME
+  is '本版本编译时的系统时间';
+comment on column CMP_PROG_VERSION.VERSION_CODE
+  is '版本管理代码，灵活自由使用';
+comment on column CMP_PROG_VERSION.COMMENTS
+  is '版本注释，主要是相对于上一版本的变化的说明';
+comment on column CMP_PROG_VERSION.SOURCE
+  is '版本的源完整码';
+comment on column CMP_PROG_VERSION.DELTA
+  is '版本的针对相对自己最近较新的版本的变化差';
+comment on column CMP_PROG_VERSION.HOST
+  is '开发人员机器名称';
+alter table CMP_PROG_VERSION
+  add constraint PK_CMP_PROG_VERSION primary key (OBJECT_SCHEMA, OBJECT_NAME, OBJECT_TYPE, COMPILE_SCN);
+
