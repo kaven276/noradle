@@ -3,15 +3,23 @@ create or replace package body p is
 	c           utl_tcp.connection;
 	gv_cont_len number;
 
-	procedure "_init"(c in out nocopy utl_tcp.connection, passport pls_integer) is
+	procedure "_init"
+	(
+		conn     in out nocopy utl_tcp.connection,
+		passport pls_integer
+	) is
 	begin
 		if passport != 80526 then
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
-		p.c := c;
+		c := conn;
 	end;
 
-	procedure prepare(mime_type varchar2 := 'text/html', charset varchar2 := 'UTF-8') is
+	procedure prepare
+	(
+		mime_type varchar2 := 'text/html',
+		charset   varchar2 := 'UTF-8'
+	) is
 	begin
 		gv_cont_len := 0;
 		line('200');
@@ -33,6 +41,10 @@ create or replace package body p is
 		r := utl_tcp.write_line(c, str);
 	end;
 
+	procedure flush is
+	begin
+		utl_tcp.flush(c);
+	end;
+
 end p;
 /
-
