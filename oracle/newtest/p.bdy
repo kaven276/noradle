@@ -12,33 +12,61 @@ create or replace package body p is
 		if passport != 80526 then
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
-		c := conn;
+		c           := conn;
+		gv_cont_len := 0;
 	end;
 
-	procedure prepare
+	procedure status_line(code pls_integer := 200) is
+	begin
+		line(code);
+	end;
+
+	procedure write_header
+	(
+		name  varchar2,
+		value varchar2
+	) is
+	begin
+		line(name || ': ' || value);
+	end;
+
+	procedure content_type
 	(
 		mime_type varchar2 := 'text/html',
 		charset   varchar2 := 'UTF-8'
 	) is
 	begin
-		gv_cont_len := 0;
-		line('200');
-		line(mime_type);
-		line(charset);
+		line('Content-Type: ' || mime_type || '; charset=' || charset);
+	end;
+
+	procedure location(url varchar2) is
+	begin
+		p.line('Location: ' || url);
+	end;
+
+	procedure http_header_close is
+	begin
 		line('');
-		utl_tcp.flush(c);
+		gv_cont_len := 0;
+	end;
+
+	procedure go(url varchar2) is
+	begin
+		status_line(303);
+		location(url);
+		http_header_close;
 	end;
 
 	-- public
 	procedure line(str varchar2) is
-		r pls_integer;
+		dummy pls_integer;
 	begin
 		gv_cont_len := gv_cont_len + length(str) + 2;
 		if gv_cont_len * 2 > gateway.gc_buff_size then
 			utl_tcp.flush(c);
 			gv_cont_len := 0;
 		end if;
-		r := utl_tcp.write_line(c, str);
+		dummy := utl_tcp.write_line(c, str);
 	end;
 
 	procedure flush is
