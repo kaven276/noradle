@@ -4,5 +4,9 @@ create or replace package test_b is
 
 	procedure long_job;
 
+	procedure form;
+
+	procedure redirect;
+
 end test_b;
 /

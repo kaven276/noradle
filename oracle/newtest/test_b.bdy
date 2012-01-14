@@ -2,7 +2,9 @@ create or replace package body test_b is
 
 	procedure d is
 	begin
-		p.prepare;
+		p.status_line;
+		p.content_type;
+		p.http_header_close;
 		p.line(r.host_prefix);
 		p.line(r.port);
 		p.line(r.method);
@@ -22,7 +24,9 @@ create or replace package body test_b is
 
 	procedure long_job is
 	begin
-		p.prepare(mime_type => 'text/html');
+		p.status_line;
+		p.content_type(mime_type => 'text/html');
+		p.http_header_close;
 		p.line('<div id="cnt"></div>');
 		p.line('<script>var cnt=document.getElementById("cnt");</script>');
 		p.line('<pre>');
@@ -34,6 +38,34 @@ create or replace package body test_b is
 			dbms_lock.sleep(1);
 		end loop;
 		p.line('</pre>');
+	end;
+
+	procedure form is
+	begin
+		p.status_line(200);
+		p.content_type;
+		p.http_header_close;
+		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
+		p.line('<form action="test_b.redirect" method="post">');
+		p.line('<input type="submit"/>');
+		p.line('</form>');
+	end;
+
+	procedure redirect is
+	begin
+		case r.method
+			when 'POST' then
+				p.go('test_b.d');
+			when 'GET' then
+				p.status_line(303);
+				p.location('test_b.d');
+				p.http_header_close;
+			else
+				p.status_line(200);
+				p.content_type;
+				p.http_header_close;
+				p.line('Method (' || r.method || ') is not supported');
+		end case;
 	end;
 
 end test_b;
