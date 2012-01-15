@@ -25,9 +25,9 @@ create or replace package body r is
 		end if;
 	
 		-- basic input
+		v_method := utl_tcp.get_line(c, true);
 		v_hostp  := utl_tcp.get_line(c, true);
 		v_port   := to_number(utl_tcp.get_line(c, true));
-		v_method := utl_tcp.get_line(c, true);
 		v_base   := utl_tcp.get_line(c, true);
 		v_dad    := utl_tcp.get_line(c, true);
 		v_prog   := utl_tcp.get_line(c, true);
@@ -116,4 +116,3 @@ create or replace package body r is
 
 end r;
 /
-
