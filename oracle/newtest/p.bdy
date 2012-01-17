@@ -89,13 +89,16 @@ create or replace package body p is
 			end if;
 			dummy       := utl_tcp.write_line(c, str);
 			gv_cont_len := gv_cont_len + lengthb(str) * 1.5 + 2;
-		else
+		elsif gv_charset = 'GBK' then
 			if gv_cont_len + lengthb(str) + 2 > gateway.gc_buff_size then
 				utl_tcp.flush(c);
 				gv_cont_len := 0;
 			end if;
-			dummy       := utl_tcp.write_raw(c, utl_i18n.string_to_raw(str || chr(13)));
-			gv_cont_len := gv_cont_len + dummy;
+			dummy := utl_tcp.write_line(c, str);
+			-- dummy       := utl_tcp.write_raw(c, utl_i18n.string_to_raw(str || chr(13)));
+			gv_cont_len := gv_cont_len + lengthb(str) + 2;
+		else
+			raise_application_error(-20001, 'other than utf/gbk charset is not supported yet');
 		end if;
 	end;
 
