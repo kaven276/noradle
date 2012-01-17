@@ -83,12 +83,12 @@ create or replace package body p is
 			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
 		end if;
 		if gv_charset = 'UTF-8' then
-			gv_cont_len := gv_cont_len + length(str) + 2;
-			if gv_cont_len * 2 > gateway.gc_buff_size then
+			if gv_cont_len + lengthb(str) * 1.5 + 2 > gateway.gc_buff_size then
 				utl_tcp.flush(c);
 				gv_cont_len := 0;
 			end if;
-			dummy := utl_tcp.write_line(c, str);
+			dummy       := utl_tcp.write_line(c, str);
+			gv_cont_len := gv_cont_len + lengthb(str) * 1.5 + 2;
 		else
 			if gv_cont_len + lengthb(str) + 2 > gateway.gc_buff_size then
 				utl_tcp.flush(c);
