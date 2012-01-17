@@ -128,5 +128,21 @@ create or replace package r is
 
 	function cookie(name varchar2) return varchar2;
 
+	function gc_msid return varchar2;
+	function gc_lsid return varchar2;
+	function gc_bsid return varchar2;
+
+	function dbu return varchar2;
+	function file return varchar2;
+
+	function from_prog return varchar2;
+	function dad_path return varchar2;
+	function url return varchar2;
+	-- function pw_path_prefix return varchar2;
+	-- function full_base return varchar2;
+
+	function etag return varchar2;
+	function lmt return varchar2;
+
 end r;
 /

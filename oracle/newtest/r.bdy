@@ -21,6 +21,9 @@ create or replace package body r is
 	v_qstr   varchar2(256);
 	v_hash   varchar2(100);
 
+	gv_dbu  varchar2(30);
+	gv_file varchar2(1000);
+
 	procedure "_init"
 	(
 		c        in out nocopy utl_tcp.connection,
@@ -374,6 +377,74 @@ create or replace package body r is
 	exception
 		when no_data_found then
 			return null;
+	end;
+
+	function gc_msid return varchar2 is
+	begin
+		return cookie('msid');
+	end;
+
+	function gc_lsid return varchar2 is
+	begin
+		return cookie('lsid');
+	end;
+
+	function gc_bsid return varchar2 is
+	begin
+		return cookie('bsid');
+	end;
+
+	function dbu return varchar2 is
+	begin
+		return gv_dbu;
+	end;
+
+	function file return varchar2 is
+	begin
+		return gv_file;
+	end;
+
+	function url return varchar2 is
+	begin
+		return v_prog || t.nnpre('?', v_qstr);
+	end;
+
+	function dad_path return varchar2 is
+	begin
+		return 'http://' || header('http_host') || '/' || v_base || '/' || v_dad;
+	end;
+
+	-- for internal url catacation
+	function full_base return varchar2 is
+	begin
+		return dad_path || '/';
+	end;
+
+	function from_prog return varchar2 is
+		v  varchar2(1000);
+		v1 pls_integer;
+		v2 pls_integer;
+	begin
+		v  := header('http_referer');
+		v1 := instr(v, '?');
+		if v1 > 0 then
+			v := substr(v, 1, v1 - 1);
+		end if;
+		v2 := instr(v, '/', -1);
+		return substr(v, v2 + 1);
+	end;
+
+	function etag return varchar2 is
+		v varchar2(100) := header('if-none-match');
+	begin
+		return substrb(v, 2, lengthb(v) - 2);
+	end;
+
+	function lmt return varchar2 is
+		fmt  constant varchar2(100) := 'Dy, DD Mon YYYY HH24:MI:SS "GMT"';
+		lang constant varchar2(100) := 'NLS_DATE_LANGUAGE = American';
+	begin
+		return to_date(header('if-modified-since'), fmt, lang) + nvl(owa_custom.dbms_server_gmtdiff, 0) / 24;
 	end;
 
 end r;
