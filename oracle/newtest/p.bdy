@@ -16,9 +16,16 @@ create or replace package body p is
 		gv_cont_len := 0;
 	end;
 
+	-- private
+	procedure header_line(str varchar2) is
+		dummy pls_integer;
+	begin
+		dummy := utl_tcp.write_line(c, str);
+	end;
+
 	procedure status_line(code pls_integer := 200) is
 	begin
-		line(code);
+		header_line(code);
 	end;
 
 	procedure write_header
@@ -27,7 +34,7 @@ create or replace package body p is
 		value varchar2
 	) is
 	begin
-		line(name || ': ' || value);
+		header_line(name || ': ' || value);
 	end;
 
 	procedure content_type
@@ -36,18 +43,17 @@ create or replace package body p is
 		charset   varchar2 := 'UTF-8'
 	) is
 	begin
-		line('Content-Type: ' || mime_type || '; charset=' || charset);
+		header_line('Content-Type: ' || mime_type || '; charset=' || charset);
 	end;
 
 	procedure location(url varchar2) is
 	begin
-		p.line('Location: ' || url);
+		header_line('Location: ' || url);
 	end;
 
 	procedure http_header_close is
 	begin
-		line('');
-		gv_cont_len := 0;
+		header_line('');
 	end;
 
 	procedure go(url varchar2) is
