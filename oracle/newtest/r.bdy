@@ -409,15 +409,15 @@ create or replace package body r is
 		return v_prog || t.nnpre('?', v_qstr);
 	end;
 
-	function dad_path return varchar2 is
+	function gu_dad_path return varchar2 is
 	begin
 		return 'http://' || header('http_host') || '/' || v_base || '/' || v_dad;
 	end;
 
 	-- for internal url catacation
-	function full_base return varchar2 is
+	function gu_full_base return varchar2 is
 	begin
-		return dad_path || '/';
+		return gu_dad_path || '/';
 	end;
 
 	function from_prog return varchar2 is

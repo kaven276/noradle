@@ -136,10 +136,10 @@ create or replace package r is
 	function file return varchar2;
 
 	function from_prog return varchar2;
-	function dad_path return varchar2;
 	function url return varchar2;
-	-- function pw_path_prefix return varchar2;
-	-- function full_base return varchar2;
+
+	function gu_dad_path return varchar2;
+	-- function gu_full_base return varchar2;
 
 	function etag return varchar2;
 	function lmt return varchar2;
