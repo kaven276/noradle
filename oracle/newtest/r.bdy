@@ -2,13 +2,12 @@ create or replace package body r is
 
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
+	type str_arr is table of varchar2(1000) index by varchar2(100);
+	gv_headers str_arr;
+	gv_cookies str_arr;
+
 	type st_arr is table of st index by varchar2(100);
 	gv_params st_arr;
-
-	type str_arr is table of varchar2(1000) index by varchar2(100);
-	gv_headers  str_arr;
-	gv_cgi_envs str_arr;
-	gv_cookies  str_arr;
 
 	v_hostp  varchar2(30);
 	v_port   pls_integer;
@@ -48,15 +47,16 @@ create or replace package body r is
 		v_qstr   := utl_tcp.get_line(c, true);
 		v_hash   := utl_tcp.get_line(c, true);
 	
-		gv_params.delete;
-		gv_cgi_envs.delete;
+		gv_headers.delete;
 		gv_cookies.delete;
+		gv_params.delete;
 	
 		-- read headers
 		loop
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null and v_value is null;
+			gv_headers(v_name) := v_value;
 		end loop;
 	
 		-- read cookies
@@ -64,9 +64,10 @@ create or replace package body r is
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null and v_value is null;
+			gv_cookies(v_name) := v_value;
 		end loop;
 	
-		-- read parameters   
+		-- read query string  
 		loop
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
@@ -75,6 +76,7 @@ create or replace package body r is
 			gv_params(v_name) := v_st;
 		end loop;
 	
+		-- read post from application/x-www-form-urlencoded
 		if v_method = 'POST' then
 			loop
 				v_name  := utl_tcp.get_line(c, true);
@@ -340,5 +342,39 @@ create or replace package body r is
 		when no_data_found then
 			return st();
 	end;
+
+	procedure cgi
+	(
+		name  varchar2,
+		value varchar2
+	) is
+	begin
+		gv_headers(name) := value;
+	end;
+
+	function cgi(name varchar2) return varchar2 is
+	begin
+		return gv_headers(name);
+	exception
+		when no_data_found then
+			return null;
+	end;
+
+	function header(name varchar2) return varchar2 is
+	begin
+		return gv_headers(name);
+	exception
+		when no_data_found then
+			return null;
+	end;
+
+	function cookie(name varchar2) return varchar2 is
+	begin
+		return gv_cookies(name);
+	exception
+		when no_data_found then
+			return null;
+	end;
+
 end r;
 /

@@ -44,6 +44,10 @@ create or replace package body test_b is
 	begin
 		p.status_line(200);
 		p.content_type;
+		p.write_header('set-cookie', 'ck1=1234');
+		p.write_header('set-cookie', 'ck3=5678');
+		p.write_header('a', 1);
+		p.write_header('b', 2);
 		p.http_header_close;
 		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
 		p.line('<form action="test_b.redirect?type=both&type=bothtoo" method="post">');
@@ -74,6 +78,15 @@ create or replace package body test_b is
 				p.line(r.getc('button1'));
 				p.line(r.getc('type'));
 				p.line(r.gets('type') (2));
+				p.line('');
+				p.line('http headers');
+				p.line(r.header('accept'));
+				p.line(r.header('connection'));
+				p.line('cookies');
+				p.line(r.cookie('ck1'));
+				p.line(r.cookie('ck2'));
+				p.line(r.cookie('ck3'));
+				p.line(r.cookie('ck4'));
 			when 'GET' then
 				p.status_line(303);
 				p.location('test_b.d');
