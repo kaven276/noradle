@@ -44,14 +44,19 @@ create or replace package body test_b is
 	begin
 		p.status_line(200);
 		p.content_type;
+		-- p.content_type(charset => 'GBK');
 		p.write_header('set-cookie', 'ck1=1234');
 		p.write_header('set-cookie', 'ck3=5678');
 		p.write_header('a', 1);
 		p.write_header('b', 2);
 		p.http_header_close;
+		p.flush;
 		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
 		p.line('<form action="test_b.redirect?type=both&type=bothtoo" method="post">');
-		p.line('<input name="text_input" type="text" value="http://www.google.com?q=123"/>');
+		p.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
+    p.line('ฤ๚บร');
+		p.line(utl_i18n.escape_reference('ฤ๚บร', 'us7ascii'));
+		p.flush;
 		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue1" checked="true"/>');
 		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue2" checked="true"/>');
 		p.line('<input name="password_input" type="password" value="passwordvalue"/>');
