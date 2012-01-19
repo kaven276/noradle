@@ -36,6 +36,9 @@ create or replace package body gateway is
 				return;
 			end if;
 		
+			pv.elpt := dbms_utility.get_time;
+			pv.cput := dbms_utility.get_cpu_time;
+		
 			r."_init"(pv.c, 80526);
 			p."_init"(80526);
 			pv.headers.delete;

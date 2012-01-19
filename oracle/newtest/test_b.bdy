@@ -3,9 +3,9 @@ create or replace package body test_b is
 	procedure d is
 	begin
 		h.status_line;
-		h.content_type;
+		h.content_type(charset => 'gbk');
 		h.header('a', 1);
-		-- h.transfer_encoding_chunked;
+		--h.transfer_encoding_chunked;
 		h.http_header_close;
 	
 		p.line('测试一下非ascii字符紧邻http header的情况');
