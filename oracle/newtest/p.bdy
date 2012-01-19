@@ -18,7 +18,7 @@ create or replace package body p is
 		end if;
 	
 		if not pv.use_stream then
-			dbms_lob.append(pv.entity, utl_i18n.string_to_raw(str || chr(13), pv.charset_ora));
+			dbms_lob.append(pv.entity, utl_i18n.string_to_raw(str || chr(10), pv.charset_ora));
 			return;
 		end if;
 	
