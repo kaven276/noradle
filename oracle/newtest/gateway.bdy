@@ -1,28 +1,17 @@
 create or replace package body gateway is
 
-	c             utl_tcp.connection; -- TCP/IP connection to the Web server
-	gv_end_marker varchar2(100);
-
-	-- private
-	procedure end_req is
-		dummy pls_integer;
-	begin
-		-- will add missing </body></html> automatically
-		dummy := utl_tcp.write_line(c, gv_end_marker);
-		utl_tcp.flush(c);
-	end;
-
 	procedure listen is
 		v_sql varchar2(100);
+		v_len pls_integer;
 	begin
 		<<make_connection>>
 		begin
-			c := utl_tcp.open_connection(remote_host     => '192.168.177.1',
-																	 remote_port     => 1522,
-																	 charset         => 'utf8',
-																	 in_buffer_size  => 32767,
-																	 out_buffer_size => gc_buff_size,
-																	 tx_timeout      => 10);
+			pv.c := utl_tcp.open_connection(remote_host     => '192.168.177.1',
+																			remote_port     => 1522,
+																			charset         => null, -- 'AL32UTF8',
+																			in_buffer_size  => 32767,
+																			out_buffer_size => pv.write_buff_size,
+																			tx_timeout      => 3);
 		exception
 			when utl_tcp.network_error then
 				dbms_lock.sleep(3);
@@ -32,26 +21,38 @@ create or replace package body gateway is
 		loop
 			<<read_request>>
 			begin
-				gv_end_marker := utl_tcp.get_line(c, true);
+				pv.end_marker := utl_tcp.get_line(pv.c, true);
 			exception
 				when utl_tcp.transfer_timeout then
 					goto read_request;
 				when utl_tcp.end_of_input then
 					goto make_connection;
 				when utl_tcp.network_error then
+					return;
 					goto make_connection;
 			end;
 		
-			if gv_end_marker = 'quit_process' then
+			if pv.end_marker = 'quit_process' then
 				return;
 			end if;
 		
-			r."_init"(c, 80526);
-			p."_init"(c, 80526);
+			r."_init"(pv.c, 80526);
+			p."_init"(80526);
+			pv.headers.delete;
+			pv.header_writen := false;
+			pv.allow_content := false;
+			pv.use_stream    := false;
 		
 			v_sql := 'call ' || r.prog || '()';
 			execute immediate v_sql;
-			end_req;
+			commit;
+			p.finish;
+		
+			if not pv.headers.exists('Content-Length') then
+				v_len := utl_tcp.write_line(pv.c, pv.end_marker);
+				utl_tcp.flush(pv.c);
+			end if;
+		
 		end loop;
 	end;
 end gateway;
