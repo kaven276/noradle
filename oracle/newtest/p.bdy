@@ -54,10 +54,10 @@ create or replace package body p is
 		if (r.header('accept-encoding') like '%gzip%') and v_len > pv.gzip_thres then
 			pv.entity := utl_compress.lz_compress(pv.entity, 1);
 			v_len     := dbms_lob.getlength(pv.entity);
-			h.content_encoding('gzip');
+			h.content_encoding_gzip;
 		end if;
-		h.content_length(v_len);
 	
+		pv.headers('Content-Length') := to_char(v_len);
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
 	
