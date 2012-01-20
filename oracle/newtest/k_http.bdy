@@ -29,6 +29,14 @@ create or replace package body k_http is
 		pv.charset   := lower(charset);
 		-- utl_i18n.generic_context, utl_i18n.iana_to_oracle
 		pv.charset_ora := utl_i18n.map_charset(charset, 0, 1);
+		declare
+			v_raw raw(1);
+		begin
+			v_raw := utl_i18n.string_to_raw('?', pv.charset_ora);
+		exception
+			when others then
+				e.chk(true, -20001, 'other than unicode(utf-8) and db charset is not supported yet');
+		end;
 		pv.headers('Content-Type') := mime_type || '; charset=' || charset;
 		pv.allow_content := true;
 		-- r.unescape_parameters;
