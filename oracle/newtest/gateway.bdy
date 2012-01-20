@@ -9,7 +9,8 @@ create or replace package body gateway is
 			pv.c := utl_tcp.open_connection(remote_host     => '192.168.177.1',
 																			remote_port     => 1522,
 																			charset         => null, -- 'AL32UTF8',
-																			in_buffer_size  => 32767,
+																			charset         => null,
+																			in_buffer_size  => pv.write_buff_size,
 																			out_buffer_size => pv.write_buff_size,
 																			tx_timeout      => 3);
 		exception
@@ -58,5 +59,9 @@ create or replace package body gateway is
 		
 		end loop;
 	end;
+
+begin
+	dbms_lob.createtemporary(pv.entity, cache => true, dur => dbms_lob.session);
+	pv.write_buff_size := dbms_lob.getchunksize(pv.entity);
 end gateway;
 /

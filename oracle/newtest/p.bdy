@@ -11,7 +11,7 @@ create or replace package body p is
 	-- public
 	procedure line(str varchar2) is
 		dummy pls_integer;
-		v_out varchar2(4000);
+		v_out raw(32767);
 	begin
 		if not pv.allow_content then
 			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
@@ -44,7 +44,7 @@ create or replace package body p is
 	procedure finish is
 		v_len  integer;
 		v_wlen number(8);
-		v_raw  raw(2048);
+		v_raw  raw(32767);
 	begin
 		if pv.use_stream then
 			return;
