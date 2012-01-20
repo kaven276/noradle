@@ -23,6 +23,7 @@ create or replace package body p is
 		end if;
 	
 		v_out := convert(str, pv.charset_ora);
+		e.chk(pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 	
 		if pv.buffered_length + lengthb(v_out) + 2 > pv.write_buff_size then
 			utl_tcp.flush(pv.c);

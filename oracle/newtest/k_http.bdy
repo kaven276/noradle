@@ -11,6 +11,9 @@ create or replace package body k_http is
 		value varchar2
 	) is
 	begin
+		e.chk(lower(name) in ('content-type', 'content-encoding', 'content-length', 'transfer-encoding'),
+					-20004,
+					'You must use the specific API instead of the general h.header API to set the http header field');
 		pv.headers(name) := value;
 	end;
 
@@ -20,6 +23,8 @@ create or replace package body k_http is
 		charset   varchar2 := 'UTF-8'
 	) is
 	begin
+		e.chk(lower(charset) = 'utf8', -20002, 'IANA charset should be utf-8, not utf8');
+		e.chk(r.type = 'c', -20005, '_c layer should not have entity content, so should not set content-type');
 		pv.mime_type := mime_type;
 		pv.charset   := charset;
 		-- utl_i18n.generic_context, utl_i18n.iana_to_oracle
