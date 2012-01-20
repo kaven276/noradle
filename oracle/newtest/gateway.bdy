@@ -46,6 +46,7 @@ create or replace package body gateway is
 			pv.header_writen := false;
 			pv.allow_content := false;
 			pv.use_stream    := false;
+			pv.gzip          := null;
 		
 			v_sql := 'call ' || r.prog || '()';
 			execute immediate v_sql;
