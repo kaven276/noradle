@@ -17,16 +17,22 @@ create or replace package k_http is
 	);
 
 	procedure content_encoding_gzip;
-	procedure content_encoding_none;
+	procedure content_encoding_identity;
+	procedure content_encoding_auto;
 
 	procedure transfer_encoding_chunked;
-	procedure transfer_encoding_none;
+	procedure transfer_encoding_identity;
+	procedure transfer_encoding_auto;
 
 	procedure http_header_close;
 
 	procedure write_head;
 
-	procedure go(url varchar2);
+	procedure go
+	(
+		url    varchar2,
+		status number := null
+	);
 
 end k_http;
 /

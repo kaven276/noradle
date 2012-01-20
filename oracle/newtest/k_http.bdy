@@ -26,7 +26,7 @@ create or replace package body k_http is
 		e.chk(lower(charset) = 'utf8', -20002, 'IANA charset should be utf-8, not utf8');
 		e.chk(r.type = 'c', -20005, '_c layer should not have entity content, so should not set content-type');
 		pv.mime_type := mime_type;
-		pv.charset   := charset;
+		pv.charset   := lower(charset);
 		-- utl_i18n.generic_context, utl_i18n.iana_to_oracle
 		pv.charset_ora := utl_i18n.map_charset(charset, 0, 1);
 		pv.headers('Content-Type') := mime_type || '; charset=' || charset;
@@ -40,38 +40,22 @@ create or replace package body k_http is
 		pv.gzip := true;
 	end;
 
-	procedure content_encoding_none is
+	procedure content_encoding_identity is
 	begin
-		pv.headers.delete('Content-Encoding');
+		pv.headers('Content-Encoding') := 'identity';
 		pv.gzip := false;
 	end;
 
-	-- private
-	procedure content_encoding(encoding varchar2 := 'gzip') is
+	procedure content_encoding_auto is
 	begin
-		if encoding = 'gzip' then
-			content_encoding_gzip;
-		elsif encoding is null or encoding = 'none' then
-			content_encoding_none;
-		else
-			raise_application_error(-20002, 'content encoding only support gzip');
-		end if;
-	end;
-
-	procedure content_length(len number) is
-	begin
-		pv.headers('Content-Length') := to_char(len);
+		pv.headers.delete('Content-Encoding');
+		pv.gzip := null;
 	end;
 
 	procedure location(url varchar2) is
 	begin
-		pv.headers('Location') := url;
-	end;
-
-	procedure transfer_encoding(encoding varchar2 := 'chunked') is
-	begin
-		pv.headers('Transfer-Encoding') := encoding;
-		pv.use_stream := true;
+		-- [todo] absolute URI
+		pv.headers('Location') := utl_url.escape(url, false, pv.charset_ora);
 	end;
 
 	procedure transfer_encoding_chunked is
@@ -80,10 +64,16 @@ create or replace package body k_http is
 		pv.use_stream := true;
 	end;
 
-	procedure transfer_encoding_none is
+	procedure transfer_encoding_identity is
+	begin
+		pv.headers('Transfer-Encoding') := 'identity';
+		pv.use_stream := false;
+	end;
+
+	procedure transfer_encoding_auto is
 	begin
 		pv.headers.delete('Transfer-Encoding');
-		pv.use_stream := false;
+		pv.use_stream := false; -- default to not use_stream
 	end;
 
 	procedure write_head is
@@ -113,7 +103,7 @@ create or replace package body k_http is
 			v := v || n || ': ' || pv.headers(n) || nl;
 			n := pv.headers.next(n);
 		end loop;
-		l := utl_tcp.write_line(pv.c, to_char(lengthb(v) + 2, '0000') || v);
+		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 	end;
 
 	procedure http_header_close is
@@ -127,14 +117,21 @@ create or replace package body k_http is
 		end if;
 	
 		pv.buffered_length := 0;
-		dbms_lob.createtemporary(pv.entity, cache => true, dur => dbms_lob.call);
 	
+		if pv.use_stream and pv.gzip then
+			pv.gzip_handle := utl_compress.lz_compress_open(pv.gzip_entity, 1);
+			pv.gzip_amount := 0;
+		end if;
 	end;
 
-	procedure go(url varchar2) is
+	procedure go
+	(
+		url    varchar2,
+		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
+	) is
 	begin
-		status_line(303);
-		location(utl_url.escape(url, false, pv.charset_ora));
+		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
+		location(url);
 		write_head;
 	end;
 
