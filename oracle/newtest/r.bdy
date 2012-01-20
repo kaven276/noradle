@@ -20,6 +20,7 @@ create or replace package body r is
 	v_path   varchar2(500);
 	v_qstr   varchar2(256);
 	v_hash   varchar2(100);
+	v_type   char(1);
 
 	gv_dbu  varchar2(30);
 	gv_file varchar2(1000);
@@ -49,6 +50,7 @@ create or replace package body r is
 		v_path   := utl_tcp.get_line(c, true);
 		v_qstr   := utl_tcp.get_line(c, true);
 		v_hash   := utl_tcp.get_line(c, true);
+		v_type   := substrb(nvl(v_pack, v_proc), -1);
 	
 		gv_headers.delete;
 		gv_cookies.delete;
@@ -145,6 +147,11 @@ create or replace package body r is
 	function hash return varchar2 is
 	begin
 		return v_hash;
+	end;
+
+	function type return varchar2 is
+	begin
+		return v_type;
 	end;
 
 	function error_str(name varchar2) return varchar2 is
@@ -344,6 +351,11 @@ create or replace package body r is
 	exception
 		when no_data_found then
 			return st();
+	end;
+
+	procedure unescape_parameters is
+	begin
+		null;
 	end;
 
 	procedure cgi

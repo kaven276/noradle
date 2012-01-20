@@ -21,6 +21,7 @@ create or replace package r is
 	function path return varchar2;
 	function qstr return varchar2;
 	function hash return varchar2;
+	function type return varchar2;
 
 	function nc return varchar2;
 	function nd return date;
