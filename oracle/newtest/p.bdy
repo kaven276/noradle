@@ -13,6 +13,10 @@ create or replace package body p is
 		dummy pls_integer;
 		v_out raw(32767);
 	begin
+		if str is null then
+			return;
+		end if;
+	
 		if not pv.allow_content then
 			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
 		end if;
