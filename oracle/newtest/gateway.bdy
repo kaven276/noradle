@@ -40,13 +40,19 @@ create or replace package body gateway is
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
 		
+			-- initialize package variables
+			pv.headers.delete;
+			pv.header_writen   := false;
+			pv.allow_content   := false;
+			pv.buffered_length := 0;
+			pv.use_stream      := false;
+			pv.gzip            := null;
+		
 			r."_init"(pv.c, 80526);
 			p."_init"(80526);
-			pv.headers.delete;
-			pv.header_writen := false;
-			pv.allow_content := false;
-			pv.use_stream    := false;
-			pv.gzip          := null;
+		
+			dbms_pipe.pack_message('executing pl/sql');
+			v_len := dbms_pipe.send_message('node2psp');
 		
 			v_sql := 'call ' || r.prog || '()';
 			execute immediate v_sql;
