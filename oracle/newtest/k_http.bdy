@@ -176,7 +176,9 @@ create or replace package body k_http is
 
 	procedure www_authenticate_basic(realm varchar2) is
 	begin
-		pv.headers('WWW-Authenticate') := 'Basic realm=' || realm;
+		status_line(401);
+		pv.headers('WWW-Authenticate') := 'Basic realm="' || realm || '"';
+		write_head;
 		pv.buffered_length := 0;
 		pv.allow_content   := false;
 	end;
