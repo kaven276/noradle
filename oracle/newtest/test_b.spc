@@ -7,6 +7,8 @@ create or replace package test_b is
 	procedure form;
 
 	procedure redirect;
+  
+  procedure auth;
 
 end test_b;
 /

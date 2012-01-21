@@ -119,6 +119,9 @@ create or replace package r is
 
 	function header(name varchar2) return varchar2;
 
+	function user return varchar2;
+	function pass return varchar2;
+
 	procedure cgi
 	(
 		name  varchar2,

@@ -130,5 +130,18 @@ create or replace package body test_b is
 		end case;
 	end;
 
+	procedure auth is
+	begin
+		if r.user is null then
+			h.www_authenticate_basic('test');
+			return;
+		end if;
+		h.status_line;
+		h.content_type('text/plain', charset => 'utf-8');
+		h.http_header_close;
+		p.line(r.user);
+		p.line(r.pass);
+	end;
+
 end test_b;
 /

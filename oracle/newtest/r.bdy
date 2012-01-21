@@ -21,6 +21,8 @@ create or replace package body r is
 	v_qstr   varchar2(256);
 	v_hash   varchar2(100);
 	v_type   char(1);
+	v_user   varchar2(30);
+	v_pass   varchar2(30);
 
 	gv_dbu  varchar2(30);
 	gv_file varchar2(1000);
@@ -63,6 +65,40 @@ create or replace package body r is
 			exit when v_name is null and v_value is null;
 			gv_headers(v_name) := v_value;
 		end loop;
+	
+		-- credentials
+		declare
+			v_credential varchar2(100);
+			v_parts      st;
+		begin
+			v_credential := gv_headers('authorization');
+			if v_credential is null then
+				v_user := null;
+				v_pass := null;
+			else
+				t.split(v_parts, v_credential, ' ');
+				case v_parts(1)
+					when 'Basic' then
+						t.split(v_parts, utl_encode.text_decode(v_parts(2), encoding => utl_encode.base64), ':');
+						v_user := v_parts(1);
+						v_pass := v_parts(2);
+					when 'Digest' then
+						null;
+				end case;
+			end if;
+		exception
+			when no_data_found then
+				v_user := null;
+				v_pass := null;
+				gv_headers('authorization') := 'null';
+		end;
+	
+		declare
+			i integer;
+		begin
+			dbms_pipe.pack_message(gv_headers('authorization'));
+			i := dbms_pipe.send_message('node2psp');
+		end;
 	
 		-- read cookies
 		loop
@@ -381,6 +417,16 @@ create or replace package body r is
 	exception
 		when no_data_found then
 			return null;
+	end;
+
+	function user return varchar2 is
+	begin
+		return v_user;
+	end;
+
+	function pass return varchar2 is
+	begin
+		return v_pass;
 	end;
 
 	function cookie(name varchar2) return varchar2 is
