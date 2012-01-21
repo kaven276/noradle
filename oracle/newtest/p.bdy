@@ -57,7 +57,16 @@ create or replace package body p is
 		v_wlen number(8);
 		v_raw  raw(32767);
 	begin
+		-- when no content, just return;
+		v_len := pv.buffered_length;
+		if v_len = 0 then
+			return;
+		end if;
+	
+		-- if use stream, flush the final buffered content and the end marker out
 		if pv.use_stream then
+			v_len := utl_tcp.write_line(pv.c, pv.end_marker);
+			utl_tcp.flush(pv.c);
 			return;
 		end if;
 	
