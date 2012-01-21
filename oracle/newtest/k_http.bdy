@@ -149,10 +149,6 @@ create or replace package body k_http is
 		-- gzip parts can be add progressively, but cannot output progressively
 		e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 	
-		if pv.use_stream and pv.gzip then
-			pv.gzip_handle := utl_compress.lz_compress_open(pv.gzip_entity, 1);
-			pv.gzip_amount := 0;
-		end if;
 	end;
 
 	procedure go
