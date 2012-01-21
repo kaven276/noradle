@@ -114,6 +114,26 @@ create or replace package body k_http is
 		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 	end;
 
+	procedure last_modified(lmt date) is
+	begin
+		null;
+	end;
+
+	procedure etag(etag varchar2) is
+	begin
+		null;
+	end;
+
+	procedure etag_md5 is
+	begin
+		null;
+	end;
+
+	procedure content_md5 is
+	begin
+		null;
+	end;
+
 	procedure http_header_close is
 	begin
 		if pv.use_stream then
@@ -141,6 +161,26 @@ create or replace package body k_http is
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(url);
 		write_head;
+	end;
+
+	procedure retry_after(delta number) is
+	begin
+		null;
+	end;
+
+	procedure retry_after(future date) is
+	begin
+		null;
+	end;
+
+	procedure www_authenticate_basic(realm varchar2) is
+	begin
+		pv.headers('WWW-Authenticate') := 'Basic realm=' || realm;
+	end;
+
+	procedure www_authenticate_digest(realm varchar2) is
+	begin
+		null;
 	end;
 
 end k_http;

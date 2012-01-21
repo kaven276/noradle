@@ -24,6 +24,11 @@ create or replace package k_http is
 	procedure transfer_encoding_identity;
 	procedure transfer_encoding_auto;
 
+	procedure last_modified(lmt date);
+	procedure etag(etag varchar2);
+	procedure etag_md5;
+	procedure content_md5;
+
 	procedure http_header_close;
 
 	procedure write_head;
@@ -33,6 +38,12 @@ create or replace package k_http is
 		url    varchar2,
 		status number := null
 	);
+
+	procedure retry_after(delta number);
+	procedure retry_after(future date);
+
+	procedure www_authenticate_basic(realm varchar2);
+	procedure www_authenticate_digest(realm varchar2);
 
 end k_http;
 /
