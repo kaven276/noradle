@@ -9,7 +9,12 @@ create or replace package body p is
 	end;
 
 	-- public
-	procedure line(str varchar2) is
+	procedure line
+	(
+		str    varchar2,
+		nl     varchar2 := chr(10),
+		indent pls_integer := null
+	) is
 		dummy pls_integer;
 		v_out raw(32767);
 		v_len pls_integer;
@@ -23,7 +28,7 @@ create or replace package body p is
 			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
 		end if;
 	
-		v_out := utl_i18n.string_to_raw(str || chr(10), pv.charset_ora);
+		v_out := utl_i18n.string_to_raw(lpad(' ', indent, ' ') || str || nl, pv.charset_ora);
 		v_len := utl_raw.length(v_out);
 	
 		if not pv.use_stream then
