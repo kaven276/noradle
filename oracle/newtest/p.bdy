@@ -32,8 +32,6 @@ create or replace package body p is
 			return;
 		end if;
 	
-		e.chk(pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
-	
 		if pv.buffered_length + v_len > pv.write_buff_size then
 			utl_tcp.flush(pv.c);
 			pv.buffered_length := 0;

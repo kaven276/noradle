@@ -145,6 +145,9 @@ create or replace package body k_http is
 		end if;
 	
 		pv.buffered_length := 0;
+		-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
+		-- gzip parts can be add progressively, but cannot output progressively
+		e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 	
 		if pv.use_stream and pv.gzip then
 			pv.gzip_handle := utl_compress.lz_compress_open(pv.gzip_entity, 1);
