@@ -56,6 +56,9 @@ create or replace package body p is
 		v_len  integer;
 		v_wlen number(8);
 		v_raw  raw(32767);
+		v_amt  number(8) := 99999999;
+		v_gzip boolean := false;
+		v_pos  number := 0;
 	begin
 		-- when no content, just return;
 		v_len := pv.buffered_length;
@@ -86,10 +89,19 @@ create or replace package body p is
 		utl_tcp.flush(pv.c);
 	
 		for i in 1 .. ceil(v_len / pv.write_buff_size) loop
-			v_wlen := pv.write_buff_size;
-			dbms_lob.read(pv.entity, v_wlen, (i - 1) * pv.write_buff_size + 1, v_raw);
+			if v_pos + pv.write_buff_size > v_len then
+				v_wlen := v_len - v_pos;
+			else
+				v_wlen := pv.write_buff_size;
+			end if;
+			if v_gzip then
+				dbms_lob.read(pv.gzip_entity, v_wlen, v_pos + 1, v_raw);
+			else
+				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
+			end if;
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
 			utl_tcp.flush(pv.c);
+			v_pos := v_pos + v_wlen;
 		end loop;
 	end;
 
