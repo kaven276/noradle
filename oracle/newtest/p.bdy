@@ -51,10 +51,11 @@ create or replace package body p is
 			return;
 		end if;
 	
-		v_len := dbms_lob.getlength(pv.entity);
 		if (r.header('accept-encoding') like '%gzip%') and v_len > pv.gzip_thres then
-			pv.entity := utl_compress.lz_compress(pv.entity, 1);
-			v_len     := dbms_lob.getlength(pv.entity);
+			v_gzip := true;
+			dbms_lob.erase(pv.entity, v_amt, pv.buffered_length + 1);
+			pv.gzip_entity := utl_compress.lz_compress(pv.entity, 1);
+			v_len          := dbms_lob.getlength(pv.gzip_entity);
 			h.content_encoding_gzip;
 		end if;
 	
