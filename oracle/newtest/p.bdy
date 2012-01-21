@@ -12,6 +12,8 @@ create or replace package body p is
 	procedure line(str varchar2) is
 		dummy pls_integer;
 		v_out raw(32767);
+		v_len pls_integer;
+		v_tmp pv.gzip_amount%type;
 	begin
 		if str is null then
 			return;
@@ -21,22 +23,23 @@ create or replace package body p is
 			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
 		end if;
 	
+		v_out := utl_i18n.string_to_raw(str || chr(10), pv.charset_ora);
+		v_len := utl_raw.length(v_out);
+	
 		if not pv.use_stream then
-			dbms_lob.append(pv.entity, utl_i18n.string_to_raw(str || chr(10), pv.charset_ora));
+			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, v_out);
+			pv.buffered_length := pv.buffered_length + v_len;
 			return;
 		end if;
 	
-		v_out := convert(str, pv.charset_ora);
 		e.chk(pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 	
-		if pv.buffered_length + lengthb(v_out) + 2 > pv.write_buff_size then
+		if pv.buffered_length + v_len > pv.write_buff_size then
 			utl_tcp.flush(pv.c);
 			pv.buffered_length := 0;
 		end if;
-		dummy              := utl_tcp.write_line(pv.c, v_out);
-		pv.buffered_length := pv.buffered_length + lengthb(v_out) + 2;
-	
-		-- raise_application_error(-20001, 'other than utf/gbk charset is not supported yet');
+		dummy              := utl_tcp.write_raw(pv.c, v_out);
+		pv.buffered_length := pv.buffered_length + v_len;
 	end;
 
 	procedure flush is
