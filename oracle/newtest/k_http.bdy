@@ -144,11 +144,11 @@ create or replace package body k_http is
 			null; -- go out, cease execution
 		end if;
 	
-		pv.buffered_length := 0;
 		-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
 		-- gzip parts can be add progressively, but cannot output progressively
 		e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 	
+		pv.buffered_length := 0;
 	end;
 
 	procedure go
@@ -160,6 +160,8 @@ create or replace package body k_http is
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(url);
 		write_head;
+		pv.buffered_length := 0;
+		pv.allow_content   := false;
 	end;
 
 	procedure retry_after(delta number) is
@@ -175,6 +177,8 @@ create or replace package body k_http is
 	procedure www_authenticate_basic(realm varchar2) is
 	begin
 		pv.headers('WWW-Authenticate') := 'Basic realm=' || realm;
+		pv.buffered_length := 0;
+		pv.allow_content   := false;
 	end;
 
 	procedure www_authenticate_digest(realm varchar2) is
