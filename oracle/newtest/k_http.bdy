@@ -105,7 +105,7 @@ create or replace package body k_http is
 				null;
 		end;
 	
-		v := pv.status_code || nl;
+		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 		n := pv.headers.first;
 		while n is not null loop
 			v := v || n || ': ' || pv.headers(n) || nl;
