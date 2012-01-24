@@ -116,12 +116,12 @@ create or replace package body k_http is
 
 	procedure last_modified(lmt date) is
 	begin
-		null;
+		pv.headers('Last-Modified') := t.hdt2s(lmt);
 	end;
 
 	procedure etag(etag varchar2) is
 	begin
-		null;
+		pv.headers('ETag') := '"' || etag || '"';
 	end;
 
 	procedure etag_md5 is

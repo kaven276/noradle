@@ -1,5 +1,8 @@
 create or replace package body k_type_tool is
 
+	fmt  constant varchar2(100) := 'Dy, DD Mon YYYY HH24:MI:SS "GMT"';
+	lang constant varchar2(100) := 'NLS_DATE_LANGUAGE = American';
+
 	function d2s(p_date date) return varchar2 is
 	begin
 		return to_char(p_date, 'yyyy-mm-dd');
@@ -22,12 +25,12 @@ create or replace package body k_type_tool is
 
 	function hdt2s(p_date date := sysdate) return varchar2 is
 	begin
-		return to_char(p_date - pv.tz_offset / 24, 'Dy, dd Mon yyyy hh24:mi:ss', 'NLS_DATE_LANGUAGE=AMERICAN') || ' GMT';
+		return to_char(p_date - pv.tz_offset / 24, fmt, lang);
 	end;
 
 	function s2hdt(p_date varchar2) return date is
 	begin
-		return pv.tz_offset / 24 + to_date(p_date, 'Dy, dd Mon yyyy hh24:mi:ss', 'NLS_DATE_LANGUAGE=AMERICAN') || ' GMT';
+		return pv.tz_offset / 24 + to_date(p_date, fmt, lang);
 	end;
 
 	function get_empty_vcarr return owa.vc_arr is
@@ -124,7 +127,6 @@ create or replace package body k_type_tool is
 	) return varchar2 is
 		v_str varchar2(32000) := pat;
 		v_chr char(1) := chr(0);
-		v_url boolean;
 	begin
 		for i in 1 .. vals.count loop
 			v_str := replace(v_str, ch || i, v_chr || vals(i));

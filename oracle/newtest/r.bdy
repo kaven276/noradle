@@ -498,11 +498,9 @@ create or replace package body r is
 		return substrb(v, 2, lengthb(v) - 2);
 	end;
 
-	function lmt return varchar2 is
-		fmt  constant varchar2(100) := 'Dy, DD Mon YYYY HH24:MI:SS "GMT"';
-		lang constant varchar2(100) := 'NLS_DATE_LANGUAGE = American';
+	function lmt return date is
 	begin
-		return to_date(header('if-modified-since'), fmt, lang) + nvl(owa_custom.dbms_server_gmtdiff, 0) / 24;
+		return t.s2hdt(header('if-modified-since'));
 	end;
 
 end r;

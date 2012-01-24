@@ -3,9 +3,14 @@ create or replace package body test_b is
 	procedure d is
 	begin
 		h.status_line;
-		h.content_type(charset => 'gbk');
+		h.content_type(charset => 'utf-8');
+	
+		h.last_modified(sysdate - 1);
+		h.etag('md5value');
+	
 		h.header('a', 1);
-		--h.transfer_encoding_chunked;
+		-- h.transfer_encoding_chunked;
+		-- h.content_encoding_gzip;
 		h.http_header_close;
 	
 		p.line('测试一下非ascii字符紧邻http header的情况');
@@ -23,6 +28,10 @@ create or replace package body test_b is
 	
 		p.line('<br/>');
 		p.line(r.header('accept-encoding'));
+		p.line('<br/>');
+		p.line(to_char(r.lmt, 'yyyy-mm-dd hh24:mi:ss'));
+		p.line('<br/>');
+		p.line(r.etag);
 	
 		for i in 1 .. r.getn('count', 10) loop
 			p.line('<br/>' || i);
@@ -50,16 +59,16 @@ create or replace package body test_b is
 	procedure form is
 	begin
 		h.status_line(200);
-		h.content_type;
+		h.content_type(charset => 'gbk');
 		-- p.content_type(charset => 'GBK');
 		h.header('set-cookie', 'ck1=1234');
 		h.header('set-cookie', 'ck3=5678');
 		h.header('a', 1);
 		h.header('b', 2);
-		h.write_head;
+		h.http_header_close;
 	
 		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
-		p.line('<form action="test_b.redirect?type=both&type=bothtoo" method="post">');
+		p.line('<form action="test_b.redirect?type=both&type=bothtoo" method="get" accept-charset="gbk">');
 		p.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
 		p.line('您好');
 		p.line(utl_i18n.escape_reference('您好', 'us7ascii'));
@@ -69,6 +78,8 @@ create or replace package body test_b is
 		p.line('<input name="password_input" type="password" value="passwordvalue"/>');
 		p.line('<input name="button1" type="submit" value="save"/>');
 		p.line('</form>');
+	
+		p.line('<a href="test_b.d">test_b.d</a>');
 	end;
 
 	procedure redirect is
@@ -78,8 +89,8 @@ create or replace package body test_b is
 			when 'POST' then
 				-- p.go('feedback?id=');
 				h.status_line(200);
-				h.content_type(mime_type => 'text/plain');
-				h.write_head;
+				h.content_type(mime_type => 'text/plain', charset => 'gbk');
+				h.http_header_close;
 			
 				p.line(r.getc('text_input'));
 				p.line(r.getc('checkbox_input'));
@@ -109,7 +120,7 @@ create or replace package body test_b is
 			when 'GET' then
 				h.status_line(200);
 				h.content_type(mime_type => 'text/plain');
-				h.write_head;
+				h.http_header_close;
 			
 				p.line(r.getc('text_input'));
 				p.line(r.getc('checkbox_input'));
@@ -132,7 +143,7 @@ create or replace package body test_b is
 
 	procedure auth is
 	begin
-		if r.user is null then
+		if r.user is null or r.user != 'psp.web' then
 			h.www_authenticate_basic('test');
 			return;
 		end if;
