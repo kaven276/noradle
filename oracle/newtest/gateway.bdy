@@ -8,7 +8,6 @@ create or replace package body gateway is
 		begin
 			pv.c := utl_tcp.open_connection(remote_host     => '192.168.177.1',
 																			remote_port     => 1522,
-																			charset         => null, -- 'AL32UTF8',
 																			charset         => null,
 																			in_buffer_size  => pv.write_buff_size,
 																			out_buffer_size => pv.write_buff_size,
@@ -51,18 +50,11 @@ create or replace package body gateway is
 			r."_init"(pv.c, 80526);
 			p."_init"(80526);
 		
-			dbms_pipe.pack_message('executing pl/sql');
-			v_len := dbms_pipe.send_message('node2psp');
-		
 			v_sql := 'call ' || r.prog || '()';
 			execute immediate v_sql;
 			commit;
 			p.finish;
 		
-			if not pv.headers.exists('Content-Length') then
-				v_len := utl_tcp.write_line(pv.c, pv.end_marker);
-				utl_tcp.flush(pv.c);
-			end if;
 		
 		end loop;
 	end;
