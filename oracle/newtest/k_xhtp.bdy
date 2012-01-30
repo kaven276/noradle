@@ -2,13 +2,6 @@ create or replace package body k_xhtp is
 
 	pragma serially_reusable;
 
-	-- in out nocopy
-	-- wpg_docload.v_blob
-
-	db_charset varchar2(30);
-	--dad_charset varchar2(30);
-	gv_convert boolean;
-
 	gc_tag_indent  constant pls_integer := 2;
 	gc_headers_len constant pls_integer := 200;
 	cs             constant char(1) := '~';
@@ -91,9 +84,7 @@ create or replace package body k_xhtp is
 	type psecs_t is table of varchar2(32767 byte) index by binary_integer;
 	gv_psecs    psecs_t;
 	gv_css_cnt  pls_integer;
-	gv_bdy_cnt  pls_integer;
-	gv_save_pt1 pls_integer;
-	gv_save_pt2 pls_integer;
+	gv_save_pt pls_integer;
 	gv_css_link boolean := false;
 	gv_css_size pls_integer;
 	-- gc_buf_size  pls_integer := 32767;
@@ -250,8 +241,8 @@ create or replace package body k_xhtp is
 		--execute immediate 'begin :r :=u(trim(substr(:p,3))); end;'
 		--using out r, p;
 	
-		if gv_convert and length(p) != lengthb(p) then
-			r := utl_url.escape(p, false, dad_charset);
+		if length(p) != lengthb(p) then
+			r := utl_url.escape(p, false, pv.charset_ora);
 		else
 			r := p;
 		end if;
@@ -340,13 +331,12 @@ create or replace package body k_xhtp is
 
 	procedure save_pointer is
 	begin
-		gv_save_pt1 := gv_bdy_cnt;
-		gv_save_pt2 := lengthb(gv_psecs(gv_bdy_cnt));
+		gv_save_pt := pv.buffered_length;
 	end;
 
 	function appended return boolean is
 	begin
-		return gv_save_pt1 = gv_bdy_cnt and gv_save_pt2 = lengthb(gv_psecs(gv_bdy_cnt));
+		return gv_save_pt = pv.buffered_length;
 	end;
 
 	procedure prn(text varchar2) is
@@ -355,13 +345,7 @@ create or replace package body k_xhtp is
 			return;
 		end if;
 		if gv_head_over then
-			begin
-				gv_psecs(gv_bdy_cnt) := gv_psecs(gv_bdy_cnt) || text;
-			exception
-				when others then
-					gv_bdy_cnt := gv_bdy_cnt + 1;
-					gv_psecs(gv_bdy_cnt) := text;
-			end;
+      p.line(text, '');
 		else
 			gv_psecs(0) := gv_psecs(0) || text;
 		end if;
@@ -373,13 +357,7 @@ create or replace package body k_xhtp is
 			return;
 		end if;
 		if gv_head_over then
-			begin
-				gv_psecs(gv_bdy_cnt) := gv_psecs(gv_bdy_cnt) || text;
-			exception
-				when others then
-					gv_bdy_cnt := gv_bdy_cnt + 1;
-					gv_psecs(gv_bdy_cnt) := text;
-			end;
+      p.line(text, '');
 		else
 			gv_psecs(0) := gv_psecs(0) || text;
 		end if;
@@ -387,20 +365,14 @@ create or replace package body k_xhtp is
 
 	procedure d(text varchar2) is
 	begin
-		prn(text);
+    p.line(text, '');
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2) is
 	begin
 		if gv_head_over then
-			begin
-				gv_psecs(gv_bdy_cnt) := gv_psecs(gv_bdy_cnt) || text || gv_tagnl;
-			exception
-				when others then
-					gv_bdy_cnt := gv_bdy_cnt + 1;
-					gv_psecs(gv_bdy_cnt) := text || gv_tagnl;
-			end;
+      p.line(text || gv_tagnl);
 		else
 			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
 		end if;
@@ -409,13 +381,7 @@ create or replace package body k_xhtp is
 	procedure line(text varchar2 := '') is
 	begin
 		if gv_head_over then
-			begin
-				gv_psecs(gv_bdy_cnt) := gv_psecs(gv_bdy_cnt) || text || gv_tagnl;
-			exception
-				when others then
-					gv_bdy_cnt := gv_bdy_cnt + 1;
-					gv_psecs(gv_bdy_cnt) := text || gv_tagnl;
-			end;
+      p.line(text, gv_tagnl);
 		else
 			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
 		end if;
@@ -620,7 +586,7 @@ create or replace package body k_xhtp is
 			end if;
 			script_close;
 		end if;
-		k_gw.cancel_page(true);
+		-- [todo] k_gw.cancel_page(true);
 	end;
 
 	-- public
@@ -701,6 +667,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 	
 		-- Êä³öµ½ v_blob ÖÐ
+    /*
 		dbms_lob.createtemporary(v_clob, true, dbms_lob.call);
 		dbms_lob.createtemporary(wpg_docload.v_blob, true, dbms_lob.call);
 		if gv_psecs(0) is not null then
@@ -763,7 +730,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		v_src_os  := 1;
 		v_amount  := dbms_lob.lobmaxsize;
 		dbms_lob.converttoblob(wpg_docload.v_blob, v_clob, v_amount, v_dest_os, v_src_os, v_csid, v_lang_ctx, v_warning);
-	end;
+	  */
+  end;
 
 	---------------------------------------------------------------------------
 
@@ -997,9 +965,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure init is
 	begin
 		--gv_xhtp     := false;
-		db_charset  := k_setting.db_char_set;
-		dad_charset := nvl(owa_util.get_cgi_env('REQUEST_CHARSET'), 'UTF8');
-		gv_convert  := lower(db_charset) != lower(dad_charset);
 		--scn         := null;
 		--gv_in_body  := false; -- reset is_dhc to true for not using k_gw
 		gv_doc_type := '';
@@ -1026,7 +991,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_tag_len   := 0;
 		gv_tags.delete;
 		gv_css_cnt := 0;
-		gv_bdy_cnt := 1;
 		gv_psecs.delete;
 		gv_psecs(1) := gv_tagnl;
 		gv_psecs(0) := '';
@@ -1073,7 +1037,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if mime_type is null then
 			gv_head_over := false;
 			mime_type    := 'text/html';
-			owa_util.mime_header(mime_type, false, utl_i18n.map_charset(dad_charset));
+			owa_util.mime_header(mime_type, false, utl_i18n.map_charset(pv.charset_ora));
 			gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
 			-- must first doctype and then xml prolog, other wise it will be in backcompatible mode
 			if k_ccflag.xml_check then
