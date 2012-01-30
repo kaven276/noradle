@@ -154,5 +154,19 @@ create or replace package body test_b is
 		p.line(r.pass);
 	end;
 
+	procedure xhtp is
+	begin
+		h.status_line;
+		h.content_type('text/html', charset => 'utf-8');
+		h.http_header_close;
+    k_xhtp.init;
+    k_xhtp.doc_type('5');
+    k_xhtp.h;
+		k_xhtp.ul_open;
+		k_xhtp.li('abc');
+		k_xhtp.li('123');
+		k_xhtp.ul_close;
+	end;
+
 end test_b;
 /

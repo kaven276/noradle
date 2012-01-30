@@ -9,6 +9,8 @@ create or replace package test_b is
 	procedure redirect;
   
   procedure auth;
+  
+  procedure xhtp;
 
 end test_b;
 /
