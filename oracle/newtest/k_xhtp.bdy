@@ -345,7 +345,7 @@ create or replace package body k_xhtp is
 			return;
 		end if;
 		if gv_head_over then
-      p.line(text, '');
+      output.line(text, '');
 		else
 			gv_psecs(0) := gv_psecs(0) || text;
 		end if;
@@ -357,7 +357,7 @@ create or replace package body k_xhtp is
 			return;
 		end if;
 		if gv_head_over then
-      p.line(text, '');
+      output.line(text, '');
 		else
 			gv_psecs(0) := gv_psecs(0) || text;
 		end if;
@@ -365,14 +365,14 @@ create or replace package body k_xhtp is
 
 	procedure d(text varchar2) is
 	begin
-    p.line(text, '');
+    output.line(text, '');
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2) is
 	begin
 		if gv_head_over then
-      p.line(text, gv_tagnl);
+      output.line(text, gv_tagnl);
 		else
 			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
 		end if;
@@ -381,7 +381,7 @@ create or replace package body k_xhtp is
 	procedure line(text varchar2 := '') is
 	begin
 		if gv_head_over then
-      p.line(text, gv_tagnl);
+      output.line(text, gv_tagnl);
 		else
 			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
 		end if;
