@@ -228,7 +228,7 @@ create or replace package k_xhtp is
 
 	procedure hn(level pls_integer, text varchar2 := null, ac st := null);
 
-	procedure para(text varchar2 := null, ac st := null);
+	procedure p(text varchar2 := null, ac st := null);
 
 	procedure div_open(ac st := null, id varchar2 := null);
 

@@ -1381,7 +1381,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'h' || level, text, ac, null);
 	end;
 
-	procedure para(text varchar2 := null, ac st := null) is
+	procedure p(text varchar2 := null, ac st := null) is
 	begin
 		gv := tpl(true, 'p', text, ac, null);
 	end;
