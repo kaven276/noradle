@@ -41,6 +41,7 @@ create or replace package body gateway is
 		
 			-- initialize package variables
 			pv.headers.delete;
+      pv.cookies.delete;
 			pv.header_writen   := false;
 			pv.allow_content   := false;
 			pv.buffered_length := 0;
@@ -48,12 +49,13 @@ create or replace package body gateway is
 			pv.gzip            := null;
 		
 			r."_init"(pv.c, 80526);
-			p."_init"(80526);
+			output."_init"(80526);
+      -- k_xhtp.init;
 		
 			v_sql := 'call ' || r.prog || '()';
 			execute immediate v_sql;
 			commit;
-			p.finish;
+			output.finish;
 		
 		
 		end loop;
@@ -62,5 +64,7 @@ create or replace package body gateway is
 begin
 	dbms_lob.createtemporary(pv.entity, cache => true, dur => dbms_lob.session);
 	pv.write_buff_size := dbms_lob.getchunksize(pv.entity);
+  dbms_lob.createtemporary(pv.csstext, cache => true, dur => dbms_lob.session);
+  
 end gateway;
 /
