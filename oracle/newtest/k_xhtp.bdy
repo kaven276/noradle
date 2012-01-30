@@ -372,7 +372,7 @@ create or replace package body k_xhtp is
 	procedure line2(text in out nocopy varchar2) is
 	begin
 		if gv_head_over then
-      p.line(text || gv_tagnl);
+      p.line(text, gv_tagnl);
 		else
 			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
 		end if;
