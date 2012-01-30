@@ -6,6 +6,20 @@ create or replace package body output is
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
 		pv.buffered_length := 0;
+		pv.css_len         := 0;
+		pv.css_ins         := null;
+	end;
+
+	procedure css(str varchar2) is
+		v_out raw(32767);
+		v_len pls_integer;
+		v_tmp pv.gzip_amount%type;
+	begin
+		v_out := utl_i18n.string_to_raw(str, pv.charset_ora);
+		v_len := utl_raw.length(v_out);
+	
+		dbms_lob.write(pv.entity, v_len, pv.css_len + 1, v_out);
+		pv.css_len := pv.css_len + v_len;
 	end;
 
 	-- public

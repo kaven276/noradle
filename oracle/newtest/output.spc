@@ -2,6 +2,8 @@ create or replace package output is
 
 	procedure "_init"(passport pls_integer);
 
+	procedure css(str varchar2);
+
 	procedure line
 	(
 		str    varchar2,

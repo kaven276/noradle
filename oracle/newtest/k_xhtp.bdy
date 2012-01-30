@@ -524,14 +524,7 @@ create or replace package body k_xhtp is
 		if gv_scale then
 			px(v_text);
 		end if;
-	
-		begin
-			gv_psecs(-gv_css_cnt) := gv_psecs(-gv_css_cnt) || v_text || gv_tagnl;
-		exception
-			when others then
-				gv_css_cnt := gv_css_cnt + 1;
-				gv_psecs(-gv_css_cnt) := v_text || gv_tagnl;
-		end;
+    output.css(v_text || gv_tagnl);
 	end;
 
 	procedure css(text varchar2, vals st, cv boolean) is
