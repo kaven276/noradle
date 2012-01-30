@@ -81,9 +81,6 @@ create or replace package body k_xhtp is
 	gv_tag_len pls_integer;
 	gv_tags    owa.vc_arr;
 
-	type psecs_t is table of varchar2(32767 byte) index by binary_integer;
-	gv_psecs    psecs_t;
-	gv_css_cnt  pls_integer;
 	gv_save_pt pls_integer;
 	gv_css_link boolean := false;
 	gv_css_size pls_integer;
@@ -514,10 +511,6 @@ create or replace package body k_xhtp is
 			v_text := substrb(v_text, 1, v_pos1 + 3) || u(substrb(v_text, v_pos1 + 4, v_pos2 - v_pos1 - 4)) ||
 								substrb(v_text, v_pos2);
 		end loop;
-		if gv_css_cnt = 0 then
-			gv_css_cnt := 1;
-			gv_psecs(-1) := '';
-		end if;
 		if cv or gv_force_css_cv then
 			v_text := replace(v_text, '^', gv_css_prefix);
 		end if;
@@ -967,10 +960,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_head_over := true;
 		gv_tag_len   := 0;
 		gv_tags.delete;
-		gv_css_cnt := 0;
-		gv_psecs.delete;
-		gv_psecs(1) := gv_tagnl;
-		gv_psecs(0) := '';
 		-- gv_has_error := false;
 	end;
 
