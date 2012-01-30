@@ -999,8 +999,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure doc_type(name varchar2) is
 	begin
-		-- htp.p('Content-type: text/html' || '; charset=' || utl_i18n.map_charset(dad_charset));
-		http_header_close;
+    http_header_close;
 		gv_xhtp := true;
 	
 		case lower(name)
@@ -1024,37 +1023,24 @@ for(i=0;i<k_xhtp.errors.length;i++)
 				gv_wap          := true;
 			when 'mobile' then
 				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">';
-			when 'text' then
-				mime_type := 'text/plain';
-			when 'js' then
-				mime_type := 'application/x-javascript';
-			when 'css' then
-				mime_type := 'text/css';
 			else
-				mime_type := name;
+				gv_doc_type_str := name;
 		end case;
 	
-		if mime_type is null then
-			gv_head_over := false;
-			mime_type    := 'text/html';
-			owa_util.mime_header(mime_type, false, utl_i18n.map_charset(pv.charset_ora));
-			gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
-			-- must first doctype and then xml prolog, other wise it will be in backcompatible mode
-			if k_ccflag.xml_check then
-				line(rpad(' ', gc_headers_len, ' '));
-			else
-				if true or instr(owa_util.get_cgi_env('http_user_agent'), 'AppleWebKit') = 0 then
-					--gv_headers_str := '<!DOCTYPE HTML PUBLIC ''-//W3C//DTD HTML 4.01//EN''>';
-					--gv_headers_str := '';
-					prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
-				end if;
-			end if;
-		else
-			gv_psecs(1) := '';
-			gv_doc_type_str := '';
-			gv_head_over := true;
-			owa_util.mime_header(mime_type, false, utl_i18n.map_charset(dad_charset));
-		end if;
+    gv_head_over := false;
+    k_http.content_type('text/html');
+    gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
+    -- must first doctype and then xml prolog, other wise it will be in backcompatible mode
+    if k_ccflag.xml_check then
+      line(rpad(' ', gc_headers_len, ' '));
+    else
+      if true or instr(owa_util.get_cgi_env('http_user_agent'), 'AppleWebKit') = 0 then
+        --gv_headers_str := '<!DOCTYPE HTML PUBLIC ''-//W3C//DTD HTML 4.01//EN''>';
+        --gv_headers_str := '';
+        prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
+      end if;
+    end if;
+		
 		gv_doc_type := name;
 	end;
 
