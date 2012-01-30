@@ -344,11 +344,7 @@ create or replace package body k_xhtp is
 		if text is null then
 			return;
 		end if;
-		if gv_head_over then
-      output.line(text, '');
-		else
-			gv_psecs(0) := gv_psecs(0) || text;
-		end if;
+    output.line(text, '');
 	end;
 
 	procedure prn(text in out nocopy clob) is
@@ -356,11 +352,7 @@ create or replace package body k_xhtp is
 		if text is null then
 			return;
 		end if;
-		if gv_head_over then
-      output.line(text, '');
-		else
-			gv_psecs(0) := gv_psecs(0) || text;
-		end if;
+    output.line(text, '');
 	end;
 
 	procedure d(text varchar2) is
@@ -371,20 +363,12 @@ create or replace package body k_xhtp is
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2) is
 	begin
-		if gv_head_over then
-      output.line(text, gv_tagnl);
-		else
-			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
-		end if;
+    output.line(text, gv_tagnl);
 	end;
 
 	procedure line(text varchar2 := '') is
 	begin
-		if gv_head_over then
-      output.line(text, gv_tagnl);
-		else
-			gv_psecs(0) := gv_psecs(0) || text || gv_tagnl;
-		end if;
+    output.line(text, gv_tagnl);
 	end;
 
 	procedure l(txt varchar2, var st := null) is
@@ -1107,6 +1091,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			line('<style type="text/css">v\:*, o\:* { behavior:url(#default#VML);display:block; }</style>');
 		end if;
 		gv_head_over := true;
+    pv.css_ins := pv.buffered_length;
 		tag_pop('head');
 		line('</head>');
 	end;
