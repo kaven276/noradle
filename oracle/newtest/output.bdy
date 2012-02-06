@@ -66,6 +66,36 @@ create or replace package body output is
 		end if;
 	end;
 
+	-- Refactored procedure do_write 
+	procedure do_write
+	(
+		v_len  in integer,
+		v_gzip in boolean
+	) is
+		v_raw  raw(32767);
+		v_wlen number(8);
+		v_pos  number := 0;
+	begin
+		h.write_head;
+		utl_tcp.flush(pv.c);
+	
+		for i in 1 .. ceil(v_len / pv.write_buff_size) loop
+			if v_pos + pv.write_buff_size > v_len then
+				v_wlen := v_len - v_pos;
+			else
+				v_wlen := pv.write_buff_size;
+			end if;
+			if v_gzip then
+				dbms_lob.read(pv.gzip_entity, v_wlen, v_pos + 1, v_raw);
+			else
+				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
+			end if;
+			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
+			utl_tcp.flush(pv.c);
+			v_pos := v_pos + v_wlen;
+		end loop;
+	end do_write;
+
 	procedure finish is
 		v_len  integer;
 		v_wlen number(8);
@@ -87,7 +117,7 @@ create or replace package body output is
 			return;
 		end if;
 	
-		if (r.header('accept-encoding') like '%gzip%') and v_len > pv.gzip_thres then
+		if r.type != 'c' and (r.header('accept-encoding') like '%gzip%') and v_len > pv.gzip_thres then
 			v_gzip := true;
 			dbms_lob.erase(pv.entity, v_amt, pv.buffered_length + 1);
 			pv.gzip_entity := utl_compress.lz_compress(pv.entity, 1);
@@ -99,26 +129,25 @@ create or replace package body output is
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
 	
-		h.write_head;
-		dbms_alert.signal('node2psp', 'write_head');
-		commit;
-		utl_tcp.flush(pv.c);
+		-- have content, but have feedback indication or _c
+		if pv.end_marker != 'feedback' and r.type = 'c' then
+			declare
+				v  varchar2(4000);
+				nl varchar2(2) := chr(13) || chr(10);
+				l  pls_integer;
+				n  varchar2(30);
+			begin
+				-- write fixed head
+				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
+				v := v || 'Content-Length: 0' || nl;
+				v := v || 'Location: feedback?id=' || nl;
+				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+        utl_tcp.flush(pv.c);
+			end;
+			return;
+		end if;
 	
-		for i in 1 .. ceil(v_len / pv.write_buff_size) loop
-			if v_pos + pv.write_buff_size > v_len then
-				v_wlen := v_len - v_pos;
-			else
-				v_wlen := pv.write_buff_size;
-			end if;
-			if v_gzip then
-				dbms_lob.read(pv.gzip_entity, v_wlen, v_pos + 1, v_raw);
-			else
-				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
-			end if;
-			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			utl_tcp.flush(pv.c);
-			v_pos := v_pos + v_wlen;
-		end loop;
+		do_write(v_len, v_gzip);
 	end;
 
 end output;

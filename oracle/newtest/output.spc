@@ -14,6 +14,8 @@ create or replace package output is
 	procedure flush;
 
 	procedure finish;
+  
+  procedure do_write(v_len in integer, v_gzip in boolean);
 
 end output;
 /

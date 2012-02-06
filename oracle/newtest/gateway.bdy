@@ -36,6 +36,11 @@ create or replace package body gateway is
 				return;
 			end if;
 		
+			if pv.end_marker = 'feedback' then
+				output.do_write(pv.buffered_length, false);
+				continue;
+			end if;
+		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
 		
