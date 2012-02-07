@@ -32,14 +32,18 @@ create or replace package body gateway is
 					goto make_connection;
 			end;
 		
-			if pv.end_marker = 'quit_process' then
-				return;
-			end if;
-		
-			if pv.end_marker = 'feedback' then
-				output.do_write(pv.buffered_length, false);
-				continue;
-			end if;
+			case pv.end_marker
+				when 'quit_process' then
+					return;
+				when 'feedback' then
+					output.do_write(pv.buffered_length, false);
+					continue;
+				when 'csslink' then
+					output.do_css_write;
+					continue;
+				else
+					null; -- normal process
+			end case;
 		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
@@ -69,7 +73,7 @@ create or replace package body gateway is
 begin
 	dbms_lob.createtemporary(pv.entity, cache => true, dur => dbms_lob.session);
 	pv.write_buff_size := dbms_lob.getchunksize(pv.entity);
-  dbms_lob.createtemporary(pv.csstext, cache => true, dur => dbms_lob.session);
-  
+	dbms_lob.createtemporary(pv.csstext, cache => true, dur => dbms_lob.session);
+
 end gateway;
 /

@@ -13,13 +13,44 @@ create or replace package body output is
 	procedure css(str varchar2) is
 		v_out raw(32767);
 		v_len pls_integer;
-		v_tmp pv.gzip_amount%type;
 	begin
 		v_out := utl_i18n.string_to_raw(str, pv.charset_ora);
 		v_len := utl_raw.length(v_out);
 	
-		dbms_lob.write(pv.entity, v_len, pv.css_len + 1, v_out);
+		dbms_lob.write(pv.csstext, v_len, pv.css_len + 1, v_out);
 		pv.css_len := pv.css_len + v_len;
+	end;
+
+	procedure do_css_write is
+		v_raw  raw(32767);
+		v_wlen number(8);
+		v_pos  number := 0;
+	begin
+		declare
+			v  varchar2(4000);
+			nl varchar2(2) := chr(13) || chr(10);
+			l  pls_integer;
+		begin
+			-- write fixed head
+			v := '200' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
+			v := v || 'Content-Length: ' || pv.css_len || nl;
+			v := v || 'Content-Type: text/css' || nl;
+			v := v || 'ETag:"' || 'cssmd5"' || nl;
+			l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+			utl_tcp.flush(pv.c);
+		end;
+	
+		for i in 1 .. ceil(pv.css_len / pv.write_buff_size) loop
+			if v_pos + pv.write_buff_size > pv.css_len then
+				v_wlen := pv.css_len - v_pos;
+			else
+				v_wlen := pv.write_buff_size;
+			end if;
+			dbms_lob.read(pv.csstext, v_wlen, v_pos + 1, v_raw);
+			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
+			utl_tcp.flush(pv.c);
+			v_pos := v_pos + v_wlen;
+		end loop;
 	end;
 
 	-- public
@@ -32,7 +63,6 @@ create or replace package body output is
 		dummy pls_integer;
 		v_out raw(32767);
 		v_len pls_integer;
-		v_tmp pv.gzip_amount%type;
 	begin
 		if str is null then
 			return;
@@ -98,11 +128,10 @@ create or replace package body output is
 
 	procedure finish is
 		v_len  integer;
-		v_wlen number(8);
 		v_raw  raw(32767);
 		v_amt  number(8) := 99999999;
 		v_gzip boolean := false;
-		v_pos  number := 0;
+		v_md5  varchar2(32);
 	begin
 		-- when no content, just return;
 		v_len := pv.buffered_length;
@@ -115,6 +144,26 @@ create or replace package body output is
 			v_len := utl_tcp.write_line(pv.c, pv.end_marker);
 			utl_tcp.flush(pv.c);
 			return;
+		end if;
+	
+		if pv.csslink is not null then
+			if pv.css_len > 0 then
+				if pv.csslink then
+					-- compute md5 digest and replace css/xxx54
+					v_md5 := rawtohex(dbms_crypto.hash(pv.csstext, dbms_crypto.hash_md5));
+					v_raw := utl_i18n.string_to_raw(v_md5, pv.charset_ora);
+					dbms_lob.write(pv.entity, 32, pv.css_hld_pos + 50, v_raw);
+					pv.headers('x-css-md5') := v_md5;
+				else
+					-- insert into the insert point
+					dbms_lob.read(pv.csstext, pv.css_len, 1, v_raw);
+					dbms_lob.fragment_insert(pv.entity, pv.css_len, pv.css_ins, v_raw);
+				end if;
+			else
+				-- remove placeholder
+				v_raw := utl_i18n.string_to_raw(lpad(chr(10), pv.css_hld_len, ' '), pv.charset_ora);
+				dbms_lob.write(pv.entity, pv.css_hld_len, pv.css_hld_pos + 1, v_raw);
+			end if;
 		end if;
 	
 		if r.type != 'c' and (r.header('accept-encoding') like '%gzip%') and v_len > pv.gzip_thres then
@@ -135,14 +184,13 @@ create or replace package body output is
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);
 				l  pls_integer;
-				n  varchar2(30);
 			begin
 				-- write fixed head
 				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 				v := v || 'Content-Length: 0' || nl;
 				v := v || 'Location: feedback?id=' || nl;
 				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
-        utl_tcp.flush(pv.c);
+				utl_tcp.flush(pv.c);
 			end;
 			return;
 		end if;
