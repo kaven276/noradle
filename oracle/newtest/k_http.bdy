@@ -84,6 +84,16 @@ create or replace package body k_http is
 		pv.use_stream := false; -- default to not use_stream
 	end;
 
+	procedure content_disposition_attachment(filename varchar2) is
+	begin
+		pv.headers('Content-disposition') := 'attachment; filename=' || filename;
+	end;
+
+	procedure content_disposition_inline(filename varchar2) is
+	begin
+		pv.headers('Content-disposition') := 'inline; filename=' || filename;
+	end;
+
 	procedure write_head is
 		v  varchar2(4000);
 		nl varchar2(2) := chr(13) || chr(10);

@@ -24,6 +24,9 @@ create or replace package k_http is
 	procedure transfer_encoding_identity;
 	procedure transfer_encoding_auto;
 
+	procedure content_disposition_attachment(filename varchar2);
+	procedure content_disposition_inline(filename varchar2);
+
 	procedure last_modified(lmt date);
 	procedure etag(etag varchar2);
 	procedure etag_md5;
