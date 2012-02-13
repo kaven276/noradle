@@ -166,6 +166,13 @@ create or replace package body test_b is
 		k_xhtp.li('abc');
 		k_xhtp.li('123');
 		k_xhtp.ul_close;
+	procedure refresh is
+	begin
+		h.refresh(3, r.getc('to'));
+		h.content_type('text/plain');
+		h.http_header_close;
+		p.line(t.dt2s(sysdate));
+		p.line(r.getc('to'));
 	end;
 
 end test_b;

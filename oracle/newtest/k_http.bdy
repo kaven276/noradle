@@ -94,6 +94,15 @@ create or replace package body k_http is
 		pv.headers('Content-disposition') := 'inline; filename=' || filename;
 	end;
 
+	procedure refresh
+	(
+		seconds number,
+		url     varchar2 := null
+	) is
+	begin
+		pv.headers('Refresh') := to_char(seconds) || t.nvl2(url, ';url=' || u(url));
+	end;
+
 	procedure write_head is
 		v  varchar2(4000);
 		nl varchar2(2) := chr(13) || chr(10);

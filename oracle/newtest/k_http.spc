@@ -27,6 +27,12 @@ create or replace package k_http is
 	procedure content_disposition_attachment(filename varchar2);
 	procedure content_disposition_inline(filename varchar2);
 
+	procedure refresh
+	(
+		seconds number,
+		url     varchar2 := null
+	);
+
 	procedure last_modified(lmt date);
 	procedure etag(etag varchar2);
 	procedure etag_md5;

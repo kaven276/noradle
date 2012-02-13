@@ -11,6 +11,7 @@ create or replace package test_b is
   procedure auth;
   
   procedure xhtp;
+	procedure refresh;
 
 end test_b;
 /
