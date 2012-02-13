@@ -58,6 +58,7 @@ create or replace package body gateway is
 			pv.gzip            := null;
 		
 			r."_init"(pv.c, 80526);
+      h.content_type;
 			output."_init"(80526);
       -- k_xhtp.init;
 		
