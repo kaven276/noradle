@@ -40,7 +40,9 @@ create or replace package k_http is
 	procedure last_modified(lmt date);
 	procedure etag(etag varchar2);
 	procedure etag_md5;
-	procedure content_md5;
+	procedure content_md5_on;
+	procedure content_md5_off;
+	procedure content_md5_auto;
 
 	procedure http_header_close;
 

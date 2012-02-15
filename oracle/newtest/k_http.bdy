@@ -163,9 +163,19 @@ create or replace package body k_http is
 		null;
 	end;
 
-	procedure content_md5 is
+	procedure content_md5_on is
 	begin
-		null;
+		pv.content_md5 := true;
+	end;
+
+	procedure content_md5_off is
+	begin
+		pv.content_md5 := false;
+	end;
+
+	procedure content_md5_auto is
+	begin
+		pv.content_md5 := null;
 	end;
 
 	procedure http_header_close is

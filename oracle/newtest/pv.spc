@@ -25,6 +25,7 @@ create or replace package pv is
 	gzip_handle binary_integer;
 	gzip_amount number(8);
 	gzip_entity blob;
+	content_md5 boolean;
 
 	type str_arr is table of varchar2(1000) index by varchar2(100);
 	headers str_arr;
