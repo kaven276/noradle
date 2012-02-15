@@ -63,6 +63,14 @@ create or replace package body gateway is
       h.content_type;
 			output."_init"(80526);
       -- k_xhtp.init;
+			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
+				h.status_line(403);
+				h.content_type;
+				h.http_header_close;
+				p.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+				output.finish;
+				continue;
+			end if;
 		
 			v_sql := 'call ' || r.prog || '()';
 			begin
