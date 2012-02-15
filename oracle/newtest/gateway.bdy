@@ -52,7 +52,7 @@ create or replace package body gateway is
 		
 			-- initialize package variables
 			pv.headers.delete;
-      pv.cookies.delete;
+			pv.cookies.delete;
 			pv.header_writen   := false;
 			pv.allow_content   := false;
 			pv.buffered_length := 0;
@@ -60,9 +60,10 @@ create or replace package body gateway is
 			pv.gzip            := null;
 		
 			r."_init"(pv.c, 80526);
-      h.content_type;
+			h.content_type;
 			output."_init"(80526);
-      -- k_xhtp.init;
+			-- k_xhtp.init;
+		
 			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 				h.status_line(403);
 				h.content_type;
@@ -84,7 +85,6 @@ create or replace package body gateway is
 					p.line('The program unit "' || r.prog || '" is not exist');
 			end;
 			output.finish;
-		
 		
 		end loop;
 	end;
