@@ -91,6 +91,7 @@ create or replace package body gateway is
 			pv.header_writen   := false;
 			pv.allow_content   := false;
 			pv.buffered_length := 0;
+			pv.max_lmt         := null;
 			pv.use_stream      := false;
 			pv.gzip            := null;
 			pv.content_md5     := null;

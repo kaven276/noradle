@@ -151,7 +151,10 @@ create or replace package body k_http is
 
 	procedure last_modified(lmt date) is
 	begin
-		pv.headers('Last-Modified') := t.hdt2s(lmt);
+		if pv.max_lmt is null or pv.max_lmt < lmt then
+			pv.max_lmt := lmt;
+		end if;
+		pv.headers('Last-Modified') := t.hdt2s(pv.max_lmt);
 	end;
 
 	procedure etag(etag varchar2) is
