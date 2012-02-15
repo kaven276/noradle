@@ -15,5 +15,7 @@ create or replace package test_b is
 
 	procedure error;
 
+	procedure on_developing;
+
 end test_b;
 /

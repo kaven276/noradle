@@ -180,5 +180,12 @@ create or replace package body test_b is
 		raise_application_error(-20000, 'some exception');
 	end;
 
+	procedure on_developing is
+	begin
+		h.sts_501_not_implemented;
+		h.http_header_close;
+		p.line('This page is under developing, please wait for release');
+	end;
+
 end test_b;
 /
