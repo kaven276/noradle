@@ -3,6 +3,8 @@ create or replace package body gateway is
 	procedure listen is
 		v_sql varchar2(100);
 		v_len pls_integer;
+		ex_no_prog exception;
+		pragma exception_init(ex_no_prog, -6576);
 	begin
 		<<make_connection>>
 		begin
@@ -63,8 +65,16 @@ create or replace package body gateway is
       -- k_xhtp.init;
 		
 			v_sql := 'call ' || r.prog || '()';
-			execute immediate v_sql;
-			commit;
+			begin
+				execute immediate v_sql;
+				commit;
+			exception
+				when ex_no_prog then
+					h.status_line(404);
+					h.content_type;
+					h.http_header_close;
+					p.line('The program unit "' || r.prog || '" is not exist');
+			end;
 			output.finish;
 		
 		
