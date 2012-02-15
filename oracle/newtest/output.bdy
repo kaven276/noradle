@@ -218,8 +218,6 @@ create or replace package body output is
 			return;
 		end if;
 	
-		h.write_head;
-		utl_tcp.flush(pv.c);
 		do_write(v_len, v_gzip);
 	end;
 
