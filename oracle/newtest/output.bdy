@@ -187,7 +187,12 @@ create or replace package body output is
 				pv.headers('Content-MD5') := v_md5;
 			end if;
 			if pv.etag_md5 = true then
-				h.etag(v_md5);
+				if r.etag = v_md5 then
+					h.status_line(304);
+					v_len := 0;
+				else
+					h.etag(v_md5);
+				end if;
 			end if;
 		end if;
 		pv.headers('Content-Length') := to_char(v_len);

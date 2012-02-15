@@ -39,9 +39,9 @@ create or replace package body test_b is
 		p.line('<br/>');
 		p.line(r.header('accept-encoding'));
 		p.line('<br/>');
-		p.line(to_char(r.lmt, 'yyyy-mm-dd hh24:mi:ss'));
+		-- p.line(to_char(r.lmt, 'yyyy-mm-dd hh24:mi:ss'));
 		p.line('<br/>');
-		p.line(r.etag);
+		-- p.line(r.etag);
 		p.br;
 		p.a('self', r.prog || r.qstr);
 	
