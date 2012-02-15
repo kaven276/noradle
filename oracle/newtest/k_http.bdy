@@ -192,12 +192,12 @@ create or replace package body k_http is
 
 	procedure retry_after(delta number) is
 	begin
-		null;
+		pv.headers('Retry-After') := to_char(delta);
 	end;
 
 	procedure retry_after(future date) is
 	begin
-		null;
+		pv.headers('Retry-After') := t.hdt2s(future);
 	end;
 
 	procedure www_authenticate_basic(realm varchar2) is

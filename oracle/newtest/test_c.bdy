@@ -17,5 +17,21 @@ create or replace package body test_c is
 		p.ul_close;
 	end;
 
+	procedure do_303 is
+	begin
+		h.status_line(303);
+		h.location('test_b.d');
+		h.http_header_close;
+	end;
+
+	procedure do_303_retry_alfter is
+	begin
+		h.status_line(303);
+		h.location('test_b.d');
+		--h.retry_after(10);
+		h.retry_after(sysdate + 10 / 24 / 60 / 60);
+		h.http_header_close;
+	end;
+
 end test_c;
 /
