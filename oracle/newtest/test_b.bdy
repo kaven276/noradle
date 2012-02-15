@@ -5,9 +5,9 @@ create or replace package body test_b is
 		h.status_line;
 		h.content_type('text/html', charset => 'utf-8');
 		h.content_language('zh-cn');
-		h.content_md5_on;
+		-- h.content_md5_on;
 		h.etag_md5_on;
-		h.last_modified(sysdate - 1);
+		h.last_modified(trunc(sysdate));
 		h.etag('md5value');
 		-- h.cookie2_send('bsid', '1234');
 		-- h.cookie_send('msid', '1234');

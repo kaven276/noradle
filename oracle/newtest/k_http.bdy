@@ -207,6 +207,11 @@ create or replace package body k_http is
 		e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 	
 		pv.buffered_length := 0;
+	
+		if r.lmt = pv.max_lmt then
+			h.status_line(304);
+			raise gateway.ex_resp_done;
+		end if;
 	end;
 
 	procedure go

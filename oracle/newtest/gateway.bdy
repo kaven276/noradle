@@ -114,6 +114,9 @@ create or replace package body gateway is
 			exception
 				when ex_no_prog then
 					error_not_exist;
+				when gateway.ex_resp_done then
+					k_debug.trace('ex_resp_done');
+					commit;
 				when others then
 					error_execute(sqlcode, sqlerrm);
 			end;
