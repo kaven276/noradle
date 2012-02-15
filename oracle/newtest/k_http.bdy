@@ -29,7 +29,7 @@ create or replace package body k_http is
 	) is
 	begin
 		e.chk(lower(charset) = 'utf8', -20002, 'IANA charset should be utf-8, not utf8');
-		e.chk(r.type = 'c', -20005, '_c layer should not have entity content, so should not set content-type');
+		-- e.chk(r.type = 'c', -20005, '_c layer should not have entity content, so should not set content-type');
 		pv.mime_type := mime_type;
 		pv.charset   := lower(charset);
 		-- utl_i18n.generic_context, utl_i18n.iana_to_oracle
@@ -73,6 +73,7 @@ create or replace package body k_http is
 
 	procedure transfer_encoding_chunked is
 	begin
+		e.chk(r.type = 'c', -20008, '_c can not use chunked encoding');
 		pv.headers('Transfer-Encoding') := 'chunked';
 		pv.use_stream := true;
 	end;
