@@ -133,17 +133,17 @@ create or replace package body output is
 		v_gzip boolean := false;
 		v_md5  varchar2(32);
 	begin
-		-- when no content, just return;
-		v_len := pv.buffered_length;
-		if v_len = 0 then
-			return;
-		end if;
-	
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.use_stream then
 			v_len := utl_tcp.write_line(pv.c, pv.end_marker);
 			utl_tcp.flush(pv.c);
 			return;
+		end if;
+	
+		-- when no content, just return;
+		v_len := pv.buffered_length;
+		if v_len = 0 then
+			goto print_http_headers;
 		end if;
 	
 		if pv.csslink is not null then
@@ -195,6 +195,8 @@ create or replace package body output is
 				end if;
 			end if;
 		end if;
+	
+		<<print_http_headers>>
 		pv.headers('Content-Length') := to_char(v_len);
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
