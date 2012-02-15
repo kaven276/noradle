@@ -17,6 +17,24 @@ create or replace package body gateway is
 		p.line('The program unit "' || r.prog || '" is not exist');
 	end;
 
+	procedure error_execute
+	(
+		ecode varchar2,
+		emsg  varchar2
+	) is
+	begin
+		h.status_line(500);
+		h.content_type('text/plain');
+		h.http_header_close;
+		p.init;
+		p.http_header_close;
+		p.line('The program unit "' || r.prog || '" is executed with error');
+		p.line('[sqlcode]');
+		p.line(ecode);
+		p.line('[sqlerrm]');
+		p.line(emsg);
+	end;
+
 	procedure listen is
 		v_sql varchar2(100);
 		v_len pls_integer;
@@ -93,6 +111,8 @@ create or replace package body gateway is
 			exception
 				when ex_no_prog then
 					error_not_exist;
+				when others then
+					error_execute(sqlcode, sqlerrm);
 			end;
 			output.finish;
 		

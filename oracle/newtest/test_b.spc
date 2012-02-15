@@ -13,5 +13,7 @@ create or replace package test_b is
   procedure xhtp;
 	procedure refresh;
 
+	procedure error;
+
 end test_b;
 /

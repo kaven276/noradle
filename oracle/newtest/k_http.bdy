@@ -5,6 +5,11 @@ create or replace package body k_http is
 		pv.status_code := code;
 	end;
 
+	procedure status_501_not_implemented is
+	begin
+		pv.status_code := 501;
+	end;
+
 	procedure header
 	(
 		name  varchar2,

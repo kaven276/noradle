@@ -1,6 +1,7 @@
 create or replace package k_http is
 
 	procedure status_line(code pls_integer := 200);
+	procedure status_501_not_implemented;
 
 	procedure header
 	(

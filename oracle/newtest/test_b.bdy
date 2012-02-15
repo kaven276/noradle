@@ -175,5 +175,10 @@ create or replace package body test_b is
 		p.line(r.getc('to'));
 	end;
 
+	procedure error is
+	begin
+		raise_application_error(-20000, 'some exception');
+	end;
+
 end test_b;
 /
