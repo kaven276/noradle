@@ -28,6 +28,9 @@ create or replace package k_http is
 	procedure content_disposition_attachment(filename varchar2);
 	procedure content_disposition_inline(filename varchar2);
 
+	procedure content_language(langs varchar2);
+	procedure content_language_none;
+
 	procedure refresh
 	(
 		seconds number,

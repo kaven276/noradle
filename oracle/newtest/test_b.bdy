@@ -4,7 +4,7 @@ create or replace package body test_b is
 	begin
 		h.status_line;
 		h.content_type(charset => 'utf-8');
-	
+		h.content_language('zh-cn');
 		h.last_modified(sysdate - 1);
 		h.etag('md5value');
 	
