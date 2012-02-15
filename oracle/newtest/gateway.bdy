@@ -1,5 +1,22 @@
 create or replace package body gateway is
 
+	procedure error_not_bch is
+	begin
+		h.status_line(403);
+		h.content_type;
+		h.http_header_close;
+		p.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+		output.finish;
+	end;
+
+	procedure error_not_exist is
+	begin
+		h.status_line(404);
+		h.content_type;
+		h.http_header_close;
+		p.line('The program unit "' || r.prog || '" is not exist');
+	end;
+
 	procedure listen is
 		v_sql varchar2(100);
 		v_len pls_integer;
@@ -65,11 +82,7 @@ create or replace package body gateway is
 			-- k_xhtp.init;
 		
 			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
-				h.status_line(403);
-				h.content_type;
-				h.http_header_close;
-				p.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
-				output.finish;
+				error_not_bch;
 				continue;
 			end if;
 		
@@ -79,10 +92,7 @@ create or replace package body gateway is
 				commit;
 			exception
 				when ex_no_prog then
-					h.status_line(404);
-					h.content_type;
-					h.http_header_close;
-					p.line('The program unit "' || r.prog || '" is not exist');
+					error_not_exist;
 			end;
 			output.finish;
 		
