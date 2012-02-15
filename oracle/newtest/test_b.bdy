@@ -3,29 +3,38 @@ create or replace package body test_b is
 	procedure d is
 	begin
 		h.status_line;
-		h.content_type(charset => 'utf-8');
+		h.content_type('text/html', charset => 'utf-8');
 		h.content_language('zh-cn');
 		h.content_md5_on;
+		h.etag_md5_on;
 		h.last_modified(sysdate - 1);
 		h.etag('md5value');
+		-- h.cookie2_send('bsid', '1234');
+		-- h.cookie_send('msid', '1234');
 	
 		h.header('a', 1);
 		-- h.transfer_encoding_chunked;
 		-- h.content_encoding_gzip;
 		h.http_header_close;
 	
-		p.line('测试一下非ascii字符紧邻http header的情况');
-		p.line(r.host_prefix);
-		p.line(r.port);
-		p.line(r.method);
-		p.line(r.base);
-		p.line(r.dad);
-		p.line(r.prog);
-		p.line(r.pack);
-		p.line(r.proc);
-		p.line(r.path);
-		p.line(r.qstr);
-		p.line(r.hash);
+		p.init;
+		p.http_header_close;
+	
+		p.style_open;
+		p.line('p{line-height:1.1em;margin:0px;}');
+		p.style_close;
+		p.p('测试一下非ascii字符紧邻http header的情况');
+		p.p(r.host_prefix);
+		p.p(r.port);
+		p.p(r.method);
+		p.p(r.base);
+		p.p(r.dad);
+		p.p(r.prog);
+		p.p(r.pack);
+		p.p(r.proc);
+		p.p(r.path);
+		p.p(r.qstr);
+		p.p(r.hash);
 	
 		p.line('<br/>');
 		p.line(r.header('accept-encoding'));
@@ -33,9 +42,11 @@ create or replace package body test_b is
 		p.line(to_char(r.lmt, 'yyyy-mm-dd hh24:mi:ss'));
 		p.line('<br/>');
 		p.line(r.etag);
+		p.br;
+		p.a('self', r.prog || r.qstr);
 	
 		for i in 1 .. r.getn('count', 10) loop
-			p.line('<br/>' || i);
+			p.p(i);
 		end loop;
 	end;
 
@@ -51,7 +62,7 @@ create or replace package body test_b is
 			p.line('LiNE, NO.' || i);
 			p.line('<script>cnt.innerText=' || i || ';</script>');
 			-- p.line(rpad(i, 300, i));
-			p.flush();
+			output.flush();
 			dbms_lock.sleep(1);
 		end loop;
 		p.line('</pre>');
@@ -68,12 +79,13 @@ create or replace package body test_b is
 		h.header('b', 2);
 		h.http_header_close;
 	
+		p.http_header_close;
 		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
-		p.line('<form action="test_b.redirect?type=both&type=bothtoo" method="get" accept-charset="gbk">');
+		p.line('<form action="test_c.do_303_retry_alfter?type=both&type=bothtoo" method="post" accept-charset="gbk">');
 		p.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
 		p.line('您好');
 		p.line(utl_i18n.escape_reference('您好', 'us7ascii'));
-		p.flush;
+		output.flush;
 		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue1" checked="true"/>');
 		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue2" checked="true"/>');
 		p.line('<input name="password_input" type="password" value="passwordvalue"/>');
@@ -88,7 +100,10 @@ create or replace package body test_b is
 	begin
 		case r.method
 			when 'POST' then
-				-- p.go('feedback?id=');
+				h.go('test_b.d');
+				-- h.feedback;
+				return;
+			
 				h.status_line(200);
 				h.content_type(mime_type => 'text/plain', charset => 'gbk');
 				h.http_header_close;
@@ -160,13 +175,16 @@ create or replace package body test_b is
 		h.status_line;
 		h.content_type('text/html', charset => 'utf-8');
 		h.http_header_close;
-    k_xhtp.init;
-    k_xhtp.doc_type('5');
-    k_xhtp.h;
-		k_xhtp.ul_open;
-		k_xhtp.li('abc');
-		k_xhtp.li('123');
-		k_xhtp.ul_close;
+		p.init;
+		p.doc_type('5');
+		p.h;
+		p.ul_open;
+		-- p.css_link;
+		p.li('abc');
+		p.li('123');
+		p.ul_close;
+	end;
+
 	procedure refresh is
 	begin
 		h.refresh(3, r.getc('to'));

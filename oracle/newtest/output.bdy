@@ -174,6 +174,22 @@ create or replace package body output is
 			h.content_encoding_gzip;
 		end if;
 	
+		if pv.content_md5 = true or pv.etag_md5 = true then
+			if v_gzip then
+				dbms_lob.trim(pv.gzip_entity, v_len);
+				v_raw := dbms_crypto.hash(pv.gzip_entity, dbms_crypto.hash_md5);
+			else
+				dbms_lob.trim(pv.entity, v_len);
+				v_raw := dbms_crypto.hash(pv.entity, dbms_crypto.hash_md5);
+			end if;
+			v_md5 := utl_raw.cast_to_varchar2(utl_encode.base64_encode(v_raw));
+			if pv.content_md5 = true then
+				pv.headers('Content-MD5') := v_md5;
+			end if;
+			if pv.etag_md5 = true then
+				h.etag(v_md5);
+			end if;
+		end if;
 		pv.headers('Content-Length') := to_char(v_len);
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';

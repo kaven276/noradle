@@ -158,9 +158,19 @@ create or replace package body k_http is
 		pv.headers('ETag') := '"' || etag || '"';
 	end;
 
-	procedure etag_md5 is
+	procedure etag_md5_on is
 	begin
-		null;
+		pv.etag_md5 := true;
+	end;
+
+	procedure etag_md5_off is
+	begin
+		pv.etag_md5 := false;
+	end;
+
+	procedure etag_md5_auto is
+	begin
+		pv.etag_md5 := null;
 	end;
 
 	procedure content_md5_on is
