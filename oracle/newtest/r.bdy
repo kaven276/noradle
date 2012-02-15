@@ -93,13 +93,6 @@ create or replace package body r is
 				gv_headers('authorization') := 'null';
 		end;
 	
-		declare
-			i integer;
-		begin
-			dbms_pipe.pack_message(gv_headers('authorization'));
-			i := dbms_pipe.send_message('node2psp');
-		end;
-	
 		-- read cookies
 		loop
 			v_name  := utl_tcp.get_line(c, true);
