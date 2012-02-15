@@ -6,7 +6,6 @@ create or replace package body k_debug is
 		name varchar2 := 'node2psp'
 	) is
 	begin
-		return;
 		dbms_pipe.pack_message(info);
 		tmp.i := dbms_pipe.send_message(name, 0);
 	exception
@@ -20,7 +19,6 @@ create or replace package body k_debug is
 		name varchar2 := 'node2psp'
 	) is
 	begin
-		return;
 		for i in 1 .. info.count loop
 			dbms_pipe.pack_message(info(i));
 		end loop;
