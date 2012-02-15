@@ -203,6 +203,7 @@ create or replace package body output is
 	
 		-- have content, but have feedback indication or _c
 		if pv.end_marker != 'feedback' and r.type = 'c' then
+		if v_len > 0 and r.type = 'c' and pv.end_marker != 'feedback' then
 			declare
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);
@@ -212,6 +213,7 @@ create or replace package body output is
 				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 				v := v || 'Content-Length: 0' || nl;
 				v := v || 'Location: feedback?id=' || nl;
+				v := v || 'Cache-Control: no-cache' || nl;
 				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 				utl_tcp.flush(pv.c);
 			end;
