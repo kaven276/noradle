@@ -204,12 +204,8 @@ create or replace package body k_http is
 
 	procedure http_header_close is
 	begin
-		if pv.use_stream then
-			write_head;
-		end if;
+		pv.buffered_length := 0;
 	
-		if not pv.allow_content then
-			null; -- go out, cease execution
 		if pv.allow is null then
 			pv.allow := case r.type
 										when 'b' then
@@ -221,8 +217,6 @@ create or replace package body k_http is
 									end;
 		end if;
 	
-		-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
-		-- gzip parts can be add progressively, but cannot output progressively
 		if pv.allow is not null and instr(',' || pv.allow || ',', r.method) <= 0 then
 			h.status_line(405); -- Method Not Allowed
 			pv.headers('Allow') := pv.allow;
@@ -232,7 +226,12 @@ create or replace package body k_http is
 			raise gateway.ex_resp_done;
 		end if;
 	
-		pv.buffered_length := 0;
+		if pv.use_stream then
+			e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
+			-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
+			-- gzip parts can be add progressively, but cannot output progressively
+			write_head;
+		end if;
 	
 		if r.lmt = pv.max_lmt then
 			h.status_line(304);
