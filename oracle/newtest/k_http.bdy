@@ -154,6 +154,11 @@ create or replace package body k_http is
 		pv.headers('Expires') := t.hdt2s(expt);
 	end;
 
+	procedure expires_now is
+	begin
+		pv.headers('Expires') := t.hdt2s(sysdate);
+	end;
+
 	procedure last_modified(lmt date) is
 	begin
 		if pv.max_lmt is null or pv.max_lmt < lmt then

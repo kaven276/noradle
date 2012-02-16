@@ -38,6 +38,7 @@ create or replace package k_http is
 	);
 
 	procedure expires(expt date);
+	procedure expires_now;
 	procedure last_modified(lmt date);
 	procedure etag(etag varchar2);
 	procedure etag_md5_on;
