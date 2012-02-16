@@ -96,6 +96,7 @@ create or replace package body gateway is
 			pv.gzip            := null;
 			pv.content_md5     := null;
 			pv.etag_md5        := null;
+			pv.allow           := null;
 		
 			r."_init"(pv.c, 80526);
 			h.content_type;
@@ -115,7 +116,6 @@ create or replace package body gateway is
 				when ex_no_prog then
 					error_not_exist;
 				when gateway.ex_resp_done then
-					k_debug.trace('ex_resp_done');
 					commit;
 				when others then
 					error_execute(sqlcode, sqlerrm);

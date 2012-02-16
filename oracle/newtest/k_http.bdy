@@ -210,11 +210,27 @@ create or replace package body k_http is
 	
 		if not pv.allow_content then
 			null; -- go out, cease execution
+		if pv.allow is null then
+			pv.allow := case r.type
+										when 'b' then
+										 'GET'
+										when 'c' then
+										 'POST'
+										else
+										 'GET,POST'
+									end;
 		end if;
 	
 		-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
 		-- gzip parts can be add progressively, but cannot output progressively
-		e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
+		if pv.allow is not null and instr(',' || pv.allow || ',', r.method) <= 0 then
+			h.status_line(405); -- Method Not Allowed
+			pv.headers('Allow') := pv.allow;
+			if pv.use_stream then
+				write_head;
+			end if;
+			raise gateway.ex_resp_done;
+		end if;
 	
 		pv.buffered_length := 0;
 	
@@ -261,6 +277,30 @@ create or replace package body k_http is
 	procedure www_authenticate_digest(realm varchar2) is
 	begin
 		null;
+	end;
+
+	procedure allow_get is
+	begin
+		if r.method != 'GET' then
+			pv.allow := 'GET';
+			h.http_header_close;
+		end if;
+	end;
+
+	procedure allow_post is
+	begin
+		if r.method != 'POST' then
+			pv.allow := 'POST';
+			h.http_header_close;
+		end if;
+	end;
+
+	procedure allow(methods varchar2) is
+	begin
+		if instrb(',' || methods || ',', r.method) <= 0 then
+			pv.allow := methods;
+			h.http_header_close;
+		end if;
 	end;
 
 end k_http;

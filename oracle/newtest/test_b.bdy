@@ -2,6 +2,8 @@ create or replace package body test_b is
 
 	procedure d is
 	begin
+		-- h.allow_post;
+		-- h.allow('POST,PUT');
 		h.status_line;
 		h.content_type('text/html', charset => 'utf-8');
 		h.content_language('zh-cn');

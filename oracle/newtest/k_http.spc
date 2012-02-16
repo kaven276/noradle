@@ -64,5 +64,9 @@ create or replace package k_http is
 	procedure www_authenticate_basic(realm varchar2);
 	procedure www_authenticate_digest(realm varchar2);
 
+	procedure allow_get;
+	procedure allow_post;
+	procedure allow(methods varchar2);
+
 end k_http;
 /
