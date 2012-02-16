@@ -8,6 +8,7 @@ create or replace package body test_b is
 		-- h.content_md5_on;
 		h.etag_md5_on;
 		h.last_modified(trunc(sysdate));
+		h.expires(sysdate + 1);
 		h.etag('md5value');
 		-- h.cookie2_send('bsid', '1234');
 		-- h.cookie_send('msid', '1234');

@@ -149,6 +149,11 @@ create or replace package body k_http is
 		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 	end;
 
+	procedure expires(expt date) is
+	begin
+		pv.headers('Expires') := t.hdt2s(expt);
+	end;
+
 	procedure last_modified(lmt date) is
 	begin
 		if pv.max_lmt is null or pv.max_lmt < lmt then

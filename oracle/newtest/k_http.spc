@@ -37,6 +37,7 @@ create or replace package k_http is
 		url     varchar2 := null
 	);
 
+	procedure expires(expt date);
 	procedure last_modified(lmt date);
 	procedure etag(etag varchar2);
 	procedure etag_md5_on;
