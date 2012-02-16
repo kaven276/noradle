@@ -48,7 +48,7 @@ create or replace package k_http is
 	procedure content_md5_off;
 	procedure content_md5_auto;
 
-	procedure http_header_close;
+	procedure header_close;
 
 	procedure write_head;
 

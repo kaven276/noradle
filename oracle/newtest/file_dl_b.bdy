@@ -2,7 +2,7 @@ create or replace package body file_dl_b is
 
 	procedure d is
 	begin
-		h.http_header_close;
+		h.header_close;
 		p.init;
 		p.h;
 		p.style_open;
@@ -18,7 +18,7 @@ create or replace package body file_dl_b is
 		h.status_line;
 		h.content_type('text/plain', charset => 'utf-8');
 		h.content_disposition_attachment('test.txt');
-		h.http_header_close;
+		h.header_close;
 		p.line('some text');
 		p.line('some other text');
 	end;
@@ -30,7 +30,7 @@ create or replace package body file_dl_b is
 		h.status_line;
 		h.content_type('text/html', charset => 'utf-8');
 		h.content_disposition_attachment('test.xls');
-		h.http_header_close;
+		h.header_close;
 	
 		p.init;
 		p.doc_type('5');
@@ -57,7 +57,7 @@ create or replace package body file_dl_b is
 		h.status_line;
 		h.content_type('text/html', charset => 'utf-8');
 		h.content_disposition_attachment('test.doc');
-		h.http_header_close;
+		h.header_close;
 	
 		p.init;
 		p.doc_type('5');

@@ -8,12 +8,12 @@ create or replace package body html_test_b is
 		h.content_type(charset => 'utf-8');
 		-- h.transfer_encoding_chunked;
 		-- h.content_encoding_gzip;
-		h.http_header_close;
+		h.header_close;
 	
-    pv.csslink := true;
+		pv.csslink := true;
 		p.h;
 		p.div_open(id => 'wrapper');
-    p.lcss('{margin:0px;background-color:#EEE;}');
+		p.lcss('{margin:0px;background-color:#EEE;}');
 	
 		p.div_open(id => 'text', ac => st('#border:1px solid silver;width:80%;padding:8px 20px;'));
 		for i in 1 .. 6 loop

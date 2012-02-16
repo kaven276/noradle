@@ -9,7 +9,7 @@ create or replace package body test_b is
 		h.content_language('zh-cn');
 		-- h.content_md5_on;
 		h.etag_md5_on;
-		h.last_modified(trunc(sysdate));
+		-- h.last_modified(trunc(sysdate));
 		h.expires(sysdate + 1);
 		h.etag('md5value');
 		-- h.cookie2_send('bsid', '1234');
@@ -18,7 +18,7 @@ create or replace package body test_b is
 		h.header('a', 1);
 		-- h.transfer_encoding_chunked;
 		-- h.content_encoding_gzip;
-		h.http_header_close;
+		h.header_close;
 	
 		p.init;
 		p.http_header_close;
@@ -80,11 +80,11 @@ create or replace package body test_b is
 		h.header('set-cookie', 'ck3=5678');
 		h.header('a', 1);
 		h.header('b', 2);
-		h.http_header_close;
+		h.header_close;
 	
 		p.http_header_close;
 		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
-		p.line('<form action="test_c.do_303_retry_alfter?type=both&type=bothtoo" method="post" accept-charset="gbk">');
+		p.line('<form action="test_c.do?type=both&type=bothtoo" method="post" accept-charset="gbk">');
 		p.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
 		p.line('ฤ๚บร');
 		p.line(utl_i18n.escape_reference('ฤ๚บร', 'us7ascii'));
@@ -109,7 +109,7 @@ create or replace package body test_b is
 			
 				h.status_line(200);
 				h.content_type(mime_type => 'text/plain', charset => 'gbk');
-				h.http_header_close;
+				h.header_close;
 			
 				p.line(r.getc('text_input'));
 				p.line(r.getc('checkbox_input'));
@@ -139,7 +139,7 @@ create or replace package body test_b is
 			when 'GET' then
 				h.status_line(200);
 				h.content_type(mime_type => 'text/plain');
-				h.http_header_close;
+				h.header_close;
 			
 				p.line(r.getc('text_input'));
 				p.line(r.getc('checkbox_input'));
@@ -168,7 +168,7 @@ create or replace package body test_b is
 		end if;
 		h.status_line;
 		h.content_type('text/plain', charset => 'utf-8');
-		h.http_header_close;
+		h.header_close;
 		p.line(r.user);
 		p.line(r.pass);
 	end;
@@ -177,7 +177,7 @@ create or replace package body test_b is
 	begin
 		h.status_line;
 		h.content_type('text/html', charset => 'utf-8');
-		h.http_header_close;
+		h.header_close;
 		p.init;
 		p.doc_type('5');
 		p.h;
@@ -192,7 +192,7 @@ create or replace package body test_b is
 	begin
 		h.refresh(3, r.getc('to'));
 		h.content_type('text/plain');
-		h.http_header_close;
+		h.header_close;
 		p.line(t.dt2s(sysdate));
 		p.line(r.getc('to'));
 	end;
@@ -205,7 +205,7 @@ create or replace package body test_b is
 	procedure on_developing is
 	begin
 		h.sts_501_not_implemented;
-		h.http_header_close;
+		h.header_close;
 		p.line('This page is under developing, please wait for release');
 	end;
 

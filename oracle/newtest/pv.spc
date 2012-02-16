@@ -16,6 +16,7 @@ create or replace package pv is
 
 	header_writen boolean;
 	allow_content boolean;
+	allow         varchar2(100);
 
 	status_code number(3);
 	mime_type   varchar2(100);

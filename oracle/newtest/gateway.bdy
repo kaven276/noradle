@@ -4,7 +4,7 @@ create or replace package body gateway is
 	begin
 		h.status_line(403);
 		h.content_type;
-		h.http_header_close;
+		h.header_close;
 		p.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
 		output.finish;
 	end;
@@ -13,7 +13,7 @@ create or replace package body gateway is
 	begin
 		h.status_line(404);
 		h.content_type;
-		h.http_header_close;
+		h.header_close;
 		p.line('The program unit "' || r.prog || '" is not exist');
 	end;
 
@@ -25,7 +25,7 @@ create or replace package body gateway is
 	begin
 		h.status_line(500);
 		h.content_type('text/plain');
-		h.http_header_close;
+		h.header_close;
 		p.init;
 		p.http_header_close;
 		p.line('The program unit "' || r.prog || '" is executed with error');
