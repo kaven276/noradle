@@ -19,20 +19,23 @@ create or replace package body gateway is
 
 	procedure error_execute
 	(
-		ecode varchar2,
-		emsg  varchar2
+		ecode      varchar2,
+		emsg       varchar2,
+		ebacktrace varchar2,
+		estack     varchar2
 	) is
 	begin
 		h.status_line(500);
-		h.content_type('text/plain');
+		h.content_type('text/html');
 		h.header_close;
 		p.init;
-		p.http_header_close;
-		p.line('The program unit "' || r.prog || '" is executed with error');
-		p.line('[sqlcode]');
-		p.line(ecode);
-		p.line('[sqlerrm]');
-		p.line(emsg);
+		p.h('', emsg);
+		p.hn(3, '[WARNING] execute with error');
+		p.pre_open;
+		p.d(estack);
+		p.d(ebacktrace);
+		p.pre_close;
+		-- p.a('refresh', 'javascript:window.location.reload();');
 	end;
 
 	procedure listen is
@@ -118,7 +121,7 @@ create or replace package body gateway is
 				when gateway.ex_resp_done then
 					commit;
 				when others then
-					error_execute(sqlcode, sqlerrm);
+					error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 			end;
 			output.finish;
 		

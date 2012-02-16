@@ -2,6 +2,20 @@ create or replace package body test_b is
 
 	procedure d is
 	begin
+		if r.getn('count', 0) = 404 then
+			h.status_line(404);
+			h.header_close;
+			p.line('resource with count=404 does not exits');
+			g.finish;
+		end if;
+	
+		if r.getn('count', 0) = 403 then
+			h.status_line(403);
+			h.header_close;
+			p.line('You have not the right to access resource with count=403');
+			g.finish;
+		end if;
+	
 		-- h.allow_post;
 		-- h.allow('POST,PUT');
 		h.status_line;
@@ -197,9 +211,15 @@ create or replace package body test_b is
 		p.line(r.getc('to'));
 	end;
 
-	procedure error is
+	-- private
+	procedure error_root is
 	begin
 		raise_application_error(-20000, 'some exception');
+	end;
+
+	procedure error is
+	begin
+		error_root;
 	end;
 
 	procedure on_developing is
