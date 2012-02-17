@@ -10,7 +10,7 @@ create or replace package body html_test_b is
 		-- h.content_encoding_gzip;
 		h.header_close;
 	
-		pv.csslink := true;
+		pv.csslink := false;
 		p.h;
 		p.div_open(id => 'wrapper');
 		p.lcss('{margin:0px;background-color:#EEE;}');

@@ -99,6 +99,7 @@ create or replace package body gateway is
 			pv.gzip            := null;
 			pv.content_md5     := null;
 			pv.etag_md5        := null;
+			pv.csslink         := null;
 			pv.allow           := null;
 		
 			r."_init"(pv.c, 80526);
@@ -130,8 +131,9 @@ create or replace package body gateway is
 
 begin
 	dbms_lob.createtemporary(pv.entity, cache => true, dur => dbms_lob.session);
-	pv.write_buff_size := dbms_lob.getchunksize(pv.entity);
+	dbms_lob.createtemporary(pv.gzip_entity, cache => true, dur => dbms_lob.session);
 	dbms_lob.createtemporary(pv.csstext, cache => true, dur => dbms_lob.session);
+	pv.write_buff_size := dbms_lob.getchunksize(pv.entity);
 
 end gateway;
 /

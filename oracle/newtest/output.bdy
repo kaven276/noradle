@@ -128,10 +128,13 @@ create or replace package body output is
 
 	procedure finish is
 		v_len  integer;
+		v_len2 integer := 0;
 		v_raw  raw(32767);
 		v_amt  number(8) := 99999999;
 		v_gzip boolean := false;
 		v_md5  varchar2(32);
+		v_lzh  binary_integer;
+		v_read binary_integer;
 	begin
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.use_stream then
@@ -155,9 +158,8 @@ create or replace package body output is
 					dbms_lob.write(pv.entity, 32, pv.css_hld_pos + 50, v_raw);
 					pv.headers('x-css-md5') := v_md5;
 				else
-					-- insert into the insert point
-					dbms_lob.read(pv.csstext, pv.css_len, 1, v_raw);
-					dbms_lob.fragment_insert(pv.entity, pv.css_len, pv.css_ins, v_raw);
+					-- fragment_insert will not work, it's for secure lob only
+					v_len2 := pv.css_len;
 				end if;
 			else
 				-- remove placeholder
@@ -166,11 +168,25 @@ create or replace package body output is
 			end if;
 		end if;
 	
-		if r.type != 'c' and (r.header('accept-encoding') like '%gzip%') and v_len > pv.gzip_thres then
+		if r.type != 'c' and (r.header('accept-encoding') like '%gzip%') and v_len + v_len2 > pv.gzip_thres then
 			v_gzip := true;
-			dbms_lob.erase(pv.entity, v_amt, pv.buffered_length + 1);
-			pv.gzip_entity := utl_compress.lz_compress(pv.entity, 1);
-			v_len          := dbms_lob.getlength(pv.gzip_entity);
+			if v_len2 = 0 then
+				dbms_lob.erase(pv.entity, v_amt, pv.buffered_length + 1);
+				pv.gzip_entity := utl_compress.lz_compress(pv.entity, 1);
+			else
+				v_lzh  := utl_compress.lz_compress_open(pv.gzip_entity, 1);
+				v_read := pv.css_ins;
+				dbms_lob.read(pv.entity, v_read, 1, v_raw);
+				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
+				v_read := pv.css_len;
+				dbms_lob.read(pv.csstext, v_read, 1, v_raw);
+				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
+				v_read := v_len - pv.css_ins;
+				dbms_lob.read(pv.entity, v_read, pv.css_ins + 1, v_raw);
+				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
+				utl_compress.lz_compress_close(v_lzh, pv.gzip_entity);
+			end if;
+			v_len := dbms_lob.getlength(pv.gzip_entity);
 			h.content_encoding_gzip;
 		end if;
 	
