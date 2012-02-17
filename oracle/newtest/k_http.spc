@@ -68,5 +68,15 @@ create or replace package k_http is
 	procedure allow_post;
 	procedure allow(methods varchar2);
 
+	procedure set_cookie
+	(
+		name    in varchar2,
+		value   in varchar2,
+		expires in date default null,
+		path    in varchar2 default null,
+		domain  in varchar2 default null,
+		secure  in boolean default false
+	);
+
 end k_http;
 /

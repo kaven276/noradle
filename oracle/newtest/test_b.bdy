@@ -26,8 +26,7 @@ create or replace package body test_b is
 		-- h.last_modified(trunc(sysdate));
 		h.expires(sysdate + 1);
 		h.etag('md5value');
-		-- h.cookie2_send('bsid', '1234');
-		-- h.cookie_send('msid', '1234');
+		h.set_cookie('bsid', 'myself', path => '/' || r.dad || '/test_b.d');
 	
 		h.header('a', 1);
 		-- h.transfer_encoding_chunked;

@@ -124,6 +124,7 @@ create or replace package body k_http is
 		nl varchar2(2) := chr(13) || chr(10);
 		l  pls_integer;
 		n  varchar2(30);
+		c  varchar2(4000);
 	begin
 		if pv.header_writen then
 			return;
@@ -145,6 +146,11 @@ create or replace package body k_http is
 		while n is not null loop
 			v := v || n || ': ' || pv.headers(n) || nl;
 			n := pv.headers.next(n);
+		end loop;
+		n := pv.cookies.first;
+		while n is not null loop
+			v := v || pv.cookies(n) || nl;
+			n := pv.cookies.next(n);
 		end loop;
 		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 	end;
@@ -300,6 +306,24 @@ create or replace package body k_http is
 			pv.allow := methods;
 			h.http_header_close;
 		end if;
+	end;
+
+	procedure set_cookie
+	(
+		name    in varchar2,
+		value   in varchar2,
+		expires in date default null,
+		path    in varchar2 default null,
+		domain  in varchar2 default null,
+		secure  in boolean default false
+	) is
+		v_str varchar2(1000);
+	begin
+		v_str := v_str || t.tf(secure, ';secure');
+		v_str := v_str || t.nvl2(domain, ';Domain=' || domain);
+		v_str := v_str || t.nvl2(path, ';path=' || path);
+		v_str := v_str || t.nvl2(expires, ';expires=' || t.hdt2s(expires));
+		pv.cookies(name) := 'Set-Cookie: ' || name || '=' || value || v_str;
 	end;
 
 end k_http;
