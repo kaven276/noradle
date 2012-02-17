@@ -109,6 +109,28 @@ create or replace package body output is
 		h.write_head;
 		utl_tcp.flush(pv.c);
 	
+		if v_gzip = false and pv.csslink = false and pv.css_len > 0 then
+			v_wlen := pv.css_ins;
+			dbms_lob.read(pv.entity, pv.css_ins, 1, v_raw);
+			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
+			utl_tcp.flush(pv.c);
+		
+			v_wlen := pv.css_len;
+			dbms_lob.read(pv.csstext, v_wlen, 1, v_raw);
+			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
+			utl_tcp.flush(pv.c);
+		
+			v_pos := pv.css_ins;
+			for i in 1 .. ceil((v_len - pv.css_ins) / 32767) loop
+				v_wlen := t.tf(v_pos + 32767 > v_len, v_len - v_pos, 32767);
+				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
+				v_pos  := v_pos + v_wlen;
+				v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
+				utl_tcp.flush(pv.c);
+			end loop;
+			return;
+		end if;
+	
 		for i in 1 .. ceil(v_len / pv.write_buff_size) loop
 			if v_pos + pv.write_buff_size > v_len then
 				v_wlen := v_len - v_pos;
@@ -218,7 +240,7 @@ create or replace package body output is
 		end if;
 	
 		<<print_http_headers>>
-		pv.headers('Content-Length') := to_char(v_len);
+		pv.headers('Content-Length') := to_char(v_len + v_len2);
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
 	
