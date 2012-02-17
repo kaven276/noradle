@@ -9,13 +9,24 @@ create or replace package body gateway is
 		output.finish;
 	end;
 
+	procedure error_dad_auth_entry
 	(
+		code number,
+		errm varchar2
 	) is
 	begin
 		h.status_line(500);
+		h.content_type('text/plain');
+		p.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
+		p.line('error text = ' || code || '/' || errm);
 	end;
 
 	procedure listen is
+		no_dad_auth_entry1 exception; -- table or view does not exist
+		pragma exception_init(no_dad_auth_entry1, -942);
+		no_dad_auth_entry2 exception;
+		pragma exception_init(no_dad_auth_entry2, -6576);
+		v_done boolean := false;
 	begin
 		<<make_connection>>
 		begin
@@ -62,6 +73,7 @@ create or replace package body gateway is
 			pv.cput := dbms_utility.get_cpu_time;
 		
 			-- initialize package variables
+			v_done := false;
 			pv.headers.delete;
 			pv.cookies.delete;
 			pv.header_writen   := false;
@@ -85,10 +97,22 @@ create or replace package body gateway is
 				continue;
 			end if;
 		
+			-- this is for become user
+			<<redo>>
 			begin
+				execute immediate 'call ' || r.dbu || '.dad_auth_entry()';
 			exception
+				when no_dad_auth_entry1 or no_dad_auth_entry2 then
+					if v_done then
+						raise;
+					end if;
+					sys.pw.add_dad_auth_entry(r.dbu);
+					v_done := true;
+					goto redo;
 				when others then
+					error_dad_auth_entry(sqlcode, sqlerrm);
 			end;
+		
 			output.finish;
 		
 		end loop;
