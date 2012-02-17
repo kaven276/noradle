@@ -447,7 +447,7 @@ create or replace package body r is
 
 	function dbu return varchar2 is
 	begin
-		return gv_dbu;
+		return nvl(gv_dbu, v_dad);
 	end;
 
 	function file return varchar2 is
