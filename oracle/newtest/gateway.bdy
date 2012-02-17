@@ -41,8 +41,6 @@ create or replace package body gateway is
 	procedure listen is
 		v_sql varchar2(100);
 		v_len pls_integer;
-		ex_no_prog exception;
-		pragma exception_init(ex_no_prog, -6576);
 	begin
 		<<make_connection>>
 		begin

@@ -229,7 +229,7 @@ create or replace package body k_http is
 			if pv.use_stream then
 				write_head;
 			end if;
-			raise gateway.ex_resp_done;
+			raise pv.ex_resp_done;
 		end if;
 	
 		if pv.use_stream then
@@ -241,7 +241,7 @@ create or replace package body k_http is
 	
 		if r.lmt = pv.max_lmt then
 			h.status_line(304);
-			raise gateway.ex_resp_done;
+			raise pv.ex_resp_done;
 		end if;
 	end;
 

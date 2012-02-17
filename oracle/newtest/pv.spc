@@ -43,5 +43,13 @@ create or replace package pv is
 	css_hld_pos pls_integer;
 	css_hld_len pls_integer;
 
+	ex_resp_done exception;
+	ex_fltr_done exception;
+	ex_no_prog exception;
+
+	pragma exception_init(ex_resp_done, -20998);
+	pragma exception_init(ex_fltr_done, -20999);
+	pragma exception_init(ex_no_prog, -6576);
+
 end pv;
 /
