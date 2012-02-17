@@ -135,6 +135,7 @@ create or replace package body output is
 		v_md5  varchar2(32);
 		v_lzh  binary_integer;
 		v_read binary_integer;
+		v_pos  number := 0;
 	begin
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.use_stream then
@@ -181,9 +182,13 @@ create or replace package body output is
 				v_read := pv.css_len;
 				dbms_lob.read(pv.csstext, v_read, 1, v_raw);
 				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
-				v_read := v_len - pv.css_ins;
-				dbms_lob.read(pv.entity, v_read, pv.css_ins + 1, v_raw);
-				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
+				v_pos := pv.css_ins;
+				for i in 1 .. ceil((v_len - pv.css_ins) / 32767) loop
+					v_read := t.tf(v_pos + 32767 > v_len, v_len - v_pos, 32767);
+					dbms_lob.read(pv.entity, v_read, v_pos + 1, v_raw);
+					v_pos := v_pos + v_read;
+					utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
+				end loop;
 				utl_compress.lz_compress_close(v_lzh, pv.gzip_entity);
 			end if;
 			v_len := dbms_lob.getlength(pv.gzip_entity);

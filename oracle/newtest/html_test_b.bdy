@@ -68,6 +68,10 @@ create or replace package body html_test_b is
 		p.fieldset_close;
 	
 		p.div_close;
+	
+		for i in 1 .. r.getn('count', 0) loop
+			p.p(i);
+		end loop;
 	end;
 
 end html_test_b;
