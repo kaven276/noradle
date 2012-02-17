@@ -1,0 +1,21 @@
+create or replace public synonym st for st;
+create or replace public synonym nt for nt;
+create or replace public synonym tmp for tmp;
+create or replace public synonym u for u;
+create or replace public synonym e for e;
+create or replace public synonym g for g;
+create or replace public synonym h for k_http;
+create or replace public synonym p for k_xhtp;
+create or replace public synonym t for k_type_tool;
+create or replace public synonym k_gw for k_gw;
+
+grant execute on st to public;
+grant execute on nt to public;
+grant execute on tmp to public;
+grant execute on u to public;
+grant execute on e to public;
+grant execute on g to public;
+grant execute on k_http to public;
+grant execute on k_xhtp to public;
+grant execute on k_type_tool to public;
+grant execute on k_gw to public;
