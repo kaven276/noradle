@@ -208,7 +208,7 @@ create or replace package body k_http is
 		pv.content_md5 := null;
 	end;
 
-	procedure http_header_close is
+	procedure header_close is
 	begin
 		pv.buffered_length := 0;
 	
@@ -288,7 +288,7 @@ create or replace package body k_http is
 	begin
 		if r.method != 'GET' then
 			pv.allow := 'GET';
-			h.http_header_close;
+			h.header_close;
 		end if;
 	end;
 
@@ -296,7 +296,7 @@ create or replace package body k_http is
 	begin
 		if r.method != 'POST' then
 			pv.allow := 'POST';
-			h.http_header_close;
+			h.header_close;
 		end if;
 	end;
 
@@ -304,7 +304,7 @@ create or replace package body k_http is
 	begin
 		if instrb(',' || methods || ',', r.method) <= 0 then
 			pv.allow := methods;
-			h.http_header_close;
+			h.header_close;
 		end if;
 	end;
 
