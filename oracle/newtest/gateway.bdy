@@ -88,6 +88,7 @@ create or replace package body gateway is
 			pv.allow           := null;
 		
 			r."_init"(pv.c, 80526);
+			pv.status_code := 200;
 			h.content_type;
 			output."_init"(80526);
 			-- k_xhtp.init;
