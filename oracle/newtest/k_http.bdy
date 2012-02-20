@@ -302,8 +302,8 @@ create or replace package body k_http is
 
 	procedure allow(methods varchar2) is
 	begin
+		pv.allow := methods;
 		if instrb(',' || methods || ',', r.method) <= 0 then
-			pv.allow := methods;
 			h.header_close;
 		end if;
 	end;
