@@ -96,7 +96,7 @@ create or replace package body html_test_b is
 		p.p('file3: ' || r.getc('file3', 'no upload file for "file3"'));
 		p.fieldset_open;
 		p.legend('form example');
-		p.form_open('f', 'form', '_self', method => 'post', enctype => 'multipart/form-data');
+		p.form_open('f', 'form_upload', '_self', method => 'post', enctype => 'multipart/form-data');
 		p.input_text('name', label_ex => 'your name');
 		p.input_password('pass', label_ex => 'your password');
 		p.br;
