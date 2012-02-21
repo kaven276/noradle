@@ -110,15 +110,34 @@ create or replace package body r is
 			gv_params(v_name) := v_st;
 		end loop;
 	
-		-- read post from application/x-www-form-urlencoded
+		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if v_method = 'POST' then
-			loop
-				v_name  := utl_tcp.get_line(c, true);
-				v_value := utl_tcp.get_line(c, true);
-				exit when v_name is null and v_value is null;
-				t.split(v_st, v_value, ',');
-				gv_params(v_name) := v_st;
-			end loop;
+			if gv_headers('content-type') like 'application/x-www-form-urlencoded%' or
+				 gv_headers('content-type') like 'multipart/form-data%' then
+				loop
+					v_name  := utl_tcp.get_line(c, true);
+					v_value := utl_tcp.get_line(c, true);
+					exit when v_name is null and v_value is null;
+					t.split(v_st, v_value, ',');
+					gv_params(v_name) := v_st;
+				end loop;
+			else
+				declare
+					v_len   number(10);
+					v_read  number(10) := 0;
+					v_raw   raw(32767);
+					v_chunk number(8);
+				begin
+					v_len := to_number(gv_headers('content-length'));
+					dbms_lob.createtemporary(pv.reqbdy, cache => true, dur => dbms_lob.session);
+					loop
+						v_chunk := utl_tcp.read_raw(c, v_raw, 32767);
+						v_read  := v_read + v_chunk;
+						dbms_lob.writeappend(pv.reqbdy, v_chunk, v_raw);
+						exit when v_read = v_len;
+					end loop;
+				end;
+			end if;
 		end if;
 	
 	end;

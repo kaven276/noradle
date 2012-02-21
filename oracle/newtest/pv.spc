@@ -35,6 +35,7 @@ create or replace package pv is
 	cookies str_arr;
 
 	entity blob;
+	reqbdy blob;
 
 	csslink     boolean;
 	csstext     blob;
