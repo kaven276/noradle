@@ -10,7 +10,7 @@ create or replace package body html_test_b is
 		-- h.content_encoding_gzip;
 		h.header_close;
 	
-		pv.csslink := false;
+		-- pv.csslink := false;
 		p.h;
 		p.div_open(id => 'wrapper');
 		p.lcss('{margin:0px;background-color:#EEE;}');
@@ -82,17 +82,17 @@ create or replace package body html_test_b is
 		p.init;
 		p.http_header_close;
 		p.h;
-		p.p(r.getc('file', 'no upload file for "file"'));
+		p.p('file: ' || r.getc('file', 'no upload file for "file"'));
 		begin
 			r.gets('file', tmp.stv);
 			for i in 1 .. tmp.stv.count loop
-				p.p(tmp.stv(i));
+				p.p('file[]: ' || tmp.stv(i));
 			end loop;
 		exception
 			when others then
 				null;
 		end;
-		p.p(r.getc('file2', 'no upload file for "file2"'));
+		p.p('file2: ' || r.getc('file2', 'no upload file for "file2"'));
 		p.fieldset_open;
 		p.legend('form example');
 		p.form_open('f', 'form', '_self', method => 'post', enctype => 'multipart/form-data');
@@ -101,7 +101,7 @@ create or replace package body html_test_b is
 		p.input_hidden('_file', 'test/');
 		p.input_file('file', ac => st('size=30;height=5;multiple=true;'));
 		p.input_file('file', ac => st('size=30;height=5;multiple=true;'));
-		p.input_hidden('_file2', 'test2/');
+		p.input_hidden('_file2', 'test2/specified.');
 		p.input_file('file2', ac => st('size=30;height=5;multiple=true;'));
 		p.input_submit;
 		p.form_close;
