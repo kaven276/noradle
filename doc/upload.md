@@ -42,3 +42,7 @@ that will cause finding in the big directory very slow.
 *	2: auto/16/16.ext
 * 3: auto/10/10/12.ext
 * 4: auto/8/8/8/8.ext
+
+## anti script infection mechanism 
+
+  If upload file's content-type is "text/html" or the upload file's extension is .html or .htm, PSP.WEB will stripe all `<script>` tags, that will prevent the html file from loading or executing harmful javascript code, such as to stolen other user's identity cookie value.
