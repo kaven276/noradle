@@ -74,7 +74,7 @@ create or replace package body html_test_b is
 		end loop;
 	end;
 
-	procedure form is
+	procedure form_upload is
 	begin
 		h.allow('GET,POST');
 		h.status_line(200);
