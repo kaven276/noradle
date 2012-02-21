@@ -74,5 +74,40 @@ create or replace package body html_test_b is
 		end loop;
 	end;
 
+	procedure form is
+	begin
+		h.allow('GET,POST');
+		h.status_line(200);
+		h.header_close;
+		p.init;
+		p.http_header_close;
+		p.h;
+		p.p(r.getc('file', 'no upload file for "file"'));
+		begin
+			r.gets('file', tmp.stv);
+			for i in 1 .. tmp.stv.count loop
+				p.p(tmp.stv(i));
+			end loop;
+		exception
+			when others then
+				null;
+		end;
+		p.p(r.getc('file2', 'no upload file for "file2"'));
+		p.fieldset_open;
+		p.legend('form example');
+		p.form_open('f', 'form', '_self', method => 'post', enctype => 'multipart/form-data');
+		p.input_text('name', label_ex => 'your name');
+		p.input_password('pass', label_ex => 'your password');
+		p.input_hidden('$file', 'test/');
+		p.input_file('file', ac => st('size=30;height=5;multiple=true;'));
+		p.input_file('file', ac => st('size=30;height=5;multiple=true;'));
+		p.input_hidden('$file2', 'test2/');
+		p.input_file('file2', ac => st('size=30;height=5;multiple=true;'));
+		p.input_submit;
+		p.form_close;
+		p.fieldset_close;
+		p.html_tail;
+	end;
+
 end html_test_b;
 /
