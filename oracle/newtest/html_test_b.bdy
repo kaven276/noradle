@@ -98,10 +98,10 @@ create or replace package body html_test_b is
 		p.form_open('f', 'form', '_self', method => 'post', enctype => 'multipart/form-data');
 		p.input_text('name', label_ex => 'your name');
 		p.input_password('pass', label_ex => 'your password');
-		p.input_hidden('$file', 'test/');
+		p.input_hidden('_file', 'test/');
 		p.input_file('file', ac => st('size=30;height=5;multiple=true;'));
 		p.input_file('file', ac => st('size=30;height=5;multiple=true;'));
-		p.input_hidden('$file2', 'test2/');
+		p.input_hidden('_file2', 'test2/');
 		p.input_file('file2', ac => st('size=30;height=5;multiple=true;'));
 		p.input_submit;
 		p.form_close;
