@@ -1,6 +1,8 @@
 create or replace public synonym st for st;
 create or replace public synonym nt for nt;
 create or replace public synonym tmp for tmp;
+create or replace public synonym r for r;
+create or replace public synonym rb for rb;
 create or replace public synonym u for u;
 create or replace public synonym e for e;
 create or replace public synonym g for g;
@@ -12,6 +14,8 @@ create or replace public synonym k_gw for k_gw;
 grant execute on st to public;
 grant execute on nt to public;
 grant execute on tmp to public;
+grant execute on r to public;
+grant execute on rb to public;
 grant execute on u to public;
 grant execute on e to public;
 grant execute on g to public;

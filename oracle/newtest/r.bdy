@@ -129,11 +129,11 @@ create or replace package body r is
 					v_chunk number(8);
 				begin
 					v_len := to_number(gv_headers('content-length'));
-					dbms_lob.createtemporary(pv.reqbdy, cache => true, dur => dbms_lob.session);
+					dbms_lob.createtemporary(rb.blob_entity, cache => true, dur => dbms_lob.session);
 					loop
 						v_chunk := utl_tcp.read_raw(c, v_raw, 32767);
 						v_read  := v_read + v_chunk;
-						dbms_lob.writeappend(pv.reqbdy, v_chunk, v_raw);
+						dbms_lob.writeappend(rb.blob_entity, v_chunk, v_raw);
 						exit when v_read = v_len;
 					end loop;
 				end;
