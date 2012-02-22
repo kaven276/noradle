@@ -137,5 +137,14 @@ xhr.send("<p>abedefg</p>\n\
 		p.div_close;
 	end;
 
+	procedure see_filter is
+	begin
+		h.header_close;
+		p.init;
+		p.h;
+		p.p(pv.id);
+		p.p(t.dt2s(pv.now));
+	end;
+
 end html_test_b;
 /
