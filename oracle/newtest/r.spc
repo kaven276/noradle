@@ -15,6 +15,7 @@ create or replace package r is
 
 	procedure read_line_init(nl varchar2 := null);
 	procedure read_line(line in out nocopy varchar2);
+	procedure read_nline(line in out nocopy nvarchar2);
 	function read_line_no_more return boolean;
 
 	function host_prefix return varchar2;

@@ -170,7 +170,7 @@ create or replace package body r is
 		v_dos  integer := 1;
 		v_sos  integer := 1;
 		v_csid integer;
-		v_lc   integer;
+		v_lc   integer := 0;
 		v_warn integer;
 	begin
 		v_len  := dbms_lob.getlength(rb.blob_entity);
@@ -203,7 +203,6 @@ create or replace package body r is
 	begin
 		e.chk(pv.rl_end, -20016, 'read line is over, can not use r.read_line for more');
 		v_end := dbms_lob.instr(rb.clob_entity, pv.rl_nlc, pv.rl_pos);
-    k_debug.trace(v_end);
 		if v_end = 0 then
 			pv.rl_end := true;
 			v_end     := dbms_lob.getlength(rb.clob_entity) + 1;
@@ -211,9 +210,24 @@ create or replace package body r is
 			e.chk(rb.clob_entity is null, -20015, 'rb.clob_entity is null, can not use r.read_line');
 		end if;
 		v_amt := v_end - pv.rl_pos;
-    k_debug.trace(v_amt);
 		dbms_lob.read(rb.clob_entity, v_amt, pv.rl_pos, line);
-    k_debug.trace(line);
+		pv.rl_pos := v_end + length(pv.rl_nlc);
+	end;
+
+	procedure read_nline(line in out nocopy nvarchar2) is
+		v_end number(10);
+		v_amt number(5);
+	begin
+		e.chk(pv.rl_end, -20016, 'read line is over, can not use r.read_line for more');
+		v_end := dbms_lob.instr(rb.nclob_entity, pv.rl_nlc, pv.rl_pos);
+		if v_end = 0 then
+			pv.rl_end := true;
+			v_end     := dbms_lob.getlength(rb.nclob_entity) + 1;
+		elsif v_end is null then
+			e.chk(rb.nclob_entity is null, -20015, 'rb.nclob_entity is null, can not use r.read_line');
+		end if;
+		v_amt := v_end - pv.rl_pos;
+		dbms_lob.read(rb.nclob_entity, v_amt, pv.rl_pos, line);
 		pv.rl_pos := v_end + length(pv.rl_nlc);
 	end;
 

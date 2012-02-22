@@ -80,11 +80,12 @@ create or replace package body test_c is
 	end;
 
 	procedure echo_http_body is
-		v_line varchar2(200);
+		v_line  varchar2(200);
+		v_nline nvarchar2(200);
 	begin
 		h.content_type('text/plain');
 		h.header_close;
-		case 3
+		case 4
 			when 1 then
 				p.init;
 				p.http_header_close;
@@ -108,6 +109,18 @@ create or replace package body test_c is
 					r.read_line(v_line);
 					p.line(i);
 					p.line(v_line);
+					exit when r.read_line_no_more;
+				end loop;
+				p.html_tail;
+			when 4 then
+				r.body2nclob;
+				p.init;
+				p.h;
+				r.read_line_init(chr(10));
+				for i in 1 .. 5 loop
+					r.read_nline(v_nline);
+					p.line(i);
+					p.line(v_nline);
 					exit when r.read_line_no_more;
 				end loop;
 				p.html_tail;
