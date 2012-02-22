@@ -190,6 +190,38 @@ create or replace package body r is
 		end if;
 	end;
 
+	procedure read_line_init(nl varchar2 := null) is
+	begin
+		pv.rl_pos := 1;
+		pv.rl_end := false;
+		pv.rl_nlc := nvl(nl, chr(13) || chr(10));
+	end;
+
+	procedure read_line(line in out nocopy varchar2) is
+		v_end number(10);
+		v_amt number(5);
+	begin
+		e.chk(pv.rl_end, -20016, 'read line is over, can not use r.read_line for more');
+		v_end := dbms_lob.instr(rb.clob_entity, pv.rl_nlc, pv.rl_pos);
+    k_debug.trace(v_end);
+		if v_end = 0 then
+			pv.rl_end := true;
+			v_end     := dbms_lob.getlength(rb.clob_entity) + 1;
+		elsif v_end is null then
+			e.chk(rb.clob_entity is null, -20015, 'rb.clob_entity is null, can not use r.read_line');
+		end if;
+		v_amt := v_end - pv.rl_pos;
+    k_debug.trace(v_amt);
+		dbms_lob.read(rb.clob_entity, v_amt, pv.rl_pos, line);
+    k_debug.trace(line);
+		pv.rl_pos := v_end + length(pv.rl_nlc);
+	end;
+
+	function read_line_no_more return boolean is
+	begin
+		return pv.rl_end;
+	end;
+
 	function host_prefix return varchar2 is
 	begin
 		return v_hostp;

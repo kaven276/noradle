@@ -13,6 +13,10 @@ create or replace package r is
 	procedure body2nclob;
 	procedure body2auto;
 
+	procedure read_line_init(nl varchar2 := null);
+	procedure read_line(line in out nocopy varchar2);
+	function read_line_no_more return boolean;
+
 	function host_prefix return varchar2;
 
 	function port return pls_integer;

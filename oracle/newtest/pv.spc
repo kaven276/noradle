@@ -29,6 +29,9 @@ create or replace package pv is
 	content_md5 boolean;
 	etag_md5    boolean;
 	max_lmt     date;
+	rl_pos      number(10);
+	rl_end      boolean;
+	rl_nlc      varchar2(2);
 
 	type str_arr is table of varchar2(1000) index by varchar2(100);
 	headers str_arr;

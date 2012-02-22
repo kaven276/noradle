@@ -124,13 +124,13 @@ create or replace package body html_test_b is
 var xhr = new XMLHttpRequest();
 xhr.open("POST","/newpsptest/test_c.echo_http_body");
 xhr.onreadystatechange = function() {
-  if(xhr.readyState != 4 ) return;
-  if(xhr.status != 200) return;
-  document.getElementById("content").innerHTML = xhr.responseText;
+	if(xhr.readyState != 4 ) return;
+	if(xhr.status != 200) return;
+	document.getElementById("content").innerHTML = xhr.responseText;
 }
-xhr.send("<p>abedefg</p>\
-<p>hijklmn</p>\
-<p>opq rst</p>\
+xhr.send("<p>abedefg</p>\n\
+<p>hijklmn</p>\n\
+<p>opq rst</p>\n\
 <p>uvw xyz</p>");
 ');
 		p.div_open(id => 'content');

@@ -80,24 +80,38 @@ create or replace package body test_c is
 	end;
 
 	procedure echo_http_body is
+		v_line varchar2(200);
 	begin
 		h.content_type('text/plain');
 		h.header_close;
-		if false then
-			p.init;
-			p.http_header_close;
-			p.line(r.method);
-			p.line(r.header('content-type'));
-			p.line(r.header('content-length'));
-			p.line(rb.charset_http);
-			p.line(rb.charset_db);
-			p.line(dbms_lob.getlength(rb.blob_entity));
-			r.body2clob;
-			p.line(dbms_lob.getlength(rb.clob_entity));
-		else
-			r.body2clob;
-			p.d(rb.clob_entity);
-		end if;
+		case 3
+			when 1 then
+				p.init;
+				p.http_header_close;
+				p.line(r.method);
+				p.line(r.header('content-type'));
+				p.line(r.header('content-length'));
+				p.line(rb.charset_http);
+				p.line(rb.charset_db);
+				p.line(dbms_lob.getlength(rb.blob_entity));
+				r.body2clob;
+				p.line(dbms_lob.getlength(rb.clob_entity));
+			when 2 then
+				r.body2clob;
+				p.d(rb.clob_entity);
+			when 3 then
+				r.body2clob;
+				p.init;
+				p.h;
+				r.read_line_init(chr(10));
+				for i in 1 .. 5 loop
+					r.read_line(v_line);
+					p.line(i);
+					p.line(v_line);
+					exit when r.read_line_no_more;
+				end loop;
+				p.html_tail;
+		end case;
 	end;
 
 end test_c;
