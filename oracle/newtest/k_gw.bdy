@@ -30,15 +30,64 @@ create or replace package body k_gw is
 	end;
 
 	procedure do is
-		v_sql varchar2(100);
-		v_len pls_integer;
+		v_sql   varchar2(100);
+		v_tried boolean;
 	begin
-		v_sql := 'call ' || r.prog || '()';
+		v_tried := false;
+		<<retry_filter>>
 		begin
-			execute immediate v_sql;
+			execute immediate 'call k_filter.before()';
+		exception
+			when pv.ex_package_state_invalid then
+				if v_tried then
+					error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
+					rollback;
+					return;
+				else
+					v_sql := regexp_replace(dbms_utility.format_error_stack,
+																	'^.*ORA-04061:( package (body )?"(\w+\.\w+)" ).*$',
+																	'alter package \3 compile \2',
+																	modifier => 'n');
+					sys.pw.recompile(regexp_replace(dbms_utility.format_error_stack,
+																					'^.*ORA-04061:( package (body )?"(\w+\.\w+)" ).*$',
+																					'alter package \3 compile \2',
+																					modifier => 'n'));
+					v_tried := true;
+					goto retry_filter;
+				end if;
+			when pv.ex_no_filter or pv.ex_invalid_proc then
+				null;
+			when pv.ex_fltr_done then
+				null;
+			when pv.ex_resp_done then
+				return;
+			when others then
+				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
+				rollback;
+				return;
+		end;
+	
+		v_tried := false;
+		<<retry_prog>>
+		begin
+			execute immediate 'call ' || r.prog || '()';
 			commit;
 		exception
-			when pv.ex_no_prog then
+			when pv.ex_package_state_invalid then
+				if v_tried then
+					error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
+					rollback;
+					return;
+				else
+					v_sql := regexp_replace(dbms_utility.format_error_stack,
+																	'^.*ORA-04061:( package (body )?"(\w+\.\w+)" ).*$',
+																	'alter package \3 compile \2',
+																	modifier => 'n');
+					sys.pw.recompile(v_sql);
+					v_tried := true;
+					goto retry_prog;
+				end if;
+			when pv.ex_no_prog or pv.ex_invalid_proc then
 				error_not_exist;
 			when pv.ex_resp_done then
 				commit;

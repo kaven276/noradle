@@ -10,6 +10,7 @@ create or replace public synonym h for k_http;
 create or replace public synonym p for k_xhtp;
 create or replace public synonym t for k_type_tool;
 create or replace public synonym k_gw for k_gw;
+create or replace public synonym k_filter for k_filter;
 
 grant execute on st to public;
 grant execute on nt to public;
@@ -23,3 +24,4 @@ grant execute on k_http to public;
 grant execute on k_xhtp to public;
 grant execute on k_type_tool to public;
 grant execute on k_gw to public;
+grant execute on k_filter to public;
