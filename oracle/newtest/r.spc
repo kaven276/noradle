@@ -9,6 +9,10 @@ create or replace package r is
 		passport pls_integer
 	);
 
+	procedure body2clob;
+	procedure body2nclob;
+	procedure body2auto;
+
 	function host_prefix return varchar2;
 
 	function port return pls_integer;

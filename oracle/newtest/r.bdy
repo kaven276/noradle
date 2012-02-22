@@ -151,6 +151,45 @@ create or replace package body r is
 	
 	end;
 
+	procedure body2clob is
+		v_len  number(8);
+		v_dos  integer := 1;
+		v_sos  integer := 1;
+		v_csid integer;
+		v_lc   integer := 0;
+		v_warn integer;
+	begin
+		v_len  := dbms_lob.getlength(rb.blob_entity);
+		v_csid := nvl(nls_charset_id(rb.charset_db), 0);
+		dbms_lob.createtemporary(rb.clob_entity, true, dbms_lob.session);
+		dbms_lob.converttoclob(rb.clob_entity, rb.blob_entity, v_len, v_dos, v_sos, v_csid, v_lc, v_warn);
+	end;
+
+	procedure body2nclob is
+		v_len  number(8);
+		v_dos  integer := 1;
+		v_sos  integer := 1;
+		v_csid integer;
+		v_lc   integer;
+		v_warn integer;
+	begin
+		v_len  := dbms_lob.getlength(rb.blob_entity);
+		v_csid := nvl(nls_charset_id(rb.charset_db), 0);
+		dbms_lob.createtemporary(rb.nclob_entity, true, dbms_lob.session);
+		dbms_lob.converttoclob(rb.nclob_entity, rb.blob_entity, v_len, v_dos, v_sos, v_csid, v_lc, v_warn);
+	end;
+
+	procedure body2auto is
+	begin
+		if nls_charset_id(rb.charset_db) = nls_charset_id('CHAR_CS') then
+			body2clob;
+		elsif nls_charset_id(rb.charset_db) = nls_charset_id('NCHAR_CS') then
+			body2nclob;
+		else
+			null;
+		end if;
+	end;
+
 	function host_prefix return varchar2 is
 	begin
 		return v_hostp;

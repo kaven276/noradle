@@ -79,5 +79,26 @@ create or replace package body test_c is
 		h.header_close;
 	end;
 
+	procedure echo_http_body is
+	begin
+		h.content_type('text/plain');
+		h.header_close;
+		if false then
+			p.init;
+			p.http_header_close;
+			p.line(r.method);
+			p.line(r.header('content-type'));
+			p.line(r.header('content-length'));
+			p.line(rb.charset_http);
+			p.line(rb.charset_db);
+			p.line(dbms_lob.getlength(rb.blob_entity));
+			r.body2clob;
+			p.line(dbms_lob.getlength(rb.clob_entity));
+		else
+			r.body2clob;
+			p.d(rb.clob_entity);
+		end if;
+	end;
+
 end test_c;
 /

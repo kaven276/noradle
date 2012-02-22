@@ -115,5 +115,27 @@ create or replace package body html_test_b is
 		p.html_tail;
 	end;
 
+	procedure ajax_post is
+	begin
+		h.header_close;
+		p.init;
+		p.h;
+		p.script_text('
+var xhr = new XMLHttpRequest();
+xhr.open("POST","/newpsptest/test_c.echo_http_body");
+xhr.onreadystatechange = function() {
+  if(xhr.readyState != 4 ) return;
+  if(xhr.status != 200) return;
+  document.getElementById("content").innerHTML = xhr.responseText;
+}
+xhr.send("<p>abedefg</p>\
+<p>hijklmn</p>\
+<p>opq rst</p>\
+<p>uvw xyz</p>");
+');
+		p.div_open(id => 'content');
+		p.div_close;
+	end;
+
 end html_test_b;
 /
