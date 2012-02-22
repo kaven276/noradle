@@ -127,8 +127,12 @@ create or replace package body r is
 					v_read  number(10) := 0;
 					v_raw   raw(32767);
 					v_chunk number(8);
+					v_pos   pls_integer;
 				begin
 					v_len := to_number(gv_headers('content-length'));
+					if v_len is null or v_len = 0 then
+						return;
+					end if;
 					dbms_lob.createtemporary(rb.blob_entity, cache => true, dur => dbms_lob.session);
 					loop
 						v_chunk := utl_tcp.read_raw(c, v_raw, 32767);
@@ -136,6 +140,11 @@ create or replace package body r is
 						dbms_lob.writeappend(rb.blob_entity, v_chunk, v_raw);
 						exit when v_read = v_len;
 					end loop;
+					-- maybe for security lobs only
+					-- dbms_lob.setcontenttype(rb.blob_entity, gv_headers('content-type'));
+					v_pos           := instrb(gv_headers('content-type'), '=');
+					rb.charset_http := t.tf(v_pos > 0, trim(substr(gv_headers('content-type'), v_pos + 1)), 'UTF-8');
+					rb.charset_db   := utl_i18n.map_charset(rb.charset_http, utl_i18n.generic_context, utl_i18n.iana_to_oracle);
 				end;
 			end if;
 		end if;

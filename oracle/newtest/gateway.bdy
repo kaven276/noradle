@@ -87,6 +87,12 @@ create or replace package body gateway is
 			pv.csslink         := null;
 			pv.allow           := null;
 		
+			rb.charset_http := null;
+			rb.charset_db   := null;
+			rb.blob_entity  := null;
+			rb.clob_entity  := null;
+			rb.nclob_entity := null;
+		
 			r."_init"(pv.c, 80526);
 			pv.status_code := 200;
 			h.content_type;
