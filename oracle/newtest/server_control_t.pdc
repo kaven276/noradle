@@ -1,0 +1,26 @@
+-- Drop table
+drop table SERVER_CONTROL_T cascade constraints;
+-- Create table
+create table SERVER_CONTROL_T
+(
+  GW_HOST      VARCHAR2(99),
+  GW_PORT      NUMBER(5),
+  MIN_SERVERS  NUMBER(4),
+  MAX_SERVERS  NUMBER(4),
+  MAX_REQUESTS NUMBER(9),
+  MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0)
+);
+
+-- Add comments to the columns 
+comment on column SERVER_CONTROL_T.GW_HOST
+  is 'host of nodeJS gateway that listen for oracle to connect';
+comment on column SERVER_CONTROL_T.GW_PORT
+  is 'port of nodeJS gateway that listen for oracle to connect';
+comment on column SERVER_CONTROL_T.MIN_SERVERS
+  is 'minimun servers to keep, it''s also the starting servers';
+comment on column SERVER_CONTROL_T.MAX_SERVERS
+  is 'maximum servers in parallel';
+comment on column SERVER_CONTROL_T.MAX_REQUESTS
+  is 'when the number of request a server process reach this limit, the server should/will quit';
+comment on column SERVER_CONTROL_T.MAX_LIFETIME
+  is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
