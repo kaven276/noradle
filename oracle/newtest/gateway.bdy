@@ -48,7 +48,7 @@ create or replace package body gateway is
 			<<read_request>>
 		
 			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime then
-				return;
+				goto the_end;
 			end if;
 		
 			begin
@@ -130,10 +130,13 @@ create or replace package body gateway is
 			output.finish;
 			pv.svr_request_count := pv.svr_request_count + 1;
 			if pv.svr_request_count >= k_cfg.server_control().max_requests then
-				return;
+				goto the_end;
 			end if;
 		
 		end loop;
+	
+		<<the_end>>
+		utl_tcp.close_all_connections;
 	end;
 
 begin
