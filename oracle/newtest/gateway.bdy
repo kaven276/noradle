@@ -30,8 +30,8 @@ create or replace package body gateway is
 	begin
 		<<make_connection>>
 		begin
-			pv.c := utl_tcp.open_connection(remote_host     => '192.168.177.1',
-																			remote_port     => 1522,
+			pv.c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
+																			remote_port     => k_cfg.server_control().gw_port,
 																			charset         => null,
 																			in_buffer_size  => pv.write_buff_size,
 																			out_buffer_size => pv.write_buff_size,
