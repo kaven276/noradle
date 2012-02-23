@@ -28,6 +28,8 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry2, -6576);
 		v_done boolean := false;
 	begin
+		pv.svr_request_count := 0;
+		pv.svr_start_time    := sysdate;
 		<<make_connection>>
 		begin
 			pv.c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
@@ -44,6 +46,11 @@ create or replace package body gateway is
 	
 		loop
 			<<read_request>>
+		
+			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime then
+				return;
+			end if;
+		
 			begin
 				pv.end_marker := utl_tcp.get_line(pv.c, true);
 			exception
@@ -121,6 +128,10 @@ create or replace package body gateway is
 			end;
 		
 			output.finish;
+			pv.svr_request_count := pv.svr_request_count + 1;
+			if pv.svr_request_count >= k_cfg.server_control().max_requests then
+				return;
+			end if;
 		
 		end loop;
 	end;
