@@ -29,12 +29,21 @@ create or replace package body k_pmon is
 		once;
 		dbms_alert.register('PW_STOP_SERVER');
 		loop
-			if v_status = 0 then
-				dbms_alert.remove('PW_STOP_SERVER');
-				-- stop all server jobs
-				return;
+			dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_sts, 10);
+			if v_sts = 1 then
+				once;
+				continue;
 			end if;
-			once;
+			dbms_alert.remove('PW_STOP_SERVER');
+			for i in (select a.job_name
+									from user_scheduler_jobs a
+								 where a.job_action = 'gateway.listen'
+									 and a.state != 'RUNNING') loop
+				dbms_scheduler.drop_job('"' || i.job_name || '"');
+			end loop;
+			dbms_alert.signal('PW_STOP_SERVER', ''); -- stop newly created server job
+			commit;
+			return;
 		end loop;
 	end;
 
