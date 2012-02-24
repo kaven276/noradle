@@ -71,8 +71,6 @@ create or replace package k_http is
 
 	procedure header_close;
 
-	procedure write_head;
-
 	procedure go
 	(
 		url    varchar2,

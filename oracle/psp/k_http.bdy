@@ -219,42 +219,6 @@ create or replace package body k_http is
 		pv.headers('Refresh') := to_char(seconds) || t.nvl2(url, ';url=' || u(url));
 	end;
 
-	procedure write_head is
-		v  varchar2(4000);
-		nl varchar2(2) := chr(13) || chr(10);
-		l  pls_integer;
-		n  varchar2(30);
-		c  varchar2(4000);
-	begin
-		if pv.header_writen then
-			return;
-		else
-			pv.header_writen := true;
-		end if;
-	
-		begin
-			if pv.headers('Transfer-Encoding') = 'chunked' then
-				pv.headers.delete('Content-Length');
-			end if;
-		exception
-			when no_data_found then
-				null;
-		end;
-	
-		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
-		n := pv.headers.first;
-		while n is not null loop
-			v := v || n || ': ' || pv.headers(n) || nl;
-			n := pv.headers.next(n);
-		end loop;
-		n := pv.cookies.first;
-		while n is not null loop
-			v := v || pv.cookies(n) || nl;
-			n := pv.cookies.next(n);
-		end loop;
-		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
-	end;
-
 	procedure expires(expt date) is
 	begin
 		pv.headers('Expires') := t.hdt2s(expt);
@@ -327,7 +291,7 @@ create or replace package body k_http is
 			h.status_line(405); -- Method Not Allowed
 			pv.headers('Allow') := pv.allow;
 			if pv.use_stream then
-				write_head;
+				output.write_head;
 			end if;
 			raise pv.ex_resp_done;
 		end if;
@@ -336,7 +300,7 @@ create or replace package body k_http is
 			e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
 			-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
 			-- gzip parts can be add progressively, but cannot output progressively
-			write_head;
+			output.write_head;
 		end if;
 	
 		if r.lmt = pv.max_lmt then
@@ -354,7 +318,7 @@ create or replace package body k_http is
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(url);
 		pv.headers('Content-Length') := '0';
-		write_head;
+		output.write_head;
 		utl_tcp.flush(pv.c);
 		pv.buffered_length := 0;
 		pv.allow_content   := false;
@@ -374,7 +338,7 @@ create or replace package body k_http is
 	begin
 		status_line(401);
 		pv.headers('WWW-Authenticate') := 'Basic realm="' || realm || '"';
-		write_head;
+		output.write_head;
 		pv.buffered_length := 0;
 		pv.allow_content   := false;
 	end;

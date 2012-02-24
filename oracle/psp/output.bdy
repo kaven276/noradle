@@ -10,6 +10,42 @@ create or replace package body output is
 		pv.css_ins         := null;
 	end;
 
+	procedure write_head is
+		v  varchar2(4000);
+		nl varchar2(2) := chr(13) || chr(10);
+		l  pls_integer;
+		n  varchar2(30);
+		c  varchar2(4000);
+	begin
+		if pv.header_writen then
+			return;
+		else
+			pv.header_writen := true;
+		end if;
+	
+		begin
+			if pv.headers('Transfer-Encoding') = 'chunked' then
+				pv.headers.delete('Content-Length');
+			end if;
+		exception
+			when no_data_found then
+				null;
+		end;
+	
+		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
+		n := pv.headers.first;
+		while n is not null loop
+			v := v || n || ': ' || pv.headers(n) || nl;
+			n := pv.headers.next(n);
+		end loop;
+		n := pv.cookies.first;
+		while n is not null loop
+			v := v || pv.cookies(n) || nl;
+			n := pv.cookies.next(n);
+		end loop;
+		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+	end;
+
 	procedure css(str varchar2) is
 		v_out raw(32767);
 		v_len pls_integer;
@@ -106,7 +142,7 @@ create or replace package body output is
 		v_wlen number(8);
 		v_pos  number := 0;
 	begin
-		h.write_head;
+		write_head;
 		utl_tcp.flush(pv.c);
 	
 		if v_gzip = false and pv.csslink = false and pv.css_len > 0 then
