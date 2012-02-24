@@ -38,6 +38,7 @@ create or replace package pv is
 	cookies str_arr;
 
 	entity blob;
+	nlbr   varchar2(2);
 
 	csslink     boolean;
 	csstext     blob;

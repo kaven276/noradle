@@ -5,6 +5,31 @@ create or replace package body k_http is
 		output.flush;
 	end;
 
+	procedure write(text varchar2 character set any_cs) is
+	begin
+		output.line(text, '');
+	end;
+
+	procedure writeln(text varchar2 character set any_cs) is
+	begin
+		output.line(text, pv.nlbr);
+	end;
+
+	procedure string(text varchar2 character set any_cs) is
+	begin
+		output.line(text, '');
+	end;
+
+	procedure line(text varchar2 character set any_cs) is
+	begin
+		output.line(text, pv.nlbr);
+	end;
+
+	procedure set_line_break(nlbr varchar2) is
+	begin
+		pv.nlbr := nlbr;
+	end;
+
 	procedure status_line(code pls_integer := 200) is
 	begin
 		pv.status_code := code;

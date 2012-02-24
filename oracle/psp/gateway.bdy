@@ -105,6 +105,7 @@ create or replace package body gateway is
 			pv.etag_md5        := null;
 			pv.csslink         := null;
 			pv.allow           := null;
+			pv.nlbr            := chr(10);
 		
 			rb.charset_http := null;
 			rb.charset_db   := null;
