@@ -2,7 +2,7 @@ create or replace package k_pmon is
 
 	procedure once;
 
-	procedure deamon;
+	procedure daemon;
 
 	procedure stop;
 

@@ -22,10 +22,10 @@ create or replace package body k_pmon is
 		end loop;
 	end;
 
-	procedure deamon is
 		v_msg     varchar2(100);
 		v_status  number;
 		v_timeout number := 10;
+	procedure daemon is
 	begin
 		dbms_alert.register('PW_STOP_SERVER');
 		loop
@@ -43,7 +43,7 @@ create or replace package body k_pmon is
 	begin
 		dbms_scheduler.create_job('"PSP.WEB_PMON"',
 															job_type        => 'STORED_PROCEDURE',
-															job_action      => 'k_pmon.deamon',
+															job_action      => 'k_pmon.daemon',
 															enabled         => true,
 															auto_drop       => true);
 	end;
@@ -58,7 +58,7 @@ create or replace package body k_pmon is
 	begin
 		dbms_scheduler.create_job('"PSP.WEB_PMON"',
 															job_type        => 'STORED_PROCEDURE',
-															job_action      => 'k_pmon.do',
+															job_action      => 'k_pmon.once',
 															start_date      => sysdate,
 															repeat_interval => 'FREQ=SECONDLY;PERIODS=10',
 															enabled         => true,
