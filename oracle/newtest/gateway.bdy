@@ -123,6 +123,8 @@ create or replace package body gateway is
 				continue;
 			end if;
 		
+			dbms_application_info.set_module(r.prog, null);
+		
 			-- this is for become user
 			<<redo>>
 			begin
