@@ -122,7 +122,7 @@ create or replace package body html_test_b is
 		p.h;
 		p.script_text('
 var xhr = new XMLHttpRequest();
-xhr.open("POST","/newpsptest/test_c.echo_http_body");
+xhr.open("POST","test_c.echo_http_body");
 xhr.onreadystatechange = function() {
 	if(xhr.readyState != 4 ) return;
 	if(xhr.status != 200) return;
