@@ -28,6 +28,7 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry2, -6576);
 		v_done boolean := false;
 	begin
+		dbms_alert.register('PW_STOP_SERVER');
 		pv.svr_request_count := 0;
 		pv.svr_start_time    := sysdate;
 		<<make_connection>>
@@ -50,6 +51,17 @@ create or replace package body gateway is
 			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime then
 				goto the_end;
 			end if;
+		
+			declare
+				v_msg varchar2(1);
+				v_sts number;
+			begin
+				dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_sts, 0);
+				if v_sts = 0 then
+					dbms_alert.remove('PW_STOP_SERVER');
+					goto the_end;
+				end if;
+			end;
 		
 			begin
 				pv.end_marker := utl_tcp.get_line(pv.c, true);
