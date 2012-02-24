@@ -22,15 +22,13 @@ create or replace package body k_pmon is
 		end loop;
 	end;
 
-		v_msg     varchar2(100);
-		v_status  number;
-		v_timeout number := 10;
 	procedure daemon is
+		v_msg varchar2(100);
+		v_sts number;
 	begin
 		once;
 		dbms_alert.register('PW_STOP_SERVER');
 		loop
-			dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_status, v_timeout);
 			if v_status = 0 then
 				dbms_alert.remove('PW_STOP_SERVER');
 				-- stop all server jobs
