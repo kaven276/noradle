@@ -1,5 +1,7 @@
 create or replace package k_http is
 
+	procedure flush;
+
 	procedure status_line(code pls_integer := 200);
 	procedure sts_501_not_implemented;
 

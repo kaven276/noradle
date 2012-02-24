@@ -1,5 +1,10 @@
 create or replace package body k_http is
 
+	procedure flush is
+	begin
+		output.flush;
+	end;
+
 	procedure status_line(code pls_integer := 200) is
 	begin
 		pv.status_code := code;
