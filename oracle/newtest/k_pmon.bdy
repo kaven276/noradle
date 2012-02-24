@@ -27,6 +27,7 @@ create or replace package body k_pmon is
 		v_timeout number := 10;
 	procedure daemon is
 	begin
+		once;
 		dbms_alert.register('PW_STOP_SERVER');
 		loop
 			dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_status, v_timeout);
