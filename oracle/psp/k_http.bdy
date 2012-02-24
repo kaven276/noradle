@@ -35,9 +35,79 @@ create or replace package body k_http is
 		pv.status_code := code;
 	end;
 
+	procedure sts_200_ok is
+	begin
+		pv.status_code := 200;
+	end;
+
+	procedure sts_300_multiple_choices is
+	begin
+		pv.status_code := 300;
+	end;
+
+	procedure sts_301_moved_permanently is
+	begin
+		pv.status_code := 301;
+	end;
+
+	procedure sts_302_found is
+	begin
+		pv.status_code := 302;
+	end;
+
+	procedure sts_303_see_other is
+	begin
+		pv.status_code := 303;
+	end;
+
+	procedure sts_304_not_modified is
+	begin
+		pv.status_code := 304;
+	end;
+
+	procedure sts_307_temporary_redirect is
+	begin
+		pv.status_code := 307;
+	end;
+
+	procedure sts_403_forbidden is
+	begin
+		pv.status_code := 403;
+	end;
+
+	procedure sts_404_not_found is
+	begin
+		pv.status_code := 404;
+	end;
+
+	procedure sts_406_not_acceptable is
+	begin
+		pv.status_code := 406;
+	end;
+
+	procedure sts_409_conflict is
+	begin
+		pv.status_code := 409;
+	end;
+
+	procedure sts_410_gone is
+	begin
+		pv.status_code := 410;
+	end;
+
+	procedure sts_500_internal_server_error is
+	begin
+		pv.status_code := 500;
+	end;
+
 	procedure sts_501_not_implemented is
 	begin
 		pv.status_code := 501;
+	end;
+
+	procedure sts_503_service_unavailable is
+	begin
+		pv.status_code := 503;
 	end;
 
 	procedure header

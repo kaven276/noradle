@@ -8,7 +8,21 @@ create or replace package k_http is
 	procedure set_line_break(nlbr varchar2);
 
 	procedure status_line(code pls_integer := 200);
+	procedure sts_200_ok;
+	procedure sts_300_multiple_choices;
+	procedure sts_301_moved_permanently;
+	procedure sts_302_found;
+	procedure sts_303_see_other;
+	procedure sts_304_not_modified;
+	procedure sts_307_temporary_redirect;
+	procedure sts_403_forbidden;
+	procedure sts_404_not_found;
+	procedure sts_406_not_acceptable;
+	procedure sts_409_conflict;
+	procedure sts_410_gone;
+	procedure sts_500_internal_server_error;
 	procedure sts_501_not_implemented;
+	procedure sts_503_service_unavailable;
 
 	procedure header
 	(
