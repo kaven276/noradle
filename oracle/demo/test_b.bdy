@@ -78,7 +78,7 @@ create or replace package body test_b is
 			p.line('LiNE, NO.' || i);
 			p.line('<script>cnt.innerText=' || i || ';</script>');
 			-- p.line(rpad(i, 300, i));
-			output.flush();
+			h.flush();
 			dbms_lock.sleep(1);
 		end loop;
 		p.line('</pre>');
@@ -101,7 +101,7 @@ create or replace package body test_b is
 		p.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
 		p.line('ฤ๚บร');
 		p.line(utl_i18n.escape_reference('ฤ๚บร', 'us7ascii'));
-		output.flush;
+		h.flush;
 		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue1" checked="true"/>');
 		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue2" checked="true"/>');
 		p.line('<input name="password_input" type="password" value="passwordvalue"/>');
