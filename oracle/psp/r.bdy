@@ -2,13 +2,6 @@ create or replace package body r is
 
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
-	type str_arr is table of varchar2(1000) index by varchar2(100);
-	gv_headers str_arr;
-	gv_cookies str_arr;
-
-	type st_arr is table of st index by varchar2(100);
-	gv_params st_arr;
-
 	v_host   varchar2(99);
 	v_hostp  varchar2(30);
 	v_port   pls_integer;
@@ -56,16 +49,16 @@ create or replace package body r is
 		v_hash   := utl_tcp.get_line(c, true);
 		v_type   := substrb(nvl(v_pack, v_proc), -1);
 	
-		gv_headers.delete;
-		gv_cookies.delete;
-		gv_params.delete;
+		ra.headers.delete;
+		ra.cookies.delete;
+		ra.params.delete;
 	
 		-- read headers
 		loop
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null and v_value is null;
-			gv_headers(v_name) := v_value;
+			ra.headers(v_name) := v_value;
 		end loop;
 	
 		-- credentials
@@ -73,7 +66,7 @@ create or replace package body r is
 			v_credential varchar2(100);
 			v_parts      st;
 		begin
-			v_credential := gv_headers('authorization');
+			v_credential := ra.headers('authorization');
 			if v_credential is null then
 				v_user := null;
 				v_pass := null;
@@ -92,7 +85,7 @@ create or replace package body r is
 			when no_data_found then
 				v_user := null;
 				v_pass := null;
-				gv_headers('authorization') := 'null';
+				ra.headers('authorization') := 'null';
 		end;
 	
 		-- read cookies
@@ -100,7 +93,7 @@ create or replace package body r is
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null and v_value is null;
-			gv_cookies(v_name) := v_value;
+			ra.cookies(v_name) := v_value;
 		end loop;
 	
 		-- read query string  
@@ -109,19 +102,19 @@ create or replace package body r is
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null and v_value is null;
 			t.split(v_st, v_value, ',');
-			gv_params(v_name) := v_st;
+			ra.params(v_name) := v_st;
 		end loop;
 	
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if v_method = 'POST' then
-			if gv_headers('content-type') like 'application/x-www-form-urlencoded%' or
-				 gv_headers('content-type') like 'multipart/form-data%' then
+			if ra.headers('content-type') like 'application/x-www-form-urlencoded%' or
+				 ra.headers('content-type') like 'multipart/form-data%' then
 				loop
 					v_name  := utl_tcp.get_line(c, true);
 					v_value := utl_tcp.get_line(c, true);
 					exit when v_name is null and v_value is null;
 					t.split(v_st, v_value, ',');
-					gv_params(v_name) := v_st;
+					ra.params(v_name) := v_st;
 				end loop;
 			else
 				declare
@@ -131,7 +124,7 @@ create or replace package body r is
 					v_chunk number(8);
 					v_pos   pls_integer;
 				begin
-					v_len := to_number(gv_headers('content-length'));
+					v_len := to_number(ra.headers('content-length'));
 					if v_len is null or v_len = 0 then
 						return;
 					end if;
@@ -144,8 +137,8 @@ create or replace package body r is
 					end loop;
 					-- maybe for security lobs only
 					-- dbms_lob.setcontenttype(rb.blob_entity, gv_headers('content-type'));
-					v_pos           := instrb(gv_headers('content-type'), '=');
-					rb.charset_http := t.tf(v_pos > 0, trim(substr(gv_headers('content-type'), v_pos + 1)), 'UTF-8');
+					v_pos           := instrb(ra.headers('content-type'), '=');
+					rb.charset_http := t.tf(v_pos > 0, trim(substr(ra.headers('content-type'), v_pos + 1)), 'UTF-8');
 					rb.charset_db   := utl_i18n.map_charset(rb.charset_http, utl_i18n.generic_context, utl_i18n.iana_to_oracle);
 				end;
 			end if;
@@ -314,7 +307,7 @@ create or replace package body r is
 		value varchar2
 	) is
 	begin
-		gv_params(name) := st(value);
+		ra.params(name) := st(value);
 	end;
 
 	function nc return varchar2 is
@@ -339,7 +332,7 @@ create or replace package body r is
 		defval varchar2
 	) is
 	begin
-		value := gv_params(name) (1);
+		value := ra.params(name) (1);
 	exception
 		when no_data_found then
 			value := defval;
@@ -351,7 +344,7 @@ create or replace package body r is
 		value in out nocopy varchar2
 	) is
 	begin
-		value := gv_params(name) (1);
+		value := ra.params(name) (1);
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
@@ -366,9 +359,9 @@ create or replace package body r is
 	) is
 	begin
 		if format is not null then
-			value := to_number(gv_params(name) (1), format);
+			value := to_number(ra.params(name) (1), format);
 		else
-			value := to_number(gv_params(name) (1));
+			value := to_number(ra.params(name) (1));
 		end if;
 	exception
 		when no_data_found then
@@ -383,9 +376,9 @@ create or replace package body r is
 	) is
 	begin
 		if format is not null then
-			value := to_number(gv_params(name) (1), format);
+			value := to_number(ra.params(name) (1), format);
 		else
-			value := to_number(gv_params(name) (1));
+			value := to_number(ra.params(name) (1));
 		end if;
 	exception
 		when no_data_found then
@@ -400,7 +393,7 @@ create or replace package body r is
 		format varchar2 := null
 	) is
 	begin
-		value := to_date(gv_params(name) (1), nvl(format, gc_date_fmt));
+		value := to_date(ra.params(name) (1), nvl(format, gc_date_fmt));
 	exception
 		when no_data_found then
 			value := defval;
@@ -413,7 +406,7 @@ create or replace package body r is
 		format varchar2 := null
 	) is
 	begin
-		value := to_date(gv_params(name) (1), nvl(format, gc_date_fmt));
+		value := to_date(ra.params(name) (1), nvl(format, gc_date_fmt));
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
@@ -425,7 +418,7 @@ create or replace package body r is
 		defval varchar2
 	) return varchar2 is
 	begin
-		return gv_params(name)(1);
+		return ra.params(name)(1);
 	exception
 		when no_data_found then
 			return defval;
@@ -433,7 +426,7 @@ create or replace package body r is
 
 	function getc(name varchar2) return varchar2 is
 	begin
-		return gv_params(name)(1);
+		return ra.params(name)(1);
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
@@ -491,12 +484,12 @@ create or replace package body r is
 		value in out nocopy st
 	) is
 	begin
-		value := gv_params(name);
+		value := ra.params(name);
 	end;
 
 	function gets(name varchar2) return st is
 	begin
-		return gv_params(name);
+		return ra.params(name);
 	exception
 		when no_data_found then
 			return st();
@@ -513,12 +506,12 @@ create or replace package body r is
 		value varchar2
 	) is
 	begin
-		gv_headers(name) := value;
+		ra.headers(name) := value;
 	end;
 
 	function cgi(name varchar2) return varchar2 is
 	begin
-		return gv_headers(name);
+		return ra.headers(name);
 	exception
 		when no_data_found then
 			return null;
@@ -526,7 +519,7 @@ create or replace package body r is
 
 	function header(name varchar2) return varchar2 is
 	begin
-		return gv_headers(name);
+		return ra.headers(name);
 	exception
 		when no_data_found then
 			return null;
@@ -544,7 +537,7 @@ create or replace package body r is
 
 	function cookie(name varchar2) return varchar2 is
 	begin
-		return gv_cookies(name);
+		return ra.cookies(name);
 	exception
 		when no_data_found then
 			return null;
