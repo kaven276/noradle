@@ -3,8 +3,7 @@ create or replace package body k_url is
 	-- private
 	function outside(key varchar2) return varchar2 is
 	begin
-    raise_application_error(-20000,'not implemented');
-		-- return k_cfg_reader.find_prefix(sys_context('user', 'current_schema'), key);
+		return k_cfg_reader.find_prefix(sys_context('user', 'current_schema'), key);
 	end;
 
 	function normalize(url varchar2, proc boolean := true) return varchar2 is
