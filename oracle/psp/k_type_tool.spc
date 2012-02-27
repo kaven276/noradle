@@ -1,5 +1,8 @@
 create or replace package k_type_tool is
 
+	type str_arr is table of varchar2(1000) index by varchar2(100);
+	type st_arr is table of st index by varchar2(100);
+
 	type col is record(
 		item varchar2(2000));
 
