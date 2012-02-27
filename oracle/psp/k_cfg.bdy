@@ -38,5 +38,15 @@ create or replace package body k_cfg is
 			end;
 	end;
 
+	function get_ext_fs return varchar2 result_cache relies_on(ext_url_t) is
+		v_prefix ext_url_t.prefix%type;
+	begin
+		select a.prefix into v_prefix from ext_url_t a where a.key = '/';
+		return v_prefix;
+	exception
+		when no_data_found then
+			return '';
+	end;
+
 end k_cfg;
 /

@@ -8,5 +8,7 @@ create or replace package k_cfg is
 		p_key varchar2
 	) return varchar2 result_cache;
 
+	function get_ext_fs return varchar2 result_cache;
+
 end k_cfg;
 /

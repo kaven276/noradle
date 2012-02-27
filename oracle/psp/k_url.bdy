@@ -6,12 +6,16 @@ create or replace package body k_url is
 		return k_cfg_reader.find_prefix(sys_context('user', 'current_schema'), key);
 	end;
 
-	function normalize(url varchar2, proc boolean := true) return varchar2 is
+	function normalize
+	(
+		url  varchar2,
+		proc boolean := true
+	) return varchar2 is
 		c1  char(1) := substrb(url, 1, 1);
 		c2  char(1) := substrb(url, 2, 1);
 		pos pls_integer;
 		dad varchar2(100);
-		ext varchar2(1000) := k_ccflag.get_ext_fs;
+		ext varchar2(1000) := k_cfg.get_ext_fs;
 		pwd varchar2(100) := nvl(r.cgi('psp_dad'), 'psp');
 	
 		function pri_file(file varchar2) return varchar2 is
