@@ -85,7 +85,6 @@ create or replace package body r is
 			when no_data_found then
 				v_user := null;
 				v_pass := null;
-				ra.headers('authorization') := 'null';
 		end;
 	
 		-- read cookies
