@@ -3,7 +3,10 @@ create or replace package output is
 	procedure "_init"(passport pls_integer);
 
 	procedure write_head;
+
 	procedure css(str varchar2);
+
+	procedure do_css_write;
 
 	procedure line
 	(
@@ -15,8 +18,12 @@ create or replace package output is
 	procedure flush;
 
 	procedure finish;
-  
-  procedure do_write(v_len in integer, v_gzip in boolean);
+
+	procedure do_write
+	(
+		v_len  in integer,
+		v_gzip in boolean
+	);
 
 end output;
 /
