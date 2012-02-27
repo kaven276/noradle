@@ -10,7 +10,7 @@ create or replace package body k_http is
 		output.line(text, '');
 	end;
 
-	procedure writeln(text varchar2 character set any_cs) is
+	procedure writeln(text varchar2 character set any_cs := '') is
 	begin
 		output.line(text, pv.nlbr);
 	end;
@@ -20,7 +20,7 @@ create or replace package body k_http is
 		output.line(text, '');
 	end;
 
-	procedure line(text varchar2 character set any_cs) is
+	procedure line(text varchar2 character set any_cs := '') is
 	begin
 		output.line(text, pv.nlbr);
 	end;

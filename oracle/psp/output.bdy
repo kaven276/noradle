@@ -100,7 +100,7 @@ create or replace package body output is
 		v_out raw(32767);
 		v_len pls_integer;
 	begin
-		if str is null then
+		if str is null and nl is null then
 			return;
 		end if;
 	
