@@ -9,10 +9,11 @@ create or replace package body r is
 	type st_arr is table of st index by varchar2(100);
 	gv_params st_arr;
 
+	v_host   varchar2(99);
 	v_hostp  varchar2(30);
 	v_port   pls_integer;
 	v_method varchar2(10);
-	v_base   varchar2(100);
+	v_base   varchar2(99);
 	v_dad    varchar2(30);
 	v_prog   varchar2(61);
 	v_pack   varchar2(30);
@@ -42,6 +43,7 @@ create or replace package body r is
 	
 		-- basic input
 		v_method := utl_tcp.get_line(c, true);
+		v_host   := utl_tcp.get_line(c, true);
 		v_hostp  := utl_tcp.get_line(c, true);
 		v_port   := to_number(utl_tcp.get_line(c, true));
 		v_base   := utl_tcp.get_line(c, true);
@@ -234,6 +236,11 @@ create or replace package body r is
 	function read_line_no_more return boolean is
 	begin
 		return pv.rl_end;
+	end;
+
+	function host return varchar2 is
+	begin
+		return v_host;
 	end;
 
 	function host_prefix return varchar2 is

@@ -18,6 +18,7 @@ create or replace package r is
 	procedure read_nline(line in out nocopy nvarchar2);
 	function read_line_no_more return boolean;
 
+	function host return varchar2;
 	function host_prefix return varchar2;
 
 	function port return pls_integer;
