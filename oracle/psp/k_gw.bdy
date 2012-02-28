@@ -95,6 +95,22 @@ create or replace package body k_gw is
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
 		end;
+	
+		begin
+			execute immediate 'call k_filter.after()';
+		exception
+			when pv.ex_no_filter or pv.ex_invalid_proc then
+				null;
+			when pv.ex_fltr_done then
+				null;
+			when pv.ex_resp_done then
+				return;
+			when others then
+				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
+				rollback;
+				return;
+		end;
+	
 	end;
 
 end k_gw;
