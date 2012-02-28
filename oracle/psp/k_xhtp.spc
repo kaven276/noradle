@@ -56,6 +56,7 @@ create or replace package k_xhtp is
 	procedure lcss_selector(texts varchar2);
 	procedure lcss_selector(texts st);
 	procedure lcss_rule(text varchar2, css_end boolean := false);
+	procedure comp_css_link(setting boolean);
 
 	procedure show_page;
 

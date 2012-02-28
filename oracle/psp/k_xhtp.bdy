@@ -525,6 +525,12 @@ create or replace package body k_xhtp is
 		css(ps(text, vals, ch => '$'), cv);
 	end;
 
+	procedure comp_css_link(setting boolean)
+	is
+	begin
+		pv.csslink := setting;
+	end;
+
 	procedure print_cgi_env is
 	begin
 		for i in 1 .. owa.num_cgi_vars loop
