@@ -8,6 +8,14 @@ create or replace package body k_gw is
 		p.line('The program unit "' || r.prog || '" is not exist');
 	end;
 
+	procedure error_no_subprog is
+	begin
+		h.status_line(404);
+		h.content_type;
+		h.header_close;
+		p.line('The package "' || r.pack || '" exists but the sub procedure "' || r.proc || '" in it' || ' is not exist');
+	end;
+
 	procedure error_execute
 	(
 		ecode      varchar2,
@@ -89,6 +97,8 @@ create or replace package body k_gw is
 				end if;
 			when pv.ex_no_prog or pv.ex_invalid_proc then
 				error_not_exist;
+			when pv.ex_no_subprog then
+				error_no_subprog;
 			when pv.ex_resp_done then
 				commit;
 			when others then

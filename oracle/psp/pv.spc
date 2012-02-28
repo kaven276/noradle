@@ -53,6 +53,7 @@ create or replace package pv is
 	ex_resp_done exception;
 	ex_fltr_done exception;
 	ex_no_prog exception;
+	ex_no_subprog exception; -- user.table.column, table.column 
 	ex_no_filter exception;
 	ex_package_state_invalid exception;
 	ex_invalid_proc exception;
@@ -60,6 +61,7 @@ create or replace package pv is
 	pragma exception_init(ex_resp_done, -20998);
 	pragma exception_init(ex_fltr_done, -20999);
 	pragma exception_init(ex_no_prog, -6576);
+	pragma exception_init(ex_no_subprog, -01747);
 	pragma exception_init(ex_no_filter, -06550); -- Usually a PL/SQL compilation error.
 	pragma exception_init(ex_package_state_invalid, -04061); -- 04061
 	pragma exception_init(ex_invalid_proc, -6576);
