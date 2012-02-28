@@ -227,7 +227,8 @@ create or replace package body output is
 			end if;
 		end if;
 	
-		if r.type != 'c' and (r.header('accept-encoding') like '%gzip%') and v_len + v_len2 > pv.gzip_thres then
+		if r.type != 'c' and r.header('accept-encoding') like '%gzip%' and
+			 (pv.gzip or pv.gzip is null and v_len + v_len2 > pv.gzip_thres) then
 			v_gzip := true;
 			if v_len2 = 0 then
 				dbms_lob.erase(pv.entity, v_amt, pv.buffered_length + 1);
