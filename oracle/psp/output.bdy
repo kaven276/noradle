@@ -195,6 +195,10 @@ create or replace package body output is
 		v_read binary_integer;
 		v_pos  number := 0;
 	begin
+		if p.gv_xhtp then
+			p.ensure_close;
+		end if;
+	
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.use_stream then
 			v_len := utl_tcp.write_line(pv.c, pv.end_marker);
