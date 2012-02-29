@@ -1013,7 +1013,19 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			line('<style type="text/css">v\:*, o\:* { behavior:url(#default#VML);display:block; }</style>');
 		end if;
 		gv_head_over := true;
-    pv.css_ins := pv.buffered_length;
+	
+		pv.css_hld_pos := pv.buffered_length;
+		if pv.csslink = true then
+			line('<link type="text/css" rel="stylesheet" href="css/1234567890abcdef1234567890abcdef"/>');
+		elsif pv.csslink = false then
+			line('<style>');
+			pv.css_ins := pv.buffered_length;
+			line('</style>');
+		else
+			null;
+		end if;
+		pv.css_hld_len := pv.buffered_length - pv.css_hld_pos;
+	
 		tag_pop('head');
 		line('</head>');
 	end;
