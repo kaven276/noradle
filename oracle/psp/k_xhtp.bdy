@@ -933,20 +933,20 @@ for(i=0;i<k_xhtp.errors.length;i++)
 				gv_doc_type_str := name;
 		end case;
 	
-    gv_head_over := false;
-    k_http.content_type('text/html');
-    gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
-    -- must first doctype and then xml prolog, other wise it will be in backcompatible mode
-    if k_ccflag.xml_check then
-      line(rpad(' ', gc_headers_len, ' '));
-    else
-      if true or instr(owa_util.get_cgi_env('http_user_agent'), 'AppleWebKit') = 0 then
-        --gv_headers_str := '<!DOCTYPE HTML PUBLIC ''-//W3C//DTD HTML 4.01//EN''>';
-        --gv_headers_str := '';
-        prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
-      end if;
-    end if;
-		
+		gv_head_over := false;
+		k_http.content_type('text/html');
+		gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
+		-- must first doctype and then xml prolog, other wise it will be in backcompatible mode
+		if k_ccflag.xml_check then
+			line(rpad(' ', gc_headers_len, ' '));
+		else
+			if true or instr(owa_util.get_cgi_env('http_user_agent'), 'AppleWebKit') = 0 then
+				--gv_headers_str := '<!DOCTYPE HTML PUBLIC ''-//W3C//DTD HTML 4.01//EN''>';
+				--gv_headers_str := '';
+				prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
+			end if;
+		end if;
+	
 		gv_doc_type := name;
 	end;
 
