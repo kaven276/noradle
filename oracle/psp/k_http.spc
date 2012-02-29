@@ -1,5 +1,12 @@
 create or replace package k_http is
 
+	mime_text  constant varchar2(30) := 'text/plain';
+	mime_xml   constant varchar2(30) := 'text/xml';
+	mime_js    constant varchar2(30) := 'application/x-javascript';
+	mime_css   constant varchar2(30) := 'text/css';
+	mime_word  constant varchar2(30) := 'application/msword';
+	mime_excel constant varchar2(30) := 'application/vnd.ms-excel';
+
 	procedure flush;
 	procedure write(text varchar2 character set any_cs);
 	procedure writeln(text varchar2 character set any_cs := '');
