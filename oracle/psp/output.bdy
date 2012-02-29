@@ -232,7 +232,7 @@ create or replace package body output is
 			v_gzip := true;
 			pv.headers('x-pw-ungzip-size') := v_len + v_len2;
 			if v_len2 = 0 then
-				dbms_lob.erase(pv.entity, v_amt, pv.buffered_length + 1);
+				dbms_lob.trim(pv.entity, pv.buffered_length);
 				pv.gzip_entity := utl_compress.lz_compress(pv.entity, 1);
 			else
 				v_lzh  := utl_compress.lz_compress_open(pv.gzip_entity, 1);
@@ -252,6 +252,7 @@ create or replace package body output is
 				utl_compress.lz_compress_close(v_lzh, pv.gzip_entity);
 			end if;
 			v_len := dbms_lob.getlength(pv.gzip_entity);
+			v_len2 := 0;
 			pv.headers('x-pw-gzip-ratio') := round(100 * v_len / to_number(pv.headers('x-pw-ungzip-size')));
 			h.content_encoding_gzip;
 		end if;
