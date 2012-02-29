@@ -117,7 +117,7 @@ create or replace package body gateway is
 			pv.status_code := 200;
 			h.content_type;
 			output."_init"(80526);
-			-- k_xhtp.init;
+			p.init;
 		
 			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 				error_not_bch;
