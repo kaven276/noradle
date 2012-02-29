@@ -338,7 +338,6 @@ create or replace package body k_http is
 	begin
 		status_line(401);
 		pv.headers('WWW-Authenticate') := 'Basic realm="' || realm || '"';
-		output.write_head;
 		pv.buffered_length := 0;
 		pv.allow_content   := false;
 	end;
