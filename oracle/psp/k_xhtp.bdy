@@ -81,7 +81,7 @@ create or replace package body k_xhtp is
 	gv_tag_len pls_integer;
 	gv_tags    owa.vc_arr;
 
-	gv_save_pt pls_integer;
+	gv_save_pt  pls_integer;
 	gv_css_link boolean := false;
 	gv_css_size pls_integer;
 	-- gc_buf_size  pls_integer := 32767;
@@ -341,7 +341,7 @@ create or replace package body k_xhtp is
 		if text is null then
 			return;
 		end if;
-    output.line(text, '');
+		output.line(text, '');
 	end;
 
 	procedure prn(text in out nocopy clob) is
@@ -349,23 +349,23 @@ create or replace package body k_xhtp is
 		if text is null then
 			return;
 		end if;
-    output.line(text, '');
+		output.line(text, '');
 	end;
 
 	procedure d(text varchar2) is
 	begin
-    output.line(text, '');
+		output.line(text, '');
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2) is
 	begin
-    output.line(text, gv_tagnl);
+		output.line(text, gv_tagnl);
 	end;
 
 	procedure line(text varchar2 := '') is
 	begin
-    output.line(text, gv_tagnl);
+		output.line(text, gv_tagnl);
 	end;
 
 	procedure l(txt varchar2, var st := null) is
@@ -517,7 +517,7 @@ create or replace package body k_xhtp is
 		if gv_scale then
 			px(v_text);
 		end if;
-    output.css(v_text || gv_tagnl);
+		output.css(v_text || gv_tagnl);
 	end;
 
 	procedure css(text varchar2, vals st, cv boolean) is
@@ -525,8 +525,7 @@ create or replace package body k_xhtp is
 		css(ps(text, vals, ch => '$'), cv);
 	end;
 
-	procedure comp_css_link(setting boolean)
-	is
+	procedure comp_css_link(setting boolean) is
 	begin
 		pv.csslink := setting;
 	end;
@@ -642,7 +641,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			script_close;
 		end if;
 	
-		-- Êä³öµ½ v_blob ÖÐ
+		-- ÃŠÃ¤Â³Ã¶ÂµÂ½ v_blob Ã–Ã
     /*
 		dbms_lob.createtemporary(v_clob, true, dbms_lob.call);
 		dbms_lob.createtemporary(wpg_docload.v_blob, true, dbms_lob.call);
@@ -971,7 +970,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure doc_type(name varchar2) is
 	begin
-    http_header_close;
+		http_header_close;
 		gv_xhtp := true;
 	
 		case lower(name)
