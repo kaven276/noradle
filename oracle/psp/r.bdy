@@ -518,7 +518,7 @@ create or replace package body r is
 
 	function header(name varchar2) return varchar2 is
 	begin
-		return ra.headers(name);
+		return ra.headers(lower(name));
 	exception
 		when no_data_found then
 			return null;
