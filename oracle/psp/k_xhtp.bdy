@@ -79,7 +79,7 @@ create or replace package body k_xhtp is
 
 	-- 标签栈
 	gv_tag_len pls_integer;
-	gv_tags    owa.vc_arr;
+	gv_tags    st;
 
 	gv_save_pt  pls_integer;
 	gv_css_link boolean := false;
@@ -274,7 +274,6 @@ create or replace package body k_xhtp is
 													 blob_csid    => nls_charset_id(dad_charset),
 													 lang_context => v_langctx,
 													 warning      => v_warning);
-		-- htp.prn(v_clob);
 		dbms_output.put(v_clob);
 	end;
 
@@ -531,9 +530,15 @@ create or replace package body k_xhtp is
 	end;
 
 	procedure print_cgi_env is
+		n varchar2(99);
+		v varchar2(999);
 	begin
-		for i in 1 .. owa.num_cgi_vars loop
-			line(owa.cgi_var_name(i) || ' = ' || htf.escape_sc(owa.cgi_var_val(i)));
+		n := ra.headers.first;
+		loop
+			exit when n is null;
+			v := ra.headers(n);
+			line(n || ' = ' || v);
+			n := ra.headers.next(n);
 		end loop;
 	end;
 
@@ -548,8 +553,7 @@ create or replace package body k_xhtp is
 		end if;
 	
 		if info is null then
-			-- htp.init; 这里会清除掉 cookie 设置，必须屏蔽
-			owa_util.redirect_url(v_url, false);
+			k_http.location(v_url);
 		else
 			h;
 			script_open;
@@ -896,10 +900,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			gv_tagnl := nl;
 		end if;
 		-- clear http headers
-		gv_doc_type  := null;
+		gv_doc_type := null;
 		gv_head_over := true;
-		gv_tag_len   := 0;
-		gv_tags.delete;
+		gv_tag_len := 0;
+		gv_tags(1) := null;
+		gv_tags(2) := null;
 		-- gv_has_error := false;
 	end;
 
@@ -940,7 +945,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if k_ccflag.xml_check then
 			line(rpad(' ', gc_headers_len, ' '));
 		else
-			if true or instr(owa_util.get_cgi_env('http_user_agent'), 'AppleWebKit') = 0 then
+			if true or instr(r.header('http_user_agent'), 'AppleWebKit') = 0 then
 				--gv_headers_str := '<!DOCTYPE HTML PUBLIC ''-//W3C//DTD HTML 4.01//EN''>';
 				--gv_headers_str := '';
 				prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
@@ -3143,6 +3148,10 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		plsql_marker(unit, lineno, '.END.');
 		line;
 	end;
+
+begin
+	gv_tags := st();
+	gv_tags.extend(30);
 
 end k_xhtp;
 /

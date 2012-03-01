@@ -33,12 +33,6 @@ create or replace package body k_type_tool is
 		return pv.tz_offset / 24 + to_date(p_date, fmt, lang);
 	end;
 
-	function get_empty_vcarr return owa.vc_arr is
-		v_arr owa.vc_arr;
-	begin
-		return v_arr;
-	end;
-
 	procedure half
 	(
 		p_str   varchar2,
@@ -64,7 +58,7 @@ create or replace package body k_type_tool is
 		v_time        char(6);
 		v_token       varchar2(100);
 		v_ip_str      varchar2(200);
-		v_ip_arry     owa_util.vc_arr;
+		v_ip_arry     st;
 		v_start_place number;
 		v_end_place   number;
 	begin

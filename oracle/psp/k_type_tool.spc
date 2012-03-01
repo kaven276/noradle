@@ -18,8 +18,6 @@ create or replace package k_type_tool is
 
 	function s2hdt(p_date varchar2) return date;
 
-	function get_empty_vcarr return owa.vc_arr;
-
 	procedure half
 	(
 		p_str   varchar2,
