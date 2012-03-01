@@ -877,7 +877,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		output."_init"(80526);
 		--gv_xhtp     := false;
 		--scn         := null;
-		--gv_in_body  := false; -- reset is_dhc to true for not using k_gw
+		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
 		gv_doc_type := '';
 		--mime_type   := '';
 		meta_init;
@@ -897,7 +897,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 		-- clear http headers
 		gv_doc_type  := null;
-		gv_in_body   := false;
 		gv_head_over := true;
 		gv_tag_len   := 0;
 		gv_tags.delete;
