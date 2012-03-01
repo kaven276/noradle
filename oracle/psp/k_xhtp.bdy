@@ -874,6 +874,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure init is
 	begin
+		output."_init"(80526);
 		--gv_xhtp     := false;
 		--scn         := null;
 		--gv_in_body  := false; -- reset is_dhc to true for not using k_gw
