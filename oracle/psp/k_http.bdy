@@ -316,7 +316,7 @@ create or replace package body k_http is
 	) is
 	begin
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
-		location(url);
+		location(u(url));
 		pv.headers('Content-Length') := '0';
 		output.write_head;
 		utl_tcp.flush(pv.c);
