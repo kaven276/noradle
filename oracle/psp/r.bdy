@@ -100,7 +100,11 @@ create or replace package body r is
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null and v_value is null;
-			t.split(v_st, v_value, ',');
+			if v_value is null then
+				v_st := st(null);
+			else
+				t.split(v_st, v_value, ',');
+			end if;
 			ra.params(v_name) := v_st;
 		end loop;
 	
@@ -112,7 +116,11 @@ create or replace package body r is
 					v_name  := utl_tcp.get_line(c, true);
 					v_value := utl_tcp.get_line(c, true);
 					exit when v_name is null and v_value is null;
-					t.split(v_st, v_value, ',');
+					if v_value is null then
+						v_st := st(null);
+					else
+						t.split(v_st, v_value, ',');
+					end if;
 					ra.params(v_name) := v_st;
 				end loop;
 			else
