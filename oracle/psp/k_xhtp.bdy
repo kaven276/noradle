@@ -122,6 +122,11 @@ create or replace package body k_xhtp is
 	procedure format_src is
 	begin
 		gv_cmpct := false;
+		if gv_cmpct then
+			gv_tagnl := null;
+		else
+			gv_tagnl := nl;
+		end if;
 	end;
 
 	procedure css_link(start_size pls_integer := 512) is
