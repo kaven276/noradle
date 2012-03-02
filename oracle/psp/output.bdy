@@ -289,7 +289,7 @@ create or replace package body output is
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
 	
 		-- have content, but have feedback indication or _c
-		if v_len > 0 and r.type = 'c' and pv.end_marker != 'feedback' then
+		if v_len > 0 and r.type = 'c' and pv.end_marker != 'feedback' and pv.status_code = 200 then
 			declare
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);
