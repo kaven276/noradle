@@ -209,6 +209,14 @@ create or replace package body output is
 		-- when no content, just return;
 		v_len := pv.buffered_length;
 		if v_len = 0 then
+			if r.type = 'c' and pv.status_code = 200 then
+				if r.header('referer') is not null then
+					h.go(r.header('referer'));
+				else
+					h.line('<script>history.back();</script>');
+					v_len := pv.buffered_length;
+				end if;
+			end if;
 			goto print_http_headers;
 		end if;
 	
