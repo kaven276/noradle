@@ -1,12 +1,12 @@
 create or replace package k_pmon is
 
-	procedure once;
+	procedure adjust;
 
-	procedure daemon;
+	procedure run;
 
 	procedure stop;
 
-	procedure create_deamon_job;
+	procedure run_job;
 
 end k_pmon;
 /
