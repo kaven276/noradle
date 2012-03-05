@@ -3,9 +3,9 @@ create or replace package body gateway is
 	procedure error_not_bch is
 	begin
 		h.status_line(403);
-		h.content_type;
+		h.content_type('text/plain');
 		h.header_close;
-		p.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+		h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
 		output.finish;
 	end;
 
@@ -17,8 +17,9 @@ create or replace package body gateway is
 	begin
 		h.status_line(500);
 		h.content_type('text/plain');
-		p.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
-		p.line('error text = ' || code || '/' || errm);
+		h.header_close;
+		h.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
+		h.line('error text = ' || code || '/' || errm);
 	end;
 
 	procedure listen is
@@ -87,6 +88,8 @@ create or replace package body gateway is
 				else
 					null; -- normal process
 			end case;
+		
+			k_debug.trace(st('new request arrived'));
 		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
