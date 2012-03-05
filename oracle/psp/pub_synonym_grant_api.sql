@@ -13,6 +13,7 @@ create or replace public synonym t for k_type_tool;
 create or replace public synonym k_gw for k_gw;
 create or replace public synonym k_filter for k_filter;
 create or replace public synonym ext_url_v for ext_url_v;
+create or replace public synonym k_debug for k_debug;
 
 grant execute on st to public;
 grant execute on nt to public;
@@ -29,3 +30,4 @@ grant execute on k_type_tool to public;
 grant execute on k_gw to public;
 grant execute on k_filter to public;
 grant all on ext_url_v to public;
+grant execute on k_debug to public;
