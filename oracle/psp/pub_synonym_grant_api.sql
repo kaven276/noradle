@@ -14,6 +14,8 @@ create or replace public synonym k_gw for k_gw;
 create or replace public synonym k_filter for k_filter;
 create or replace public synonym ext_url_v for ext_url_v;
 create or replace public synonym k_debug for k_debug;
+create or replace public synonym k_sess for k_sess;
+create or replace public synonym gac_cid_seq for gac_cid_seq;
 
 grant execute on st to public;
 grant execute on nt to public;
@@ -31,3 +33,5 @@ grant execute on k_gw to public;
 grant execute on k_filter to public;
 grant all on ext_url_v to public;
 grant execute on k_debug to public;
+grant execute on k_sess to public;
+grant execute on gac_cid_seq to public;
