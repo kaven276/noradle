@@ -155,6 +155,9 @@ create or replace package body gateway is
 	
 		<<the_end>>
 		utl_tcp.close_all_connections;
+	exception
+		when others then
+			utl_tcp.close_all_connections;
 	end;
 
 begin
