@@ -50,6 +50,14 @@ create or replace package pv is
 	svr_request_count number(9);
 	svr_start_time    date;
 
+	base64_cookie varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
+	base64_gac    varchar2(26) := '!"#$%&''()*,-./:;<>?@[\]{|}';
+	gac_dtfmt constant varchar2(17) := 'yyyymmddhh24miss-';
+	ls_gid varchar2(99);
+	ls_uid varchar2(99);
+	ls_lgt date;
+	ls_lat date;
+
 	ex_resp_done exception;
 	ex_fltr_done exception;
 	ex_no_prog exception;
