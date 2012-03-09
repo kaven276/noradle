@@ -10,7 +10,22 @@ create or replace package k_sess authid current_user is
 	pragma exception_init(over_max_idle, -20024);
 
 	function gucid return varchar2;
-	function get_session_id return varchar2;
+
+	function use_bsid_cookie
+	(
+		cookie varchar2 := null,
+		domain varchar2 := null,
+		path   varchar2 := 'APP',
+		secure boolean := null
+	) return varchar2;
+
+	function use_msid_cookie
+	(
+		cookie varchar2 := null,
+		domain varchar2 := null,
+		path   varchar2 := 'APP',
+		secure boolean := null
+	) return varchar2;
 
 	procedure use
 	(
@@ -21,6 +36,8 @@ create or replace package k_sess authid current_user is
 		max_keep interval day to second := null,
 		max_idle interval day to second := null
 	);
+
+	function get_session_id return varchar2;
 
 	procedure attr
 	(

@@ -30,6 +30,58 @@ create or replace package body k_sess is
 		end if;
 	end;
 
+	function use_bsid_cookie
+	(
+		cookie varchar2 := null,
+		domain varchar2 := null,
+		path   varchar2 := 'APP',
+		secure boolean := null
+	) return varchar2 is
+		v_cookie varchar2(30) := nvl(cookie, 'BSID');
+		v_bsid   varchar(30) := r.cookie(v_cookie);
+		v_domain varchar2(99) := domain;
+		v_path   varchar2(999);
+	begin
+		if v_bsid is null then
+			v_bsid := gucid;
+			case upper(path)
+				when 'APP' then
+					v_path := t.nvl2(r.base, '/' || r.base) || '/' || r.dad;
+				else
+					v_path := path;
+			end case;
+			v_domain := domain;
+			h.set_cookie(v_cookie, v_bsid, path => v_path, domain => v_domain, secure => secure);
+		end if;
+		return v_bsid;
+	end;
+
+	function use_msid_cookie
+	(
+		cookie varchar2 := null,
+		domain varchar2 := null,
+		path   varchar2 := 'APP',
+		secure boolean := null
+	) return varchar2 is
+		v_cookie varchar2(30) := nvl(cookie, 'MSID');
+		v_msid   varchar(30) := r.cookie(v_cookie);
+		v_domain varchar2(99) := domain;
+		v_path   varchar2(999);
+	begin
+		if v_msid is null then
+			v_msid := gucid;
+			case upper(path)
+				when 'APP' then
+					v_path := t.nvl2(r.base, '/' || r.base) || '/' || r.dad;
+				else
+					v_path := path;
+			end case;
+			v_domain := domain;
+			h.set_cookie(v_cookie, v_msid, path => v_path, domain => v_domain, secure => secure, expires => sysdate + 360);
+		end if;
+		return v_msid;
+	end;
+
 	procedure use
 	(
 		cookie   varchar2 := null,
@@ -48,18 +100,8 @@ create or replace package body k_sess is
 		v_max_idle interval day to second(0) := nvl(max_idle, '+00 00:15:00');
 		v_gac_val  varchar2(230);
 	begin
-		if v_bsid is null then
-			v_bsid := gucid;
-			case upper(path)
-				when 'APP' then
-					v_path := t.nvl2(r.base, '/' || r.base) || '/' || r.dad;
-				else
-					v_path := path;
-			end case;
-			v_domain := domain;
-			h.set_cookie(v_cookie, v_bsid, path => v_path, domain => v_domain, secure => secure);
-		end if;
-		v_cid := translate(v_bsid, pv.base64_cookie, pv.base64_gac);
+		v_bsid := use_bsid_cookie('BSID');
+		v_cid  := translate(v_bsid, pv.base64_cookie, pv.base64_gac);
 		dbms_session.clear_identifier;
 		v_gac_val := sys_context('SESS_CID_CTX', v_cid);
 		if v_gac_val is not null then
@@ -127,8 +169,6 @@ create or replace package body k_sess is
 	end;
 
 	function last_access_time return date is
-		v_cid varchar2(30);
-		v_lat date;
 	begin
 		return pv.ls_lat;
 	end;
