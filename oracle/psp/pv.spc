@@ -58,6 +58,9 @@ create or replace package pv is
 	ls_lgt date;
 	ls_lat date;
 
+	cs_char  varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
+	cs_nchar varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
+
 	ex_resp_done exception;
 	ex_fltr_done exception;
 	ex_no_prog exception;
