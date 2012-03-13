@@ -10,7 +10,7 @@ create or replace package output is
 
 	procedure line
 	(
-		str    varchar2,
+		str    varchar2 character set any_cs,
 		nl     varchar2 := chr(10),
 		indent pls_integer := null
 	);

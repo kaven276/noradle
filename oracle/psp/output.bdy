@@ -92,13 +92,15 @@ create or replace package body output is
 	-- public
 	procedure line
 	(
-		str    varchar2,
+		str    varchar2 character set any_cs,
 		nl     varchar2 := chr(10),
 		indent pls_integer := null
 	) is
 		dummy pls_integer;
 		v_out raw(32767);
 		v_len pls_integer;
+		v_str varchar2(32767);
+		v_cs  varchar2(30) := pv.charset_ora;
 	begin
 		if str is null and nl is null then
 			return;
@@ -108,7 +110,25 @@ create or replace package body output is
 			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
 		end if;
 	
-		v_out := utl_i18n.string_to_raw(lpad(' ', indent, ' ') || str || nl, pv.charset_ora);
+		v_len := lengthb(str);
+		if v_len = length(str) then
+			v_cs := null;
+		else
+			v_str := str;
+			if v_len = lengthb(v_str) then
+				-- is database charset
+				if pv.charset_ora = pv.cs_char then
+					v_cs := null;
+				end if;
+			else
+				-- is national charset
+				if pv.charset_ora like '%' || pv.cs_nchar then
+					v_cs := null;
+				end if;
+			end if;
+		end if;
+	
+		v_out := utl_i18n.string_to_raw(lpad(' ', indent, ' ') || str || nl, v_cs);
 		v_len := utl_raw.length(v_out);
 	
 		if not pv.use_stream then
