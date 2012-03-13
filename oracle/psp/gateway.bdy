@@ -22,6 +22,20 @@ create or replace package body gateway is
 		h.line('error text = ' || code || '/' || errm);
 	end;
 
+	-- Refactored procedure quit 
+	function quit return boolean is
+		v_msg varchar2(1);
+		v_sts number;
+	begin
+		dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_sts, 0);
+		if v_sts = 0 then
+			dbms_alert.remove('PW_STOP_SERVER');
+			return true;
+		else
+			return false;
+		end if;
+	end;
+
 	procedure listen is
 		no_dad_auth_entry1 exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry1, -942);
@@ -42,6 +56,9 @@ create or replace package body gateway is
 																			tx_timeout      => 3);
 		exception
 			when utl_tcp.network_error then
+				if quit then
+					goto the_end;
+				end if;
 				dbms_lock.sleep(3);
 				goto make_connection;
 		end;
@@ -53,16 +70,9 @@ create or replace package body gateway is
 				goto the_end;
 			end if;
 		
-			declare
-				v_msg varchar2(1);
-				v_sts number;
-			begin
-				dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_sts, 0);
-				if v_sts = 0 then
-					dbms_alert.remove('PW_STOP_SERVER');
-					goto the_end;
-				end if;
-			end;
+			if quit then
+				goto the_end;
+			end if;
 		
 			begin
 				pv.end_marker := utl_tcp.get_line(pv.c, true);
