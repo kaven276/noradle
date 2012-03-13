@@ -340,7 +340,7 @@ create or replace package body k_xhtp is
 		return gv_save_pt = pv.buffered_length;
 	end;
 
-	procedure prn(text varchar2) is
+	procedure prn(text varchar2 character set any_cs) is
 	begin
 		if text is null then
 			return;
@@ -348,7 +348,7 @@ create or replace package body k_xhtp is
 		output.line(text, '');
 	end;
 
-	procedure prn(text in out nocopy clob) is
+	procedure prn(text in out nocopy clob character set any_cs) is
 	begin
 		if text is null then
 			return;
@@ -356,18 +356,18 @@ create or replace package body k_xhtp is
 		output.line(text, '');
 	end;
 
-	procedure d(text varchar2) is
+	procedure d(text varchar2 character set any_cs) is
 	begin
 		output.line(text, '');
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
-	procedure line2(text in out nocopy varchar2) is
+	procedure line2(text in out nocopy varchar2 character set any_cs) is
 	begin
 		output.line(text, gv_tagnl);
 	end;
 
-	procedure line(text varchar2 := '') is
+	procedure line(text varchar2 character set any_cs := '') is
 	begin
 		output.line(text, gv_tagnl);
 	end;

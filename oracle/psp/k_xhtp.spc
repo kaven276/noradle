@@ -44,9 +44,9 @@ create or replace package k_xhtp is
 	function appended return boolean;
 
 	-- 简单原样输出
-	procedure d(text varchar2);
-	procedure prn(text varchar2);
-	procedure prn(text in out nocopy clob);
+	procedure d(text varchar2 character set any_cs);
+	procedure prn(text varchar2 character set any_cs);
+	procedure prn(text in out nocopy clob character set any_cs);
 	procedure set_css_prefix(prefix varchar2);
 	procedure force_css_cv;
 	procedure css(text varchar2, cv boolean := false);
@@ -70,7 +70,7 @@ create or replace package k_xhtp is
   */
 
 	-- 输出再换行
-	procedure line(text varchar2 := '');
+	procedure line(text varchar2 character set any_cs := '');
 
 	procedure l(txt varchar2, var st := null);
 
