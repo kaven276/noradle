@@ -944,7 +944,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end case;
 	
 		gv_head_over := false;
-		k_http.content_type('text/html');
+		k_http.content_type('text/html', pv.charset);
 		gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
 		-- must first doctype and then xml prolog, other wise it will be in backcompatible mode
 		if k_ccflag.xml_check then
