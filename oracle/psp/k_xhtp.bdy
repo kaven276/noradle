@@ -686,29 +686,15 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	------------------
 
 	-- private, common tag output API
-	function tpl(output boolean, name varchar2, text varchar2 character set any_cs, ac in st, da st) return varchar2 is
-		v_ac  varchar2(32000);
-		v_a1  varchar2(32000);
-		v_a2  varchar2(32000);
-		v_s   varchar2(32000);
+	function tpl(output boolean, name varchar2, text varchar2 character set any_cs, ac in st, da st) return varchar2 character set text%charset is
+		v_ac  varchar2(32000) character set text%charset;
+		v_a1  varchar2(32000) character set text%charset;
+		v_a2  varchar2(32000) character set text%charset;
+		v_s   varchar2(32000) character set text%charset;
 		v_pos pls_integer;
-		m     varchar2(32000);
-		n     nvarchar2(32000);
+		m     varchar2(32000) character set text%charset;
 		v_tag varchar2(30) := get_tag(name);
-		nc    boolean := gv_nc;
-		v_txt varchar2(32000);
-		v_len pls_integer;
 	begin
-		if nc is null then
-			v_len := lengthb(text);
-			if v_len = length(text) then
-				nc := false;
-			else
-				v_txt := text;
-				nc    := v_len != lengthb(v_txt);
-			end if;
-		end if;
-	
 		-- head part tag api will not use me, body,frameset(include itself) will call me
 		if mime_type != 'text/plain' then
 			assert(instrb(',html,head,body,frameset,frame,hta:application,title,base,meta,link,script,style,',
@@ -771,11 +757,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 						m := '<' || name || v_a2 || v_a1 || v_s || '></' || v_tag || '>';
 					end if;
 				else
-					if nc then
-						n := n'<' || name || v_a2 || v_a1 || v_s || '>' || text || n'</' || v_tag || n'>';
-					else
-						m := '<' || name || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
-					end if;
+					m := '<' || name || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
 				end if;
 		end case;
 	
@@ -791,11 +773,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 					line2(m);
 				else
 					tag_indent;
-					if m is not null then
-						line2(m);
-					else
-						line2(n);
-					end if;
+					line2(m);
 			end case;
 			return null;
 		else
@@ -1839,8 +1817,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_auto_input_class := flag;
 	end;
 
-	function input_checkbox(name varchar2 := null, value varchar2 := null, checked boolean := false, ac st := null,
-													title varchar2 := null, disabled boolean := null) return varchar2 is
+	function input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false,
+													ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -1860,8 +1838,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	procedure input_checkbox(name varchar2 := null, value varchar2 := null, label_ex varchar2 := null,
-													 checked boolean := false, ac st := null, title varchar2 := null, disabled boolean := null) is
+	procedure input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null,
+													 label_ex varchar2 := null, checked boolean := false, ac st := null, title varchar2 := null,
+													 disabled boolean := null) is
 	begin
 		form_item_open(label_ex, null);
 		gv := tpl(true,
@@ -1883,8 +1862,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	function input_radio(name varchar2 := null, value varchar2 := null, checked boolean := false, ac st := null,
-											 title varchar2 := null, disabled boolean := null) return varchar2 is
+	function input_radio(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false,
+											 ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -1904,7 +1883,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	procedure input_radio(name varchar2 := null, value varchar2 := null, label_ex varchar2 := null,
+	procedure input_radio(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
 												checked boolean := false, ac st := null, title varchar2 := null, disabled boolean := null) is
 	begin
 		form_item_open(label_ex);
@@ -1927,7 +1906,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	procedure input_hidden(name varchar2 := null, value varchar2 := null, ac st := null) is
+	procedure input_hidden(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null) is
 	begin
 		gv := tpl(true, 'input', null, ac, st('type', 'hidden', 'name', name, 'value', value));
 	end;
@@ -1993,9 +1972,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	function input_password(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-													sizep pls_integer := null, maxlength pls_integer := null, readonly boolean := null,
-													disabled boolean := null) return varchar2 is
+	function input_password(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+													title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
+													readonly boolean := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -2019,9 +1998,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(disabled)));
 	end;
 
-	procedure input_password(name varchar2 := null, value varchar2 := null, label_ex varchar2 := null, ac st := null,
-													 title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
-													 readonly boolean := null, disabled boolean := null) is
+	procedure input_password(name varchar2 := null, value varchar2 character set any_cs := null,
+													 label_ex varchar2 := null, ac st := null, title varchar2 := null, sizep pls_integer := null,
+													 maxlength pls_integer := null, readonly boolean := null, disabled boolean := null) is
 	begin
 		form_item_open(label_ex, null);
 		gv := tpl(true,
@@ -2047,9 +2026,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	function input_text(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-											sizep pls_integer := null, maxlength pls_integer := null, readonly boolean := null,
-											disabled boolean := null) return varchar2 is
+	function input_text(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+											title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
+											readonly boolean := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -2073,8 +2052,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(disabled)));
 	end;
 
-	procedure input_text(name varchar2 := null, value varchar2 := null, label_ex varchar2 := null, ac st := null,
-											 title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
+	procedure input_text(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
+											 ac st := null, title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
 											 readonly boolean := null, disabled boolean := null) is
 	begin
 		form_item_open(label_ex, null);
@@ -2101,8 +2080,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	function textarea(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-										rows pls_integer := null, cols pls_integer := null, readonly boolean := null,
+	function textarea(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+										title varchar2 := null, rows pls_integer := null, cols pls_integer := null, readonly boolean := null,
 										disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
@@ -2123,8 +2102,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(disabled)));
 	end;
 
-	procedure textarea(name varchar2 := null, value varchar2 := null, label_ex varchar2 := null, ac st := null,
-										 title varchar2 := null, rows pls_integer := null, cols pls_integer := null,
+	procedure textarea(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
+										 ac st := null, title varchar2 := null, rows pls_integer := null, cols pls_integer := null,
 										 readonly boolean := null, disabled boolean := null) is
 	begin
 		form_item_open(label_ex, null);
@@ -2153,8 +2132,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'button', text, ac, st('name', name, 'value', value, 'title', title, 'disabled', b2c(disabled)));
 	end;
 
-	function input_button(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-												disabled boolean := null) return varchar2 is
+	function input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												title varchar2 := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -2172,8 +2151,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	procedure input_button(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-												 disabled boolean := null) is
+	procedure input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												 title varchar2 := null, disabled boolean := null) is
 	begin
 		gv := tpl(true,
 							'input',
@@ -2191,8 +2170,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	function input_submit(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-												disabled boolean := null) return varchar2 is
+	function input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												title varchar2 := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -2210,8 +2189,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	procedure input_submit(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-												 disabled boolean := null) is
+	procedure input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												 title varchar2 := null, disabled boolean := null) is
 	begin
 		gv := tpl(true,
 							'input',
@@ -2229,8 +2208,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	function input_reset(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-											 disabled boolean := null) return varchar2 is
+	function input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+											 title varchar2 := null, disabled boolean := null) return varchar2 is
 	begin
 		return tpl(false,
 							 'input',
@@ -2248,8 +2227,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(disabled, gv_disabled))));
 	end;
 
-	procedure input_reset(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
-												disabled boolean := null) is
+	procedure input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												title varchar2 := null, disabled boolean := null) is
 	begin
 		gv := tpl(true,
 							'input',
@@ -2296,8 +2275,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	procedure select_option(text varchar2 character set any_cs, value varchar2 := null, selected boolean := null,
-													ac st := null, disabled boolean := null, label varchar2 := null) is
+	procedure select_option(text varchar2 character set any_cs, value varchar2 character set any_cs := null,
+													selected boolean := null, ac st := null, disabled boolean := null, label varchar2 := null) is
 	begin
 		gv := tpl(true,
 							'option',
