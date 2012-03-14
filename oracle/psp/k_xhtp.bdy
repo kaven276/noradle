@@ -342,17 +342,11 @@ create or replace package body k_xhtp is
 
 	procedure prn(text varchar2 character set any_cs) is
 	begin
-		if text is null then
-			return;
-		end if;
 		output.line(text, '');
 	end;
 
 	procedure prn(text in out nocopy clob character set any_cs) is
 	begin
-		if text is null then
-			return;
-		end if;
 		output.line(text, '');
 	end;
 
@@ -596,19 +590,6 @@ create or replace package body k_xhtp is
 	-- public
 	procedure ensure_close is
 		v_err_msg  varchar2(200);
-		v_clob     clob;
-		v_dest_os  integer := 1;
-		v_src_os   integer := 1;
-		v_amount   integer := dbms_lob.lobmaxsize;
-		v_csid     number := nvl(nls_charset_id(dad_charset), 0);
-		v_lang_ctx integer := 0;
-		v_warning  integer;
-		v_num      number(6);
-		procedure add2clob(p_str varchar2) is
-			v_str varchar2(100) := p_str;
-		begin
-			dbms_lob.writeappend(v_clob, length(v_str), v_str);
-		end;
 	begin
 		gv_cmpct := true;
 		-- ¼ì²éÎ´½áÊø±êÇ©
@@ -694,12 +675,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	---------------------------------------------------------------------------
 
-	function w(text varchar2) return varchar2 is
+	function w(text varchar2 character set any_cs) return varchar2 is
 	begin
 		return regexp_replace(text, '(.)', '<b>\1</b>');
 	end;
 
-	function ps(pat varchar2, vals st, url boolean := null, ch char := ':') return varchar2 is
+	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2 is
 		v_str varchar2(32000) := pat;
 		v_chr char(1) := chr(0);
 		v_url boolean;
@@ -710,7 +691,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		return replace(v_str, v_chr, '');
 	end;
 
-	procedure ps(pat varchar2, vals st, url boolean := null, ch char := ':') is
+	procedure ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') is
 	begin
 		tag_indent;
 		line(ps(pat, vals, url, ch));
@@ -2806,7 +2787,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	-------------------------------------------------------------------------
 
-	-- ´¿ÎÄ±¾(»»ĞĞ)
+	-- Â´Â¿ÃÃ„Â±Â¾(Â»Â»ÃÃ)
 	procedure print(text varchar2) is
 	begin
 		tag_indent;

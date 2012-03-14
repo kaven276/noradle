@@ -58,8 +58,6 @@ create or replace package k_xhtp is
 	procedure lcss_rule(text varchar2, css_end boolean := false);
 	procedure comp_css_link(setting boolean);
 
-	procedure show_page;
-
 	/*
   procedure range_replace
   (
@@ -74,11 +72,11 @@ create or replace package k_xhtp is
 
 	procedure l(txt varchar2, var st := null);
 
-	function w(text varchar2) return varchar2;
+	function w(text varchar2 character set any_cs) return varchar2;
 
-	function ps(pat varchar2, vals st, url boolean := null, ch char := ':') return varchar2;
+	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2;
 
-	procedure ps(pat varchar2, vals st, url boolean := null, ch char := ':');
+	procedure ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':');
 
 	procedure split(p varchar2, sep varchar2 := ',');
 
@@ -100,7 +98,7 @@ create or replace package k_xhtp is
 	procedure blank_line(amount pls_integer := null);
 
 	-- ´¿ÎÄ±¾
-	procedure print(text varchar2);
+	procedure print(text varchar2 character set any_cs);
 
 	--------------------------------------
 
