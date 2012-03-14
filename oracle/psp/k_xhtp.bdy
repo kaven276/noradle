@@ -15,12 +15,12 @@ create or replace package body k_xhtp is
 	gv_compatible   varchar2(100);
 	gv_vml          boolean := false;
 
-	gv_sv              varchar2(32000);
-	gv_form_item_open  boolean;
-	gv_readonly        boolean; -- form's readonly default for text/password/textarea
-	gv_disabled        boolean; -- form's disable default for select/checkbox/radio
+	gv_sv             varchar2(32000);
+	gv_form_item_open boolean;
+	gv_readonly       boolean; -- form's readonly default for text/password/textarea
+	gv_disabled       boolean; -- form's disable default for select/checkbox/radio
 
-	-- API 输出调整变换相关
+	-- API output adjustment related
 	gv              varchar2(32000);
 	gv_hv_ex        char(1);
 	gv_table_id     varchar2(100);
@@ -50,48 +50,44 @@ create or replace package body k_xhtp is
 	gv_level pls_integer := 0;
 	gv_type  varchar2(10); -- tree,menu
 
-	-- 配置参数
+	-- configuration parameters
 	$if                  k_ccflag.config_mode = k_ccflag.cm_sys $then
 
-	gv_attr_lowercase    char(1) := k_psp_cfg.get_xxx; -- 属性必须是小写
-	gv_tag_auto_indent   char(1) := k_psp_cfg.get_xxx; -- 是否自动缩进
-	gv_tag_nesting_check char(1) := k_psp_cfg.get_xxx; -- 是否进行标签嵌套错误检查
-	gv_proc_exist        char(1) := k_psp_cfg.get_xxx; --k_psp_cfg.get_cfg_value('proc_exist')
+	gv_attr_lowercase    char(1) := k_psp_cfg.get_xxx; -- require lowercase attributes
+	gv_tag_auto_indent   char(1) := k_psp_cfg.get_xxx; -- if auto indent page source
+	gv_tag_nesting_check char(1) := k_psp_cfg.get_xxx; -- if do tag nesting error check
 
 	$elsif               k_ccflag.config_mode = k_ccflag.cm_pck $then
 
-	gv_attr_lowercase    char(1) := 'Y'; -- 属性必须是小写
-	gv_tag_auto_indent   char(1) := 'Y'; -- 是否自动缩进
-	gv_tag_nesting_check char(1) := 'Y'; -- 是否进行标签嵌套错误检查
-	gv_proc_exist        char(1) := 'Y'; --k_psp_cfg.get_cfg_value('proc_exist')
+	gv_attr_lowercase    char(1) := 'Y';
+	gv_tag_auto_indent   char(1) := 'Y';
+	gv_tag_nesting_check char(1) := 'Y';
 
 	$elsif               k_ccflag.config_mode = k_ccflag.cm_def $then
 
-	gv_attr_lowercase    char(1) := 'Y'; -- 属性必须是小写
-	gv_tag_auto_indent   char(1) := 'Y'; -- 是否自动缩进
-	gv_tag_nesting_check char(1) := 'Y'; -- 是否进行标签嵌套错误检查
-	gv_proc_exist        char(1) := 'Y'; --k_psp_cfg.get_cfg_value('proc_exist')
+	gv_attr_lowercase    char(1) := 'Y';
+	gv_tag_auto_indent   char(1) := 'Y';
+	gv_tag_nesting_check char(1) := 'Y';
 
 	$end
 
-	-- 标签栈
-	gv_tag_len pls_integer;
+	-- tag stack
+	gv_tag_len pls_integer; -- first tag is body, depth is 1
 	gv_tags    st;
 
-	gv_save_pt  pls_integer;
-	gv_css_link boolean := false;
-	gv_css_size pls_integer;
-	-- gc_buf_size  pls_integer := 32767;
-	gv_head_over boolean; -- 控制往哪个输出缓冲区输出
+	gv_save_pt   pls_integer;
+	gv_css_link  boolean := false;
+	gv_css_size  pls_integer;
+	gv_head_over boolean; -- control where to output
 
-	-- 免输出，支持免结束标签输出特性
+	-- for auto close body/html tags
 	gv_need_html_close boolean := false;
 	gv_need_body_close boolean := false;
 
-	-- 转换在 body 区输出原本应该在 head 的内容
+	-- convert tags for head to in body
 	gv_in_body boolean := false;
 
-	-- 页面生成中是否出现错误
+	-- record if there has errors in output
 	gv_has_error boolean := false;
 
 	gv_cur_seq pls_integer := 0;
@@ -507,7 +503,7 @@ create or replace package body k_xhtp is
 	end;
 
 	procedure go(url varchar2, vals st := null, info varchar2 := null) is
-		v_url  varchar2(1000);
+		v_url varchar2(1000);
 	begin
 		v_url := l(url, true);
 		v_url := t.tf(not regexp_like(v_url, '(http://|/|./|../).*'), './') || v_url;
@@ -553,10 +549,9 @@ create or replace package body k_xhtp is
 
 	-- public
 	procedure ensure_close is
-		v_err_msg  varchar2(200);
+		v_err_msg varchar2(200);
 	begin
 		gv_cmpct := true;
-		-- 检查未结束标签
 		if gv_tag_nesting_check = 'Y' then
 			case nvl(gv_tag_len, 0)
 				when 0 then
@@ -564,12 +559,12 @@ create or replace package body k_xhtp is
 				when 1 then
 					assert(gv_tags(1) = 'html', 'xxx');
 				when 2 then
-					assert(gv_tags(2) = 'body', '未结束标签不是 body，可能是head未结束');
+					assert(gv_tags(2) = 'body', 'The unclosed tag is not body, gmaybe head tag is not closed.');
 				else
 					for i in 1 .. gv_tag_len loop
 						v_err_msg := v_err_msg || nl || gv_tags(i);
 					end loop;
-					assert(false, '存在未结束标签' || v_err_msg);
+					assert(false, 'There are tags not closed ' || v_err_msg);
 			end case;
 		end if;
 		if gv_tag_len is null then
@@ -604,13 +599,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		null;
 	end;
 
-	-- 公共 private 过程，嵌套检查和自动缩进支持
-	/*
-  在欠套检查的同时进行自动缩进；
-  ac:tag_len 记录当前嵌套标签的深度，第一个标签是 body，深度是1。
-  ac:tag_n 是记录第n层深度的标签。
-  只对成对标签进行嵌套检查，对所有标签进行缩进。
-  */
 	procedure tag_push(tag varchar2) is
 	begin
 		gv_tag_len := gv_tag_len + 1;
@@ -619,7 +607,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure tag_pop(tag varchar2) is
 	begin
-		assert(gv_tags(gv_tag_len) = tag, '标签欠套错误：结束标签没有对应的开始标签' || gv_tag_len);
+		assert(gv_tags(gv_tag_len) = tag, 'tag nesting error, no matching open tag for this close tag.' || gv_tag_len);
 		gv_tags(gv_tag_len) := null;
 		gv_tag_len := gv_tag_len - 1;
 	end;
@@ -660,7 +648,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		line(ps(pat, vals, url, ch));
 	end;
 
-	-- private 对某些公共过程进行封装，用于减少代码量，防止拼null串
+	-- private : to avoid string concat
 	function b2c(value boolean) return varchar2 is
 	begin
 		if value then
@@ -705,11 +693,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		m     varchar2(32000);
 		v_tag varchar2(30) := get_tag(name);
 	begin
-		-- head 区内容不会调用此程序，body,frameset(含自身)才会调用此程序
+		-- head part tag api will not use me, body,frameset(include itself) will call me
 		if mime_type != 'text/plain' then
 			assert(instrb(',html,head,body,frameset,frame,hta:application,title,base,meta,link,script,style,',
 										',' || v_tag || ',') > 0 or gv_tags(2) = 'body',
-						 '本标签' || v_tag || '必须在body中使用');
+						 ' this tag ' || v_tag || 'must used in body tag');
 		end if;
 	
 		-- parse ac
@@ -732,7 +720,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 					raise_application_error(-20000, 'maybe lose ;');
 				end if;
 				-- name=#sddsf;name2=#dfsdf#css1:dsfds;css2:xcxcv;
-				v_a1 := replace(replace(' ' || v_ac, '=', '="'), ';', '" '); -- todo: 多个一个空格
+				v_a1 := replace(replace(' ' || v_ac, '=', '="'), ';', '" '); -- todo: one more space problem
 				v_s  := null;
 			end if;
 		end if;
@@ -740,10 +728,10 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			raise_application_error(-20000, 'attributes must use =, and not :, for [' || v_ac || ']');
 		end if;
 	
-		-- 自由属性部分
+		-- free attributes part
 		if da is not null then
 			for i in 1 .. floor(da.count / 2) loop
-				assert(da(i * 2 - 1) = lower(da(i * 2 - 1)), 'xhtml 属性名必须全部是小写:' || da(i * 2 - 1));
+				assert(da(i * 2 - 1) = lower(da(i * 2 - 1)), 'xhtml attribute name must be in lower case:' || da(i * 2 - 1));
 				if da(i * 2) is not null then
 					v_a2 := v_a2 || ' ' || da(i * 2 - 1) || '="' || da(i * 2) || '"';
 				end if;
@@ -915,7 +903,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure html_open(manifest varchar2 := null) is
 	begin
-		assert(gv_tag_len is not null, '系统错误，xhtml 文档没有输出第一行的 doc_type 声明');
+		assert(gv_tag_len is not null,
+					 'System exception, xhtml page has not output doc_type declaration in the first line.');
 		tag_push('html');
 		if gv_wap then
 			line('<wml>');
@@ -948,7 +937,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure head_open is
 	begin
-		assert(gv_tag_len = 1 and gv_tags(1) = 'html', 'head 没在 html 底下直接出现');
+		assert(gv_tag_len = 1 and gv_tags(1) = 'html', 'head tag must be positioned directly under html tag.');
 		line('<head>');
 		tag_push('head');
 	end;
@@ -985,7 +974,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure body_open(ac st := null) is
 	begin
-		assert(gv_tag_len = 1 and gv_tags(1) = 'html', 'body 没在 html 底下直接出现');
+		assert(gv_tag_len = 1 and gv_tags(1) = 'html', 'body tag must be positioned directly under html tag.');
 		gv                 := tpl(true, 'body', el_open, ac, null);
 		gv_in_body         := true;
 		gv_need_body_close := true;
@@ -999,7 +988,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_in_body         := false;
 	end;
 
-	----------------- head 部分接口 -----------------------------------------------
+	----------------- head part -----------------------------------------------
 
 	procedure x3___________ is
 	begin
@@ -1008,7 +997,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure assert_in_head(tag varchar2) is
 	begin
-		assert(gv_tag_len = 2 and gv_tags(2) = 'head', tag || ' 只能在 head 区出现');
+		assert(gv_tag_len = 2 and gv_tags(2) = 'head', tag || ' must used in head tag range.');
 	end;
 
 	procedure hta(ac st := null, id varchar2 := null, applicationname varchar2 := null, version varchar2 := null,
@@ -1083,7 +1072,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure meta_init is
 	begin
-		assert(gv_doc_type is null, '必须在开始输出文档前执行 p.meta_init' || gv_doc_type);
+		assert(gv_doc_type is null, 'p.meta_init must be used before page output begin' || gv_doc_type);
 		gv_st     := st();
 		gv_texts  := st();
 		gv_values := st();
@@ -1092,10 +1081,10 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure meta(content varchar2, http_equiv varchar2 default null, name varchar2 default null) is
 		v_idx pls_integer := gv_st.count + 1;
 	begin
-		assert(not (http_equiv is not null and name is not null), 'http_equiv和name不能都有');
-		assert(http_equiv is null or name is null, 'http_equiv和name不能全空');
+		assert(not (http_equiv is not null and name is not null), 'http_equiv and name can be set ether, but not both.');
+		assert(http_equiv is null or name is null, 'both http_equiv and name is null, it must have one set.');
 		if gv_doc_type is null then
-			-- 如果没开始输出 meta,则先保存到数组
+			-- if meta has not output yet, save them to package array
 			gv_st.extend;
 			gv_texts.extend;
 			gv_values.extend;
@@ -1272,7 +1261,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		body_open;
 	end;
 
-	-------------------- body 部分 -------------------------------------------------
+	-------------------- body part -------------------------------------------------
 
 	procedure x4___________ is
 	
@@ -1282,7 +1271,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure hn(level pls_integer, text varchar2 := null, ac st := null) is
 	begin
-		assert(level between 1 and 6, 'hn 的级别必须在 1 到 6 之间');
+		assert(level between 1 and 6, 'hn level must be between 1 and 6.');
 		gv := tpl(true, 'h' || level, text, ac, null);
 	end;
 
@@ -2436,7 +2425,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		return value = 'PW_NULL';
 	end;
 
-	----------------- ul/ol/li/dd/dl 等等 ---------------------------
+	----------------- ul/ol/li/dd/dl... ---------------------------
 
 	procedure x7___________ is
 	begin
@@ -2551,12 +2540,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		
 			exit when cur%notfound;
 			if v_pw_level = v_level + 1 then
-				-- 深一层
+				-- down one level
 				ul_open;
 			else
 				li_close;
 				for j in 1 .. v_level - v_pw_level loop
-					-- 回层
+					-- return level
 					ul_close;
 					li_close;
 				end loop;
@@ -2607,7 +2596,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure add_node(p_level pls_integer, p_text varchar2, p_href varchar2 := null) is
 	begin
 		if p_level = gv_level + 1 then
-			-- 深一层
+			-- down one level
 			if gv_type = 'menu' and p_level = 1 then
 				ol_open;
 			else
@@ -2616,7 +2605,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		else
 			li_close;
 			for j in 1 .. gv_level - p_level loop
-				-- 回层
+				-- return level
 				ul_close;
 				li_close;
 			end loop;
@@ -2831,7 +2820,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure frame(name varchar2 := null, src varchar2 := null, ac st := null, frameborder varchar2 := null,
 									scrolling varchar2 := null, noresize boolean := null) is
 	begin
-		assert(gv_tag_len > 0 and gv_tags(gv_tag_len) = 'frameset', 'frame 必须在 frameset 中使用');
+		assert(gv_tag_len > 0 and gv_tags(gv_tag_len) = 'frameset', 'frame tag must occur in frameset tag');
 		gv := tpl(true,
 							'frame',
 							null,

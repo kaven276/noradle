@@ -43,10 +43,19 @@ create or replace package k_xhtp is
 	procedure save_pointer;
 	function appended return boolean;
 
-	-- 简单原样输出
+	-- basic output API
 	procedure d(text varchar2 character set any_cs);
 	procedure prn(text varchar2 character set any_cs);
 	procedure prn(text in out nocopy clob character set any_cs);
+	procedure line(text varchar2 character set any_cs := '');
+	procedure l(txt varchar2, var st := null);
+	function w(text varchar2 character set any_cs) return varchar2;
+	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2;
+	procedure ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':');
+	procedure blank_line(amount pls_integer := null);
+	procedure print(text varchar2 character set any_cs);
+
+	-- component css output API
 	procedure set_css_prefix(prefix varchar2);
 	procedure force_css_cv;
 	procedure css(text varchar2, cv boolean := false);
@@ -58,62 +67,23 @@ create or replace package k_xhtp is
 	procedure lcss_rule(text varchar2, css_end boolean := false);
 	procedure comp_css_link(setting boolean);
 
-	/*
-  procedure range_replace
-  (
-    id      varchar2,
-    pattern varchar2,
-    value   varchar2
-  );
-  */
-
-	-- 输出再换行
-	procedure line(text varchar2 character set any_cs := '');
-
-	procedure l(txt varchar2, var st := null);
-
-	function w(text varchar2 character set any_cs) return varchar2;
-
-	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2;
-
-	procedure ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':');
-
+	-- tools APIs
 	procedure split(p varchar2, sep varchar2 := ',');
-
 	-- function split4tab(p varchar2, sep varchar2 := ',') return st;
-
 	procedure join(sep varchar2 := ',');
-
 	procedure split2(pairs varchar2, sep varchar2 := ';:');
-
 	function tf(cond boolean, true_str varchar2, false_str varchar2 := '') return varchar2 deterministic;
 
 	procedure print_cgi_env;
-
 	procedure go(url varchar2, vals st := null, info varchar2 := null);
-	-- 注释
 	procedure comment(text varchar2);
-
-	-- xhtml 源码中输出空行
-	procedure blank_line(amount pls_integer := null);
-
-	-- 纯文本
-	procedure print(text varchar2 character set any_cs);
+	-- output blank lines in xhtml
 
 	--------------------------------------
 
-	-- 当 dhc 层还没有开始输出 body open 时为真
 	function is_dhc return boolean;
-
-	-- 当 dhc 页面没有结束 body/html 标签时会自动补齐
 	procedure ensure_close;
-
-	--------------------------------------
-
-	-- 结束 http 头部
 	procedure http_header_close;
-
-	-- 清空已经输出的内容
 	procedure init;
 
 	-----------------------
@@ -131,7 +101,7 @@ create or replace package k_xhtp is
 	procedure tag_close(name varchar2);
 
 	--------
-	-- 本段为 xhtml 必须有的几个部分
+	-- top xhtml parts
 
 	procedure use_vml;
 
@@ -164,11 +134,10 @@ create or replace package k_xhtp is
 
 	-----------------------------------------------------------------
 
-	-- 本段为能够出现在 head 中，不作为显示元素的部分
+	-- none-display tags in head
 
 	procedure title(text varchar2);
 
-	--set_base已封装在head_open中，此处只为未使用k_xhtp的程序提供API
 	procedure base(href varchar2 := null, target varchar2 := null);
 
 	procedure meta_init;
@@ -214,12 +183,11 @@ create or replace package k_xhtp is
 
 	-----------------------------------------------------------------
 
-	-- 本段为一般的元素 div/span hn
-	-- 前三个元素均为 text,id,class
-	-- 对于块元素(一般内部有多行显示) 第四个参数是 align
-	-- 对于行元素(一般显示在一行中的元素) 第四个参数是 title
-	-- 第五个参数为 st 类型，随意显示其他各种属性 attributes
-	-- 第六个参数为 st 类型，随意显示其他各种 inline styles
+	-- normal elements
+	-- first 3 is text,id,class
+	-- for block element, 4th parameter is align
+	-- for inline element, 4th parameter is title
+	-- 5th parameter is st type
 
 	procedure pre_open(ac st := null);
 
@@ -256,7 +224,7 @@ create or replace package k_xhtp is
 
 	-----------------------------------------------------------------
 
-	-- 本段为 table 及其内部各对象的输出
+	-- table parts
 
 	procedure table_open(rules varchar2 := null, hv_ex char := null, cellspacing varchar2 := null,
 											 cellpadding varchar2 := null, ac st := null, id varchar2 := null, switch_ex pls_integer := null,
@@ -349,8 +317,8 @@ create or replace package k_xhtp is
 
 	-----------------------------------------------------------------
 
-	-- 本部分均为表单相关的
-	-- 前两个参数均为 id, name
+	-- form part
+	-- first two parameter will be id, name
 
 	procedure form_open(name varchar2 := null, action varchar2 := null, target varchar2 := null, ac st := null,
 											method varchar2 := null, enctype varchar2 := null, readonly_ex boolean := null,
@@ -476,7 +444,7 @@ create or replace package k_xhtp is
 
 	-----------------------------------------------------------------
 
-	-- ul/ol/li/dd/dl 等等
+	-- ul/ol/li/dd/dl ...
 
 	procedure ul_open(ac st := null, id varchar2 := null);
 
@@ -547,7 +515,7 @@ create or replace package k_xhtp is
 
 	-----------------------------------------------------------------
 
-	-- 链接
+	-- link
 	function a(text varchar2, href varchar2 := null, target varchar2 := null, ac st := null, method varchar2 := null)
 		return varchar2;
 	--pragma restrict_references(a, wnds, rnds);
@@ -578,7 +546,7 @@ create or replace package k_xhtp is
 	procedure cfg_cols_thead;
 	procedure cfg_content(cur in out nocopy sys_refcursor, fmt_date varchar2 := null, group_size pls_integer := null);
 
-	-- 标注针对本注释标签的对应的 plsql 源码位置
+	-- mark the position in plsql code source
 	procedure plsql_marker(unit varchar2, lineno pls_integer, text varchar2 := null);
 
 	-- sub component start marker
