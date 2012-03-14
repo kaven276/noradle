@@ -14,10 +14,8 @@ create or replace package body k_xhtp is
 	gv_doc_type_str varchar2(200);
 	gv_compatible   varchar2(100);
 	gv_vml          boolean := false;
-	gv_smil         boolean := false;
 
 	gv_sv              varchar2(32000);
-	gv_selected_values st;
 	gv_form_item_open  boolean;
 	gv_readonly        boolean; -- form's readonly default for text/password/textarea
 	gv_disabled        boolean; -- form's disable default for select/checkbox/radio
@@ -37,7 +35,6 @@ create or replace package body k_xhtp is
 	gv_cur_col          pls_integer;
 
 	gv_id      varchar2(100);
-	gv_cls     varchar2(100);
 	gv_css_tag varchar2(30);
 
 	-- table cfg
@@ -98,15 +95,6 @@ create or replace package body k_xhtp is
 	gv_has_error boolean := false;
 
 	gv_cur_seq pls_integer := 0;
-
-	type t_part is record(
-		
-		start_pos pls_integer,
-		stop_pos  pls_integer);
-
-	type t_parts is table of t_part index by varchar2(100);
-
-	gv_parts t_parts;
 
 	gv_force_css_cv boolean := false;
 	gv_css_prefix   varchar2(10);
@@ -259,28 +247,6 @@ create or replace package body k_xhtp is
 	end;
 
 	----------------------
-
-	procedure show_page is
-		v_amount  integer := dbms_lob.lobmaxsize;
-		v_do      integer := 1;
-		v_so      integer := 1;
-		v_blob    blob;
-		v_clob    clob;
-		v_langctx integer := 0;
-		v_warning integer;
-	begin
-		wpg_docload.get_download_blob(v_blob);
-		dbms_lob.createtemporary(v_clob, true, dbms_lob.call);
-		dbms_lob.converttoclob(v_clob,
-													 v_blob,
-													 amount       => v_amount,
-													 dest_offset  => v_do,
-													 src_offset   => v_so,
-													 blob_csid    => nls_charset_id(dad_charset),
-													 lang_context => v_langctx,
-													 warning      => v_warning);
-		dbms_output.put(v_clob);
-	end;
 
 	/*
   procedure range_begin(p_id varchar2) is
@@ -441,7 +407,6 @@ create or replace package body k_xhtp is
 	end;
 
 	procedure lcss_selector(texts st) is
-		v_sel  varchar2(1000);
 		v_term char(2) := ' ,';
 	begin
 		for i in 1 .. texts.count loop
@@ -542,7 +507,6 @@ create or replace package body k_xhtp is
 	end;
 
 	procedure go(url varchar2, vals st := null, info varchar2 := null) is
-		v_para st;
 		v_url  varchar2(1000);
 	begin
 		v_url := l(url, true);
@@ -683,7 +647,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2 is
 		v_str varchar2(32000) := pat;
 		v_chr char(1) := chr(0);
-		v_url boolean;
 	begin
 		for i in 1 .. vals.count loop
 			v_str := replace(v_str, ch || i, v_chr || vals(i));
@@ -878,7 +841,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure http_header_close is
-		v varchar2(10);
 	begin
 		if gv_cmpct then
 			gv_tagnl := null;
@@ -2787,8 +2749,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	-------------------------------------------------------------------------
 
-	-- ´¿ÎÄ±¾(»»ÐÐ)
-	procedure print(text varchar2) is
+	procedure print(text varchar2 character set any_cs) is
 	begin
 		tag_indent;
 		line(text);
@@ -3013,7 +2974,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure cfg_content(cur in out nocopy sys_refcursor, fmt_date varchar2 := null, group_size pls_integer := null) is
-		type curtype is ref cursor;
 		curid      number;
 		desctab    dbms_sql.desc_tab;
 		colcnt     number;
