@@ -76,7 +76,7 @@ create or replace package k_xhtp is
 
 	procedure print_cgi_env;
 	procedure go(url varchar2, vals st := null, info varchar2 := null);
-	procedure comment(text varchar2);
+	procedure comment(text varchar2 character set any_cs);
 	-- output blank lines in xhtml
 
 	--------------------------------------
@@ -88,13 +88,13 @@ create or replace package k_xhtp is
 
 	-----------------------
 
-	function tag(name varchar2, text varchar2, ac st := null,
+	function tag(name varchar2, text varchar2 character set any_cs, ac st := null,
 							 -- stand for static bound parameters for attributes and inline-styles
 							 da st := null
 							 -- stand for dynamic bound parameters for attributes
 							 ) return varchar2;
 
-	procedure tag(name varchar2, text varchar2, ac st := null, da st := null);
+	procedure tag(name varchar2, text varchar2 character set any_cs, ac st := null, da st := null);
 
 	procedure tag_open(name varchar2, ac st := null, da st := null);
 
@@ -136,7 +136,7 @@ create or replace package k_xhtp is
 
 	-- none-display tags in head
 
-	procedure title(text varchar2);
+	procedure title(text varchar2 character set any_cs);
 
 	procedure base(href varchar2 := null, target varchar2 := null);
 
@@ -160,9 +160,9 @@ create or replace package k_xhtp is
 
 	------------------
 
-	procedure script_text(text varchar2);
+	procedure script_text(text varchar2 character set any_cs);
 
-	procedure js(text varchar2);
+	procedure js(text varchar2 character set any_cs);
 
 	procedure script(src varchar2, ac st := null);
 
@@ -193,9 +193,9 @@ create or replace package k_xhtp is
 
 	procedure pre_close;
 
-	procedure hn(level pls_integer, text varchar2 := null, ac st := null);
+	procedure hn(level pls_integer, text varchar2 character set any_cs := null, ac st := null);
 
-	procedure p(text varchar2 := null, ac st := null);
+	procedure p(text varchar2 character set any_cs := null, ac st := null);
 
 	procedure div_open(ac st := null, id varchar2 := null);
 
@@ -206,13 +206,14 @@ create or replace package k_xhtp is
 
 	procedure marquee_close;
 
-	function span(text varchar2 := null, ac st := null, title varchar2 := null) return varchar2;
+	function span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2;
 
-	procedure span(text varchar2 := null, ac st := null, title varchar2 := null, class varchar2 := null);
+	procedure span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
+								 class varchar2 := null);
 
-	function b(text varchar2 := null, ac st := null, title varchar2 := null) return varchar2;
+	function b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2;
 
-	procedure b(text varchar2 := null, ac st := null, title varchar2 := null, class varchar2 := null);
+	procedure b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null, class varchar2 := null);
 
 	-----------------------------------------------------------------
 
@@ -220,7 +221,7 @@ create or replace package k_xhtp is
 
 	procedure fieldset_close;
 
-	procedure legend(text varchar2, ac st := null, title varchar2 := null);
+	procedure legend(text varchar2 character set any_cs, ac st := null, title varchar2 := null);
 
 	-----------------------------------------------------------------
 
@@ -232,7 +233,7 @@ create or replace package k_xhtp is
 
 	procedure table_close;
 
-	procedure caption(text varchar2, ac st := null, title varchar2 := null);
+	procedure caption(text varchar2 character set any_cs, ac st := null, title varchar2 := null);
 
 	procedure col(class varchar2 := null, align varchar2 := null, width varchar2 := null, span pls_integer := null,
 								ac st := null);
@@ -279,22 +280,22 @@ create or replace package k_xhtp is
 
 	procedure tr_open(ac st := null, class varchar2 := null);
 
-	procedure tr(text varchar2, ac st := null, class varchar2 := null);
+	procedure tr(text varchar2 character set any_cs, ac st := null, class varchar2 := null);
 
-	function tr(text varchar2, ac st := null) return varchar2;
+	function tr(text varchar2 character set any_cs, ac st := null) return varchar2;
 
 	procedure tr_close;
 
-	procedure td(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	procedure td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							 rowspan pls_integer := null, class varchar2 := null);
 
-	function td(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	function td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							rowspan pls_integer := null, class varchar2 := null) return varchar2;
 
-	procedure th(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	procedure th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							 rowspan pls_integer := null, class varchar2 := null);
 
-	function th(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	function th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							rowspan pls_integer := null, class varchar2 := null) return varchar2;
 
 	procedure ths(texts st);
@@ -326,9 +327,10 @@ create or replace package k_xhtp is
 
 	procedure form_close;
 
-	procedure label(text varchar2, ac st := null, title varchar2 := null, forp varchar2 := null);
+	procedure label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null);
 
-	function label(text varchar2, ac st := null, title varchar2 := null, forp varchar2 := null) return varchar2;
+	function label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null)
+		return varchar2;
 
 	procedure label_open(ac st := null, title varchar2 := null, forp varchar2 := null);
 
@@ -386,8 +388,8 @@ create or replace package k_xhtp is
 										 title varchar2 := null, rows pls_integer := null, cols pls_integer := null,
 										 readonly boolean := null, disabled boolean := null);
 
-	procedure button(name varchar2, value varchar2, text varchar2, ac st := null, title varchar2 := null,
-									 disabled boolean := null);
+	procedure button(name varchar2, value varchar2, text varchar2 character set any_cs, ac st := null,
+									 title varchar2 := null, disabled boolean := null);
 
 	function input_button(name varchar2 := null, value varchar2 := null, ac st := null, title varchar2 := null,
 												disabled boolean := null) return varchar2;
@@ -413,8 +415,8 @@ create or replace package k_xhtp is
 
 	procedure select_close;
 
-	procedure select_option(text varchar2, value varchar2 := null, selected boolean := null, ac st := null,
-													disabled boolean := null, label varchar2 := null);
+	procedure select_option(text varchar2 character set any_cs, value varchar2 := null, selected boolean := null,
+													ac st := null, disabled boolean := null, label varchar2 := null);
 
 	procedure optgroup(label varchar2 := null, ac st := null, disabled boolean := null);
 
@@ -454,7 +456,7 @@ create or replace package k_xhtp is
 
 	procedure ol_close;
 
-	procedure li(text varchar2, ac st := null, value pls_integer := null, class varchar2 := null);
+	procedure li(text varchar2 character set any_cs, ac st := null, value pls_integer := null, class varchar2 := null);
 
 	procedure li_open(ac st := null, value pls_integer := null, class varchar2 := null);
 
@@ -463,24 +465,24 @@ create or replace package k_xhtp is
 	procedure dl_open(ac st := null, id varchar2 := null);
 	procedure dl_close;
 
-	procedure dt(text varchar2, ac st := null);
+	procedure dt(text varchar2 character set any_cs, ac st := null);
 
 	procedure dt_open(ac st := null);
 	procedure dt_close;
 
-	procedure dd(text varchar2, ac st := null);
+	procedure dd(text varchar2 character set any_cs, ac st := null);
 	procedure dd_open(ac st := null);
 	procedure dd_close;
 
 	procedure tree(cur sys_refcursor);
 
-	procedure tree(cur sys_refcursor, text varchar2, href varchar2 := null, class varchar2 := null);
+	procedure tree(cur sys_refcursor, text varchar2 character set any_cs, href varchar2 := null, class varchar2 := null);
 
 	procedure open_nodes(p_type varchar2);
 
 	procedure close_nodes;
 
-	procedure add_node(p_level pls_integer, p_text varchar2, p_href varchar2 := null);
+	procedure add_node(p_level pls_integer, p_text varchar2 character set any_cs, p_href varchar2 := null);
 
 	-----------------------------------------------------------------
 
@@ -494,9 +496,9 @@ create or replace package k_xhtp is
 	procedure img(src varchar2 := null, alt varchar2 := null, title varchar2 := null, lowsrc varchar2 := null,
 								ac st := null);
 
-	procedure object(text varchar2 := null, name varchar2 := null, ac st := null, title varchar2 := null,
-									 classid varchar2 := null, codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
-									 alt varchar2 := null);
+	procedure object(text varchar2 character set any_cs := null, name varchar2 := null, ac st := null,
+									 title varchar2 := null, classid varchar2 := null, codebase varchar2 := null, data varchar2 := null,
+									 typep varchar2 := null, alt varchar2 := null);
 
 	procedure object_open(name varchar2 := null, ac st := null, title varchar2 := null, classid varchar2 := null,
 												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null, alt varchar2 := null);
@@ -516,11 +518,12 @@ create or replace package k_xhtp is
 	-----------------------------------------------------------------
 
 	-- link
-	function a(text varchar2, href varchar2 := null, target varchar2 := null, ac st := null, method varchar2 := null)
-		return varchar2;
+	function a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,
+						 method varchar2 := null) return varchar2;
 	--pragma restrict_references(a, wnds, rnds);
 
-	procedure a(text varchar2, href varchar2 := null, target varchar2 := null, ac st := null, method varchar2 := null);
+	procedure a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,
+							method varchar2 := null);
 
 	----------------------------------------------------------------
 
@@ -547,8 +550,7 @@ create or replace package k_xhtp is
 	procedure cfg_content(cur in out nocopy sys_refcursor, fmt_date varchar2 := null, group_size pls_integer := null);
 
 	-- mark the position in plsql code source
-	procedure plsql_marker(unit varchar2, lineno pls_integer, text varchar2 := null);
-
+	procedure plsql_marker(unit varchar2, lineno pls_integer, text varchar2 character set any_cs := null);
 	-- sub component start marker
 	procedure plsql_begin(unit varchar2, lineno pls_integer);
 

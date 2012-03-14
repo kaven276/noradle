@@ -95,6 +95,8 @@ create or replace package body k_xhtp is
 	gv_force_css_cv boolean := false;
 	gv_css_prefix   varchar2(10);
 
+	gv_nc boolean;
+
 	function next_seq return varchar2 is
 	begin
 		gv_cur_seq := gv_cur_seq + 1;
@@ -683,16 +685,30 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	------------------
 
-	function tpl(output boolean, name varchar2, text varchar2, ac in st, da st) return varchar2 is
+	-- private, common tag output API
+	function tpl(output boolean, name varchar2, text varchar2 character set any_cs, ac in st, da st) return varchar2 is
 		v_ac  varchar2(32000);
 		v_a1  varchar2(32000);
 		v_a2  varchar2(32000);
 		v_s   varchar2(32000);
 		v_pos pls_integer;
-	
 		m     varchar2(32000);
+		n     nvarchar2(32000);
 		v_tag varchar2(30) := get_tag(name);
+		nc    boolean := gv_nc;
+		v_txt varchar2(32000);
+		v_len pls_integer;
 	begin
+		if nc is null then
+			v_len := lengthb(text);
+			if v_len = length(text) then
+				nc := false;
+			else
+				v_txt := text;
+				nc    := v_len != lengthb(v_txt);
+			end if;
+		end if;
+	
 		-- head part tag api will not use me, body,frameset(include itself) will call me
 		if mime_type != 'text/plain' then
 			assert(instrb(',html,head,body,frameset,frame,hta:application,title,base,meta,link,script,style,',
@@ -755,7 +771,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 						m := '<' || name || v_a2 || v_a1 || v_s || '></' || v_tag || '>';
 					end if;
 				else
-					m := '<' || name || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
+					if nc then
+						n := n'<' || name || v_a2 || v_a1 || v_s || '>' || text || n'</' || v_tag || n'>';
+					else
+						m := '<' || name || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
+					end if;
 				end if;
 		end case;
 	
@@ -771,7 +791,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 					line2(m);
 				else
 					tag_indent;
-					line2(m);
+					if m is not null then
+						line2(m);
+					else
+						line2(n);
+					end if;
 			end case;
 			return null;
 		else
@@ -780,12 +804,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	
 	end;
 
-	function tag(name varchar2, text varchar2, ac st, da st) return varchar2 is
+	function tag(name varchar2, text varchar2 character set any_cs, ac st, da st) return varchar2 is
 	begin
 		return tpl(false, name, text, ac, da);
 	end;
 
-	procedure tag(name varchar2, text varchar2, ac st, da st) is
+	procedure tag(name varchar2, text varchar2 character set any_cs, ac st, da st) is
 	begin
 		gv := tpl(true, name, text, ac, da);
 	end;
@@ -889,6 +913,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 	
 		gv_doc_type := name;
+	
+		if pv.cs_char = pv.charset_ora then
+			gv_nc := false;
+		else
+			gv_nc := null;
+		end if;
 	end;
 
 	procedure use_vml is
@@ -1051,13 +1081,13 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2yn(scrollflat)));
 	end;
 
-	procedure title(text varchar2) is
+	procedure title(text varchar2 character set any_cs) is
 	begin
 		assert_in_head('title');
 		line('<title>' || text || '</title>');
 	end;
 
-	procedure title2(text varchar2) is
+	procedure title2(text varchar2 character set any_cs) is
 	begin
 		title(text);
 	end;
@@ -1142,14 +1172,14 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		line('</style>');
 	end;
 
-	procedure script_text(text varchar2) is
+	procedure script_text(text varchar2 character set any_cs) is
 	begin
 		script_open;
 		line(text);
 		script_close;
 	end;
 
-	procedure js(text varchar2) is
+	procedure js(text varchar2 character set any_cs) is
 	begin
 		if gv_tags(gv_tag_len) = 'script' then
 			line(text);
@@ -1269,13 +1299,13 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		null;
 	end;
 
-	procedure hn(level pls_integer, text varchar2 := null, ac st := null) is
+	procedure hn(level pls_integer, text varchar2 character set any_cs := null, ac st := null) is
 	begin
 		assert(level between 1 and 6, 'hn level must be between 1 and 6.');
 		gv := tpl(true, 'h' || level, text, ac, null);
 	end;
 
-	procedure p(text varchar2 := null, ac st := null) is
+	procedure p(text varchar2 character set any_cs := null, ac st := null) is
 	begin
 		gv := tpl(true, 'p', text, ac, null);
 	end;
@@ -1320,22 +1350,23 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('marquee');
 	end;
 
-	function span(text varchar2 := null, ac st := null, title varchar2 := null) return varchar2 is
+	function span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 is
 	begin
 		return tpl(false, 'span', text, ac, st('title', title));
 	end;
 
-	procedure span(text varchar2 := null, ac st := null, title varchar2 := null, class varchar2 := null) is
+	procedure span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
+								 class varchar2 := null) is
 	begin
 		gv := tpl(true, 'span', text, ac, st('title', title, 'class', class));
 	end;
 
-	function b(text varchar2 := null, ac st := null, title varchar2 := null) return varchar2 is
+	function b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 is
 	begin
 		return tpl(false, 'b', text, ac, st('title', title));
 	end;
 
-	procedure b(text varchar2 := null, ac st := null, title varchar2 := null, class varchar2 := null) is
+	procedure b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null, class varchar2 := null) is
 	begin
 		gv := tpl(true, 'b', text, ac, st('title', title, 'class', class));
 	end;
@@ -1355,7 +1386,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('fieldset');
 	end;
 
-	procedure legend(text varchar2, ac st := null, title varchar2 := null) is
+	procedure legend(text varchar2 character set any_cs, ac st := null, title varchar2 := null) is
 	begin
 		gv := tpl(true, 'legend', text, ac, st('title', title));
 	end;
@@ -1404,7 +1435,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_css_tag  := null;
 	end;
 
-	procedure caption(text varchar2, ac st := null, title varchar2 := null) is
+	procedure caption(text varchar2 character set any_cs, ac st := null, title varchar2 := null) is
 	begin
 		gv := tpl(true, 'caption', text, ac, st('title', title));
 	end;
@@ -1579,17 +1610,17 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('tr');
 	end;
 
-	procedure tr(text varchar2, ac st := null, class varchar2 := null) is
+	procedure tr(text varchar2 character set any_cs, ac st := null, class varchar2 := null) is
 	begin
 		gv := tpl(true, 'tr', text, ac, st('class', class || ' ' || tr_switch));
 	end;
 
-	function tr(text varchar2, ac st := null) return varchar2 is
+	function tr(text varchar2 character set any_cs, ac st := null) return varchar2 is
 	begin
 		return tpl(false, 'tr', text, ac, null);
 	end;
 
-	procedure td(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	procedure td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							 rowspan pls_integer := null, class varchar2 := null) is
 	
 	begin
@@ -1610,19 +1641,19 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 	end;
 
-	function td(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	function td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							rowspan pls_integer := null, class varchar2 := null) return varchar2 is
 	begin
 		return tpl(false, 'td', text, ac, st('title', title, 'colspan', colspan, 'rowspan', rowspan, 'class', class));
 	end;
 
-	procedure th(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	procedure th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							 rowspan pls_integer := null, class varchar2 := null) is
 	begin
 		gv := tpl(true, 'th', text, ac, st('title', title, 'colspan', colspan, 'rowspan', rowspan, 'class', class));
 	end;
 
-	function th(text varchar2, ac st := null, title varchar2 := null, colspan pls_integer := null,
+	function th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							rowspan pls_integer := null, class varchar2 := null) return varchar2 is
 	begin
 		return tpl(false, 'th', text, ac, st('title', title, 'colspan', colspan, 'rowspan', rowspan, 'class', class));
@@ -1782,12 +1813,13 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 	end;
 
-	procedure label(text varchar2, ac st := null, title varchar2 := null, forp varchar2 := null) is
+	procedure label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null) is
 	begin
 		gv := tpl(true, 'label', text, ac, st('title', title, 'for', forp));
 	end;
 
-	function label(text varchar2, ac st := null, title varchar2 := null, forp varchar2 := null) return varchar2 is
+	function label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null)
+		return varchar2 is
 	begin
 		return tpl(false, 'label', text, ac, st('title', title, 'for', forp));
 	end;
@@ -2115,8 +2147,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	procedure button(name varchar2, value varchar2, text varchar2, ac st := null, title varchar2 := null,
-									 disabled boolean := null) is
+	procedure button(name varchar2, value varchar2, text varchar2 character set any_cs, ac st := null,
+									 title varchar2 := null, disabled boolean := null) is
 	begin
 		gv := tpl(true, 'button', text, ac, st('name', name, 'value', value, 'title', title, 'disabled', b2c(disabled)));
 	end;
@@ -2264,8 +2296,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		form_item_close;
 	end;
 
-	procedure select_option(text varchar2, value varchar2 := null, selected boolean := null, ac st := null,
-													disabled boolean := null, label varchar2 := null) is
+	procedure select_option(text varchar2 character set any_cs, value varchar2 := null, selected boolean := null,
+													ac st := null, disabled boolean := null, label varchar2 := null) is
 	begin
 		gv := tpl(true,
 							'option',
@@ -2452,7 +2484,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('ol');
 	end;
 
-	procedure li(text varchar2, ac st := null, value pls_integer := null, class varchar2 := null) is
+	procedure li(text varchar2 character set any_cs, ac st := null, value pls_integer := null, class varchar2 := null) is
 	begin
 		gv := tpl(true, 'li', text, ac, st('value', value, 'class', class));
 	end;
@@ -2477,7 +2509,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('dl');
 	end;
 
-	procedure dt(text varchar2, ac st := null) is
+	procedure dt(text varchar2 character set any_cs, ac st := null) is
 	begin
 		gv := tpl(true, 'dt', text, ac, null);
 	end;
@@ -2492,7 +2524,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('dt');
 	end;
 
-	procedure dd(text varchar2, ac st := null) is
+	procedure dd(text varchar2 character set any_cs, ac st := null) is
 	begin
 		gv := tpl(true, 'dd', text, ac, null);
 	end;
@@ -2565,7 +2597,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		close cur;
 	end;
 
-	procedure tree(cur sys_refcursor, text varchar2, href varchar2 := null, class varchar2 := null) is
+	procedure tree(cur sys_refcursor, text varchar2 character set any_cs, href varchar2 := null, class varchar2 := null) is
 	begin
 		li_open(class => class);
 		span(a(text, href));
@@ -2593,7 +2625,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 	end;
 
-	procedure add_node(p_level pls_integer, p_text varchar2, p_href varchar2 := null) is
+	procedure add_node(p_level pls_integer, p_text varchar2 character set any_cs, p_href varchar2 := null) is
 	begin
 		if p_level = gv_level + 1 then
 			-- down one level
@@ -2664,9 +2696,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'embed', null, ac, st('title', title, 'src', l(src), 'pluginspace', pluginspage));
 	end;
 
-	procedure object(text varchar2 := null, name varchar2 := null, ac st := null, title varchar2 := null,
-									 classid varchar2 := null, codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
-									 alt varchar2 := null) is
+	procedure object(text varchar2 character set any_cs := null, name varchar2 := null, ac st := null,
+									 title varchar2 := null, classid varchar2 := null, codebase varchar2 := null, data varchar2 := null,
+									 typep varchar2 := null, alt varchar2 := null) is
 	begin
 		gv := tpl(true,
 							'object',
@@ -2745,7 +2777,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	-- public
-	procedure comment(text varchar2) is
+	procedure comment(text varchar2 character set any_cs) is
 		v varchar2(2000);
 	begin
 		if nvl(text, el_open) != el_close then
@@ -2773,13 +2805,14 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 	end;
 
-	function a(text varchar2, href varchar2 := null, target varchar2 := null, ac st := null, method varchar2 := null)
-		return varchar2 is
+	function a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,
+						 method varchar2 := null) return varchar2 is
 	begin
 		return tpl(false, 'a', text, ac, st('href', l(href, true), 'target', target, 'methods', method));
 	end;
 
-	procedure a(text varchar2, href varchar2 := null, target varchar2 := null, ac st := null, method varchar2 := null) is
+	procedure a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,
+							method varchar2 := null) is
 	begin
 		gv := tpl(true, 'a', text, ac, st('href', l(href, true), 'target', target, 'methods', method));
 	end;
@@ -3065,7 +3098,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			dbms_sql.close_cursor(curid);
 	end;
 
-	procedure plsql_marker(unit varchar2, lineno pls_integer, text varchar2 := null) is
+	procedure plsql_marker(unit varchar2, lineno pls_integer, text varchar2 character set any_cs := null) is
 	begin
 		comment(text || ' @ ' || unit || '.' || lineno);
 	end;
