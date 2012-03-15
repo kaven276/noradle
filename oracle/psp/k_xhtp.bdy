@@ -1068,9 +1068,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure title(text varchar2 character set any_cs) is
+		v_title varchar2(1000) character set text%charset;
 	begin
 		assert_in_head('title');
-		line('<title>' || text || '</title>');
+		v_title := '<title>' || text || '</title>';
+		line2(v_title);
 	end;
 
 	procedure title2(text varchar2 character set any_cs) is
@@ -1202,7 +1204,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	-------------------------------
 
-	procedure html_head(title varchar2 default 'psp.web', links st := null, scripts st := null, body boolean default true) is
+	procedure html_head(title varchar2 character set any_cs default 'psp.web', links st := null, scripts st := null,
+											body boolean default true) is
 	begin
 		if gv_doc_type is null then
 			doc_type;
@@ -1233,8 +1236,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		html_close;
 	end;
 
-	procedure h(files varchar2 := null, title varchar2 default 'psp.web', target varchar2 := null, href varchar2 := null,
-							charset varchar2 := null, manifest varchar2 := '') is
+	procedure h(files varchar2 := null, title varchar2 character set any_cs default 'psp.web', target varchar2 := null,
+							href varchar2 := null, charset varchar2 := null, manifest varchar2 := '') is
 		v_file varchar2(32000);
 	begin
 		if not is_dhc then

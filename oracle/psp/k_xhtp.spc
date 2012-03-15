@@ -124,12 +124,13 @@ create or replace package k_xhtp is
 
 	procedure body_close;
 
-	procedure html_head(title varchar2 default 'psp.web', links st := null, scripts st := null, body boolean default true);
+	procedure html_head(title varchar2 character set any_cs default 'psp.web', links st := null, scripts st := null,
+											body boolean default true);
 
 	procedure html_tail;
 
-	procedure h(files varchar2 := null, title varchar2 default 'psp.web', target varchar2 := null, href varchar2 := null,
-							charset varchar2 := null, manifest varchar2 := '');
+	procedure h(files varchar2 := null, title varchar2 character set any_cs default 'psp.web', target varchar2 := null,
+							href varchar2 := null, charset varchar2 := null, manifest varchar2 := '');
 
 	-----------------------------------------------------------------
 
