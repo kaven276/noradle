@@ -491,22 +491,24 @@ create or replace package k_xhtp is
 
 	procedure hr(sizep pls_integer := null, noshade boolean := null, ac st := null);
 
-	function img(src varchar2 := null, alt varchar2 := null, title varchar2 := null, lowsrc varchar2 := null,
-							 ac st := null) return varchar2;
+	function img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
+							 lowsrc varchar2 := null, ac st := null) return varchar2;
 
-	procedure img(src varchar2 := null, alt varchar2 := null, title varchar2 := null, lowsrc varchar2 := null,
-								ac st := null);
+	procedure img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
+								lowsrc varchar2 := null, ac st := null);
 
-	procedure object(text varchar2 character set any_cs := null, name varchar2 := null, ac st := null,
-									 title varchar2 := null, classid varchar2 := null, codebase varchar2 := null, data varchar2 := null,
-									 typep varchar2 := null, alt varchar2 := null);
+	procedure object(text varchar2 := null, name varchar2 := null, ac st := null, title varchar2 := null,
+									 classid varchar2 := null, codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+									 alt varchar2 character set any_cs := null);
 
 	procedure object_open(name varchar2 := null, ac st := null, title varchar2 := null, classid varchar2 := null,
-												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null, alt varchar2 := null);
+												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+												alt varchar2 character set any_cs := null);
 
 	procedure object_close;
 
-	procedure param(name varchar2, value varchar2, ac st := null, valuetype varchar2 := null, typep varchar2 := null);
+	procedure param(name varchar2, value varchar2 character set any_cs, ac st := null, valuetype varchar2 := null,
+									typep varchar2 := null);
 
 	procedure embed(src varchar2 := null, ac st := null, title varchar2 := null, pluginspage varchar2 := null);
 

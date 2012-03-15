@@ -2622,14 +2622,14 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'hr', null, ac, st('size', sizep, 'noshade', b2c(noshade)));
 	end;
 
-	function img(src varchar2 := null, alt varchar2 := null, title varchar2 := null, lowsrc varchar2 := null,
-							 ac st := null) return varchar2 is
+	function img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
+							 lowsrc varchar2 := null, ac st := null) return varchar2 is
 	begin
 		return tpl(false, 'img', null, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
 	end;
 
-	procedure img(src varchar2 := null, alt varchar2 := null, title varchar2 := null, lowsrc varchar2 := null,
-								ac st := null) is
+	procedure img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
+								lowsrc varchar2 := null, ac st := null) is
 	begin
 		gv := tpl(true, 'img', null, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
 	end;
@@ -2639,9 +2639,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'embed', null, ac, st('title', title, 'src', l(src), 'pluginspace', pluginspage));
 	end;
 
-	procedure object(text varchar2 character set any_cs := null, name varchar2 := null, ac st := null,
-									 title varchar2 := null, classid varchar2 := null, codebase varchar2 := null, data varchar2 := null,
-									 typep varchar2 := null, alt varchar2 := null) is
+	procedure object(text varchar2 := null, name varchar2 := null, ac st := null, title varchar2 := null,
+									 classid varchar2 := null, codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+									 alt varchar2 character set any_cs := null) is
 	begin
 		gv := tpl(true,
 							'object',
@@ -2664,7 +2664,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure object_open(name varchar2 := null, ac st := null, title varchar2 := null, classid varchar2 := null,
-												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null, alt varchar2 := null) is
+												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+												alt varchar2 character set any_cs := null) is
 	begin
 		gv := tpl(true,
 							'object',
@@ -2691,9 +2692,10 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('object');
 	end;
 
-	procedure param(name varchar2, value varchar2, ac st := null, valuetype varchar2 := null, typep varchar2 := null) is
+	procedure param(name varchar2, value varchar2 character set any_cs, ac st := null, valuetype varchar2 := null,
+									typep varchar2 := null) is
 	begin
-		gv := tpl(true, 'param', null, ac, st('name', name, 'value', value, 'valuetype', valuetype, 'type', typep));
+		gv := tpl(true, 'param', null, ac, st('name', name, 'valuetype', valuetype, 'type', typep), value);
 	end;
 
 	procedure xml(id varchar2, src varchar2) is
