@@ -497,12 +497,13 @@ create or replace package k_xhtp is
 	procedure img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
 								lowsrc varchar2 := null, ac st := null);
 
-	procedure object(text varchar2 := null, name varchar2 := null, ac st := null, title varchar2 := null,
-									 classid varchar2 := null, codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+	procedure object(text varchar2 character set any_cs := null, name varchar2 := null, ac st := null,
+									 title varchar2 := null, classid varchar2 := null, codebase varchar2 := null,
+									 data varchar2 character set any_cs := null, typep varchar2 := null,
 									 alt varchar2 character set any_cs := null);
 
 	procedure object_open(name varchar2 := null, ac st := null, title varchar2 := null, classid varchar2 := null,
-												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+												codebase varchar2 := null, data varchar2 character set any_cs := null, typep varchar2 := null,
 												alt varchar2 character set any_cs := null);
 
 	procedure object_close;

@@ -2624,14 +2624,16 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	function img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
 							 lowsrc varchar2 := null, ac st := null) return varchar2 is
+		v_text varchar2(1) character set alt%charset := null;
 	begin
-		return tpl(false, 'img', null, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
+		return tpl(false, 'img', v_text, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
 	end;
 
 	procedure img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
 								lowsrc varchar2 := null, ac st := null) is
+		v_text varchar2(1) character set alt%charset := null;
 	begin
-		gv := tpl(true, 'img', null, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
+		gv := tpl(true, 'img', v_text, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
 	end;
 
 	procedure embed(src varchar2 := null, ac st := null, title varchar2 := null, pluginspage varchar2 := null) is
@@ -2639,13 +2641,15 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'embed', null, ac, st('title', title, 'src', l(src), 'pluginspace', pluginspage));
 	end;
 
-	procedure object(text varchar2 := null, name varchar2 := null, ac st := null, title varchar2 := null,
-									 classid varchar2 := null, codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+	procedure object(text varchar2 character set any_cs := null, name varchar2 := null, ac st := null,
+									 title varchar2 := null, classid varchar2 := null, codebase varchar2 := null,
+									 data varchar2 character set any_cs := null, typep varchar2 := null,
 									 alt varchar2 character set any_cs := null) is
+		v_text varchar2(32000) character set alt%charset := text;
 	begin
 		gv := tpl(true,
 							'object',
-							text,
+							v_text,
 							ac,
 							st('name',
 								 name,
@@ -2664,12 +2668,13 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure object_open(name varchar2 := null, ac st := null, title varchar2 := null, classid varchar2 := null,
-												codebase varchar2 := null, data varchar2 := null, typep varchar2 := null,
+												codebase varchar2 := null, data varchar2 character set any_cs := null, typep varchar2 := null,
 												alt varchar2 character set any_cs := null) is
+		v_text varchar2(10) character set alt%charset := el_open;
 	begin
 		gv := tpl(true,
 							'object',
-							el_open,
+							v_text,
 							ac,
 							st('name',
 								 name,
@@ -2694,8 +2699,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure param(name varchar2, value varchar2 character set any_cs, ac st := null, valuetype varchar2 := null,
 									typep varchar2 := null) is
+		v_text varchar2(1) character set value%charset := null;
 	begin
-		gv := tpl(true, 'param', null, ac, st('name', name, 'valuetype', valuetype, 'type', typep), value);
+		gv := tpl(true, 'param', v_text, ac, st('name', name, 'valuetype', valuetype, 'type', typep), value);
 	end;
 
 	procedure xml(id varchar2, src varchar2) is
