@@ -46,14 +46,14 @@ create or replace package r is
 	procedure getc
 	(
 		name   varchar2,
-		value  in out nocopy varchar2,
+		value  in out nocopy varchar2 character set any_cs,
 		defval varchar2
 	);
 
 	procedure getc
 	(
 		name  varchar2,
-		value in out nocopy varchar2
+		value in out nocopy varchar2 character set any_cs
 	);
 
 	procedure getn
@@ -89,10 +89,10 @@ create or replace package r is
 	function getc
 	(
 		name   varchar2,
-		defval varchar2
-	) return varchar2;
+		defval nvarchar2
+	) return nvarchar2;
 
-	function getc(name varchar2) return varchar2;
+	function getc(name varchar2) return nvarchar2;
 
 	function getn
 	(

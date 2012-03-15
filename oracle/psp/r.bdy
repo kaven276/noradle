@@ -335,11 +335,11 @@ create or replace package body r is
 	procedure getc
 	(
 		name   varchar2,
-		value  in out nocopy varchar2,
+		value  in out nocopy varchar2 character set any_cs,
 		defval varchar2
 	) is
 	begin
-		value := ra.params(name) (1);
+		value := utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
 	exception
 		when no_data_found then
 			value := defval;
@@ -348,10 +348,10 @@ create or replace package body r is
 	procedure getc
 	(
 		name  varchar2,
-		value in out nocopy varchar2
+		value in out nocopy varchar2 character set any_cs
 	) is
 	begin
-		value := ra.params(name) (1);
+		value := utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
@@ -422,18 +422,18 @@ create or replace package body r is
 	function getc
 	(
 		name   varchar2,
-		defval varchar2
-	) return varchar2 is
+		defval nvarchar2
+	) return nvarchar2 is
 	begin
-		return ra.params(name)(1);
+		return utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
 	exception
 		when no_data_found then
 			return defval;
 	end;
 
-	function getc(name varchar2) return varchar2 is
+	function getc(name varchar2) return nvarchar2 is
 	begin
-		return ra.params(name)(1);
+		return utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
