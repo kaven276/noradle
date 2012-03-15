@@ -49,8 +49,8 @@ create or replace package k_xhtp is
 	procedure prn(text in out nocopy clob character set any_cs);
 	procedure line(text varchar2 character set any_cs := '');
 	procedure l(txt varchar2, var st := null);
-	function w(text varchar2 character set any_cs) return varchar2;
-	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2;
+	function w(text varchar2 character set any_cs) return varchar2 character set text%charset;
+	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2 character set pat%charset;
 	procedure ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':');
 	procedure blank_line(amount pls_integer := null);
 	procedure print(text varchar2 character set any_cs);
@@ -72,7 +72,8 @@ create or replace package k_xhtp is
 	-- function split4tab(p varchar2, sep varchar2 := ',') return st;
 	procedure join(sep varchar2 := ',');
 	procedure split2(pairs varchar2, sep varchar2 := ';:');
-	function tf(cond boolean, true_str varchar2, false_str varchar2 := '') return varchar2 deterministic;
+	function tf(cond boolean, true_str varchar2 character set any_cs, false_str varchar2 character set any_cs := '')
+		return varchar2 character set true_str%charset deterministic;
 
 	procedure print_cgi_env;
 	procedure go(url varchar2, vals st := null, info varchar2 := null);
@@ -88,11 +89,9 @@ create or replace package k_xhtp is
 
 	-----------------------
 
-	function tag(name varchar2, text varchar2 character set any_cs, ac st := null,
-							 -- stand for static bound parameters for attributes and inline-styles
-							 da st := null
-							 -- stand for dynamic bound parameters for attributes
-							 ) return varchar2;
+	-- param ac : stand for static bound parameters for attributes and inline-styles
+	-- param da : stand for dynamic bound parameters for attributes
+	function tag(name varchar2, text varchar2 character set any_cs, ac st := null, da st := null) return varchar2 character set text%charset;
 
 	procedure tag(name varchar2, text varchar2 character set any_cs, ac st := null, da st := null);
 
@@ -206,12 +205,12 @@ create or replace package k_xhtp is
 
 	procedure marquee_close;
 
-	function span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2;
+	function span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 character set text%charset;
 
 	procedure span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
 								 class varchar2 := null);
 
-	function b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2;
+	function b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 character set text%charset;
 
 	procedure b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null, class varchar2 := null);
 
@@ -282,7 +281,7 @@ create or replace package k_xhtp is
 
 	procedure tr(text varchar2 character set any_cs, ac st := null, class varchar2 := null);
 
-	function tr(text varchar2 character set any_cs, ac st := null) return varchar2;
+	function tr(text varchar2 character set any_cs, ac st := null) return varchar2 character set text%charset;
 
 	procedure tr_close;
 
@@ -290,13 +289,13 @@ create or replace package k_xhtp is
 							 rowspan pls_integer := null, class varchar2 := null);
 
 	function td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
-							rowspan pls_integer := null, class varchar2 := null) return varchar2;
+							rowspan pls_integer := null, class varchar2 := null) return varchar2 character set text%charset;
 
 	procedure th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							 rowspan pls_integer := null, class varchar2 := null);
 
 	function th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
-							rowspan pls_integer := null, class varchar2 := null) return varchar2;
+							rowspan pls_integer := null, class varchar2 := null) return varchar2 character set text%charset;
 
 	procedure ths(texts st);
 
@@ -330,7 +329,7 @@ create or replace package k_xhtp is
 	procedure label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null);
 
 	function label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null)
-		return varchar2;
+		return varchar2 character set text%charset;
 
 	procedure label_open(ac st := null, title varchar2 := null, forp varchar2 := null);
 
@@ -338,14 +337,15 @@ create or replace package k_xhtp is
 
 	procedure auto_input_class(flag boolean := true);
 
-	function input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false, ac st := null,
-													title varchar2 := null, disabled boolean := null) return varchar2;
+	function input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false,
+													ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
-													 checked boolean := false, ac st := null, title varchar2 := null, disabled boolean := null);
+	procedure input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null,
+													 label_ex varchar2 := null, checked boolean := false, ac st := null, title varchar2 := null,
+													 disabled boolean := null);
 
-	function input_radio(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false, ac st := null,
-											 title varchar2 := null, disabled boolean := null) return varchar2;
+	function input_radio(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false,
+											 ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset;
 
 	procedure input_radio(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
 												checked boolean := false, ac st := null, title varchar2 := null, disabled boolean := null);
@@ -364,50 +364,50 @@ create or replace package k_xhtp is
 	procedure input_file(name varchar2 := null, label_ex varchar2 := null, ac st := null, title varchar2 := null,
 											 sizep pls_integer := null, disabled boolean := null);
 
-	function input_password(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-													sizep pls_integer := null, maxlength pls_integer := null, readonly boolean := null,
-													disabled boolean := null) return varchar2;
+	function input_password(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+													title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
+													readonly boolean := null, disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure input_password(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null, ac st := null,
-													 title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
-													 readonly boolean := null, disabled boolean := null);
+	procedure input_password(name varchar2 := null, value varchar2 character set any_cs := null,
+													 label_ex varchar2 := null, ac st := null, title varchar2 := null, sizep pls_integer := null,
+													 maxlength pls_integer := null, readonly boolean := null, disabled boolean := null);
 
-	function input_text(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-											sizep pls_integer := null, maxlength pls_integer := null, readonly boolean := null,
-											disabled boolean := null) return varchar2;
+	function input_text(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+											title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
+											readonly boolean := null, disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure input_text(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null, ac st := null,
-											 title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
+	procedure input_text(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
+											 ac st := null, title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
 											 readonly boolean := null, disabled boolean := null);
 
-	function textarea(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-										rows pls_integer := null, cols pls_integer := null, readonly boolean := null,
-										disabled boolean := null) return varchar2;
+	function textarea(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+										title varchar2 := null, rows pls_integer := null, cols pls_integer := null, readonly boolean := null,
+										disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure textarea(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null, ac st := null,
-										 title varchar2 := null, rows pls_integer := null, cols pls_integer := null,
+	procedure textarea(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
+										 ac st := null, title varchar2 := null, rows pls_integer := null, cols pls_integer := null,
 										 readonly boolean := null, disabled boolean := null);
 
 	procedure button(name varchar2, value varchar2, text varchar2 character set any_cs, ac st := null,
 									 title varchar2 := null, disabled boolean := null);
 
-	function input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-												disabled boolean := null) return varchar2;
+	function input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-												 disabled boolean := null);
+	procedure input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												 title varchar2 := null, disabled boolean := null);
 
-	function input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-												disabled boolean := null) return varchar2;
+	function input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-												 disabled boolean := null);
+	procedure input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												 title varchar2 := null, disabled boolean := null);
 
-	function input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-											 disabled boolean := null) return varchar2;
+	function input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+											 title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset;
 
-	procedure input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null, title varchar2 := null,
-												disabled boolean := null);
+	procedure input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
+												title varchar2 := null, disabled boolean := null);
 
 	procedure select_open(name varchar2 := null, value_ex varchar2 := null, label_ex varchar2 := null, ac st := null,
 												title varchar2 := null, sizep pls_integer := null, multiple boolean := false,
@@ -415,8 +415,8 @@ create or replace package k_xhtp is
 
 	procedure select_close;
 
-	procedure select_option(text varchar2 character set any_cs, value varchar2 character set any_cs := null, selected boolean := null,
-													ac st := null, disabled boolean := null, label varchar2 := null);
+	procedure select_option(text varchar2 character set any_cs, value varchar2 character set any_cs := null,
+													selected boolean := null, ac st := null, disabled boolean := null, label varchar2 := null);
 
 	procedure optgroup(label varchar2 := null, ac st := null, disabled boolean := null);
 
@@ -519,7 +519,7 @@ create or replace package k_xhtp is
 
 	-- link
 	function a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,
-						 method varchar2 := null) return varchar2;
+						 method varchar2 := null) return varchar2 character set text%charset;
 	--pragma restrict_references(a, wnds, rnds);
 
 	procedure a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,

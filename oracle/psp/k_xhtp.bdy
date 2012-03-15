@@ -190,9 +190,15 @@ create or replace package body k_xhtp is
 		end loop;
 	end;
 
-	function tf(cond boolean, true_str varchar2, false_str varchar2) return varchar2 is
+	function tf(cond boolean, true_str varchar2 character set any_cs, false_str varchar2 character set any_cs)
+		return varchar2 character set true_str%charset is
 	begin
-		return case when cond then true_str else false_str end;
+		-- return case when cond then true_str else false_str end;
+		if cond then
+			return true_str;
+		else
+			return false_str;
+		end if;
 	end;
 
 	function fill_pairs(cur pairs_t) return number is
@@ -629,12 +635,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	---------------------------------------------------------------------------
 
-	function w(text varchar2 character set any_cs) return varchar2 is
+	function w(text varchar2 character set any_cs) return varchar2 character set text%charset is
 	begin
 		return regexp_replace(text, '(.)', '<b>\1</b>');
 	end;
 
-	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2 is
+	function ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') return varchar2 character set pat%charset is
 		v_str varchar2(32000) := pat;
 		v_chr char(1) := chr(0);
 	begin
@@ -672,7 +678,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end case;
 	end;
 
-	function get_tag(full_tag varchar2) return varchar2 is
+	function get_tag(full_tag varchar2 character set any_cs) return varchar2 character set full_tag%charset is
 		v_pos pls_integer;
 	begin
 		v_pos := instrb(full_tag, ' ');
@@ -788,7 +794,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	
 	end;
 
-	function tag(name varchar2, text varchar2 character set any_cs, ac st, da st) return varchar2 is
+	function tag(name varchar2, text varchar2 character set any_cs, ac st, da st) return varchar2 character set text%charset is
 	begin
 		return tpl(false, name, text, ac, da);
 	end;
@@ -798,11 +804,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, name, text, ac, da);
 	end;
 
-	procedure tag_open(name varchar2, ac st := null,
-										 -- stand for static bound parameters for attributes and inline-styles
-										 da st := null
-										 -- stand for dynamic bound parameters for attributes
-										 ) is
+	procedure tag_open(name varchar2, ac st := null, da st := null) is
 	begin
 		gv := tpl(true, name, el_open, ac, da);
 	end;
@@ -1334,7 +1336,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		tag_close('marquee');
 	end;
 
-	function span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 is
+	function span(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'span', text, ac, st('title', title));
 	end;
@@ -1345,7 +1347,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'span', text, ac, st('title', title, 'class', class));
 	end;
 
-	function b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 is
+	function b(text varchar2 character set any_cs := null, ac st := null, title varchar2 := null) return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'b', text, ac, st('title', title));
 	end;
@@ -1599,7 +1601,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv := tpl(true, 'tr', text, ac, st('class', class || ' ' || tr_switch));
 	end;
 
-	function tr(text varchar2 character set any_cs, ac st := null) return varchar2 is
+	function tr(text varchar2 character set any_cs, ac st := null) return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'tr', text, ac, null);
 	end;
@@ -1626,7 +1628,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
-							rowspan pls_integer := null, class varchar2 := null) return varchar2 is
+							rowspan pls_integer := null, class varchar2 := null) return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'td', text, ac, st('title', title, 'colspan', colspan, 'rowspan', rowspan, 'class', class));
 	end;
@@ -1638,7 +1640,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function th(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
-							rowspan pls_integer := null, class varchar2 := null) return varchar2 is
+							rowspan pls_integer := null, class varchar2 := null) return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'th', text, ac, st('title', title, 'colspan', colspan, 'rowspan', rowspan, 'class', class));
 	end;
@@ -1803,7 +1805,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function label(text varchar2 character set any_cs, ac st := null, title varchar2 := null, forp varchar2 := null)
-		return varchar2 is
+		return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'label', text, ac, st('title', title, 'for', forp));
 	end;
@@ -1824,7 +1826,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false,
-													ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 is
+													ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -1869,7 +1871,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function input_radio(name varchar2 := null, value varchar2 character set any_cs := null, checked boolean := false,
-											 ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 is
+											 ac st := null, title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -1981,7 +1983,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	function input_password(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
 													title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
-													readonly boolean := null, disabled boolean := null) return varchar2 is
+													readonly boolean := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -2035,7 +2037,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	function input_text(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
 											title varchar2 := null, sizep pls_integer := null, maxlength pls_integer := null,
-											readonly boolean := null, disabled boolean := null) return varchar2 is
+											readonly boolean := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -2089,7 +2091,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	function textarea(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
 										title varchar2 := null, rows pls_integer := null, cols pls_integer := null, readonly boolean := null,
-										disabled boolean := null) return varchar2 is
+										disabled boolean := null) return varchar2 character set value%charset is
 	begin
 		return tpl(false,
 							 'textarea',
@@ -2140,7 +2142,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
-												title varchar2 := null, disabled boolean := null) return varchar2 is
+												title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -2164,7 +2166,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
-												title varchar2 := null, disabled boolean := null) return varchar2 is
+												title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -2188,7 +2190,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
-											 title varchar2 := null, disabled boolean := null) return varchar2 is
+											 title varchar2 := null, disabled boolean := null) return varchar2 character set value%charset is
 		v_text varchar2(1) character set value%charset := '';
 	begin
 		return tpl(false,
@@ -2744,7 +2746,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	function a(text varchar2 character set any_cs, href varchar2 := null, target varchar2 := null, ac st := null,
-						 method varchar2 := null) return varchar2 is
+						 method varchar2 := null) return varchar2 character set text%charset is
 	begin
 		return tpl(false, 'a', text, ac, st('href', l(href, true), 'target', target, 'methods', method));
 	end;
