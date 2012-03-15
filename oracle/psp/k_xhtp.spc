@@ -10,7 +10,6 @@ create or replace package k_xhtp is
 
 	gv_xhtp boolean := false;
 
-	dad_charset varchar2(30);
 	mime_type   varchar2(100);
 
 	gv_headers_str varchar2(200);
