@@ -691,13 +691,18 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	------------------
 
+	-- private
+	function prop(name varchar2, value varchar2 character set any_cs) return varchar2 character set value%charset is
+	begin
+		return ' ' || name || '="' || value || '"';
+	end;
+
 	-- private, common tag output API
 	function tpl(output boolean, name varchar2, text varchar2 character set any_cs, ac in st, da st,
-							 value varchar2 character set text%charset := null) return varchar2 character set text%charset is
+							 prop varchar2 character set text%charset := null) return varchar2 character set text%charset is
 		v_ac  varchar2(4000) character set text%charset;
 		v_a1  varchar2(4000) character set text%charset;
 		v_a2  varchar2(4000) character set text%charset;
-		v_val varchar2(4000) character set text%charset;
 		v_s   varchar2(4000) character set text%charset;
 		v_pos pls_integer;
 		m     varchar2(32000) character set text%charset;
@@ -738,10 +743,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			raise_application_error(-20000, 'attributes must use =, and not :, for [' || v_ac || ']');
 		end if;
 	
-		if value is not null then
-			v_val := ' value="' || value || '"';
-		end if;
-	
 		-- free attributes part
 		if da is not null then
 			for i in 1 .. floor(da.count / 2) loop
@@ -757,19 +758,19 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	
 		case text
 			when el_open then
-				m := '<' || name || v_val || v_a2 || v_a1 || v_s || '>';
+				m := '<' || name || prop || v_a2 || v_a1 || v_s || '>';
 			when el_close then
 				m := '</' || v_tag || '>';
 			else
 				if text is null then
 					if regexp_like(name, '^(base|meta|br|hr|col|input|img|link|area|param)$') then
 						-- |embed|object|frame
-						m := '<' || name || v_val || v_a2 || v_a1 || v_s || '/>';
+						m := '<' || name || prop || v_a2 || v_a1 || v_s || '/>';
 					else
-						m := '<' || name || v_val || v_a2 || v_a1 || v_s || '></' || v_tag || '>';
+						m := '<' || name || prop || v_a2 || v_a1 || v_s || '></' || v_tag || '>';
 					end if;
 				else
-					m := '<' || name || v_val || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
+					m := '<' || name || prop || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
 				end if;
 		end case;
 	
@@ -1846,7 +1847,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(checked),
 									'disabled',
 									b2c(nvl(disabled, gv_disabled))),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_checkbox(name varchar2 := null, value varchar2 character set any_cs := null,
@@ -1869,7 +1870,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2c(checked),
 								 'disabled',
 								 b2c(nvl(disabled, gv_disabled))),
-							value);
+							prop('value', value));
 		form_item_close;
 	end;
 
@@ -1891,7 +1892,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(checked),
 									'disabled',
 									b2c(nvl(disabled, gv_disabled))),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_radio(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
@@ -1913,14 +1914,14 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2c(checked),
 								 'disabled',
 								 b2c(nvl(disabled, gv_disabled))),
-							value);
+							prop('value', value));
 		form_item_close;
 	end;
 
 	procedure input_hidden(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null) is
 		v_text varchar2(1) character set value%charset := '';
 	begin
-		gv := tpl(true, 'input', v_text, ac, st('type', 'hidden', 'name', name), value);
+		gv := tpl(true, 'input', v_text, ac, st('type', 'hidden', 'name', name), prop('value', value));
 	end;
 
 	procedure input_keep(name varchar2) is
@@ -2007,7 +2008,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(readonly, gv_readonly)),
 									'disabled',
 									b2c(disabled)),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_password(name varchar2 := null, value varchar2 character set any_cs := null,
@@ -2034,7 +2035,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2c(nvl(readonly, gv_readonly)),
 								 'disabled',
 								 b2c(disabled)),
-							value);
+							prop('value', value));
 		form_item_close;
 	end;
 
@@ -2061,7 +2062,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									b2c(nvl(readonly, gv_readonly)),
 									'disabled',
 									b2c(disabled)),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_text(name varchar2 := null, value varchar2 character set any_cs := null, label_ex varchar2 := null,
@@ -2088,7 +2089,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 b2c(nvl(readonly, gv_readonly)),
 								 'disabled',
 								 b2c(disabled)),
-							value);
+							prop('value', value));
 		form_item_close;
 	end;
 
@@ -2141,7 +2142,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure button(name varchar2, value varchar2, text varchar2 character set any_cs, ac st := null,
 									 title varchar2 := null, disabled boolean := null) is
 	begin
-		gv := tpl(true, 'button', text, ac, st('name', name, 'title', title, 'disabled', b2c(disabled)), value);
+		gv := tpl(true,
+							'button',
+							text,
+							ac,
+							st('name', name, 'title', title, 'disabled', b2c(disabled)),
+							prop('value', value));
 	end;
 
 	function input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
@@ -2153,7 +2159,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							 v_text,
 							 ac,
 							 st('type', 'button', 'name', name, 'title', title, 'disabled', b2c(nvl(disabled, gv_disabled))),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_button(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
@@ -2165,7 +2171,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							v_text,
 							ac,
 							st('type', 'button', 'name', name, 'title', title, 'disabled', b2c(nvl(disabled, gv_disabled))),
-							value);
+							prop('value', value));
 	end;
 
 	function input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
@@ -2177,7 +2183,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							 v_text,
 							 ac,
 							 st('type', 'submit', 'name', name, 'title', title, 'disabled', b2c(nvl(disabled, gv_disabled))),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_submit(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
@@ -2189,7 +2195,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							v_text,
 							ac,
 							st('type', 'submit', 'name', name, 'title', title, 'disabled', b2c(nvl(disabled, gv_disabled))),
-							value);
+							prop('value', value));
 	end;
 
 	function input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
@@ -2201,7 +2207,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							 v_text,
 							 ac,
 							 st('type', 'reset', 'name', name, 'title', title, 'disabled', b2c(nvl(disabled, gv_disabled))),
-							 value);
+							 prop('value', value));
 	end;
 
 	procedure input_reset(name varchar2 := null, value varchar2 character set any_cs := null, ac st := null,
@@ -2213,7 +2219,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							v_text,
 							ac,
 							st('type', 'reset', 'name', name, 'title', title, 'disabled', b2c(nvl(disabled, gv_disabled))),
-							value);
+							prop('value', value));
 	end;
 
 	procedure select_open(name varchar2 := null, value_ex varchar2 := null, label_ex varchar2 := null, ac st := null,
@@ -2253,7 +2259,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							text,
 							ac,
 							st('selected', b2c(nvl(selected, gv_sv = value)), 'disabled', b2c(disabled), 'label', label),
-							value);
+							prop('value', value));
 	end;
 
 	procedure optgroup(label varchar2 := null, ac st := null, disabled boolean := null) is
@@ -2626,14 +2632,14 @@ for(i=0;i<k_xhtp.errors.length;i++)
 							 lowsrc varchar2 := null, ac st := null) return varchar2 is
 		v_text varchar2(1) character set alt%charset := null;
 	begin
-		return tpl(false, 'img', v_text, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
+		return tpl(false, 'img', v_text, ac, st('src', l(src), 'title', title, 'lowsrc', l(lowsrc)), prop('alt', alt));
 	end;
 
 	procedure img(src varchar2 := null, alt varchar2 character set any_cs := null, title varchar2 := null,
 								lowsrc varchar2 := null, ac st := null) is
 		v_text varchar2(1) character set alt%charset := null;
 	begin
-		gv := tpl(true, 'img', v_text, ac, st('src', l(src), 'alt', alt, 'title', title, 'lowsrc', l(lowsrc)));
+		gv := tpl(true, 'img', v_text, ac, st('src', l(src), 'title', title, 'lowsrc', l(lowsrc)), prop('alt', alt));
 	end;
 
 	procedure embed(src varchar2 := null, ac st := null, title varchar2 := null, pluginspage varchar2 := null) is
@@ -2662,9 +2668,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 'data',
 								 l(data),
 								 'type',
-								 typep,
-								 'alt',
-								 alt));
+								 typep),
+							prop('alt', alt));
 	end;
 
 	procedure object_open(name varchar2 := null, ac st := null, title varchar2 := null, classid varchar2 := null,
@@ -2687,9 +2692,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 								 'data',
 								 l(data),
 								 'type',
-								 typep,
-								 'alt',
-								 alt));
+								 typep),
+							prop('alt', alt));
 	end;
 
 	procedure object_close is
@@ -2701,7 +2705,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 									typep varchar2 := null) is
 		v_text varchar2(1) character set value%charset := null;
 	begin
-		gv := tpl(true, 'param', v_text, ac, st('name', name, 'valuetype', valuetype, 'type', typep), value);
+		gv := tpl(true, 'param', v_text, ac, st('name', name, 'valuetype', valuetype, 'type', typep), prop('value', value));
 	end;
 
 	procedure xml(id varchar2, src varchar2) is
