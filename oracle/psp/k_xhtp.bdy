@@ -956,15 +956,15 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		assert(gv_tag_len = 1 and gv_tags(1) = 'html', 'head tag must be positioned directly under html tag.');
 		line('<head>');
 		tag_push('head');
+		line('<meta name="generator" content="PSP.WEB"/>');
+		meta_http_equiv('Content-Type', 'text/html;charset=' || pv.charset);
 	end;
 
 	procedure head_close is
 	begin
-		line('<meta name="generator" content="PSP.WEB"/>');
 		if gv_compatible is not null then
 			meta_http_equiv('X-UA-Compatible', gv_compatible);
 		end if;
-		-- meta_http_equiv('Content-Type', 'text/html;charset=' || utl_i18n.map_charset(dad_charset));
 		if gv_vml then
 			line('<?import namespace="v" implementation="#default#VML"?>');
 			line('<?import namespace="o" implementation="#default#VML"?>');
