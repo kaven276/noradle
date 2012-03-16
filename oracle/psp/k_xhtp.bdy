@@ -694,6 +694,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	-- private
 	function prop(name varchar2, value varchar2 character set any_cs) return varchar2 character set value%charset is
 	begin
+		if value is null then
+			return '';
+		end if;
 		return ' ' || name || '="' || value || '"';
 	end;
 
@@ -717,7 +720,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	
 		-- parse ac
 		if ac is not null then
-			v_ac := ac(1);
+			v_ac := ac(1); 
 			for i in 1 .. ac.count - 1 loop
 				v_ac := replace(v_ac, '?' || i, ac(1 + i));
 			end loop;
