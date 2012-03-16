@@ -230,17 +230,8 @@ create or replace package body k_xhtp is
 
 	-- private
 	function l(p varchar2, to_proc boolean := false) return varchar2 is
-		r varchar2(32000);
+		r varchar2(32000) := p; -- utl_url.escape(p, false, pv.charset_ora);
 	begin
-		--execute immediate 'begin :r :=u(trim(substr(:p,3))); end;'
-		--using out r, p;
-	
-		if length(p) != lengthb(p) then
-			r := utl_url.escape(p, false, pv.charset_ora);
-		else
-			r := p;
-		end if;
-	
 		if r like 'u:%' then
 			return u(trim(substr(r, 3)), to_proc);
 		elsif r is not null then
