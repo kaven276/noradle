@@ -7,78 +7,61 @@ create or replace package k_type_tool is
 		item varchar2(2000));
 
 	function d2s(p_date date) return varchar2;
-
 	function dt2s(p_date date) return varchar2;
-
 	function s2d(p_date varchar2) return date;
-
 	function s2dt(p_date varchar2) return date;
-
 	function hdt2s(p_date date := sysdate) return varchar2;
-
 	function s2hdt(p_date varchar2) return date;
 
 	procedure half
 	(
-		p_str   varchar2,
-		p_left  in out nocopy varchar2,
-		p_right in out nocopy varchar2
+		p_str   varchar2 character set any_cs,
+		p_left  in out nocopy varchar2 character set p_str%charset,
+		p_right in out nocopy varchar2 character set p_str%charset
 	);
 
 	function gen_token(p_algorithm binary_integer := 0) return varchar2;
 
 	function ps
 	(
-		tpl  in varchar2,
-		subs varchar2
-	) return varchar2;
+		tpl  in varchar2 character set any_cs,
+		subs varchar2 character set any_cs
+	) return varchar2 character set tpl%charset;
 
 	function ps
 	(
-		pat  varchar2,
+		pat  varchar2 character set any_cs,
 		vals st,
 		ch   char := ':'
-	) return varchar2;
+	) return varchar2 character set pat%charset;
 
 	-- like c's printf, use ~ for replacement by default
 	function pf
 	(
-		pat varchar2,
-		sub varchar2,
-		ch  char := '~'
-	) return varchar2;
-	function pf
-	(
-		pat  varchar2,
+		pat  varchar2 character set any_cs,
 		subs st,
 		ch   char := '~'
-	) return varchar2;
-
-	function lspace
-	(
-		p varchar2,
-		s varchar2 := ' '
-	) return varchar2;
+	) return varchar2 character set pat%charset;
 
 	function tf
 	(
 		cond boolean,
-		t    varchar2,
-		f    varchar2 := ''
-	) return varchar2;
+		t    varchar2 character set any_cs,
+		f    varchar2 character set t%charset := ''
+	) return varchar2 character set t%charset;
 
 	function nnpre
 	(
-		pre varchar2,
-		str varchar2
-	) return varchar2;
+		pre varchar2 character set any_cs,
+		str varchar2 character set any_cs
+	) return varchar2 character set str%charset;
 
 	function nvl2
 	(
-		cond varchar2,
-		nn   varchar2,
-		n    varchar2 := ''
-	) return varchar2;
+		cond varchar2 character set any_cs,
+		nn   varchar2 character set cond%charset,
+		n    varchar2 character set cond%charset := ''
+	) return varchar2 character set cond%charset;
 
 	procedure split
 	(

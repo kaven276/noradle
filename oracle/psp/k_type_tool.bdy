@@ -35,9 +35,9 @@ create or replace package body k_type_tool is
 
 	procedure half
 	(
-		p_str   varchar2,
-		p_left  in out nocopy varchar2,
-		p_right in out nocopy varchar2
+		p_str   varchar2 character set any_cs,
+		p_left  in out nocopy varchar2 character set p_str%charset,
+		p_right in out nocopy varchar2 character set p_str%charset
 	) is
 		v_pos pls_integer;
 	begin
@@ -82,14 +82,14 @@ create or replace package body k_type_tool is
 
 	function ps
 	(
-		tpl  varchar2,
-		subs varchar2
-	) return varchar2 is
+		tpl  varchar2 character set any_cs,
+		subs varchar2 character set any_cs
+	) return varchar2 character set tpl%charset is
 		v_pos1 pls_integer := 0;
 		v_pos2 pls_integer;
 		v_cnt  pls_integer := 0;
-		v_rtn  varchar2(2000);
-		v_str  varchar2(100);
+		v_rtn  varchar2(2000) character set tpl%charset;
+		v_str  varchar2(1000) character set subs%charset;
 	begin
 		if subs is null then
 			return tpl;
@@ -115,11 +115,11 @@ create or replace package body k_type_tool is
 
 	function ps
 	(
-		pat  varchar2,
+		pat  varchar2 character set any_cs,
 		vals st,
 		ch   char := ':'
-	) return varchar2 is
-		v_str varchar2(32000) := pat;
+	) return varchar2 character set pat%charset is
+		v_str varchar2(32000) character set pat%charset := pat;
 		v_chr char(1) := chr(0);
 	begin
 		for i in 1 .. vals.count loop
@@ -131,44 +131,25 @@ create or replace package body k_type_tool is
 	-- like c's printf, use ~ for replacement by default
 	function pf
 	(
-		pat varchar2,
-		sub varchar2,
-		ch  char := '~'
-	) return varchar2 is
-	begin
-		return replace(pat, ch, sub);
-	end;
-
-	function pf
-	(
-		pat  varchar2,
+		pat  varchar2 character set any_cs,
 		subs st,
 		ch   char := '~'
-	) return varchar2 is
+	) return varchar2 character set pat%charset is
 		v_rtn varchar2(32000);
 	begin
 		v_rtn := regexp_replace(pat, ch, subs(1), 1);
 		for i in 2 .. subs.count loop
-			v_rtn := regexp_replace(v_rtn, ch, subs(1), 1);
+			v_rtn := regexp_replace(v_rtn, ch, subs(i), 1);
 		end loop;
 		return v_rtn;
-	end;
-
-	function lspace
-	(
-		p varchar2,
-		s varchar2 := ' '
-	) return varchar2 is
-	begin
-		return regexp_replace(p, '([^$])', '\1' || s);
 	end;
 
 	function tf
 	(
 		cond boolean,
-		t    varchar2,
-		f    varchar2
-	) return varchar2 is
+		t    varchar2 character set any_cs,
+		f    varchar2 character set t%charset := ''
+	) return varchar2 character set t%charset is
 	begin
 		if cond then
 			return t;
@@ -179,9 +160,9 @@ create or replace package body k_type_tool is
 
 	function nnpre
 	(
-		pre varchar2,
-		str varchar2
-	) return varchar2 is
+		pre varchar2 character set any_cs,
+		str varchar2 character set any_cs
+	) return varchar2 character set str%charset is
 	begin
 		if str is null then
 			return null;
@@ -191,10 +172,10 @@ create or replace package body k_type_tool is
 
 	function nvl2
 	(
-		cond varchar2,
-		nn   varchar2,
-		n    varchar2
-	) return varchar2 is
+		cond varchar2 character set any_cs,
+		nn   varchar2 character set cond%charset,
+		n    varchar2 character set cond%charset := ''
+	) return varchar2 character set cond%charset is
 	begin
 		if cond is not null then
 			return nn;
