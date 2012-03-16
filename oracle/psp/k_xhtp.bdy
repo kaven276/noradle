@@ -1079,7 +1079,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		v_href varchar2(1000);
 	begin
 		assert_in_head('base');
-		v_href := nvl(href, r.cgi('SCRIPT_NAME') || '/');
 		gv     := tpl(true, 'base', null, null, st('href', l(href), 'target', nvl(target, '_self')));
 	end;
 
