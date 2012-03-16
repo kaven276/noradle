@@ -60,6 +60,7 @@ create or replace package pv is
 
 	cs_char  varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
 	cs_nchar varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
+	cs_req   varchar2(30);
 
 	ex_resp_done exception;
 	ex_fltr_done exception;

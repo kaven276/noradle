@@ -37,6 +37,10 @@ create or replace package r is
 	function nd return date;
 	function nn return number;
 
+	procedure req_charset(cs varchar2);
+	procedure req_charset_db;
+	procedure req_charset_utf8;
+
 	procedure setc
 	(
 		name  varchar2,

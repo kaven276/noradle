@@ -332,6 +332,21 @@ create or replace package body r is
 		return null;
 	end;
 
+	procedure req_charset(cs varchar2) is
+	begin
+		pv.cs_req := utl_i18n.map_charset(cs, 0, 1);
+	end;
+
+	procedure req_charset_db is
+	begin
+		pv.cs_req := pv.cs_char;
+	end;
+
+	procedure req_charset_utf8 is
+	begin
+		pv.cs_req := 'AL32UTF8';
+	end;
+
 	procedure getc
 	(
 		name   varchar2,
@@ -339,7 +354,7 @@ create or replace package body r is
 		defval varchar2
 	) is
 	begin
-		value := utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
+		value := utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
 	exception
 		when no_data_found then
 			value := defval;
@@ -351,7 +366,7 @@ create or replace package body r is
 		value in out nocopy varchar2 character set any_cs
 	) is
 	begin
-		value := utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
+		value := utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
@@ -425,7 +440,7 @@ create or replace package body r is
 		defval nvarchar2
 	) return nvarchar2 is
 	begin
-		return utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
+		return utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
 	exception
 		when no_data_found then
 			return defval;
@@ -433,7 +448,7 @@ create or replace package body r is
 
 	function getc(name varchar2) return nvarchar2 is
 	begin
-		return utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
+		return utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
 	exception
 		when no_data_found then
 			raise_application_error(-20000, error_str(name));
