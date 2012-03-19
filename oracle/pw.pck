@@ -10,9 +10,8 @@ create or replace package body sys.pw is
 
 	procedure add_dad_auth_entry(p_db_user varchar2) is
 	begin
-		execute immediate 'create or replace procedure ' || p_db_user ||
-											'.dad_auth_entry is begin k_gw.do; end;';
-		execute immediate 'grant execute on ' || p_db_user || '.dad_auth_entry to public';
+		execute immediate 'create or replace procedure ' || p_db_user || '.dad_auth_entry is begin k_gw.do; end;';
+		execute immediate 'grant execute on ' || p_db_user || '.dad_auth_entry to ' || user;
 	end;
 
 	procedure recompile(p_sql varchar2) is
