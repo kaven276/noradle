@@ -13,5 +13,11 @@ create or replace package e is
 		err_msg  varchar2
 	);
 
+	procedure report
+	(
+		cond boolean,
+		msg  varchar2
+	);
+
 end e;
 /

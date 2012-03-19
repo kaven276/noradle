@@ -5,6 +5,34 @@ create or replace package body k_http is
 		output.flush;
 	end;
 
+	-- public
+	procedure write_raw(data in out nocopy raw) is
+		dummy pls_integer;
+		v_len pls_integer;
+	begin
+		v_len := utl_raw.length(data);
+		if data is null or v_len = 0 then
+			return;
+		end if;
+	
+		if not pv.allow_content then
+			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
+		end if;
+	
+		if not pv.use_stream then
+			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, data);
+			pv.buffered_length := pv.buffered_length + v_len;
+			return;
+		end if;
+	
+		if pv.buffered_length + v_len > pv.write_buff_size then
+			utl_tcp.flush(pv.c);
+			pv.buffered_length := 0;
+		end if;
+		dummy              := utl_tcp.write_raw(pv.c, data);
+		pv.buffered_length := pv.buffered_length + v_len;
+	end;
+
 	procedure write(text varchar2 character set any_cs) is
 	begin
 		output.line(text, '');
@@ -320,7 +348,7 @@ create or replace package body k_http is
 		location(u(url));
 		pv.headers('Content-Length') := '0';
 		pv.buffered_length := 0;
-		pv.allow_content   := false;
+		pv.allow_content := false;
 	end;
 
 	procedure retry_after(delta number) is
