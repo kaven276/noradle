@@ -3,7 +3,7 @@ create or replace package body k_url is
 	-- private
 	function outside(key varchar2) return varchar2 is
 	begin
-		return k_cfg_reader.find_prefix(sys_context('user', 'current_schema'), key);
+		return k_cfg.find_prefix(sys_context('user', 'current_schema'), key);
 	end;
 
 	function normalize
