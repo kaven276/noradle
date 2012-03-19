@@ -134,6 +134,7 @@ create or replace package body k_http is
 		pv.charset   := lower(charset);
 		-- utl_i18n.generic_context, utl_i18n.iana_to_oracle
 		pv.charset_ora := utl_i18n.map_charset(charset, 0, 1);
+		pv.cs_req      := pv.charset_ora;
 		declare
 			v_raw raw(1);
 		begin
