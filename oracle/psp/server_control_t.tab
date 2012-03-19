@@ -5,7 +5,8 @@ create table SERVER_CONTROL_T
   MIN_SERVERS  NUMBER(4),
   MAX_SERVERS  NUMBER(4),
   MAX_REQUESTS NUMBER(9),
-  MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0)
+  MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0),
+  STATIC_URL   VARCHAR2(100)
 )
 ;
 comment on column SERVER_CONTROL_T.GW_HOST
@@ -20,4 +21,5 @@ comment on column SERVER_CONTROL_T.MAX_REQUESTS
   is 'when the number of request a server process reach this limit, the server should/will quit';
 comment on column SERVER_CONTROL_T.MAX_LIFETIME
   is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
-
+comment on column SERVER_CONTROL_T.STATIC_URL
+  is 'the common static file root url prefix';
