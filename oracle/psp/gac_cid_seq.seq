@@ -1,4 +1,3 @@
--- Create sequence 
 create sequence GAC_CID_SEQ
 minvalue 1
 maxvalue 99999999999999999999
