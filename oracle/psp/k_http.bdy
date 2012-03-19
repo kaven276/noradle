@@ -342,7 +342,7 @@ create or replace package body k_http is
 
 	procedure www_authenticate_digest(realm varchar2) is
 	begin
-		null;
+		e.raise(-20025, 'PSP.WEB have not implenment http digest authentication.');
 	end;
 
 	procedure allow_get is
