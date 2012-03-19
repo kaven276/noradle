@@ -1,4 +1,3 @@
--- Create table
 create table EXT_URL_T
 (
   DBU    VARCHAR2(30) default lower(sys_context('user','current_schema')) not null,
@@ -7,7 +6,6 @@ create table EXT_URL_T
   constraint PK_EXT_URL primary key (DBU, KEY)
 )
 organization index;
--- Add comments to the columns 
 comment on column EXT_URL_T.KEY
   is 'can not exceed 30, consider it may sync with GAC, consider code will be more concise';
 comment on column EXT_URL_T.PREFIX
