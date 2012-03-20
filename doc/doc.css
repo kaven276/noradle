@@ -1,0 +1,13 @@
+body { margin:1em 2em; }
+
+h1 {counter-increment:chapter; counter-reset:section;}
+h2 {counter-increment:section;}
+
+h1:before {content:"Chapter " counter(chapter) " ";}
+h2:before {content:"Sect " counter(chapter) "." counter(section) " : ";}
+
+p:{text-indent:2em;}
+
+h1 {text-transform:capitalize;}
+
+
