@@ -15,6 +15,6 @@ create or replace synonym k_gw for k_gw;
 create or replace synonym k_filter for k_filter;
 create or replace synonym ext_url_v for ext_url_v;
 create or replace synonym k_debug for k_debug;
-create or replace synonym k_sess for k_sess;
+create or replace synonym s for k_sess;
 create or replace synonym gac_cid_seq for gac_cid_seq;
 create or replace synonym kv for kv;

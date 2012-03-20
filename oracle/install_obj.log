@@ -1,0 +1,395 @@
+
+Creating table EXT_URL_T
+========================
+
+create table EXT_URL_T
+             *
+第 1 行出现错误: 
+ORA-00955: 名称已由现有对象使用 
+
+
+
+注释已创建。
+
+
+注释已创建。
+
+
+Creating table SERVER_CONTROL_T
+===============================
+
+create table SERVER_CONTROL_T
+             *
+第 1 行出现错误: 
+ORA-00955: 名称已由现有对象使用 
+
+
+
+注释已创建。
+
+
+注释已创建。
+
+
+注释已创建。
+
+
+注释已创建。
+
+
+注释已创建。
+
+
+注释已创建。
+
+
+Creating sequence GAC_CID_SEQ
+=============================
+
+
+序列已创建。
+
+
+Creating view EXT_URL_V
+=======================
+
+
+视图已创建。
+
+
+Creating package ATTR
+=====================
+
+SP2-0310: 无法打开文件 "psp/attr.spc"
+
+Creating package E
+==================
+
+
+程序包已创建。
+
+
+Creating package G
+==================
+
+
+程序包已创建。
+
+
+Creating package GATEWAY
+========================
+
+
+程序包已创建。
+
+
+Creating package KV
+===================
+
+
+程序包已创建。
+
+
+Creating package K_CCFLAG
+=========================
+
+
+程序包已创建。
+
+
+Creating package K_CFG
+======================
+
+
+程序包已创建。
+
+
+Creating type ST
+================
+
+
+类型已创建。
+
+
+Creating package K_DEBUG
+========================
+
+
+程序包已创建。
+
+
+Creating package K_FILTER
+=========================
+
+
+程序包已创建。
+
+
+Creating package K_GAC
+======================
+
+
+程序包已创建。
+
+
+Creating package K_GC
+=====================
+
+
+程序包已创建。
+
+
+Creating package K_GW
+=====================
+
+
+程序包已创建。
+
+
+Creating package K_HTTP
+=======================
+
+
+程序包已创建。
+
+
+Creating package K_PMON
+=======================
+
+
+程序包已创建。
+
+
+Creating package K_SESS
+=======================
+
+
+程序包已创建。
+
+
+Creating type NT
+================
+
+
+类型已创建。
+
+
+Creating package K_TYPE_TOOL
+============================
+
+
+程序包已创建。
+
+
+Creating package K_URL
+======================
+
+
+程序包已创建。
+
+
+Creating package K_XHTP
+=======================
+
+
+程序包已创建。
+
+
+Creating package OUTPUT
+=======================
+
+
+程序包已创建。
+
+
+Creating package PV
+===================
+
+
+程序包已创建。
+
+
+Creating package R
+==================
+
+
+程序包已创建。
+
+
+Creating package RA
+===================
+
+
+警告: 创建的包带有编译错误。
+
+
+Creating package RB
+===================
+
+
+程序包已创建。
+
+
+Creating package TMP
+====================
+
+
+程序包已创建。
+
+
+Creating function N
+===================
+
+
+函数已创建。
+
+
+Creating function U
+===================
+
+
+函数已创建。
+
+
+Creating procedure DAD_AUTH_ENTRY
+=================================
+
+SP2-0310: 无法打开文件 "psp/dad_auth_entry.prc"
+
+Creating package body ATTR
+==========================
+
+SP2-0310: 无法打开文件 "psp/attr.bdy"
+
+Creating package body E
+=======================
+
+
+程序包体已创建。
+
+
+Creating package body G
+=======================
+
+
+程序包体已创建。
+
+
+Creating package body GATEWAY
+=============================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body KV
+========================
+
+
+程序包体已创建。
+
+
+Creating package body K_CCFLAG
+==============================
+
+
+程序包体已创建。
+
+
+Creating package body K_CFG
+===========================
+
+
+程序包体已创建。
+
+
+Creating package body K_DEBUG
+=============================
+
+
+程序包体已创建。
+
+
+Creating package body K_FILTER
+==============================
+
+
+程序包体已创建。
+
+
+Creating package body K_GAC
+===========================
+
+
+程序包体已创建。
+
+
+Creating package body K_GC
+==========================
+
+
+程序包体已创建。
+
+
+Creating package body K_GW
+==========================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body K_HTTP
+============================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body K_PMON
+============================
+
+
+程序包体已创建。
+
+
+Creating package body K_SESS
+============================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body K_TYPE_TOOL
+=================================
+
+
+程序包体已创建。
+
+
+Creating package body K_URL
+===========================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body K_XHTP
+============================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body OUTPUT
+============================
+
+
+警告: 创建的包体带有编译错误。
+
+
+Creating package body R
+=======================
+
+
+警告: 创建的包体带有编译错误。
+

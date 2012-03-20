@@ -18,3 +18,5 @@ grant execute on k_debug to public;
 grant execute on k_sess to public;
 grant execute on gac_cid_seq to public;
 grant execute on kv to public;
+
+grant select on gac_cid_seq to public;
