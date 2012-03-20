@@ -26,11 +26,6 @@ prompt =======================
 prompt
 @@ext_url_v.vw
 prompt
-prompt Creating package ATTR
-prompt =====================
-prompt
-@@attr.spc
-prompt
 prompt Creating package E
 prompt ==================
 prompt
@@ -165,16 +160,6 @@ prompt Creating function U
 prompt ===================
 prompt
 @@u.fnc
-prompt
-prompt Creating procedure DAD_AUTH_ENTRY
-prompt =================================
-prompt
-@@dad_auth_entry.prc
-prompt
-prompt Creating package body ATTR
-prompt ==========================
-prompt
-@@attr.bdy
 prompt
 prompt Creating package body E
 prompt =======================
