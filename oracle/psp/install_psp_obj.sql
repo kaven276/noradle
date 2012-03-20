@@ -3,7 +3,7 @@
 -- Created by Li Yong on 2012-3-19, 9:22:37 --
 ----------------------------------------------
 
-spool install_obj.log
+spool install_psp_obj.log
 
 prompt
 prompt Creating table EXT_URL_T
