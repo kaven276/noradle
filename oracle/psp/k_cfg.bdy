@@ -34,7 +34,8 @@ create or replace package body k_cfg is
 				return v_prefix;
 			exception
 				when no_data_found then
-					e.raise(-20017, 'no such url prefix for key : ' || p_key);
+					e.raise(-20017,
+									'no such url prefix for key : ' || p_key || ', please config ext_url_v for external url reference.');
 			end;
 	end;
 
