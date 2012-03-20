@@ -29,7 +29,7 @@ create or replace package body k_cfg is
 				select a.prefix
 					into v_prefix
 					from ext_url_t a
-				 where a.dbu = 'psp'
+				 where a.dbu = '/'
 					 and a.key = p_key;
 				return v_prefix;
 			exception
@@ -38,14 +38,10 @@ create or replace package body k_cfg is
 			end;
 	end;
 
-	function get_ext_fs return varchar2 result_cache relies_on(ext_url_t) is
+	function get_ext_fs return varchar2 result_cache relies_on(server_control_t) is
 		v_prefix ext_url_t.prefix%type;
 	begin
-		select a.prefix into v_prefix from ext_url_t a where a.key = '/';
-		return v_prefix;
-	exception
-		when no_data_found then
-			return '';
+		return server_control().static_url;
 	end;
 
 end k_cfg;

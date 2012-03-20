@@ -58,7 +58,7 @@ create or replace package body k_url is
 			when '[' then
 				-- for external reference
 				pos := instrb(url, ']');
-				return outside(substrb(url, 2, pos - 2)) || substr(url, pos + 1);
+				return outside(substrb(url, 2, pos - 2)) || '/' || substr(url, pos + 1);
 			when '.' then
 				case c2
 					when '/' then
