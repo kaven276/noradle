@@ -41,6 +41,8 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry1, -942);
 		no_dad_auth_entry2 exception;
 		pragma exception_init(no_dad_auth_entry2, -6576);
+		no_dad_auth_entry_right exception; -- table or view does not exist
+		pragma exception_init(no_dad_auth_entry_right, -01031);
 		v_done boolean := false;
 	begin
 		dbms_alert.register('PW_STOP_SERVER');
@@ -144,7 +146,7 @@ create or replace package body gateway is
 			begin
 				execute immediate 'call ' || r.dbu || '.dad_auth_entry()';
 			exception
-				when no_dad_auth_entry1 or no_dad_auth_entry2 then
+				when no_dad_auth_entry1 or no_dad_auth_entry2 or no_dad_auth_entry_right then
 					if v_done then
 						raise;
 					end if;
