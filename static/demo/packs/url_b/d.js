@@ -1,0 +1,1 @@
+console.log("url_test_b/d.js is executed!");

@@ -1,0 +1,5 @@
+body {
+	background-color:silver;
+	/* showing from standalone proc's css reference to common static file's css */
+	background-image:url(../../pulldown-back.gif); 
+}
