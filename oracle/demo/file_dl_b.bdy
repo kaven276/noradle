@@ -2,12 +2,12 @@ create or replace package body file_dl_b is
 
 	procedure d is
 	begin
-		h.header_close;
-		p.init;
-		p.h;
+		p.h;	
 		p.style_open;
 		p.line('a{display:block;line-height:2em;}');
 		p.style_close;
+		src_b.link_pack;
+		p.p('use h.content_disposition_attachment(file.ext) to download a pre-named file');
 		p.a('download text', 'text');
 		p.a('download excel', 'excel');
 		p.a('download word', 'word');
@@ -15,10 +15,7 @@ create or replace package body file_dl_b is
 
 	procedure text is
 	begin
-		h.status_line;
-		h.content_type('text/plain', charset => 'utf-8');
 		h.content_disposition_attachment('test.txt');
-		h.header_close;
 		p.line('some text');
 		p.line('some other text');
 	end;
@@ -27,12 +24,7 @@ create or replace package body file_dl_b is
 		cursor c_packages is
 			select * from user_objects a where a.object_type = 'PACKAGE' order by a.object_name asc;
 	begin
-		h.status_line;
-		h.content_type('text/html', charset => 'utf-8');
 		h.content_disposition_attachment('test.xls');
-		h.header_close;
-	
-		p.init;
 		p.doc_type('5');
 		p.h;
 	
@@ -54,12 +46,7 @@ create or replace package body file_dl_b is
 
 	procedure word is
 	begin
-		h.status_line;
-		h.content_type('text/html', charset => 'utf-8');
 		h.content_disposition_attachment('test.doc');
-		h.header_close;
-	
-		p.init;
 		p.doc_type('5');
 		p.h;
 	

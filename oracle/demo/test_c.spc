@@ -18,7 +18,5 @@ create or replace package test_c is
 
 	procedure do_303_retry_alfter;
 
-	procedure echo_http_body;
-
 end test_c;
 /

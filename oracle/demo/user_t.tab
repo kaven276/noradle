@@ -1,0 +1,11 @@
+create table USER_T
+(
+  NAME  VARCHAR2(30) not null,
+  PASS  VARCHAR2(30) not null,
+  CTIME DATE not null
+)
+;
+comment on table USER_T
+  is 'users who can login to';
+alter table USER_T
+  add constraint PK_USER primary key (NAME);

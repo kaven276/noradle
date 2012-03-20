@@ -7,7 +7,6 @@ create or replace package body test_c is
 		h.content_type;
 		h.header_close;
 	
-		p.init;
 		p.doc_type('5');
 		p.h;
 		p.ul_open;
@@ -58,7 +57,6 @@ create or replace package body test_c is
 	begin
 		h.status_line(412);
 		h.header_close;
-		p.init;
 		p.h;
 		p.hn(2, 'status 412 Precondition Failed');
 	end;
@@ -77,54 +75,6 @@ create or replace package body test_c is
 		--h.retry_after(10);
 		h.retry_after(sysdate + 10 / 24 / 60 / 60);
 		h.header_close;
-	end;
-
-	procedure echo_http_body is
-		v_line  varchar2(200);
-		v_nline nvarchar2(200);
-	begin
-		h.content_type('text/plain');
-		h.header_close;
-		case 4
-			when 1 then
-				p.init;
-				p.http_header_close;
-				p.line(r.method);
-				p.line(r.header('content-type'));
-				p.line(r.header('content-length'));
-				p.line(rb.charset_http);
-				p.line(rb.charset_db);
-				p.line(dbms_lob.getlength(rb.blob_entity));
-				r.body2clob;
-				p.line(dbms_lob.getlength(rb.clob_entity));
-			when 2 then
-				r.body2clob;
-				p.d(rb.clob_entity);
-			when 3 then
-				r.body2clob;
-				p.init;
-				p.h;
-				r.read_line_init(chr(10));
-				for i in 1 .. 5 loop
-					r.read_line(v_line);
-					p.line(i);
-					p.line(v_line);
-					exit when r.read_line_no_more;
-				end loop;
-				p.html_tail;
-			when 4 then
-				r.body2nclob;
-				p.init;
-				p.h;
-				r.read_line_init(chr(10));
-				for i in 1 .. 5 loop
-					r.read_nline(v_nline);
-					p.line(i);
-					p.line(v_nline);
-					exit when r.read_line_no_more;
-				end loop;
-				p.html_tail;
-		end case;
 	end;
 
 end test_c;

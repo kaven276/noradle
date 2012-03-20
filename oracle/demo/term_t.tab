@@ -1,0 +1,9 @@
+create table TERM_T
+(
+  MSID    VARCHAR2(30) not null,
+  BGCOLOR VARCHAR2(30),
+  FGCOLOR VARCHAR2(30)
+)
+;
+alter table TERM_T
+  add constraint PK_TERM primary key (MSID);

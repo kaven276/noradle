@@ -1,41 +1,41 @@
 create or replace package body test_b is
 
+	procedure entry is
+	begin
+		h.header_close;
+		h.line('<pre>');
+		h.line('<a href="test_b.d">Link to test_b.d (basic request info) </a>');
+		h.line('<a href="test_b.redirect">Link to test_b.redirect (test for redirect)</a>');
+		h.line('</pre>');
+	end;
+
 	procedure d is
 	begin
 		if r.getn('count', 0) = 404 then
-			h.status_line(404);
+			h.sts_404_not_found;
 			h.header_close;
-			p.line('resource with count=404 does not exits');
+			h.writeln('resource with count=404 does not exits');
 			g.finish;
 		end if;
 	
 		if r.getn('count', 0) = 403 then
-			h.status_line(403);
+			h.sts_403_forbidden;
 			h.header_close;
-			p.line('You have not the right to access resource with count=403');
+			h.writeln('You have not the right to access resource with count=403');
 			g.finish;
 		end if;
 	
 		-- h.allow_post;
 		-- h.allow('POST,PUT');
-		h.status_line;
+		h.sts_200_ok;
 		h.content_type('text/html', charset => 'utf-8');
 		h.content_language('zh-cn');
-		-- h.content_md5_on;
-		h.etag_md5_on;
-		-- h.last_modified(trunc(sysdate));
-		h.expires(sysdate + 1);
-		h.etag('md5value');
 		h.set_cookie('bsid', 'myself', path => '/' || r.dad || '/test_b.d');
 	
 		h.header('a', 1);
-		-- h.transfer_encoding_chunked;
-		-- h.content_encoding_gzip;
 		h.header_close;
 	
-		p.init;
-		p.http_header_close;
-	
+		p.h;
 		p.style_open;
 		p.line('p{line-height:1.1em;margin:0px;}');
 		p.style_close;
@@ -66,49 +66,23 @@ create or replace package body test_b is
 		end loop;
 	end;
 
-	procedure long_job is
-	begin
-		h.status_line;
-		h.content_type(mime_type => 'text/html');
-		h.write_head;
-		p.line('<div id="cnt"></div>');
-		p.line('<script>var cnt=document.getElementById("cnt");</script>');
-		p.line('<pre>');
-		for i in 1 .. 9 loop
-			p.line('LiNE, NO.' || i);
-			p.line('<script>cnt.innerText=' || i || ';</script>');
-			-- p.line(rpad(i, 300, i));
-			h.flush();
-			dbms_lock.sleep(1);
-		end loop;
-		p.line('</pre>');
-	end;
-
 	procedure form is
 	begin
-		h.status_line(200);
 		h.content_type(charset => 'gbk');
 		-- p.content_type(charset => 'GBK');
-		h.header('set-cookie', 'ck1=1234');
-		h.header('set-cookie', 'ck3=5678');
-		h.header('a', 1);
-		h.header('b', 2);
 		h.header_close;
 	
-		p.http_header_close;
-		p.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
-		p.line('<form action="test_c.do?type=both&type=bothtoo" method="post" accept-charset="gbk">');
-		p.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
-		p.line('您好');
-		p.line(utl_i18n.escape_reference('您好', 'us7ascii'));
+		h.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
+		h.line('<form action="test_c.do?type=both&type=bothtoo" method="post" accept-charset="gbk">');
+		h.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
+		h.line('您好');
+		h.line(utl_i18n.escape_reference('您好', 'us7ascii'));
 		h.flush;
-		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue1" checked="true"/>');
-		p.line('<input name="checkbox_input" type="checkbox" value="checkedvalue2" checked="true"/>');
-		p.line('<input name="password_input" type="password" value="passwordvalue"/>');
-		p.line('<input name="button1" type="submit" value="save"/>');
-		p.line('</form>');
-	
-		p.line('<a href="test_b.d">test_b.d</a>');
+		h.line('<input name="checkbox_input" type="checkbox" value="checkedvalue1" checked="true"/>');
+		h.line('<input name="checkbox_input" type="checkbox" value="checkedvalue2" checked="true"/>');
+		h.line('<input name="password_input" type="password" value="passwordvalue"/>');
+		h.line('<input name="button1" type="submit" value="save"/>');
+		h.line('</form>');
 	end;
 
 	procedure redirect is
@@ -150,82 +124,15 @@ create or replace package body test_b is
 				p.line(r.cookie('ck3'));
 				p.line(r.cookie('ck4'));
 			when 'GET' then
-				h.status_line(200);
-				h.content_type(mime_type => 'text/plain');
-				h.header_close;
-			
-				p.line(r.getc('text_input'));
-				p.line(r.getc('checkbox_input'));
-				r.gets('checkbox_input', v_st);
-				for i in 1 .. v_st.count loop
-					p.line(v_st(i));
-				end loop;
-				return;
-			
 				h.status_line(303);
-				h.location('test_b.d');
-				h.write_head;
+				h.location('test_b.entry');
+				h.header_close;
 			else
 				h.status_line(200);
 				h.content_type;
-				h.write_head;
+				h.header_close;
 				p.line('Method (' || r.method || ') is not supported');
 		end case;
-	end;
-
-	procedure auth is
-	begin
-		if r.user is null or r.user != 'psp.web' then
-			h.www_authenticate_basic('test');
-			return;
-		end if;
-		h.status_line;
-		h.content_type('text/plain', charset => 'utf-8');
-		h.header_close;
-		p.line(r.user);
-		p.line(r.pass);
-	end;
-
-	procedure xhtp is
-	begin
-		h.status_line;
-		h.content_type('text/html', charset => 'utf-8');
-		h.header_close;
-		p.init;
-		p.doc_type('5');
-		p.h;
-		p.ul_open;
-		-- p.css_link;
-		p.li('abc');
-		p.li('123');
-		p.ul_close;
-	end;
-
-	procedure refresh is
-	begin
-		h.refresh(3, r.getc('to'));
-		h.content_type('text/plain');
-		h.header_close;
-		p.line(t.dt2s(sysdate));
-		p.line(r.getc('to'));
-	end;
-
-	-- private
-	procedure error_root is
-	begin
-		raise_application_error(-20000, 'some exception');
-	end;
-
-	procedure error is
-	begin
-		error_root;
-	end;
-
-	procedure on_developing is
-	begin
-		h.sts_501_not_implemented;
-		h.header_close;
-		p.line('This page is under developing, please wait for release');
 	end;
 
 end test_b;
