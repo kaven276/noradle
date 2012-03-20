@@ -21,5 +21,24 @@ create or replace package body e is
 		end if;
 	end;
 
+	procedure report
+	(
+		cond   boolean,
+		msg    varchar2
+	) is
+	begin
+		if not cond then
+			return;
+		end if;
+		h.status_line(403);
+		h.content_type('text/html');
+		h.header_close;
+		p.init;
+		p.h;
+		p.p(msg);
+		p.a('Back', r.header('referer'));
+		g.finish;
+	end;
+
 end e;
 /

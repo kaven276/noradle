@@ -8,6 +8,7 @@ create or replace package k_http is
 	mime_excel constant varchar2(30) := 'application/vnd.ms-excel';
 
 	procedure flush;
+	procedure write_raw(data in out nocopy raw);
 	procedure write(text varchar2 character set any_cs);
 	procedure writeln(text varchar2 character set any_cs := '');
 	procedure string(text varchar2 character set any_cs);
