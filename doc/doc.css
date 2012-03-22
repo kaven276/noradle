@@ -14,3 +14,8 @@ h1,h2,h3{text-shadow:1px 1px 2px gray;}
 li{padding-bottom:0.5em;}
 
 strong{font-weight:bold;color:gray;text-shadow:1px 1px 1px black;}
+
+span.psp_logo{font-family:"Arial";}
+span.psp_logo em {font-style:normal;}
+span.psp_logo em:first-child {color:red;}
+span.psp_logo em:last-child {color:#2A3FAA;}
