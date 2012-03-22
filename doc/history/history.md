@@ -78,6 +78,10 @@
 * post to control lay unit and generate(when process is successful) page as a feedback page to avoid repeating post
 
   For oracle side's process, you can 
-
 * leverage the power of result-cache at row level using versioned result-cache
 * proper use of browser session info to store login user-id, and other info.
+
+
+
+**********************************************
+<span class="psp_logo footer">*PSP*.*WEB*<span>

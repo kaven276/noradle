@@ -97,3 +97,6 @@ They are both based on node module "connect" and "express", if you want some of 
 	npm -g install marked
 
   For normal use, static.js is enough, For advanced static server, it can provide services to PSP.WEB's documentation by converting .md files to .html files, So you can read PSP.WEB documentation at http://your-static-server/doc/introduction.html.
+
+**********************************************
+<span class="psp_logo footer">*PSP*.*WEB*<span>

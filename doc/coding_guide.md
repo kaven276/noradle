@@ -224,3 +224,5 @@ advanced p.xxx APIs
 ### scalable css
 
 
+**********************************************
+<span class="psp_logo footer">*PSP*.*WEB*<span>

@@ -19,3 +19,4 @@ span.psp_logo{font-family:"Arial";}
 span.psp_logo em {font-style:normal;}
 span.psp_logo em:first-child {color:red;}
 span.psp_logo em:last-child {color:#2A3FAA;}
+span.footer{display:block;text-align:center;}

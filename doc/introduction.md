@@ -88,14 +88,19 @@ Compare to Oracle's PSP
 Other Docs and references
 ============
 
-* [deployment.md](deployment.html) : How to install, configure and manage the PSP.WEB server.
+* [License](license.html)
+* [deployment](deployment.html) : How to install, configure and manage the PSP.WEB server.
 * [coding_guide](coding_guide.html) : It's just begin to write.
-* [history.md](history/history.html) : a brief description of ancestral versions PSP.WEB that's just extension of ORACLE's PSP.
+* [history](history/history.html) : a brief description of ancestral versions PSP.WEB that's just extension of ORACLE's PSP.
 * run demo with http://your_server/demo/index_b.frame
 * [PL/SQL Developer][PL/SQL Developer] "Allround Automations"'s site.
 * [Developing PL/SQL Web Applications](http://docs.oracle.com/cd/B28359_01/appdev.111/b28424/adfns_web.htm#g1026380) ORACLE's PSP introduction
 * [Oracle® HTTP Server mod_plsql User's Guide][mod_plsql] ORACLE's PSP introduction
 * [Competitive products for Oracle](http://www.orafaq.com/tools/competitive)
+
+
+**********************************************
+<span class="psp_logo footer">*PSP*.*WEB*<span>
 
 [PL/SQL Developer]: http://www.allroundautomations.com/ "Allround Automations's site"
 [mod_plsql]: http://docs.oracle.com/cd/B19306_01/server.102/b14337/toc.htm

@@ -19,3 +19,6 @@ if you enterprise buy oracle for $20000 for 8 cores, the you must buy PSP.WEB li
   **NodeJS** : Joyent is a key contributer to Node.js code development. 
 	
   **ORACLE DATABASE**  : It is a product of ORACLE.
+
+**********************************************
+<span class="psp_logo footer">*PSP*.*WEB*<span>
