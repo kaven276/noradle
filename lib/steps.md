@@ -1,4 +1,4 @@
-# date format
+# date format (ok)
 
 * how to determine the current time-zone from oracle
 * last modified
@@ -15,12 +15,14 @@
 * the blob to save gzip result do not need to create beforehand. 
 * need to auto calculate chunk size / buffer sect size
 
-# file upload
+# file upload (partial)
 
 * can use r.upload(filename) to get blob/blobs
-* can use k_upload.save(nodepath) to save upload file to node6
+* can use k.save(nodepath) to save upload file to node6
 
-# clob test
+# clob test (giveup)
+
+	http write will output to blob directly, so any charset can be writen to it.
 
 * all http body will write to clob using db charset
 * if write some nchar, then nchar must be converted to db charset
@@ -33,7 +35,7 @@
 p.d/p.line will switch between it.
 
 
-# http header should have default value and set, when header close then output to client/browser
+# http header should have default value and set, when header close then output to client/browser (ok)
 
 * multiple set-cookie will keep the last only
 * when select charset, PSP.WEB will known if and how to do conversion
@@ -47,15 +49,15 @@ p.d/p.line will switch between it.
 * using ajax: more overhead(for filter/request parser), but more parallelism, multiple subpage sources.
 * using long-running streamed page will have low overhead,
 
-# k_cookie can set cookie
+# k_cookie can set cookie (ok)
 
+# URL API U (ok)
 
+  It's may consider how to determine the url of the uploaded file.
 
-# URL API U
+# gateway can use mapping table to map a dad to a dbu [todo]
 
-# gateway can use mapping table to map a dad to a dbu
-
-# gateway can switch between db users
+# gateway can switch between db users (ok)
 
 # character set convertion (difficult/undone)
 
@@ -65,11 +67,11 @@ p.d/p.line will switch between it.
   Must use utf8, otherwise query-string will send to node as none-utf8 suss cause problem.
   If use zhs16gbk, qstr will send opaque to node and then to oracle, oracle will accept row and do convert to
 
-# catch PL/SQL exceptions and automatically commit
+# catch PL/SQL exceptions and automatically commit (ok)
 
 
 
-# do post and redirect result
+# do post and redirect result (ok)
 
 * process post and generate a feedback page
 * process post and redirect to another resource
@@ -100,7 +102,7 @@ p.d/p.line will switch between it.
 * node in-middle cache.
  node can cache response from oracle and compute a digest MD5 value, when client request, node will send it's cache's MD5 and ETAG in request to oracle. oracle can make a unique ETAG without making the full page, if the ETAG is same as of node cache's ETAG, oracle consider node's cache is validate. How to compute the ETAG quickly without making the whole page is application logic.This mechanism is the same as ORACLE's modplsql cache method.
 
-# feedback info [todo]
+# feedback info [ok]
 
 * when a post/_c PL/SQL generate a 302/303 redirect and made a feedback page, the page is streamed to node.
  node will then redirect to a url to the feedback.
@@ -108,4 +110,4 @@ p.d/p.line will switch between it.
 * when feedback page url is called, node can recognize it's a feedback url, and using MD5 value to index find out then kept feedback page and response to browser and delete the kept feedback page
 * This will prevent from repeat/refresh the post/_c url.
 
-# oracle's PMON and process control parameters
+# oracle's "PMON" and process control parameters (ok)

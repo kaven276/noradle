@@ -26,7 +26,7 @@ Install at oracle's side
 	-- The "principal" parameter in "dbms_network_acl_admin.create_acl" must specify the schema that hold the PSP.WEB engine software, it's case sensitive. use "dbms_network_acl_admin.add_privilege" to grant right to other db user that act as PSP.WEB engine user.
 	-- The "host" parameter in "dbms_network_acl_admin.assign_acl" must specify where the nodeJS http gateway is for dns/hostname or ip address.
 
-## Configure core parameter for server_config_t table
+## Configure core parameter for **server\_config\_t** table
 
 	Upon completion of installation, The SERVER_CONTROL_T table is configured by the following insert statement
 
@@ -74,10 +74,22 @@ Install at nodeJS's side
 
 ## Install nodeJS and npm
 
-## Install static server nodeJS package
-
-  For advanced static server, it can provide services to PSP.WEB's documentation by converting .md files to .html files.
+  See [nodeJS official website](http://nodejs.org/#download) for the guide of installation of NodeJS and NPM.
 
 ## Start and Stop node gateway server
 
-	 node lib/plsql_gateway.js will start the server
+  `node lib/psp.web.js` will start the server
+
+  `nohup node lib/psp.web.js & ` will start the server as a daemon.
+
+## Install static server nodeJS package
+
+  PSP.WEB will serve separate http server for static files. You can use any static server like Apache/NGINX/IIS/Lighttpd, but PSP.WEB provide a NodeJS based static server in "lib/static.js" and it's advance version "lib/static\_adv.js".
+They are both based on node module "connect" and "express", if you want some of pre-translation function like markdown2html, stylus2css, you can add them as well. Use the following command to install them, they are all in the [NPM registry](http://search.npmjs.org/).
+
+	npm -g install connect
+	npm -g install express
+	npm -g install stylus
+	npm -g install marked
+
+  For normal use, static.js is enough, For advanced static server, it can provide services to PSP.WEB's documentation by converting .md files to .html files, So you can read PSP.WEB documentation at http://your-static-server/doc/introduction.html.

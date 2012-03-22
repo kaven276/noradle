@@ -16,11 +16,22 @@ It's all tough problems here.
 
 ### how oracle manage tcp links to node
 
-  Oracle may start a process monitor, who can get the control parameter from table, and find how many PSP.WEB background job process is running, how many additional job process need to start or closed.
-  Just like apache, psp2node will use start_servers, min_spared_servers, max_spared_servers,max_clients.
+  Oracle may start a process monitor, who can read the control parameter from table, and find how many PSP.WEB background job process is running, how many additional job process need to start or closed.
+  Just like apache, NODE2PSP will control parameters including min_servers, max_servers, max_requests, max_lifetime, and some more to control parallel process ability and prevent resource(mainly memory) leak.
   PSP.WEB pmon will check every 3 seconds and take any action if needed.
 	When you configure the schedule for PSP.WEB's PMON, all thing is managed automatically.
-	A job process will quit if it has processed *max_request_per_process* requests or run longer than *max_duration*, such every PSP.WEB's background server job process can lease computation resources and prevent memory leak.
+	PSP.WEB pmon will run automatically when oracle database start and survive any shutdown or restart.
+	A job process will quit if it has processed *max_request* requests or run longer than *max_duration*, such every PSP.WEB's background server job process can release computation resources and prevent memory leak.
+	
+	configuration table as :
+	
+	gw_host,gw_port: to specify where the nodeJS web server will listen for oracle to connect, that's include ip/dns and port
+	min_servers: when oracle start or manual start PSP.WEB server process, how many worker job process will be use at that time
+	max_servers: maximum number of PSP.WEB background job process
+	max_requests: after served this number of requrest, PSP.WEB job process will terminate and release resource
+	max_lifetime: after this number of minutes, PSP.WEB job process will terminate and release resource
+	
+	
 
 ### about result cache
 
@@ -154,4 +165,6 @@ So using byside css do has some shortcoming.
 #### may be has standalone css is ok
 a plsql dynamic css page can take all factor like terminal size and etc ...
 that will do the right length computation and terminal adaption.
+
+But that will hurt the component of code.
 

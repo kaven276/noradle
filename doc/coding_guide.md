@@ -2,6 +2,8 @@
 
 <div id="title"> PSP.WEB Coding Guide </div>
 
+  I'm sorry that this programming guide is just a skeleton, I'll write details later, but the demo can tell your how to use the API PSP.WEB provide because most of features this doc describe is also covered in DEMO.
+
 Basic PL/SQL programming
 ==============
 

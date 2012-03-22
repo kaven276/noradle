@@ -54,7 +54,7 @@ Why invent PSP.WEB
 
 ## Has very handy IDE for both PL/SQL coding and data manipulation
 
-  There is a full featured PL/SQL IDE called ** PL/SQL developer **, It's as good as the most used IDE such as Eclipse ..., but with data manipulation integrated.
+  There is a full featured PL/SQL IDE called [** PL/SQL developer **] [PL/SQL Developer], It's as good as the most used IDE such as Eclipse ..., but with data manipulation integrated.
 
   Traditionally, you use different developing tool and IDEs for application language and database, such as use Eclipse and SQL deveoper both. Now you need only one IDE - "PL/SQL developer".
 
@@ -66,7 +66,7 @@ Why invent PSP.WEB
 Compare to Oracle's PSP
 =================
 
-  Someone will tell me that ORACLE has PL/SQL SERVER PAGES support by mod_plsql within Apache since 8i. Now I tell you ORACLE's PSP is so limited, and it is unchanged for many years and almost frozen. Below I list some of it's limits.
+  Someone will tell me that ORACLE has PL/SQL SERVER PAGES support by [mod_plsql] [mod_plsql] within Apache since 8i. Now I tell you ORACLE's PSP is so limited, and it is unchanged for many years and almost frozen. Below I list some of it's limits.
 
 * Installation of Companion CD for 10G and Web Tier for 11G is tedious, actually only a bit of part is for PSP, but you are force to install all of them.
 * Configuration Apache is a burden, most of configuration is not not related to PSP, but you must do it.
@@ -89,7 +89,9 @@ Other Docs and references
 * [coding_guide](coding_guide.html) : It's just begin to write.
 * [history.md](history/history.html) : a brief description of ancestral versions PSP.WEB that's just extension of ORACLE's PSP.
 * run demo with http://your_server/demo/index_b.frame
-* [PL/SQL Developer](http://www.allroundautomations.com/) "Allround Automations"'s site.
+* [PL/SQL Developer][PL/SQL Developer] "Allround Automations"'s site.
 * [Developing PL/SQL Web Applications](http://docs.oracle.com/cd/B28359_01/appdev.111/b28424/adfns_web.htm#g1026380) ORACLE's PSP introduction
-* [Oracle® HTTP Server mod_plsql User's Guide](http://docs.oracle.com/cd/B19306_01/server.102/b14337/toc.htm) ORACLE's PSP introduction
+* [Oracle® HTTP Server mod_plsql User's Guide][mod_plsql] ORACLE's PSP introduction
 
+[PL/SQL Developer]: http://www.allroundautomations.com/ "Allround Automations's site"
+[mod_plsql]: http://docs.oracle.com/cd/B19306_01/server.102/b14337/toc.htm
