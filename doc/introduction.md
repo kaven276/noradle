@@ -95,6 +95,7 @@ Other Docs and references
 * [PL/SQL Developer][PL/SQL Developer] "Allround Automations"'s site.
 * [Developing PL/SQL Web Applications](http://docs.oracle.com/cd/B28359_01/appdev.111/b28424/adfns_web.htm#g1026380) ORACLE's PSP introduction
 * [Oracle® HTTP Server mod_plsql User's Guide][mod_plsql] ORACLE's PSP introduction
+* [Competitive products for Oracle](http://www.orafaq.com/tools/competitive)
 
 [PL/SQL Developer]: http://www.allroundautomations.com/ "Allround Automations's site"
 [mod_plsql]: http://docs.oracle.com/cd/B19306_01/server.102/b14337/toc.htm
