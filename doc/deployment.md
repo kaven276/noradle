@@ -4,6 +4,8 @@
 
 <div id="title"> Deployment & Configuration & Administration of PSP.WEB  </div>
 
+  The PSP.WEB software is tested on ORACLE DATABASE 11g（EE & XE) and NodeJS v0.6.2.
+
 Install at oracle's side
 ===
 
