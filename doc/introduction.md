@@ -11,7 +11,7 @@ div.path{display:inline-block;font-size:smaller;}
 What's PSP.WEB
 ===============
 
-  PSP.WEB is the short term of "PL/SQL Stored Procedure for WEB" or "PL/SQL SERVER PAGES for WEB".
+  PSP.WEB is the short term of "PL/SQL Stored Procedure for WEB" or "PL/SQL SERVER PAGES for WEB" or "PAGE of Stored Procedure for WEB".
 
   PSP.WEB use PL/SQL programing language to do web development, It's a language of DB stored procedure that is different from most of the other web developing languages and platforms such as J2EE .Net, PHP, RUBY. with PSP.WEB platform, PL/SQL can use PSP.WEB APIs to gain http request info, do nature data processing, and print page to http response. It's the most proper way to develop database(oracle) based web applications. 
 
