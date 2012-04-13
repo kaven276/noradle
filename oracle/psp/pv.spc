@@ -1,5 +1,6 @@
 create or replace package pv is
 
+	type vc_arr is table of varchar2(32000) index by binary_integer;
 	tz_offset constant number(2) := 8;
 
 	c utl_tcp.connection; -- TCP/IP connection to the Web server

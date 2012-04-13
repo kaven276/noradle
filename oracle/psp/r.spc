@@ -1,7 +1,7 @@
 create or replace package r is
 
-	na owa.vc_arr;
-	va owa.vc_arr;
+	na pv.vc_arr;
+	va pv.vc_arr;
 
 	procedure "_init"
 	(
