@@ -536,23 +536,6 @@ create or replace package body r is
 		null;
 	end;
 
-	procedure cgi
-	(
-		name  varchar2,
-		value varchar2
-	) is
-	begin
-		ra.headers(name) := value;
-	end;
-
-	function cgi(name varchar2) return varchar2 is
-	begin
-		return ra.headers(name);
-	exception
-		when no_data_found then
-			return null;
-	end;
-
 	function header(name varchar2) return varchar2 is
 	begin
 		return ra.headers(lower(name));

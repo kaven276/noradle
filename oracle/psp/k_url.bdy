@@ -16,7 +16,7 @@ create or replace package body k_url is
 		pos pls_integer;
 		dad varchar2(100);
 		ext varchar2(1000) := k_cfg.get_ext_fs;
-		pwd varchar2(100) := nvl(r.cgi('psp_dad'), 'psp');
+		pwd varchar2(100) := lower(user);
 	
 		function pri_file(file varchar2) return varchar2 is
 		begin
@@ -94,7 +94,7 @@ create or replace package body k_url is
 					if pos <= 0 then
 						-- common css,js
 						dad := pwd;
-						-- u:pw/xxx.ext -> /psp/pub/ext/xxx.ext        
+						-- u:pw/xxx.ext -> /psp/pub/ext/xxx.ext
 						return normal(regexp_replace(url, '^pw/([^.]+)\.([^.]+)$', 'pub/\2/\1.\2'));
 					else
 						-- the same as ../psp/...

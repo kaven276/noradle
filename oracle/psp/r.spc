@@ -136,14 +136,6 @@ create or replace package r is
 	function user return varchar2;
 	function pass return varchar2;
 
-	procedure cgi
-	(
-		name  varchar2,
-		value varchar2
-	);
-
-	function cgi(name varchar2) return varchar2;
-
 	function cookie(name varchar2) return varchar2;
 
 	function gc_msid return varchar2;
