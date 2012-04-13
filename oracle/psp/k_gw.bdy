@@ -100,7 +100,7 @@ create or replace package body k_gw is
 			when pv.ex_no_subprog then
 				error_no_subprog;
 			when pv.ex_resp_done then
-				commit;
+				null;
 			when others then
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
