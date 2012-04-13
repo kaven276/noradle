@@ -162,6 +162,8 @@ create or replace package r is
 
 	function etag return varchar2;
 	function lmt return date;
+  function client_addr return varchar2;
+  function client_port return pls_integer;
 
 end r;
 /

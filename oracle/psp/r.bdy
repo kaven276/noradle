@@ -21,6 +21,9 @@ create or replace package body r is
 	gv_dbu  varchar2(30);
 	gv_file varchar2(1000);
 
+	gv_caddr varchar2(30);
+	gv_cport pls_integer;
+
 	procedure "_init"
 	(
 		c        in out nocopy utl_tcp.connection,
@@ -48,6 +51,8 @@ create or replace package body r is
 		v_qstr   := utl_tcp.get_line(c, true);
 		v_hash   := utl_tcp.get_line(c, true);
 		v_type   := substrb(nvl(v_pack, v_proc), -1);
+		gv_caddr := utl_tcp.get_line(c, true);
+		gv_cport := utl_tcp.get_line(c, true);
 	
 		select /*+ result_cache */
 		 max(a.username)
@@ -643,6 +648,16 @@ create or replace package body r is
 	function lmt return date is
 	begin
 		return t.s2hdt(header('if-modified-since'));
+	end;
+
+	function client_addr return varchar2 is
+	begin
+		return gv_caddr;
+	end;
+
+	function client_port return pls_integer is
+	begin
+		return gv_cport;
 	end;
 
 end r;
