@@ -248,12 +248,12 @@ create or replace package body k_xhtp is
   begin
     gv_parts(p_id).start_pos := dbms_lob.getlength(gv_blob);
   end;
-  
+
   procedure range_end(p_id varchar2) is
   begin
     gv_parts(p_id).stop_pos := dbms_lob.getlength(gv_blob);
   end;
-  
+
   procedure range_replace
   (
     id      varchar2,
@@ -509,9 +509,9 @@ create or replace package body k_xhtp is
 		if vals is not null then
 			v_url := ps(v_url, vals);
 		end if;
-	
+
 		if info is null then
-			k_http.location(v_url);
+			k_http.go(v_url);
 		else
 			h;
 			script_open;
@@ -569,14 +569,14 @@ create or replace package body k_xhtp is
 		if gv_tag_len is null then
 			raise_application_error(-20000, 'dd');
 		end if;
-	
+
 		if gv_need_body_close then
 			body_close;
 		end if;
 		if gv_need_html_close then
 			html_close;
 		end if;
-	
+
 		if gv_has_error then
 			script_open;
 			line('
@@ -588,7 +588,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		');
 			script_close;
 		end if;
-	
+
 	end;
 
 	---------------------------------------------------------------------------
@@ -616,7 +616,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if gv_tag_auto_indent != 'Y' or gv_cmpct then
 			return;
 		end if;
-	
+
 		if gv_doc_type = 'frameset' then
 			d(rpad(' ', (gv_tag_len) * gc_tag_indent, chr(32)));
 		elsif gv_tag_len > 2 then
@@ -708,10 +708,10 @@ for(i=0;i<k_xhtp.errors.length;i++)
 										',' || v_tag || ',') > 0 or gv_tags(2) = 'body',
 						 ' this tag ' || v_tag || 'must used in body tag');
 		end if;
-	
+
 		-- parse ac
 		if ac is not null then
-			v_ac := ac(1); 
+			v_ac := ac(1);
 			for i in 1 .. ac.count - 1 loop
 				v_ac := replace(v_ac, '?' || i, ac(1 + i));
 			end loop;
@@ -736,7 +736,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if instrb(v_a1, ':') > 0 then
 			raise_application_error(-20000, 'attributes must use =, and not :, for [' || v_ac || ']');
 		end if;
-	
+
 		-- free attributes part
 		if da is not null then
 			for i in 1 .. floor(da.count / 2) loop
@@ -749,7 +749,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 				v_a1 := v_a1 || ' class="' || substr(da(2), 1, 1) || '"';
 			end if;
 		end if;
-	
+
 		case text
 			when el_open then
 				m := '<' || name || prop || v_a2 || v_a1 || v_s || '>';
@@ -767,7 +767,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 					m := '<' || name || prop || v_a2 || v_a1 || v_s || '>' || text || '</' || v_tag || '>';
 				end if;
 		end case;
-	
+
 		if output then
 			case text
 				when el_open then
@@ -786,7 +786,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		else
 			return m;
 		end if;
-	
+
 	end;
 
 	function tag(name varchar2, text varchar2 character set any_cs, ac st, da st) return varchar2 character set text%charset is
@@ -853,7 +853,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	begin
 		http_header_close;
 		gv_xhtp := true;
-	
+
 		case lower(name)
 			when '5' then
 				gv_doc_type_str := '<!DOCTYPE html>';
@@ -878,7 +878,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			else
 				gv_doc_type_str := name;
 		end case;
-	
+
 		gv_head_over := false;
 		k_http.content_type('text/html', pv.charset);
 		gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
@@ -892,9 +892,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 				prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
 			end if;
 		end if;
-	
+
 		gv_doc_type := name;
-	
+
 		if pv.cs_char = pv.charset_ora then
 			gv_nc := false;
 		else
@@ -966,7 +966,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			line('<style type="text/css">v\:*, o\:* { behavior:url(#default#VML);display:block; }</style>');
 		end if;
 		gv_head_over := true;
-	
+
 		pv.css_hld_pos := pv.buffered_length;
 		if pv.csslink = true then
 			line('<link type="text/css" rel="stylesheet" href="css/1234567890abcdef1234567890abcdef"/>');
@@ -978,7 +978,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			null;
 		end if;
 		pv.css_hld_len := pv.buffered_length - pv.css_hld_pos;
-	
+
 		tag_pop('head');
 		line('</head>');
 	end;
@@ -1277,7 +1277,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	-------------------- body part -------------------------------------------------
 
 	procedure x4___________ is
-	
+
 	begin
 		null;
 	end;
@@ -1377,7 +1377,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	--------------------------------------------------------------------------------
 
 	procedure x5___________ is
-	
+
 	begin
 		null;
 	end;
@@ -1605,7 +1605,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure td(text varchar2 character set any_cs, ac st := null, title varchar2 := null, colspan pls_integer := null,
 							 rowspan pls_integer := null, class varchar2 := null) is
-	
+
 	begin
 		if gv_tab_cols is not null and text != el_close then
 			if gv_cur_col = 0 then
@@ -1613,9 +1613,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			end if;
 			gv_cur_col := gv_cur_col + 1;
 		end if;
-	
+
 		gv := tpl(true, 'td', text, ac, st('title', title, 'colspan', colspan, 'rowspan', rowspan, 'class', class));
-	
+
 		if gv_tab_cols is not null and text != el_open then
 			if gv_cur_col = gv_tab_cols then
 				tr_close;
@@ -1711,7 +1711,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	--------------------------------------------------------------------------------
 
 	procedure x6___________ is
-	
+
 	begin
 		null;
 	end;
@@ -2511,7 +2511,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 						into v_pw_level, v_text, v_href;
 				end if;
 			end if;
-		
+
 			exit when cur%notfound;
 			if v_pw_level = v_level + 1 then
 				-- down one level
@@ -2963,7 +2963,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	begin
 		curid := dbms_sql.to_cursor_number(cur);
 		dbms_sql.describe_columns(curid, colcnt, desctab);
-	
+
 		for i in 1 .. colcnt loop
 			case desctab(i).col_type
 				when 1 then
@@ -2980,10 +2980,10 @@ for(i=0;i<k_xhtp.errors.length;i++)
 					set_align('center', i);
 			end case;
 		end loop;
-	
+
 		-- set tbody cols css
 		cfg_css;
-	
+
 		-- for col and width
 		for i in 1 .. colcnt loop
 			v_col_name := lower(desctab(i).col_name);
@@ -2991,7 +2991,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			print('<col class="pwc_' || v_col_name || '"' || case when gv_width(i) is not null then
 						' style="width:' || replace(gv_width(i), 'pw', v_collen || 'ex') || ';"/>' end);
 		end loop;
-	
+
 		-- thead label use cfg or alias
 		thead_open;
 		tr_open;
@@ -3000,7 +3000,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end loop;
 		tr_close;
 		thead_close;
-	
+
 		-- Fetch Rows
 		tbody_open;
 		gv_count := 0;
@@ -3038,7 +3038,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			end if;
 		end loop;
 		tbody_close;
-	
+
 		dbms_sql.close_cursor(curid);
 	exception
 		when no_data_found then
