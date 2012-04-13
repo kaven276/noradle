@@ -49,6 +49,15 @@ create or replace package body r is
 		v_hash   := utl_tcp.get_line(c, true);
 		v_type   := substrb(nvl(v_pack, v_proc), -1);
 	
+		select /*+ result_cache */
+		 max(a.username)
+			into gv_dbu
+			from dba_users a
+		 where a.username = upper(v_dad);
+		if gv_dbu is null then
+			gv_dbu := k_cfg.server_control().default_dbu;
+		end if;
+	
 		ra.headers.delete;
 		ra.cookies.delete;
 		ra.params.delete;
