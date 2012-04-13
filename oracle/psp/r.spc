@@ -158,6 +158,7 @@ create or replace package r is
 
 	function gu_dad_path return varchar2;
 	-- function gu_full_base return varchar2;
+	function dad_path return varchar2;
 
 	function etag return varchar2;
 	function lmt return date;

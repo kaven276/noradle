@@ -606,6 +606,11 @@ create or replace package body r is
 		return gu_dad_path || '/';
 	end;
 
+	function dad_path return varchar2 is
+	begin
+		return '/' || r.base || '/' || r.dad;
+	end;
+
 	function from_prog return varchar2 is
 		v  varchar2(1000);
 		v1 pls_integer;
