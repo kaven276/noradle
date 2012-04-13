@@ -62,7 +62,7 @@ create or replace package body k_type_tool is
 		v_start_place number;
 		v_end_place   number;
 	begin
-		v_ip_str      := owa_util.get_cgi_env('REMOTE_ADDR');
+		v_ip_str      := r.client_addr;
 		v_start_place := 0;
 		v_end_place   := instr(v_ip_str, '.');
 		for i in 1 .. 3 loop
