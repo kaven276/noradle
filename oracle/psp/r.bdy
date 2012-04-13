@@ -605,7 +605,7 @@ create or replace package body r is
 
 	function dad_path return varchar2 is
 	begin
-		return '/' || r.base || '/' || r.dad;
+		return t.nvl2(r.base, '/' || r.base) || '/' || r.dad;
 	end;
 
 	function from_prog return varchar2 is
