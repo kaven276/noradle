@@ -633,6 +633,16 @@ create or replace package body r is
 		return t.s2hdt(header('if-modified-since'));
 	end;
 
+	function referer return varchar2 is
+	begin
+		return header('referer');
+	end;
+
+	function ua return varchar2 is
+	begin
+		return header('user-agent');
+	end;
+
 	function client_addr return varchar2 is
 	begin
 		return gv_caddr;
