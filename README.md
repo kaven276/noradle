@@ -1,6 +1,6 @@
 
 
-please see [Introduction of PSP.WEB](psp.web/blob/master/doc/introduction.md) at doc/introduction.md on github
+please see [Introduction of PSP.WEB](psp.web/blob/master/doc/introduction.md) at doc/introduction.md on github (format will lose)
 
 please see [Introduction of PSP.WEB](http://60.29.143.244:8001/doc/introduction.html) at my site
 
