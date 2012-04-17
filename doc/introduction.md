@@ -94,9 +94,9 @@ Other Docs and references
 * [history](history/history.html) : a brief description of ancestral versions PSP.WEB that's just extension of ORACLE's PSP.
 * run demo with http://your_server/demo/index_b.frame
 * [PL/SQL Developer][PL/SQL Developer] "Allround Automations"'s site.
-* [Developing PL/SQL Web Applications](http://docs.oracle.com/cd/B28359_01/appdev.111/b28424/adfns_web.htm#g1026380) ORACLE's PSP introduction
-* [Oracle® HTTP Server mod_plsql User's Guide][mod_plsql] ORACLE's PSP introduction
-* [Competitive products for Oracle](http://www.orafaq.com/tools/competitive)
+* [Developing PL/SQL Web Applications](http://docs.oracle.com/cd/B28359_01/appdev.111/b28424/adfns_web.htm#g1026380) ORACLE's PSP introduction (for comparison only)
+* [Oracle® HTTP Server mod_plsql User's Guide][mod_plsql] ORACLE's PSP introduction (for comparison only)
+* [Competitive products for Oracle](http://www.orafaq.com/tools/competitive) (for comparison only)
 
 
 **********************************************
