@@ -7,13 +7,13 @@ h2{counter-increment:section;}
 h1:before{content:"Chapter " counter(chapter) " - ";display:inline-block;margin-right:1em;}
 h2:before{content:"Sect " counter(chapter) "." counter(section) " : ";}
 h3:before{content:" => "}
-p{text-indent:2em;line-height:1.2em;}
+p{text-indent:2em;line-height:1.5em;letter-spacing:2px;}
 h1{text-transform:capitalize;}
 pre{background-color:#eeeeee;border:1px dashed gray;padding:1em;-webkit-border-radius:1em;}
 h1,h2,h3{text-shadow:1px 1px 2px gray;}
-li{padding-bottom:0.5em;}
+li{padding-bottom:0.4em;padding-top:0.2em;}
 
-strong{font-weight:bold;color:gray;text-shadow:1px 1px 1px black;}
+strong{font-weight:bold;color:black;text-shadow:1px 0px 0px darkblue;}
 
 span.psp_logo{font-family:"Arial";}
 span.psp_logo em {font-style:normal;}
