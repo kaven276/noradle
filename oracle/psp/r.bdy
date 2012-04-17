@@ -55,12 +55,12 @@ create or replace package body r is
 		gv_cport := utl_tcp.get_line(c, true);
 	
 		select /*+ result_cache */
-		 max(a.username)
+		 max(lower(a.username))
 			into gv_dbu
 			from dba_users a
 		 where a.username = upper(v_dad);
 		if gv_dbu is null then
-			gv_dbu := k_cfg.server_control().default_dbu;
+			gv_dbu := lower(k_cfg.server_control().default_dbu);
 		end if;
 	
 		ra.headers.delete;
