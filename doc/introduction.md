@@ -11,9 +11,12 @@ div.path{display:inline-block;font-size:smaller;}
 What's PSP.WEB
 ===============
 
-  PSP.WEB is the short term of "PL/SQL Stored Procedure for WEB" or "PL/SQL SERVER PAGES for WEB" or "PAGE of Stored Procedure for WEB".
+  PSP.WEB is the short term   
+of "PL/SQL Stored Procedure for WEB"   
+or "PL/SQL SERVER PAGES for WEB"   
+or "PAGE of Stored Procedure for WEB".
 
-  PSP.WEB use PL/SQL programing language to do web development, It's a language of DB stored procedure that is different from most of the other web developing languages and platforms such as J2EE .Net, PHP, RUBY. with PSP.WEB platform, PL/SQL can use PSP.WEB APIs to gain http request info, do nature data processing, and print page to http response. It's the most proper way to develop database(oracle) based web applications. 
+  PSP.WEB use PL/SQL programing language to do web development, It's a language of DB stored procedure, that is different from most of the other web developing languages and platforms such as J2EE .Net, PHP, RUBY. With PSP.WEB platform, PL/SQL can use PSP.WEB APIs to gain http request info(request line parts, http header info, form submit, fileupload, request body and etc...), do nature data processing (insert,update,delete,select and PL/SQL code), and print page (header info and page body) to http response. It's the most proper way to develop database(oracle) based web applications. 
 
 <div id="graph">
   <button>browser<br/>user agent</button> --- 
@@ -33,21 +36,21 @@ What's PSP.WEB
 Why invent PSP.WEB
 ===============
 
-  PL/SQL has natural advantages, using PL/SQL for developing web site/application is seductive. But naturally, PL/SQL have no touch with http protocol, If we provide a http listener (such as nodeJS based) that can communicate with oracle PL/SQL, we can invert a whole new stored-procedure based web platform that is the most integrated platform taking both application layer and database layer together. That is just the way PSP.WEB do. Now PL/SQL leverage it's power to web development in it's most. All the sections below will tell you the unique features of PSP.WEB that other web-dev techs do not reach.
+  PL/SQL has natural advantages, using PL/SQL for developing web site/application is seductive. But naturally, PL/SQL have no touch with http protocol, If we provide a http listener (such as nodeJS based) that can communicate with oracle PL/SQL, we can invent a whole new stored-procedure based web platform that is the most integrated and convenient platform taking both application layer and database layer together. That is just the way PSP.WEB do. Now PL/SQL leverage it's power to web development in it's most. All the sections below will tell you the unique features of PSP.WEB that other web-dev techs do not reach.
 
 ## avoid database connection related work
 
-  Since all code are stored procedure that run in DB, there is **no sql driver or database client driver need**, and so, there is no any connection configuration work that other web platform need to do. PSP.WEB will launch a set of background worker job for http processing, they are just pool of servers, PSP.WEB will alway select the first free worker process, minimize the process switch work. This is really a kind of **natural connection pool with zero configuration**.
+  Since all code are stored procedure that run in DB, there is **no sql driver or database client driver needed**, and, there is no longer any connection configuration work that other web platform need to do. PSP.WEB will launch a set of background worker job for http processing, they are just pool of servers, PSP.WEB will alway select the first free worker process, minimize the process switch overhead. This is really a kind of **natural connection pool with zero configuration**.
 
 ## internal network cost is minimized
 
-  PL/SQL run within DB, they are run directly on database server processes (exactly say on background job processes), there is no traditional DB client-server cross process communication. PL/SQL just use QUERY or DML ** to manipulate data in-process **.
+  PL/SQL run within DB, they are run directly on database server processes (exactly say, on background job processes), there is no traditional DB client-server cross inter-process communication. PL/SQL just use QUERY or DML ** to manipulate data in-process **.
 
-  PSP.WEB use NodeJS as http listener, NodeJS is act as the http gateway for PL/SQL, NodeJS gateway will parse the http request, transform it to a easy to read format and send them to one of the free PSP.WEB worker job process using TCP, PL/SQL will output the response through NodeJS gateway to the final client like browsers. The communication between http listener NodeJS gateway and PSP.WEB worker job processes is simple and low cost, since they communicate with **minimal of roundtrips**, commonly, there is one tcp/id package for request and there is one or several tcp/ip packages for response, And there is just raw binary data stream for response from PL/SQL, there is **no data serialization and parsing** at the two ends as all of the sql driver will do.
+  PSP.WEB use NodeJS as http listener, NodeJS act as the http gateway for PL/SQL, NodeJS gateway will parse the http request, transform it to a easy to read format and send them to one of the free PSP.WEB worker job process using TCP, PL/SQL will output the response through NodeJS gateway to the final client(browser). The communication between http listener NodeJS gateway and PSP.WEB worker job processes is simple and low cost, since they communicate with **minimal of roundtrips**, commonly, there is one tcp/ip packet for one request and there is one or several tcp/ip packet for one response, And there is just raw binary data stream for response from PL/SQL, there is **no data serialization and parsing** at the two ends that all kinds of the sql driver will do.
 
 ## PL/SQL is the best way to process data with embed sql. 
 
-  Use %rowtype to declare variables is much better than xDBC, EMBED-x and OR-Mapping since all other none-store-procedure based application server will declare data structures according to database tables and it' so redundant and need to carefully map the two different data types, use PL/SQL there is **minimal of data structure declaration**. 
+  Use %rowtype to declare variables is much better than xDBC, EMBED-x and OR-Mapping since all other none-store-procedure based application server will declare data structures according to database tables and it' so redundant, hard to update or keep sync, and need to carefully map the two different data types, use PL/SQL there is **minimal of data structure declaration**. 
 
   SQL-binding is so good, you have no change to submit string-spelled sql text, all sql is parsed in PL/SQL already, all sql use bound parameter already, no sql-infection attack possible, no repeating sql parsing possible.
 
@@ -63,7 +66,7 @@ Why invent PSP.WEB
 
 ## In-DB result cache with low design/coding cost
 
-  ORACLE support result-cache, but PSP.WEB provide **row level versioned result_cache**, often used data can be result cached such as user profile, terminal properties. None stored procedure will do hard to provide data cache and it's too complex.
+  ORACLE support result-cache, but PSP.WEB provide **row level versioned result_cache**, often used data can be result cached such as user profile, terminal properties. None stored procedure based platforms will do hard to provide data cache and will be too complex.
 
 
 Compare to Oracle's PSP
@@ -71,18 +74,21 @@ Compare to Oracle's PSP
 
   Someone will tell me that ORACLE has PL/SQL SERVER PAGES support by [mod_plsql] [mod_plsql] within Apache since 8i. Now I tell you ORACLE's PSP is so limited, and it is unchanged for many years and almost frozen. Below I list some of it's limits.
 
-* Installation of Companion CD for 10G and Web Tier for 11G is tedious, actually only a bit of part is for PSP, but you are force to install all of them.
-* Configuration Apache is a burden, most of configuration is not not related to PSP, but you must do it.
-* Configuration one dad for one database user or application, can not reuse connection for different DADs
+* Installation of Companion CD for 10G and Web Tier for 11G is tedious, actually only a bit of part is for PSP, but you are forced to install all of them.
+* Configuration Apache is a burden, most of configuration is not related to PSP, but you must do configure work.
+* Configuration one dad for one database user or application, it's so tedious and can not reuse database connection for different DADs
 * The HTP and HTF API is not natural and hard to use
 * Can not provide exactly every http request header info
 * Can not provide http request body info
+* Support very limited http response header (only status line, content-type, location is supported)
+* Do not well support charset, since owa's page buffer is array of varchar2, not nvarchar2 or raw data
 * Front-end web server can not support well for keep-alive requests
 * Do not support streaming of http response
-* Every http request will form a dynamic spelled anonymous sql, cause oracle to low hit-rate of shared-pool
-* html form parameter must be have corresponding procedure parameter with the same name, it's so rigid, fragile, and can not span across PL/SQL call stack.
+* Every http request will form a dynamic spelled anonymous sql, hit-rate of oracle shared-pool is low
+* html form parameters must have corresponding procedure parameters with the same name, it's so rigid, fragile, and can not span across PL/SQL call stack.
 
-  PSP.WEB removed the limited burdened with ORACLE's PSP, PSP.WEB has simple installation and configuration, support almost full http protocol support with easily used API and framework, it's no longer a sugar toy as PSP
+
+  PSP.WEB removed the limitation or burden from ORACLE's ancient PSP, PSP.WEB has simple installation and configuration, support almost full http protocol specification with easily used API and framework, it's no longer a sugar toy as PSP.
 
 
 Other Docs and references
