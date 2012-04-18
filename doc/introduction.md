@@ -142,6 +142,7 @@ API based html print over templating
 * The dynamic page's half work is app logic process work over the html making work, while templating support html making work, it lowered the support for app logic process
 * Templating can only convert PL/SQL server pages to plsql stored procedure and no packages, but package is just the best choice to implement application logic over standalone procedures.
 
+
   So PSP.WEB will not focus on PL/SQL html page templating. 
 
   For the cases when the dynamic page is mainly static html with little PL/SQL, I'll consider support some kind of templating. But I will not use "loadpsp" like method, you just deploy the .psp file in filesystem, nodeJS will monitor the change and automatically compile it to a hash-named standalone procedure.
@@ -168,6 +169,7 @@ separation of files out of db
 * ORACLE do not support any pre-compiler as for sass, less, stylus, coffee-script ..., to support it, files must be put outside of DB
 * files is candidate for caching, so it's better to deploy them in front servers instead of the most backend DB servers.
 * static file should use different host:port, so the browser can achieve higher concurrent requests, the static server can leverage CDN, and the dynamic server (PSP.WEB) can dedicated for dynamic content with maximum performance.
+
 
   When your PSP.WEB code print a,link,form,script,iframe,frame..., the url of the linked file is re-allocable by just configuration, and PSP.WEB let you use shortest string to specify the url by convention.
 
