@@ -36,7 +36,7 @@ or "PAGE of Stored Procedure for WEB".
 Why invent PSP.WEB
 ===============
 
-  PL/SQL has natural advantages, using PL/SQL for developing web site/application is seductive. But naturally, PL/SQL have no touch with http protocol, If we provide a http listener (such as nodeJS based) that can communicate with oracle PL/SQL, we can invent a whole new stored-procedure based web platform that is the most integrated and convenient platform taking both application layer and database layer together. That is just the way PSP.WEB do. Now PL/SQL leverage it's power to web development in it's most. All the sections below will tell you the unique features of PSP.WEB that other web-dev techs do not reach.
+  I prefer to put all logic that deals with data in PLSQL. There is no more natural language to interact with SQL data then PLSQL, None. PL/SQL has natural advantages, using PL/SQL for developing web site/application is seductive. But naturally, PL/SQL have no touch with http protocol, If we provide a http listener (such as nodeJS based) that can communicate with oracle PL/SQL, we can invent a whole new stored-procedure based web platform that is the most integrated and convenient platform taking both application layer and database layer together. That is just the way PSP.WEB do. Now PL/SQL leverage it's power to web development in it's most. All the sections below will tell you the unique features of PSP.WEB that other web-dev techs do not reach.
 
 ## avoid database connection related work
 
@@ -68,9 +68,11 @@ Why invent PSP.WEB
 
   ORACLE support result-cache, but PSP.WEB provide **row level versioned result_cache**, often used data can be result cached such as user profile, terminal properties. None stored procedure based platforms will do hard to provide data cache and will be too complex.
 
+Compare to other platforms
+=================
 
 Compare to Oracle's PSP
-=================
+-----------------
 
   Someone will tell me that ORACLE has PL/SQL SERVER PAGES support by [mod_plsql] [mod_plsql] within Apache since 8i. Now I tell you ORACLE's PSP is so limited, and it is unchanged for many years and almost frozen. Below I list some of it's limits.
 
@@ -86,9 +88,88 @@ Compare to Oracle's PSP
 * Do not support streaming of http response
 * Every http request will form a dynamic spelled anonymous sql, hit-rate of oracle shared-pool is low
 * html form parameters must have corresponding procedure parameters with the same name, it's so rigid, fragile, and can not span across PL/SQL call stack.
+* No support for streaming. PSP will store all staging page content in array of varchar2, then the last byte made, it will transfer to mod-plsql. But you may need the page head and some of content to return to browser more quickly.
 
 
   PSP.WEB removed the limitation or burden from ORACLE's ancient PSP, PSP.WEB has simple installation and configuration, support almost full http protocol specification with easily used API and framework, it's no longer a sugar toy as PSP.
+
+Compare to Oracle's APEX
+------------------
+
+  APEX support common dynamic website design (authentication, page flow control, ...), It's a high level platform, so it's convenient, but because its lack of low level API/framework support, it limit the freedom of design. It can be used in some none official and common cases, but if your organization need a serious information system, you'd better not to use it. It's fixed bound to its UI/app design, but real requirement is much more flexible and versatile.
+
+Compare to J2EE (and other platforms that a language different than PL/SQL to do logic and connect to db for data processing)
+------------------
+
+  For J2EE, I never felt I need anything beyond tomcat and JDBC connection to the database. All these
+Enterprise Beans, OR-Mapping, eXtremely Messy Language, SOAP, etc are for SQL challenged developers only.
+
+  My view -- I'm lazy.  I want to admin as few things as possible.  I'm easily confused as well -- 
+I'd rather have as few moving pieces as possible.  Do I really need a browser to talk http to a servlet that will do some EJB thing to a bean that was built using CMP for persistence to update a row in a table?
+
+  I find when I build an app against the database -- guess what?  its all about the data.  How can that middle tier app work out a repayment schedule in the middle tier *without sucking all of the data out of the database and pretending to be a database itself*?
+
+  We really need a better integration between a host language and the relational model, only PL/SQL is fit, java,c/c++,c-sharp,php all of them is uncomfortable for it.
+
+  An app server includes a web server and other modules to host an a web application. Usually you need one when you generate dynamic content out of database. The code deployed in app server is just execute app logic, and the app logic is almost equal to data processing in database. So rather than you code with xDBC/OR-mapping to code your app logic, you should code PL/SQL directly and far more conveniently to achieve the same goal.
+
+  So, if you choose ORACLE as your backend database, your dynamic site should prefer PSP.WEB as the technical platform over all the others.
+
+Main Design Considerations
+============
+
+Complete independent of the ORACLE' PSP
+------------
+
+  The new PSP.WEB have it own API's, that is not rely on any of the ORACLE'S owa prefixed packages and htp,htf packages. PSP.WEB do not need Apache and mod-plsql to deploy, nor need XDB http server running. Application of both PSP and PSP.WEB can be deployed both in one oracle database with no conflict.
+
+low level support for http protocol
+------------
+
+  ORACLE's ancient PSP can not handle some of the http features, there is no API to gain arbitrary http request header info, there is no API to get the whole request body lob. Upload file is force to save in upload table no matter of wether the main handler is willing to save it. You are forced to print http header lines (status-line, mime-type, redirect-url in owa-util) before page body printing. It doesn't support page response streaming and compression. The http basic/digest authentication is configured but do not support API for flexible use cased. Expire and validation cache model for browser is not supported at API level.
+
+  But in PSP.WEB, we support almost every aspect features of http protocol is supported well that is sensible for dynamic page app. All request info (include parts of status line, http headers, query string, http form submit parameters(all enctype), file upload, request body itself, cookies) can be got with ease to use API. For response, streaming, compression, 304 caching, attachment download, mime-type, any charset is supported. Http authentication is supported at http header API. You can give the right response status with API.
+
+  The API h is stand for http, that can specify any http response header, and PSP.WEB will do according to the response header, for example, it you set compress:gzip in response header, PSP.WEB will automatically do gzip compression for the output page; if you set content-type's charset is gbk, then PSP.WEB will automatically convert the page from db charset to gbk charset. The PSP.WEB API is just follow http protocol, so it's low level enough, it provide a good foundation for later high level features.
+
+API based html print over templating
+------------
+
+  Templating has many shortcut, it's so limiting :
+
+* It reduced the features of the PL/SQL IDE, tags and PL/SQL messed together, the IDE can no longer do auto-format and well display, it can not compile directly (must firstly be pre-compiled to a standalone procedure)
+* Templating can not support high level features of dynamic page generating, for example: array output for select options,checkboxes,radios,tr-tds.
+* The dynamic page's half work is app logic process work over the html making work, while templating support html making work, it lowered the support for app logic process
+* Templating can only convert PL/SQL server pages to plsql stored procedure and no packages, but package is just the best choice to implement application logic over standalone procedures.
+
+  So PSP.WEB will not focus on PL/SQL html page templating. 
+
+  For the cases when the dynamic page is mainly static html with little PL/SQL, I'll consider support some kind of templating. But I will not use "loadpsp" like method, you just deploy the .psp file in filesystem, nodeJS will monitor the change and automatically compile it to a hash-named standalone procedure.
+
+### bonus feather for API html print
+
+* array output for TDS, SELECT-OPTIONS, CHECKBOXES, RADIOS
+* table print for select result set
+* tree print for hierachical sql result set with level column
+* very short code to specify a url
+* relocatable url reference
+* component css
+* component css with external link
+* css scalable for all length unit
+
+separation of files out of db
+-------------------------------
+
+  Every site including dynamic site need static files. For uploaded files, usually there is no need to process them using pl/sql, they are just accessed as a whole lob. If we store the static files and uploaded files in oracle db, it has many shortcuts. as :
+
+* files will occupy storage space, if you are using ORACLE XE, the space is limited, it will just compete space quota with table data.
+* the files is just deployment copies from source, putting them in db will not gain the benefit of backup/restore of DB
+* the creation/deletion/modification of the files will cause unnessary undo logs and redo logs suss raise the running overhead of DB
+* ORACLE do not support any pre-compiler as for sass, less, stylus, coffee-script ..., to support it, files must be put outside of DB
+* files is candidate for caching, so it's better to deploy them in front servers instead of the most backend DB servers.
+* static file should use different host:port, so the browser can achieve higher concurrent requests, the static server can leverage CDN, and the dynamic server (PSP.WEB) can dedicated for dynamic content with maximum performance.
+
+  When your PSP.WEB code print a,link,form,script,iframe,frame..., the url of the linked file is re-allocable by just configuration, and PSP.WEB let you use shortest string to specify the url by convention.
 
 
 Other Docs and references
