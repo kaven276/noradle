@@ -98,6 +98,10 @@ Compare to Oracle's APEX
 
   APEX support common dynamic website design (authentication, page flow control, ...), It's a high level platform, so it's convenient, but because its lack of low level API/framework support, it limit the freedom of design. It can be used in some none official and common cases, but if your organization need a serious information system, you'd better not to use it. It's fixed bound to its UI/app design, but real requirement is much more flexible and versatile.
 
+  APEX is design after Microsoft's Access and Oracle's forms. We known the limits of access like RAD, it' not for real programmers, and it is not for serius applications.
+
+  The good to use PL/SQL for web is for write data processing ode in IDE like "PL/SQL Developer", intelligent code assistant is there, but when you use APEX, all the goods are lost. I's difficult to write a simple sql or pl/sql. Apex just throw away the only real valuable feature (stuck to easy data process coding) of oracle development, and trade it for the self pleased so limited wizard, predefined design patterns. 
+
 Compare to J2EE (and other platforms that a language different than PL/SQL to do logic and connect to db for data processing)
 ------------------
 
