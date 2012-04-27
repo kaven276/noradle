@@ -32,12 +32,14 @@ Install at oracle's side
 
 ## Configure core parameter for **server\_config\_t** table
 
-	Upon completion of installation, The SERVER_CONTROL_T table is configured by the following insert statement
+  Upon completion of installation, The SERVER\_CONTROL\_T table is configured by the following insert statement
 
 	insert into SERVER_CONTROL_T (GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME, STATIC_URL)
 	values ('127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:30','http://127.0.0.1:81');	
 
   To let PSP.WEB known where the nodeJS http gateway is, You must specify `GW_HOST and GW_PORT columns for SERVER_CONTROL_T`. The nodeJS http server as PL/SQL gateway is listening for oracle connection at tcp address of `GW_HOST:GW_PORT`.
+
+  The above insert will create a config called 'default', you can create additional config by insert multiple records of server\_config\_table, and specify column cfg\_id as the name of the new configuration. That way, you can allow multiple nodeJS gateways to reverse-connect to one oracle database.
 
 
 ## Make sure there is enough processes/sessions and background job process for PSP.WEB service.
