@@ -1,10 +1,19 @@
 create or replace package body k_cfg is
 
-	function server_control return server_control_t%rowtype result_cache relies_on(server_control_t) is
-		v server_control_t%rowtype;
+	type svr_ctl_map is table of server_control_t%rowtype index by varchar2(15);
+
+	function server_controls return svr_ctl_map result_cache relies_on(server_control_t) is
+		v svr_ctl_map;
 	begin
-		select * into v from server_control_t where rownum = 1;
+		for i in (select a.* from server_control_t a) loop
+			v(upper(i.cfg_id)) := i;
+		end loop;
 		return v;
+	end;
+
+	function server_control return server_control_t%rowtype is
+	begin
+		return server_controls()(nvl(pv.cur_cfg_id, 'default'));
 	exception
 		when no_data_found then
 			e.chk(true, -20015, 'No configuation data in PSP.WEB''s server_control_t table');
@@ -40,7 +49,6 @@ create or replace package body k_cfg is
 	end;
 
 	function get_ext_fs return varchar2 result_cache relies_on(server_control_t) is
-		v_prefix ext_url_t.prefix%type;
 	begin
 		return server_control().static_url;
 	end;

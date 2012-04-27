@@ -1,5 +1,6 @@
 create table SERVER_CONTROL_T
 (
+  CFG_ID       VARCHAR2(15) default 'default' not null,
   GW_HOST      VARCHAR2(99),
   GW_PORT      NUMBER(5),
   MIN_SERVERS  NUMBER(4),
@@ -10,6 +11,8 @@ create table SERVER_CONTROL_T
   DEFAULT_DBU  VARCHAR2(30)
 )
 ;
+comment on column SERVER_CONTROL_T.CFG_ID
+  is 'different config can connect to different nodeJS gateway';
 comment on column SERVER_CONTROL_T.GW_HOST
   is 'host of nodeJS gateway that listen for oracle to connect';
 comment on column SERVER_CONTROL_T.GW_PORT
@@ -26,3 +29,6 @@ comment on column SERVER_CONTROL_T.STATIC_URL
   is 'the common static file root url prefix';
 comment on column SERVER_CONTROL_T.DEFAULT_DBU
   is 'if dad do not match any db_user, then map to this dbu';
+
+alter table SERVER_CONTROL_T
+  add constraint PK_SVR_CFG primary key (CFG_ID);

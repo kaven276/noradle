@@ -1,8 +1,17 @@
 create or replace package body k_pmon is
 
-	procedure start_one_server_process(no pls_integer) is
+	function job_prefix(cfg varchar2) return varchar2 deterministic is
 	begin
-		dbms_scheduler.create_job('"PSP.WEB_' || ltrim(to_char(no, '0000')) || '"',
+		return 'PSP.WEB_' || upper(cfg) || ':';
+	end;
+
+	procedure start_one_server_process
+	(
+		cfg varchar2,
+		no  pls_integer
+	) is
+	begin
+		dbms_scheduler.create_job('"' || job_prefix(cfg) || ltrim(to_char(no, '0000')) || '"',
 															job_type => 'STORED_PROCEDURE',
 															job_action => 'gateway.listen',
 															start_date => sysdate,
@@ -11,14 +20,20 @@ create or replace package body k_pmon is
 	end;
 
 	procedure adjust is
-		v_cnt pls_integer := k_cfg.server_control().min_servers;
+		v_prefix varchar2(30);
 	begin
-		for i in (select rownum no
-								from dual
-							connect by rownum <= v_cnt
-							minus
-							select to_number(substrb(a.job_name, 9)) from user_scheduler_jobs a where a.job_action = 'gateway.listen') loop
-			start_one_server_process(i.no);
+		for c in (select * from server_control_t) loop
+			v_prefix := job_prefix(c.cfg_id);
+			for i in (select rownum no
+									from dual
+								connect by rownum <= c.min_servers
+								minus
+								select to_number(substrb(a.job_name, -4))
+									from user_scheduler_jobs a
+								 where a.job_action = 'gateway.listen'
+									 and a.job_name like v_prefix || '%') loop
+				start_one_server_process(c.cfg_id, i.no);
+			end loop;
 		end loop;
 	end;
 

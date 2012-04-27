@@ -22,7 +22,7 @@ create or replace package body gateway is
 		h.line('error text = ' || code || '/' || errm);
 	end;
 
-	-- Refactored procedure quit 
+	-- Refactored procedure quit
 	function quit return boolean is
 		v_msg varchar2(1);
 		v_sts number;
@@ -45,6 +45,12 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry_right, -01031);
 		v_done boolean := false;
 	begin
+		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5)
+			into pv.cur_cfg_id
+			from user_scheduler_running_jobs a
+		 where a.session_id = sys_context('userenv', 'sid');
+		k_debug.trace(st(sys_context('USERENV', 'SID'), pv.cur_cfg_id), 'bgjobid');
+	
 		dbms_alert.register('PW_STOP_SERVER');
 		pv.svr_request_count := 0;
 		pv.svr_start_time    := sysdate;
@@ -100,8 +106,6 @@ create or replace package body gateway is
 				else
 					null; -- normal process
 			end case;
-		
-			k_debug.trace(st('new request arrived'));
 		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
@@ -169,6 +173,7 @@ create or replace package body gateway is
 		utl_tcp.close_all_connections;
 	exception
 		when others then
+			k_debug.trace(st(pv.cur_cfg_id, sqlcode, sqlerrm));
 			utl_tcp.close_all_connections;
 	end;
 
