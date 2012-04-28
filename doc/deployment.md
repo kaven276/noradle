@@ -99,7 +99,6 @@ Install at nodeJS's side
 They are both based on node module "connect" and "express", if you want some of pre-translation function like markdown2html, stylus2css, you can add them as well. Use the following command to install them, they are all in the [NPM registry](http://search.npmjs.org/).
 
 	npm -g install connect
-	npm -g install express
 	npm -g install stylus
 	npm -g install marked
 
