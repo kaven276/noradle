@@ -88,6 +88,8 @@ create or replace package body k_url is
 				pos := instrb(url, '/');
 				dad := substrb(url, 2, pos - 2);
 				return normal(substrb(url, pos + 1));
+			when '#' then
+				return url;
 			else
 				if url like 'pw/%' then
 					pos := instrb(url, '/', 4);
