@@ -505,13 +505,14 @@ create or replace package body k_xhtp is
 		v_url varchar2(1000);
 	begin
 		v_url := l(url, true);
+		-- prefix ./ , so some buggy browsers do not treat as /xxx instead of relative path
 		v_url := t.tf(not regexp_like(v_url, '(http://|/|./|../).*'), './') || v_url;
 		if vals is not null then
 			v_url := ps(v_url, vals);
 		end if;
 
 		if info is null then
-			k_http.go(v_url);
+			k_http.go('=' || v_url);
 		else
 			h;
 			script_open;
@@ -524,6 +525,7 @@ create or replace package body k_xhtp is
 			script_close;
 		end if;
 		-- [todo] k_gw.cancel_page(true);
+		g.finish(true);
 	end;
 
 	-- public
