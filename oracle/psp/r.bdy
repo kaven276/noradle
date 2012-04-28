@@ -54,6 +54,10 @@ create or replace package body r is
 		gv_caddr := utl_tcp.get_line(c, true);
 		gv_cport := utl_tcp.get_line(c, true);
 	
+		if v_dad is null then
+			v_dad := lower(k_cfg.server_control().default_dbu);
+		end if;
+	
 		select /*+ result_cache */
 		 max(lower(a.username))
 			into gv_dbu
