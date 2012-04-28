@@ -84,9 +84,14 @@ Install at nodeJS's side
 
 ## Start and Stop node gateway server
 
-  `node lib/psp.web.js` will start the server
+## Start and Stop node gateway server
 
-  `nohup node lib/psp.web.js & ` will start the server as a daemon.
+	node lib/plsql.js <oracle-port:1521> <http-port:80> <https-port:443> will start the server that service dynamic PL/SQL page only
+	node lib/static.js <http-port:81> will start the server that service static file only
+	node lib/static_adv.js <http-port:81> will start the server that service static file(with documetation) only
+	node lib/combined.js <oracle-port:1521> <http-port:80> <https-port:443> will start the server that service both dynamic PL/SQL page and static file
+	
+	`nohup node lib/combined.js & ` will start the server as a daemon.
 
 ## Install static server nodeJS package
 
