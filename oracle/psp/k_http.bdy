@@ -366,7 +366,7 @@ create or replace package body k_http is
 		status_line(401);
 		pv.headers('WWW-Authenticate') := 'Basic realm="' || realm || '"';
 		pv.buffered_length := 0;
-		pv.allow_content := false;
+		-- pv.allow_content := false;
 	end;
 
 	procedure www_authenticate_digest(realm varchar2) is
