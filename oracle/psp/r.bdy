@@ -642,6 +642,11 @@ create or replace package body r is
 		return header('referer');
 	end;
 
+	function referer2 return varchar2 is
+	begin
+		return getc('$referer', header('referer'));
+	end;
+
 	function ua return varchar2 is
 	begin
 		return header('user-agent');

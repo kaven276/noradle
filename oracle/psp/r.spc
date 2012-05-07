@@ -155,10 +155,11 @@ create or replace package r is
 	function etag return varchar2;
 	function lmt return date;
 	function referer return varchar2;
+	function referer2 return varchar2;
 	function ua return varchar2;
-  
-  function client_addr return varchar2;
-  function client_port return pls_integer;
+
+	function client_addr return varchar2;
+	function client_port return pls_integer;
 
 end r;
 /
