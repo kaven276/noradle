@@ -2,6 +2,7 @@ create or replace package body gateway is
 
 	procedure error_not_bch is
 	begin
+		h.allow_get_post;
 		h.status_line(403);
 		h.content_type('text/plain');
 		h.header_close;
@@ -15,6 +16,7 @@ create or replace package body gateway is
 		errm varchar2
 	) is
 	begin
+		h.allow_get_post;
 		h.status_line(500);
 		h.content_type('text/plain');
 		h.header_close;
