@@ -2,6 +2,7 @@ create or replace package body r is
 
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
+	v_url    varchar2(1000);
 	v_host   varchar2(99);
 	v_hostp  varchar2(30);
 	v_port   pls_integer;
@@ -39,6 +40,7 @@ create or replace package body r is
 	
 		-- basic input
 		v_method := utl_tcp.get_line(c, true);
+		v_url    := utl_tcp.get_line(c, true);
 		v_host   := utl_tcp.get_line(c, true);
 		v_hostp  := utl_tcp.get_line(c, true);
 		v_port   := to_number(utl_tcp.get_line(c, true));
@@ -593,7 +595,7 @@ create or replace package body r is
 
 	function url return varchar2 is
 	begin
-		return v_prog || t.nnpre('?', v_qstr);
+		return v_url;
 	end;
 
 	function gu_dad_path return varchar2 is
