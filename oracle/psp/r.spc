@@ -30,7 +30,6 @@ create or replace package r is
 	function proc return varchar2;
 	function path return varchar2;
 	function qstr return varchar2;
-	function hash return varchar2;
 	function type return varchar2;
 
 	function nc return varchar2;

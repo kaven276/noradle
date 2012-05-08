@@ -14,7 +14,6 @@ create or replace package body r is
 	v_proc   varchar2(30);
 	v_path   varchar2(500);
 	v_qstr   varchar2(256);
-	v_hash   varchar2(100);
 	v_type   char(1);
 	v_user   varchar2(30);
 	v_pass   varchar2(30);
@@ -51,7 +50,6 @@ create or replace package body r is
 		v_proc   := utl_tcp.get_line(c, true);
 		v_path   := utl_tcp.get_line(c, true);
 		v_qstr   := utl_tcp.get_line(c, true);
-		v_hash   := utl_tcp.get_line(c, true);
 		v_type   := substrb(nvl(v_pack, v_proc), -1);
 		gv_caddr := utl_tcp.get_line(c, true);
 		gv_cport := utl_tcp.get_line(c, true);
@@ -311,11 +309,6 @@ create or replace package body r is
 	function qstr return varchar2 is
 	begin
 		return v_qstr;
-	end;
-
-	function hash return varchar2 is
-	begin
-		return v_hash;
 	end;
 
 	function type return varchar2 is

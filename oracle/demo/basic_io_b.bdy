@@ -20,7 +20,6 @@ create or replace package body basic_io_b is
 		h.line('r.proc : ' || r.proc);
 		h.line('r.path : ' || r.path);
 		h.line('r.qstr : ' || r.qstr);
-		h.line('r.hash : ' || r.hash);
 	
 		h.line;
 		h.line('[ This is all http request headers ]');
