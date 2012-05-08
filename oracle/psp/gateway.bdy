@@ -181,8 +181,13 @@ create or replace package body gateway is
 		utl_tcp.close_all_connections;
 	exception
 		when others then
-			k_debug.trace(st(pv.cur_cfg_id, sqlcode, sqlerrm));
+			k_debug.trace(st('gateway listen exception',
+											 pv.cur_cfg_id,
+											 sqlcode,
+											 sqlerrm,
+											 dbms_utility.format_error_backtrace));
 			utl_tcp.close_all_connections;
+			raise;
 	end;
 
 begin
