@@ -160,6 +160,12 @@ create or replace package body gateway is
 					v_done := true;
 					goto redo;
 				when others then
+					k_debug.trace(st('page exception',
+													 r.url,
+													 pv.cur_cfg_id,
+													 sqlcode,
+													 sqlerrm,
+													 dbms_utility.format_error_backtrace));
 					error_dad_auth_entry(sqlcode, sqlerrm);
 			end;
 		
