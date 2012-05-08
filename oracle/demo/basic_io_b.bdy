@@ -10,6 +10,7 @@ create or replace package body basic_io_b is
 	
 		h.line('[ This is the basic request info derived from http request line and host http header ]');
 		h.line('r.method : ' || r.method);
+		h.line('r.url : ' || r.url);
 		h.line('r.host : ' || r.host);
 		h.line('r.host_prefix : ' || r.host_prefix);
 		h.line('r.port : ' || r.port);
