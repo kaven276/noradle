@@ -82,21 +82,51 @@ Install at nodeJS's side
 
   See [nodeJS official website](http://nodejs.org/#download) for the guide of installation of NodeJS and NPM.
 
-## Start and Stop node gateway server
+## SSL support (optional)
+
+	install openssl, and run
+	openssl genrsa -out privatekey.pem 1024
+	openssl req -new -key privatekey.pem -out certificate.csr
+	openssl x509 -req -in certificate.csr -signkey privatekey.pem -out certificate.pem
+
+## setting.js and lib/cfg.js
+
+  lib/cfg.js set the default configuration for NodeJS side server, it's under version control and belong to the product.
+So do not touch it if you don't want lose your work when update PSP.WEB to new version.
+But you can copy lib/cfg.js to setting.js file and modify the setting for your own environment.
+All the setting in lib/cfg.js has remarks and it's easy to understand.
 
 ## Start and Stop node gateway server
 
-	node lib/plsql.js <oracle-port:1521> <http-port:80> <https-port:443> will start the server that service dynamic PL/SQL page only
-	node lib/static.js <http-port:81> will start the server that service static file only
-	node lib/static_adv.js <http-port:81> will start the server that service static file(with documetation) only
-	node lib/combined.js <oracle-port:1521> <http-port:80> <https-port:443> will start the server that service both dynamic PL/SQL page and static file
+  PSP.WEB provide two types of gateway server that will route http requests to oracle plsql store procedures.
+One is sole plsql page gateway server at lib/plsql.js, that's rely on NodeJS alone, and need no more other 3rd-party node modules.
+The other is combined server at lib/combined.js that will serve both plsql dynamic page and static file, basicly, it rely on 3rd-party module connect.
+We suggest to separate static server from main dynamic server, it will get better performance, concurrency, stability,
+and more, you can use CDN for the static part.
+
+  The oracle-port is for oracle scheduler job processes to reverse connect to NodeJS,
+so NodeJS can communicate to oracle, send request and receive reply.
+
+	node lib/plsql.js [oracle-port:1521] [http-port:80] [https-port:443] will start the server that service dynamic PL/SQL page only
+	node lib/combined.js [oracle-port:1521] [http-port:80] [https-port:443] will start the server that service both dynamic PL/SQL page and static file
 	
-	`nohup node lib/combined.js & ` will start the server as a daemon.
+	nohup node lib/combined.js &  will start the server as a daemon.
 
-## Install static server nodeJS package
+## Install/Run static server nodeJS package (optional)
 
-  PSP.WEB will serve separate http server for static files. You can use any static server like Apache/NGINX/IIS/Lighttpd, but PSP.WEB provide a NodeJS based static server in "lib/static.js" and it's advance version "lib/static\_adv.js".
-They are both based on node module "connect" and "express", if you want some of pre-translation function like markdown2html, stylus2css, you can add them as well. Use the following command to install them, they are all in the [NPM registry](http://search.npmjs.org/).
+
+	node lib/static.js [http-port:81] will start the server that service static file only
+	node lib/static_adv.js [http-port:81] will start the server that service static file(with documetation) only
+
+  You can run static file server with plsql dynamic page server or run it separately,
+and you can run static file server we provide that's based on nodeJS and connect module,
+or you can run it on any static http server like Apache, lighttpd, Ngix, IIS, ...
+If you deploy static file separately, please set SERVER\_CONTROL\_T.STATIC\_URL the value that point to the url of the static web server.
+If you only run plsql dynamic page only, run plsql.js, and it rely on pure NodeJS installation only, no additional node modules required.
+Otherwise, if you run combined server or run my static server, you need to install connect module.
+Run `npm -g install connect --production` for connect installation.
+If you want my static server to serve psp.web documentation, you need to install module marked, so that the .md docs can be converted to html.
+If you want some of pre-translation function like markdown2html, stylus2css, you can add them as well. Use the following command to install them, they are all in the [NPM registry](http://search.npmjs.org/).
 
 	npm -g install connect
 	npm -g install stylus
