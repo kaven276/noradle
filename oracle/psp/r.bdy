@@ -5,7 +5,7 @@ create or replace package body r is
 	v_url    varchar2(1000);
 	v_host   varchar2(99);
 	v_hostp  varchar2(30);
-	v_port   pls_integer;
+	v_port   positive;
 	v_method varchar2(10);
 	v_base   varchar2(99);
 	v_dad    varchar2(30);
@@ -22,7 +22,7 @@ create or replace package body r is
 	gv_file varchar2(1000);
 
 	gv_caddr varchar2(30);
-	gv_cport pls_integer;
+	gv_cport positive;
 
 	procedure "_init"
 	(
@@ -52,7 +52,7 @@ create or replace package body r is
 		v_qstr   := utl_tcp.get_line(c, true);
 		v_type   := substrb(nvl(v_pack, v_proc), -1);
 		gv_caddr := utl_tcp.get_line(c, true);
-		gv_cport := utl_tcp.get_line(c, true);
+		gv_cport := to_number(utl_tcp.get_line(c, true));
 	
 		if v_dad is null then
 			v_dad := lower(k_cfg.server_control().default_dbu);
