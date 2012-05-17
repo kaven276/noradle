@@ -1,0 +1,8 @@
+notes/*
+*.html
+*.ppt
+*.log
+*Thumbs.db
+oracle/json/*
+doc/notes/*
+pem/*
