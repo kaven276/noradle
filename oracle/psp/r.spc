@@ -1,5 +1,8 @@
 create or replace package r is
 
+	ct_http   constant pls_integer := 0;
+	ct_nodejs constant pls_integer := 1;
+
 	na pv.vc_arr;
 	va pv.vc_arr;
 
@@ -160,6 +163,8 @@ create or replace package r is
 
 	function client_addr return varchar2;
 	function client_port return pls_integer;
+
+	function call_type return pls_integer;
 
 end r;
 /
