@@ -36,6 +36,11 @@ prompt ==========================
 prompt
 @@charset_b.spc
 prompt
+prompt Creating package DB_SRC_B
+prompt ========================
+prompt
+@@db_src_b.spc
+prompt
 prompt Creating package ERROR_B
 prompt ========================
 prompt
@@ -180,6 +185,11 @@ prompt Creating package body CHARSET_B
 prompt ===============================
 prompt
 @@charset_b.bdy
+prompt
+prompt Creating package body DB_SRC_B
+prompt ========================
+prompt
+@@db_src_b.bdy
 prompt
 prompt Creating package body ERROR_B
 prompt =============================

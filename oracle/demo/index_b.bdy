@@ -103,6 +103,9 @@ create or replace package body index_b is
 		p.dd(p.a('xml_users_css', 'xml_page_b.xml_users_css'));
 		p.dd(p.a('xml_users_xsl_cli', 'xml_page_b.xml_users_xsl_cli'));
 	
+		p.dt('db_src_b');
+		p.dd(p.a('example', 'db_src_b.example'));
+	
 		p.dl_close;
 	end;
 
