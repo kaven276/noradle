@@ -611,20 +611,20 @@ create or replace package body r is
 		return v_url;
 	end;
 
-	function gu_dad_path return varchar2 is
+	function dad_path return varchar2 is
 	begin
-		return 'http://' || header('http_host') || '/' || v_base || '/' || v_dad;
+		return t.nvl2(v_base, '/' || v_base) || '/' || v_dad;
+	end;
+
+	function dad_path_full return varchar2 is
+	begin
+		return v_proto || '://' || v_host || t.tf(v_port != 80, ':' || v_port) || dad_path;
 	end;
 
 	-- for internal url catacation
 	function gu_full_base return varchar2 is
 	begin
-		return gu_dad_path || '/';
-	end;
-
-	function dad_path return varchar2 is
-	begin
-		return t.nvl2(r.base, '/' || r.base) || '/' || r.dad;
+		return dad_path_full || '/';
 	end;
 
 	function from_prog return varchar2 is
