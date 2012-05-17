@@ -38,34 +38,43 @@ create or replace package body r is
 		end if;
 	
 		-- basic input
-		v_method := utl_tcp.get_line(c, true);
-		v_url    := utl_tcp.get_line(c, true);
-		v_host   := utl_tcp.get_line(c, true);
-		v_hostp  := utl_tcp.get_line(c, true);
-		v_port   := to_number(utl_tcp.get_line(c, true));
-		v_base   := utl_tcp.get_line(c, true);
-		v_dad    := utl_tcp.get_line(c, true);
-		v_prog   := utl_tcp.get_line(c, true);
-		v_pack   := utl_tcp.get_line(c, true);
-		v_proc   := utl_tcp.get_line(c, true);
-		v_path   := utl_tcp.get_line(c, true);
-		v_qstr   := utl_tcp.get_line(c, true);
-		v_type   := substrb(nvl(v_pack, v_proc), -1);
-		gv_caddr := utl_tcp.get_line(c, true);
-		gv_cport := to_number(utl_tcp.get_line(c, true));
-	
-		if v_dad is null then
-			v_dad := lower(k_cfg.server_control().default_dbu);
-		end if;
-	
-		select /*+ result_cache */
-		 max(lower(a.username))
-			into gv_dbu
-			from dba_users a
-		 where a.username = upper(v_dad);
-		if gv_dbu is null then
-			gv_dbu := lower(k_cfg.server_control().default_dbu);
-		end if;
+		case pv.call_type
+			when 0 then
+				v_method := utl_tcp.get_line(c, true);
+				v_url    := utl_tcp.get_line(c, true);
+				v_host   := utl_tcp.get_line(c, true);
+				v_hostp  := utl_tcp.get_line(c, true);
+				v_port   := to_number(utl_tcp.get_line(c, true));
+				v_base   := utl_tcp.get_line(c, true);
+				v_dad    := utl_tcp.get_line(c, true);
+				v_prog   := utl_tcp.get_line(c, true);
+				v_pack   := utl_tcp.get_line(c, true);
+				v_proc   := utl_tcp.get_line(c, true);
+				v_path   := utl_tcp.get_line(c, true);
+				v_qstr   := utl_tcp.get_line(c, true);
+				v_type   := substrb(nvl(v_pack, v_proc), -1);
+				gv_caddr := utl_tcp.get_line(c, true);
+				gv_cport := to_number(utl_tcp.get_line(c, true));
+			
+				if v_dad is null then
+					v_dad := lower(k_cfg.server_control().default_dbu);
+				end if;
+			
+				select /*+ result_cache */
+				 max(lower(a.username))
+					into gv_dbu
+					from dba_users a
+				 where a.username = upper(v_dad);
+				if gv_dbu is null then
+					gv_dbu := lower(k_cfg.server_control().default_dbu);
+				end if;
+			
+			when 1 then
+				gv_dbu := lower(utl_tcp.get_line(c, true));
+				v_prog := utl_tcp.get_line(c, true);
+				v_proc := utl_tcp.get_line(c, true);
+				v_pack := utl_tcp.get_line(c, true);
+		end case;
 	
 		ra.headers.delete;
 		ra.cookies.delete;
@@ -80,38 +89,42 @@ create or replace package body r is
 		end loop;
 	
 		-- credentials
-		declare
-			v_credential varchar2(100);
-			v_parts      st;
-		begin
-			v_credential := ra.headers('authorization');
-			if v_credential is null then
-				v_user := null;
-				v_pass := null;
-			else
-				t.split(v_parts, v_credential, ' ');
-				case v_parts(1)
-					when 'Basic' then
-						t.split(v_parts, utl_encode.text_decode(v_parts(2), encoding => utl_encode.base64), ':');
-						v_user := v_parts(1);
-						v_pass := v_parts(2);
-					when 'Digest' then
-						null;
-				end case;
-			end if;
-		exception
-			when no_data_found then
-				v_user := null;
-				v_pass := null;
-		end;
+		if pv.call_type = 0 then
+			declare
+				v_credential varchar2(100);
+				v_parts      st;
+			begin
+				v_credential := ra.headers('authorization');
+				if v_credential is null then
+					v_user := null;
+					v_pass := null;
+				else
+					t.split(v_parts, v_credential, ' ');
+					case v_parts(1)
+						when 'Basic' then
+							t.split(v_parts, utl_encode.text_decode(v_parts(2), encoding => utl_encode.base64), ':');
+							v_user := v_parts(1);
+							v_pass := v_parts(2);
+						when 'Digest' then
+							null;
+					end case;
+				end if;
+			exception
+				when no_data_found then
+					v_user := null;
+					v_pass := null;
+			end;
+		end if;
 	
 		-- read cookies
-		loop
-			v_name := utl_tcp.get_line(c, true);
-			exit when v_name is null;
-			v_value := utl_tcp.get_line(c, true);
-			ra.cookies(v_name) := v_value;
-		end loop;
+		if pv.call_type = 0 then
+			loop
+				v_name := utl_tcp.get_line(c, true);
+				exit when v_name is null;
+				v_value := utl_tcp.get_line(c, true);
+				ra.cookies(v_name) := v_value;
+			end loop;
+		end if;
 	
 		-- read query string  
 		loop
@@ -127,7 +140,7 @@ create or replace package body r is
 		end loop;
 	
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
-		if v_method = 'POST' then
+		if pv.call_type = 0 and v_method = 'POST' then
 			if ra.headers('content-type') like 'application/x-www-form-urlencoded%' or
 				 ra.headers('content-type') like 'multipart/form-data%' then
 				loop

@@ -105,8 +105,10 @@ create or replace package body gateway is
 				when 'csslink' then
 					output.do_css_write;
 					continue;
+				when 'NodeJS Call' then
+					pv.call_type := 1;
 				else
-					null; -- normal process
+					pv.call_type := 0; -- normal process
 			end case;
 		
 			pv.elpt := dbms_utility.get_time;
@@ -168,7 +170,6 @@ create or replace package body gateway is
 													 dbms_utility.format_error_backtrace));
 					error_dad_auth_entry(sqlcode, sqlerrm);
 			end;
-		
 			output.finish;
 			pv.svr_request_count := pv.svr_request_count + 1;
 			if pv.svr_request_count >= k_cfg.server_control().max_requests then
