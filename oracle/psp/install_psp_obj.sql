@@ -146,6 +146,11 @@ prompt ===================
 prompt
 @@rb.spc
 prompt
+prompt Creating package RS
+prompt ===================
+prompt
+@@rs.spc
+prompt
 prompt Creating package TMP
 prompt ====================
 prompt
@@ -255,5 +260,10 @@ prompt Creating package body R
 prompt =======================
 prompt
 @@r.bdy
+prompt
+prompt Creating package body RS
+prompt =======================
+prompt
+@@rs.bdy
 
 spool off
