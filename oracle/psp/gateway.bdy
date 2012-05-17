@@ -138,7 +138,11 @@ create or replace package body gateway is
 		
 			r."_init"(pv.c, 80526);
 			pv.status_code := 200;
-			h.content_type;
+			if pv.call_type = 0 then
+				h.content_type;
+			else
+				h.content_type(h.mime_text, 'UTF-8');
+			end if;
 			output."_init"(80526);
 			p.init;
 		
