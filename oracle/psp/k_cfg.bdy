@@ -48,7 +48,7 @@ create or replace package body k_cfg is
 			end;
 	end;
 
-	function get_ext_fs return varchar2 result_cache relies_on(server_control_t) is
+	function get_ext_fs return varchar2 is
 	begin
 		return server_control().static_url;
 	end;
