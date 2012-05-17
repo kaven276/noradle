@@ -6,3 +6,6 @@ notes/*
 oracle/json/*
 doc/notes/*
 pem/*
+.idea/*
+*/*.out
+*/*.log
