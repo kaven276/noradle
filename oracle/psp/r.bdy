@@ -3,6 +3,7 @@ create or replace package body r is
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
 	v_url    varchar2(1000);
+	v_proto  varchar2(10);
 	v_host   varchar2(99);
 	v_hostp  varchar2(30);
 	v_port   positive;
@@ -42,6 +43,7 @@ create or replace package body r is
 			when 0 then
 				v_method := utl_tcp.get_line(c, true);
 				v_url    := utl_tcp.get_line(c, true);
+				v_proto  := 'http'; -- utl_tcp.get_line(c, true);
 				v_host   := utl_tcp.get_line(c, true);
 				v_hostp  := utl_tcp.get_line(c, true);
 				v_port   := to_number(utl_tcp.get_line(c, true));
@@ -267,6 +269,11 @@ create or replace package body r is
 	function read_line_no_more return boolean is
 	begin
 		return pv.rl_end;
+	end;
+
+	function protocol return varchar2 is
+	begin
+		return v_proto;
 	end;
 
 	function host return varchar2 is
@@ -668,6 +675,11 @@ create or replace package body r is
 	function client_port return pls_integer is
 	begin
 		return gv_cport;
+	end;
+
+	function call_type return pls_integer is
+	begin
+		return pv.call_type;
 	end;
 
 end r;
