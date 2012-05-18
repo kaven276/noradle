@@ -13,6 +13,7 @@ create or replace package pv is
 	write_buff_size pls_integer := 8132; -- will be auto set to lob chunk size, maxium to 32767
 	gzip_thres      pls_integer := 1000;
 
+	msg_stream      boolean;
 	use_stream      boolean;
 	buffered_length number(8) := 0;
 	end_marker      varchar2(100);

@@ -124,6 +124,7 @@ create or replace package body gateway is
 			pv.allow_content   := false;
 			pv.buffered_length := 0;
 			pv.max_lmt         := null;
+			pv.msg_stream      := false;
 			pv.use_stream      := false;
 			pv.gzip            := null;
 			pv.content_md5     := null;
@@ -176,6 +177,9 @@ create or replace package body gateway is
 													 dbms_utility.format_error_backtrace));
 					error_dad_auth_entry(sqlcode, sqlerrm);
 			end;
+			if pv.msg_stream then
+				goto the_end; -- when stream quit, quit process also, to release resource
+			end if;
 			output.finish;
 			pv.svr_request_count := pv.svr_request_count + 1;
 			if pv.svr_request_count >= k_cfg.server_control().max_requests then
