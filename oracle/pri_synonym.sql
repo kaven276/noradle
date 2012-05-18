@@ -18,4 +18,5 @@ create or replace synonym k_debug for k_debug;
 create or replace synonym s for k_sess;
 create or replace synonym gac_cid_seq for gac_cid_seq;
 create or replace synonym kv for kv;
-create or replace public synonym rs for rs;
+create or replace synonym rs for rs;
+create or replace synonym bkr for k_broker;

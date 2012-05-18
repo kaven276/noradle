@@ -46,6 +46,11 @@ prompt ===================
 prompt
 @@kv.spc
 prompt
+prompt Creating package K_BROKER
+prompt =========================
+prompt
+@@k_broker.spc
+prompt
 prompt Creating package K_CCFLAG
 prompt =========================
 prompt
@@ -185,6 +190,11 @@ prompt Creating package body KV
 prompt ========================
 prompt
 @@kv.bdy
+prompt
+prompt Creating package body K_BROKER
+prompt ==============================
+prompt
+@@k_broker.bdy
 prompt
 prompt Creating package body K_CCFLAG
 prompt ==============================

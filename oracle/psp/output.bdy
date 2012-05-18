@@ -163,7 +163,7 @@ create or replace package body output is
 		v_pos  number := 0;
 	begin
 	
-		if v_gzip = false and pv.csslink = false and pv.css_len > 0 then
+		if pv.csslink = false and v_gzip = false and pv.css_len > 0 then
 			v_wlen := pv.css_ins;
 			dbms_lob.read(pv.entity, pv.css_ins, 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
