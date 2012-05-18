@@ -31,6 +31,11 @@ prompt ========================
 prompt
 @@cache_b.spc
 prompt
+prompt Creating package CALLOUT_BROKER_H
+prompt ========================
+prompt
+@@callout_broker_h.spc
+prompt
 prompt Creating package CHARSET_B
 prompt ==========================
 prompt
@@ -180,6 +185,11 @@ prompt Creating package body CACHE_B
 prompt =============================
 prompt
 @@cache_b.bdy
+prompt
+prompt Creating package body CALLOUT_BROKER_H
+prompt =============================
+prompt
+@@callout_broker_h.bdy
 prompt
 prompt Creating package body CHARSET_B
 prompt ===============================
