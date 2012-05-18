@@ -19,4 +19,3 @@ create or replace public synonym s for k_sess;
 create or replace public synonym gac_cid_seq for gac_cid_seq;
 create or replace public synonym kv for kv;
 create or replace public synonym rs for rs;
-create or replace public synonym resultsets for rs;
