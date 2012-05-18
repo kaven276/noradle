@@ -162,8 +162,6 @@ create or replace package body output is
 		v_wlen number(8);
 		v_pos  number := 0;
 	begin
-		write_head;
-		utl_tcp.flush(pv.c);
 	
 		if v_gzip = false and pv.csslink = false and pv.css_len > 0 then
 			v_wlen := pv.css_ins;
@@ -334,6 +332,8 @@ create or replace package body output is
 			return;
 		end if;
 	
+		write_head;
+		utl_tcp.flush(pv.c);
 		do_write(v_len, v_gzip);
 	end;
 

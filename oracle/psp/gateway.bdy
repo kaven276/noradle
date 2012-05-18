@@ -100,6 +100,8 @@ create or replace package body gateway is
 				when 'quit_process' then
 					return;
 				when 'feedback' then
+					output.write_head;
+					utl_tcp.flush(pv.c);
 					output.do_write(pv.buffered_length, false);
 					continue;
 				when 'csslink' then
