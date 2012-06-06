@@ -12,3 +12,5 @@ please see [App dialbook developed on PSP.WEB](http://60.29.143.244/tjuc) at pro
 
 please see [License of PSP.WEB](psp.web/blob/master/doc/license.md) at doc/license.md
 
+please see [Call oracle plsql stored procedure with javascript](http://60.29.143.244/doc/js_call_plsql.html) at doc/js_call_plsql.md
+
