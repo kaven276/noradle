@@ -1,0 +1,21 @@
+{
+  "author" : "Li Yong <kaven276@vip.sina.com>",
+  "name" : "Noradle",
+  "description" : "A NodeJS and Oracle DB integration, and NodeJS can act as gateway for plsql server pages",
+  "version" : "0.5.1",
+  "repository" : {
+    "type" : "git",
+    "url" : "git://github.com/kaven276/psp.web.git"
+  },
+  "main" : "server.js",
+  "scripts" : {
+  },
+  "engines" : {
+    "node" : ">=0.6.2"
+  },
+  "dependencies" : {
+    "connect" : ">=1.0"
+  },
+  "devDependencies" : {
+  }
+}
