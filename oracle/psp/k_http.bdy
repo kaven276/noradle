@@ -178,6 +178,10 @@ create or replace package body k_http is
 
 	procedure content_encoding_gzip is
 	begin
+		if pv.content_md5 then
+			pv.headers('x-pw-content-encoding-zip-nullify') := 'content_md5';
+			return;
+		end if;
 		pv.headers('Content-Encoding') := 'gzip';
 	end;
 
@@ -188,6 +192,10 @@ create or replace package body k_http is
 
 	procedure content_encoding_auto is
 	begin
+		if pv.content_md5 then
+			pv.headers('x-pw-content-encoding-zip-nullify') := 'content_md5';
+			return;
+		end if;
 		pv.headers.delete('Content-Encoding');
 	end;
 
