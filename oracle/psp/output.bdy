@@ -114,8 +114,8 @@ create or replace package body output is
 	procedure write_raw(content in out nocopy raw) is
 		v_len pls_integer := utl_raw.length(content);
 	begin
-		if pv.chunk_max_idle is not null and (systimestamp - pv.last_flush) > pv.chunk_max_idle and
-			 pv.buffered_length > nvl(pv.chunk_min_size, 512) then
+		if pv.chunk_max_idle is not null and pv.buffered_length > nvl(pv.chunk_min_size, 512) and
+			 (systimestamp - pv.last_flush) > pv.chunk_max_idle then
 			flush;
 		end if;
 	
