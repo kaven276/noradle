@@ -340,17 +340,7 @@ create or replace package body k_http is
 		if pv.allow is not null and instr(',' || pv.allow || ',', r.method) <= 0 then
 			h.status_line(405); -- Method Not Allowed
 			pv.headers('Allow') := pv.allow;
-			if pv.use_stream then
-				output.write_head;
-			end if;
 			raise pv.ex_resp_done;
-		end if;
-	
-		if pv.use_stream then
-			e.chk(pv.use_stream and pv.gzip, -20006, 'when use stream/chunked transfer, gzip are not supported');
-			-- stream and gzip is impossible, utl_compress will forbid other lob operation until close
-			-- gzip parts can be add progressively, but cannot output progressively
-			output.write_head;
 		end if;
 	
 		if r.lmt = pv.max_lmt then
