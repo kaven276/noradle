@@ -15,7 +15,6 @@ create or replace package body output is
 		nl varchar2(2) := chr(13) || chr(10);
 		l  pls_integer;
 		n  varchar2(30);
-		c  varchar2(4000);
 	begin
 		if pv.header_writen then
 			return;
@@ -235,12 +234,8 @@ create or replace package body output is
 		v_len  integer;
 		v_len2 integer := 0;
 		v_raw  raw(32767);
-		v_amt  number(8) := 99999999;
 		v_gzip boolean := false;
 		v_md5  varchar2(32);
-		v_lzh  binary_integer;
-		v_read binary_integer;
-		v_pos  number := 0;
 	begin
 		if p.gv_xhtp then
 			p.ensure_close;
