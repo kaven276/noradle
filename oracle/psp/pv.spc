@@ -11,7 +11,6 @@ create or replace package pv is
 	cput number(10); -- cpu-time
 
 	write_buff_size pls_integer := 8132; -- will be auto set to lob chunk size, maxium to 32767
-	gzip_thres      pls_integer := 1000;
 
 	msg_stream      boolean;
 	use_stream      boolean;
@@ -31,9 +30,6 @@ create or replace package pv is
 	charset     varchar2(30);
 	charset_ora varchar2(30);
 	gzip        boolean;
-	gzip_handle binary_integer;
-	gzip_amount number(8);
-	gzip_entity blob;
 	content_md5 boolean;
 	etag_md5    boolean;
 	max_lmt     date;

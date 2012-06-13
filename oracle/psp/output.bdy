@@ -93,7 +93,6 @@ create or replace package body output is
 		v_raw  raw(32767);
 		v_wlen number(8);
 		v_pos  number := 0;
-		v_gzip boolean := false;
 	begin
 		if not pv.header_writen then
 			pv.headers('Transfer-Encoding') := 'chunked';
@@ -105,11 +104,7 @@ create or replace package body output is
 			else
 				v_wlen := pv.write_buff_size;
 			end if;
-			if v_gzip then
-				dbms_lob.read(pv.gzip_entity, v_wlen, v_pos + 1, v_raw);
-			else
-				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
-			end if;
+			dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
 			v_pos  := v_pos + v_wlen;
 		end loop;
@@ -230,13 +225,9 @@ create or replace package body output is
 			else
 				v_wlen := pv.write_buff_size;
 			end if;
-			if v_gzip then
-				dbms_lob.read(pv.gzip_entity, v_wlen, v_pos + 1, v_raw);
-			else
-				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
-			end if;
+			dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			v_pos := v_pos + v_wlen;
+			v_pos  := v_pos + v_wlen;
 		end loop;
 	end do_write;
 
@@ -295,44 +286,9 @@ create or replace package body output is
 			end if;
 		end if;
 	
-		if r.type != 'c' and r.header('accept-encoding') like '%gzip%' and
-			 (pv.gzip or pv.gzip is null and v_len + v_len2 > pv.gzip_thres) then
-			v_gzip := true;
-			pv.headers('x-pw-ungzip-size') := v_len + v_len2;
-			if v_len2 = 0 then
-				dbms_lob.trim(pv.entity, pv.buffered_length);
-				pv.gzip_entity := utl_compress.lz_compress(pv.entity, 1);
-			else
-				v_lzh  := utl_compress.lz_compress_open(pv.gzip_entity, 1);
-				v_read := pv.css_ins;
-				dbms_lob.read(pv.entity, v_read, 1, v_raw);
-				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
-				v_read := pv.css_len;
-				dbms_lob.read(pv.csstext, v_read, 1, v_raw);
-				utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
-				v_pos := pv.css_ins;
-				for i in 1 .. ceil((v_len - pv.css_ins) / 32767) loop
-					v_read := t.tf(v_pos + 32767 > v_len, v_len - v_pos, 32767);
-					dbms_lob.read(pv.entity, v_read, v_pos + 1, v_raw);
-					v_pos := v_pos + v_read;
-					utl_compress.lz_compress_add(v_lzh, pv.gzip_entity, v_raw);
-				end loop;
-				utl_compress.lz_compress_close(v_lzh, pv.gzip_entity);
-			end if;
-			v_len := dbms_lob.getlength(pv.gzip_entity);
-			v_len2 := 0;
-			pv.headers('x-pw-gzip-ratio') := round(100 * v_len / to_number(pv.headers('x-pw-ungzip-size')));
-			h.content_encoding_gzip;
-		end if;
-	
 		if pv.content_md5 = true or pv.etag_md5 = true then
-			if v_gzip then
-				dbms_lob.trim(pv.gzip_entity, v_len);
-				v_raw := dbms_crypto.hash(pv.gzip_entity, dbms_crypto.hash_md5);
-			else
-				dbms_lob.trim(pv.entity, v_len);
-				v_raw := dbms_crypto.hash(pv.entity, dbms_crypto.hash_md5);
-			end if;
+			dbms_lob.trim(pv.entity, v_len);
+			v_raw := dbms_crypto.hash(pv.entity, dbms_crypto.hash_md5);
 			v_md5 := utl_raw.cast_to_varchar2(utl_encode.base64_encode(v_raw));
 			if pv.content_md5 = true then
 				pv.headers('Content-MD5') := v_md5;
