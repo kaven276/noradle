@@ -93,6 +93,9 @@ create or replace package body output is
 		v_wlen number(8);
 		v_pos  number := 0;
 	begin
+		if pv.content_md5 or pv.etag_md5 then
+			return;
+		end if;
 		if not pv.header_writen then
 			pv.headers('Transfer-Encoding') := 'chunked';
 			write_head;
@@ -281,14 +284,14 @@ create or replace package body output is
 			end if;
 		end if;
 	
-		if pv.content_md5 = true or pv.etag_md5 = true then
+		if pv.content_md5 or pv.etag_md5 then
 			dbms_lob.trim(pv.entity, v_len);
 			v_raw := dbms_crypto.hash(pv.entity, dbms_crypto.hash_md5);
 			v_md5 := utl_raw.cast_to_varchar2(utl_encode.base64_encode(v_raw));
-			if pv.content_md5 = true then
+			if pv.content_md5 then
 				pv.headers('Content-MD5') := v_md5;
 			end if;
-			if pv.etag_md5 = true then
+			if pv.etag_md5 then
 				if r.etag = v_md5 then
 					h.status_line(304);
 					v_len := 0;

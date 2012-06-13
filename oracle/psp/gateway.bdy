@@ -127,8 +127,8 @@ create or replace package body gateway is
 			pv.msg_stream      := false;
 			pv.use_stream      := false;
 			pv.gzip            := null;
-			pv.content_md5     := null;
-			pv.etag_md5        := null;
+			pv.content_md5     := false;
+			pv.etag_md5        := false;
 			pv.csslink         := null;
 			pv.allow           := null;
 			pv.nlbr            := chr(10);
