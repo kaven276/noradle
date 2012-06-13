@@ -213,6 +213,22 @@ create or replace package body k_http is
 		pv.use_stream := false;
 	end;
 
+	procedure auto_chunk_max_size(bytes pls_integer) is
+	begin
+		pv.chunk_max_size := bytes;
+	end;
+
+	procedure auto_chunk_max_idle
+	(
+		seconds   number,
+		min_bytes pls_integer
+	) is
+	begin
+		pv.chunk_max_idle := numtodsinterval(seconds, 'second');
+		pv.chunk_min_size := min_bytes;
+		pv.last_flush     := systimestamp;
+	end;
+
 	procedure transfer_encoding_auto is
 	begin
 		pv.headers.delete('Transfer-Encoding');

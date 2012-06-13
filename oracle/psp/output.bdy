@@ -89,6 +89,67 @@ create or replace package body output is
 		end loop;
 	end;
 
+	procedure flush is
+		v_raw  raw(32767);
+		v_wlen number(8);
+		v_pos  number := 0;
+		v_gzip boolean := false;
+	begin
+		if not pv.header_writen then
+			pv.headers('Transfer-Encoding') := 'chunked';
+			write_head;
+		end if;
+		for i in 1 .. ceil(pv.buffered_length / pv.write_buff_size) loop
+			if v_pos + pv.write_buff_size > pv.buffered_length then
+				v_wlen := pv.buffered_length - v_pos;
+			else
+				v_wlen := pv.write_buff_size;
+			end if;
+			if v_gzip then
+				dbms_lob.read(pv.gzip_entity, v_wlen, v_pos + 1, v_raw);
+			else
+				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
+			end if;
+			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
+			v_pos  := v_pos + v_wlen;
+		end loop;
+		pv.buffered_length := 0;
+		pv.last_flush      := systimestamp;
+	end;
+
+	procedure write_raw(content in out nocopy raw) is
+		v_len pls_integer := utl_raw.length(content);
+	begin
+		if pv.chunk_max_idle is not null and (systimestamp - pv.last_flush) > pv.chunk_max_idle and
+			 pv.buffered_length > nvl(pv.chunk_min_size, 512) then
+			flush;
+		end if;
+	
+		if true then
+			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, content);
+			pv.buffered_length := pv.buffered_length + v_len;
+		end if;
+	
+		if pv.chunk_max_size is not null and pv.buffered_length >= pv.chunk_max_size then
+			flush;
+		end if;
+	end;
+
+	procedure write(content varchar2 character set any_cs) is
+	begin
+		null;
+	end;
+
+	procedure write(content in out nocopy blob) is
+	begin
+		null;
+	end;
+
+	procedure write(content in out nocopy clob character set any_cs) is
+	begin
+		null;
+	end;
+
 	-- public
 	procedure line
 	(
@@ -129,27 +190,8 @@ create or replace package body output is
 		end if;
 	
 		v_out := utl_i18n.string_to_raw(lpad(' ', indent, ' ') || str || nl, v_cs);
-		v_len := utl_raw.length(v_out);
+		write_raw(v_out);
 	
-		if not pv.use_stream then
-			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, v_out);
-			pv.buffered_length := pv.buffered_length + v_len;
-			return;
-		end if;
-	
-		if pv.buffered_length + v_len > pv.write_buff_size then
-			utl_tcp.flush(pv.c);
-			pv.buffered_length := 0;
-		end if;
-		dummy              := utl_tcp.write_raw(pv.c, v_out);
-		pv.buffered_length := pv.buffered_length + v_len;
-	end;
-
-	procedure flush is
-	begin
-		if pv.use_stream then
-			utl_tcp.flush(pv.c);
-		end if;
 	end;
 
 	-- Refactored procedure do_write 
@@ -167,12 +209,10 @@ create or replace package body output is
 			v_wlen := pv.css_ins;
 			dbms_lob.read(pv.entity, pv.css_ins, 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			utl_tcp.flush(pv.c);
 		
 			v_wlen := pv.css_len;
 			dbms_lob.read(pv.csstext, v_wlen, 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			utl_tcp.flush(pv.c);
 		
 			v_pos := pv.css_ins;
 			for i in 1 .. ceil((v_len - pv.css_ins) / 32767) loop
@@ -180,7 +220,6 @@ create or replace package body output is
 				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
 				v_pos  := v_pos + v_wlen;
 				v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-				utl_tcp.flush(pv.c);
 			end loop;
 			return;
 		end if;
@@ -197,7 +236,6 @@ create or replace package body output is
 				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
 			end if;
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			utl_tcp.flush(pv.c);
 			v_pos := v_pos + v_wlen;
 		end loop;
 	end do_write;
@@ -219,8 +257,8 @@ create or replace package body output is
 	
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.use_stream then
-			v_len := utl_tcp.write_line(pv.c, pv.end_marker);
-			utl_tcp.flush(pv.c);
+			line(pv.end_marker, chr(13) || chr(10));
+			flush;
 			return;
 		end if;
 	

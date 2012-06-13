@@ -62,7 +62,7 @@ create or replace package body gateway is
 																			remote_port     => k_cfg.server_control().gw_port,
 																			charset         => null,
 																			in_buffer_size  => pv.write_buff_size,
-																			out_buffer_size => pv.write_buff_size,
+																			out_buffer_size => 0,
 																			tx_timeout      => 3);
 		exception
 			when utl_tcp.network_error then
@@ -152,6 +152,11 @@ create or replace package body gateway is
 			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 				error_not_bch;
 				continue;
+			end if;
+		
+			if r.method = 'GET' then
+				k_http.auto_chunk_max_size;
+				k_http.auto_chunk_max_idle;
 			end if;
 		
 			dbms_application_info.set_module(r.prog, null);

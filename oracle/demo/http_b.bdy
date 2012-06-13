@@ -50,8 +50,8 @@ create or replace package body http_b is
 		end case;
 		h.header_close;
 	
-    h.line('<link href="http_b.content_css" type="text/css" rel="stylesheet"/>');
-    h.line('<script src="http_b.content_js"></script>');
+		h.line('<link href="http_b.content_css" type="text/css" rel="stylesheet"/>');
+		h.line('<script src="http_b.content_js"></script>');
 		src_b.link_proc;
 		h.line('This page transfer-encoding setting is ' || r.getc('use', 'auto') || '<br/>');
 		h.line('This page print ' || r.getc('count', 100) || ' numbers <br/>');
@@ -87,6 +87,7 @@ create or replace package body http_b is
 	begin
 		h.transfer_encoding_chunked;
 		h.header_close;
+		-- h.auto_chunk_max_idle(0.5, 10);
 	
 		src_b.link_proc;
 		h.line('<h3>This a long-running page that use chunked transfer and flush by section to response early</h3>');
@@ -97,7 +98,9 @@ create or replace package body http_b is
 			h.line('LiNE, NO.' || i);
 			h.line('<script>cnt.innerText=' || i || ';</script>');
 			-- p.line(rpad(i, 300, i));
-			h.flush();
+			h.flush(); 
+			-- you may not force flush when h.auto_chunk_max_idle is set.
+			-- but you can close auto flush by call h.auto_chunk_max_idle(null);
 			dbms_lock.sleep(1);
 		end loop;
 		h.line('</pre>');
