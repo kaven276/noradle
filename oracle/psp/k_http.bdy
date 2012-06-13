@@ -179,19 +179,16 @@ create or replace package body k_http is
 	procedure content_encoding_gzip is
 	begin
 		pv.headers('Content-Encoding') := 'gzip';
-		pv.gzip := true;
 	end;
 
 	procedure content_encoding_identity is
 	begin
 		pv.headers('Content-Encoding') := 'identity';
-		pv.gzip := false;
 	end;
 
 	procedure content_encoding_auto is
 	begin
 		pv.headers.delete('Content-Encoding');
-		pv.gzip := null;
 	end;
 
 	procedure location(url varchar2) is

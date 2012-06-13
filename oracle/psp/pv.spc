@@ -29,7 +29,6 @@ create or replace package pv is
 	mime_type   varchar2(100);
 	charset     varchar2(30);
 	charset_ora varchar2(30);
-	gzip        boolean;
 	content_md5 boolean;
 	etag_md5    boolean;
 	max_lmt     date;
