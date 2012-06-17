@@ -284,6 +284,10 @@ create or replace package body output is
 			end if;
 		end if;
 	
+		if pv.content_md5 and pv.headers('Content-Encoding') in ('try', '?') then
+			pv.content_md5 := false;
+		end if;
+	
 		if pv.content_md5 or pv.etag_md5 then
 			dbms_lob.trim(pv.entity, v_len);
 			v_raw := dbms_crypto.hash(pv.entity, dbms_crypto.hash_md5);
