@@ -50,10 +50,6 @@ create or replace package k_http is
 	procedure content_encoding_identity;
 	procedure content_encoding_auto;
 
-	procedure transfer_encoding_chunked;
-	procedure transfer_encoding_identity;
-	procedure transfer_encoding_auto;
-
 	procedure auto_chunk_max_size(bytes pls_integer := pv.write_buff_size);
 	procedure auto_chunk_max_idle
 	(

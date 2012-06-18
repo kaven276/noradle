@@ -197,19 +197,6 @@ create or replace package body k_http is
 		pv.headers('Location') := utl_url.escape(url, false, pv.charset_ora);
 	end;
 
-	procedure transfer_encoding_chunked is
-	begin
-		e.chk(r.type = 'c', -20008, '_c can not use chunked encoding');
-		pv.headers('Transfer-Encoding') := 'chunked';
-		pv.use_stream := true;
-	end;
-
-	procedure transfer_encoding_identity is
-	begin
-		pv.headers('Transfer-Encoding') := 'identity';
-		pv.use_stream := false;
-	end;
-
 	procedure auto_chunk_max_size(bytes pls_integer) is
 	begin
 		pv.chunk_max_size := bytes;
@@ -224,12 +211,6 @@ create or replace package body k_http is
 		pv.chunk_max_idle := numtodsinterval(seconds, 'second');
 		pv.chunk_min_size := min_bytes;
 		pv.last_flush     := systimestamp;
-	end;
-
-	procedure transfer_encoding_auto is
-	begin
-		pv.headers.delete('Transfer-Encoding');
-		pv.use_stream := false; -- default to not use_stream
 	end;
 
 	procedure content_disposition_attachment(filename varchar2) is
@@ -286,7 +267,8 @@ create or replace package body k_http is
 
 	procedure etag_md5_on is
 	begin
-		pv.etag_md5 := true;
+		pv.etag_md5   := true;
+		pv.use_stream := false;
 	end;
 
 	procedure etag_md5_off is

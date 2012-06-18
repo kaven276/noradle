@@ -23,8 +23,9 @@ create or replace package body output is
 		end if;
 	
 		begin
-			if pv.headers('Transfer-Encoding') = 'chunked' then
+			if pv.use_stream then
 				pv.headers.delete('Content-Length');
+				pv.headers('Transfer-Encoding') := 'chunked';
 			end if;
 		exception
 			when no_data_found then
@@ -93,7 +94,7 @@ create or replace package body output is
 		v_wlen number(8);
 		v_pos  number := 0;
 	begin
-		if pv.content_md5 or pv.etag_md5 then
+		if not pv.use_stream then
 			return;
 		end if;
 		if not pv.header_writen then
@@ -112,12 +113,13 @@ create or replace package body output is
 		end loop;
 		pv.buffered_length := 0;
 		pv.last_flush      := systimestamp;
+		pv.flushed         := true;
 	end;
 
 	procedure write_raw(content in out nocopy raw) is
 		v_len pls_integer := utl_raw.length(content);
 	begin
-		if pv.chunk_max_idle is not null and pv.buffered_length > nvl(pv.chunk_min_size, 512) and
+		if pv.use_stream and pv.chunk_max_idle is not null and pv.buffered_length > nvl(pv.chunk_min_size, 512) and
 			 (systimestamp - pv.last_flush) > pv.chunk_max_idle then
 			flush;
 		end if;
@@ -127,7 +129,7 @@ create or replace package body output is
 			pv.buffered_length := pv.buffered_length + v_len;
 		end if;
 	
-		if pv.chunk_max_size is not null and pv.buffered_length >= pv.chunk_max_size then
+		if pv.use_stream and pv.chunk_max_size is not null and pv.buffered_length >= pv.chunk_max_size then
 			flush;
 		end if;
 	end;
@@ -245,7 +247,7 @@ create or replace package body output is
 		end if;
 	
 		-- if use stream, flush the final buffered content and the end marker out
-		if pv.use_stream then
+		if pv.flushed then
 			line(pv.end_marker, chr(13) || chr(10));
 			flush;
 			return;
@@ -323,13 +325,12 @@ create or replace package body output is
 				v := v || 'Location: feedback?id=' || nl;
 				v := v || 'Cache-Control: no-cache' || nl;
 				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
-				utl_tcp.flush(pv.c);
 			end;
 			return;
 		end if;
 	
+		pv.use_stream := false;
 		write_head;
-		utl_tcp.flush(pv.c);
 		do_write(v_len, v_gzip);
 	end;
 

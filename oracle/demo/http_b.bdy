@@ -40,27 +40,17 @@ create or replace package body http_b is
 	procedure chunked_transfer is
 	begin
 		h.content_encoding_identity;
-		case r.getc('use', 'auto')
-			when 'on' then
-				h.transfer_encoding_chunked;
-			when 'off' then
-				h.transfer_encoding_identity;
-			when 'auto' then
-				h.transfer_encoding_auto;
-		end case;
 		h.header_close;
 	
 		h.line('<link href="http_b.content_css" type="text/css" rel="stylesheet"/>');
 		h.line('<script src="http_b.content_js"></script>');
 		src_b.link_proc;
-		h.line('This page transfer-encoding setting is ' || r.getc('use', 'auto') || '<br/>');
+		h.line('This page transfer-encoding setting is ' || r.getc('use', 'on') || '<br/>');
 		h.line('This page print ' || r.getc('count', 100) || ' numbers <br/>');
 		h.line('<br/>');
 	
 		h.line('<form action="http_b.chunked_transfer">');
 		h.line('chunked transfer options: ');
-		h.line('<input name="use" type="radio" value="auto" checked/>');
-		h.line('<label>AUTO(=off)</label>');
 		h.line('<input name="use" type="radio" value="on"/>');
 		h.line('<label>ON</label>');
 		h.line('<input name="use" type="radio" value="off"/>');
@@ -85,7 +75,6 @@ create or replace package body http_b is
 
 	procedure long_job is
 	begin
-		h.transfer_encoding_chunked;
 		h.header_close;
 		-- h.auto_chunk_max_idle(0.5, 10);
 	
@@ -98,7 +87,7 @@ create or replace package body http_b is
 			h.line('LiNE, NO.' || i);
 			h.line('<script>cnt.innerText=' || i || ';</script>');
 			-- p.line(rpad(i, 300, i));
-			h.flush(); 
+			h.flush;
 			-- you may not force flush when h.auto_chunk_max_idle is set.
 			-- but you can close auto flush by call h.auto_chunk_max_idle(null);
 			dbms_lock.sleep(1);
@@ -108,7 +97,6 @@ create or replace package body http_b is
 	end;
 
 	procedure content_type is
-		v varchar2(100);
 		procedure mime_link(mime varchar2) is
 		begin
 			h.line('<a target="_blank" href="http_b.content_type?mime=' || mime || '"> open ' || mime ||

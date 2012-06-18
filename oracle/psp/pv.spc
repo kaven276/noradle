@@ -14,6 +14,7 @@ create or replace package pv is
 
 	msg_stream      boolean;
 	use_stream      boolean;
+	flushed         boolean;
 	chunk_max_size  pls_integer; -- when write over the size, auto flush buffer
 	chunk_min_size  pls_integer; -- when write detect long idle, and buffer is more than the size, auto flush buffdf
 	chunk_max_idle  interval day(0) to second(1); -- when write see last write time is more than

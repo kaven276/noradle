@@ -125,7 +125,7 @@ create or replace package body gateway is
 			pv.buffered_length := 0;
 			pv.max_lmt         := null;
 			pv.msg_stream      := false;
-			pv.use_stream      := false;
+			pv.use_stream      := true;
 			pv.content_md5     := false;
 			pv.etag_md5        := false;
 			pv.csslink         := null;
@@ -154,6 +154,7 @@ create or replace package body gateway is
 			end if;
 		
 			if r.method = 'GET' then
+				pv.flushed := false;
 				k_http.auto_chunk_max_size;
 				k_http.auto_chunk_max_idle;
 			end if;

@@ -486,6 +486,9 @@ create or replace package body k_xhtp is
 	procedure comp_css_link(setting boolean) is
 	begin
 		pv.csslink := setting;
+		if setting is not null then
+			pv.use_stream := false;
+		end if;
 	end;
 
 	procedure print_cgi_env is
