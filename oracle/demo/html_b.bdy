@@ -105,7 +105,7 @@ create or replace package body html_b is
 			else
 				v_link := null;
 		end case;
-		h.content_encoding_gzip;
+		h.content_encoding_try_zip;
 		p.comp_css_link(v_link);
 		p.h('', 'component css');
 		src_b.link_proc;
@@ -133,7 +133,7 @@ create or replace package body html_b is
 			p.p('I''m in dhc(direct http access) mode.');
 		else
 			p.br;
-      src_b.link_proc('html_b.component');
+			src_b.link_proc('html_b.component');
 			p.p('I''m included in ' || r.prog || ' as a component.');
 		end if;
 		p.p('My proc name is html_b.component.');

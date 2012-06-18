@@ -46,7 +46,7 @@ create or replace package k_http is
 		charset   varchar2 := 'UTF-8'
 	);
 
-	procedure content_encoding_gzip;
+	procedure content_encoding_try_zip;
 	procedure content_encoding_identity;
 	procedure content_encoding_auto;
 

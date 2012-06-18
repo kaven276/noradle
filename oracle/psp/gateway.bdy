@@ -157,6 +157,7 @@ create or replace package body gateway is
 				pv.flushed := false;
 				k_http.auto_chunk_max_size;
 				k_http.auto_chunk_max_idle;
+				k_http.content_encoding_auto;
 			end if;
 		
 			dbms_application_info.set_module(r.prog, null);

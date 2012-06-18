@@ -176,9 +176,10 @@ create or replace package body k_http is
 		-- r.unescape_parameters;
 	end;
 
-	procedure content_encoding_gzip is
+	procedure content_encoding_try_zip is
 	begin
-		pv.headers('Content-Encoding') := 'gzip';
+		pv.headers('Content-Encoding') := 'zip';
+		pv.use_stream := false;
 	end;
 
 	procedure content_encoding_identity is
@@ -188,7 +189,7 @@ create or replace package body k_http is
 
 	procedure content_encoding_auto is
 	begin
-		pv.headers.delete('Content-Encoding');
+		pv.headers('Content-Encoding') := '?';
 	end;
 
 	procedure location(url varchar2) is
