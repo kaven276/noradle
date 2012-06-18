@@ -173,6 +173,15 @@ create or replace package body http_b is
 	procedure content_md5 is
 	begin
 		h.content_md5_on;
+		if false then
+			-- md5 is computed in Oracle
+			h.content_encoding_identity;
+			h.auto_chunk_max_size(null);
+			h.auto_chunk_max_idle(null);
+		else
+			-- md5 is computed in NodeJS;
+			null;
+		end if;
 		p.h;
 		src_b.link_proc;
 		p.p('Use http content-md5 header to ensure response body integrity.');
