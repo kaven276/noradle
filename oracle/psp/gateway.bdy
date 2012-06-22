@@ -92,8 +92,7 @@ create or replace package body gateway is
 				when utl_tcp.end_of_input then
 					goto make_connection;
 				when utl_tcp.network_error then
-					return;
-					goto make_connection;
+					goto the_end;
 			end;
 		
 			case pv.end_marker
