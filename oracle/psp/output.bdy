@@ -195,17 +195,13 @@ create or replace package body output is
 	end;
 
 	-- Refactored procedure do_write 
-	procedure do_write
-	(
-		v_len  in integer,
-		v_gzip in boolean
-	) is
+	procedure do_write(v_len in integer) is
 		v_raw  raw(32767);
 		v_wlen number(8);
 		v_pos  number := 0;
 	begin
 	
-		if pv.csslink = false and v_gzip = false and pv.css_len > 0 then
+		if pv.csslink = false and pv.css_len > 0 then
 			v_wlen := pv.css_ins;
 			dbms_lob.read(pv.entity, pv.css_ins, 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
@@ -240,7 +236,6 @@ create or replace package body output is
 		v_len  integer;
 		v_len2 integer := 0;
 		v_raw  raw(32767);
-		v_gzip boolean := false;
 		v_md5  varchar2(32);
 	begin
 		if p.gv_xhtp then
@@ -332,7 +327,6 @@ create or replace package body output is
 	
 		pv.use_stream := false;
 		write_head;
-		do_write(v_len, v_gzip);
 	end;
 
 end output;

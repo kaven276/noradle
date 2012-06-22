@@ -102,7 +102,7 @@ create or replace package body gateway is
 				when 'feedback' then
 					output.write_head;
 					utl_tcp.flush(pv.c);
-					output.do_write(pv.buffered_length, false);
+					output.do_write(pv.buffered_length);
 					continue;
 				when 'csslink' then
 					output.do_css_write;
