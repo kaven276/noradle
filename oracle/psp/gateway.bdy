@@ -74,6 +74,7 @@ create or replace package body gateway is
 		end;
 	
 		loop
+			k_init.by_request;
 			<<read_request>>
 		
 			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime then
@@ -114,38 +115,8 @@ create or replace package body gateway is
 		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
-		
-			-- initialize package variables
-			v_done := false;
-			pv.headers.delete;
-			pv.cookies.delete;
-			pv.header_writen   := false;
-			pv.allow_content   := false;
-			pv.buffered_length := 0;
-			pv.max_lmt         := null;
-			pv.msg_stream      := false;
-			pv.use_stream      := true;
-			pv.content_md5     := false;
-			pv.etag_md5        := false;
-			pv.csslink         := null;
-			pv.allow           := null;
-			pv.nlbr            := chr(10);
-		
-			rb.charset_http := null;
-			rb.charset_db   := null;
-			rb.blob_entity  := null;
-			rb.clob_entity  := null;
-			rb.nclob_entity := null;
-		
 			r."_init"(pv.c, 80526);
-			pv.status_code := 200;
-			if pv.call_type = 0 then
-				h.content_type;
-			else
-				h.content_type(h.mime_text, 'UTF-8');
-			end if;
-			output."_init"(80526);
-			p.init;
+			v_done := false;
 		
 			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 				error_not_bch;
