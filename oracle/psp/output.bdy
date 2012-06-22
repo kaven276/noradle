@@ -296,7 +296,8 @@ create or replace package body output is
 			if pv.etag_md5 then
 				if r.etag = v_md5 then
 					h.status_line(304);
-					v_len := 0;
+					v_len  := 0;
+					v_len2 := 0;
 				else
 					h.etag(v_md5);
 				end if;
