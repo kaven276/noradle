@@ -328,6 +328,12 @@ create or replace package body output is
 	
 		pv.use_stream := false;
 		write_head;
+		if pv.etag_md5 then
+			if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
+				return;
+			end if;
+		end if;
+		do_write(v_len);
 	end;
 
 end output;
