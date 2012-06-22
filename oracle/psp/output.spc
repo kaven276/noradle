@@ -19,11 +19,7 @@ create or replace package output is
 
 	procedure finish;
 
-	procedure do_write
-	(
-		v_len  in integer,
-		v_gzip in boolean
-	);
+	procedure do_write(v_len in integer);
 
 end output;
 /
