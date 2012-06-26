@@ -44,6 +44,10 @@ create or replace package pv is
 	entity blob;
 	nlbr   varchar2(2);
 
+	outcon utl_tcp.connection;
+	outmsg blob;
+	outpos pls_integer;
+
 	feedback    boolean;
 	csslink     boolean;
 	csstext     blob;
@@ -63,6 +67,7 @@ create or replace package pv is
 	ls_lgt date;
 	ls_lat date;
 
+	cs_utf8  varchar2(30) := utl_i18n.map_charset('utf-8', 0, 1);
 	cs_char  varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
 	cs_nchar varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
 	cs_req   varchar2(30);
