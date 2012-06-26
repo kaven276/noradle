@@ -34,7 +34,7 @@ function UnitTest(){
       process.exit(2);
     } else if (!msg) {
       console.log('The End');
-      //return;
+      return;
     }
     console.log('\nNO.%d message arrived @callback:', ++count);
   });
@@ -47,7 +47,7 @@ function UnitTest(){
     console.log('message (%s) is sent(synchronized) to www.tencent.com', msg.replace(/\n$/, ''));
   });
 
-  msgStream.on('end', function(){
+  msgStream.on('finish', function(){
     console.log('End of msgStream');
   });
 }
