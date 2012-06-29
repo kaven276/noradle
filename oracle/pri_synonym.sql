@@ -20,3 +20,4 @@ create or replace synonym gac_cid_seq for gac_cid_seq;
 create or replace synonym kv for kv;
 create or replace synonym rs for rs;
 create or replace synonym bkr for k_broker;
+create or replace synonym dco for k_ext_call;
