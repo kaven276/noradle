@@ -166,7 +166,7 @@ create or replace package body gateway is
 			end;
 			if pv.msg_stream then
 				if pv.buffered_length > 0 then
-					bkr.emit_msg;
+					bkr.emit_msg(true);
 				end if;
 				goto the_end; -- when stream quit, quit process also, to release resource
 			end if;

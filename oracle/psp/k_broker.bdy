@@ -30,15 +30,19 @@ create or replace package body k_broker is
 	
 	end;
 
-	procedure emit_msg is
+	procedure emit_msg(ex boolean := false) is
 		v_wlen pls_integer;
+		v_ind  pls_integer := 1;
 	begin
 		if p.gv_xhtp then
 			p.ensure_close;
 		end if;
+		if ex then
+			v_ind := -1;
+		end if;
 		if pv.buffered_length > 0 then
 			if pv.call_type = 1 then
-				v_wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(pv.buffered_length), 4);
+				v_wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(pv.buffered_length * v_ind), 4);
 			else
 				v_wlen := utl_tcp.write_line(pv.c, to_char(pv.buffered_length));
 			end if;
