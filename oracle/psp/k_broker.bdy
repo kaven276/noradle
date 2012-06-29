@@ -5,12 +5,10 @@ create or replace package body k_broker is
 		e.chk(r.type != 'h', -20025, 'only _h layer prog unit could be used for message stream producer');
 		if pv.call_type = 0 then
 			h.content_type('text/html', 'UTF-8');
-			h.transfer_encoding_chunked;
 			pv.use_stream := false;
 			h.line('<pre>');
 		else
 			h.content_type('text/noradle.msg.stream', 'UTF-8');
-			h.transfer_encoding_identity;
 		end if;
 		pv.use_stream := false;
 		pv.msg_stream := true;
