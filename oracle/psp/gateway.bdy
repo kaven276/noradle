@@ -2,12 +2,16 @@ create or replace package body gateway is
 
 	procedure error_not_bch is
 	begin
-		h.allow_get_post;
-		h.status_line(403);
-		h.content_type('text/plain');
-		h.header_close;
-		h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
-		output.finish;
+		if pv.msg_stream then
+			h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+		else
+			h.allow_get_post;
+			h.status_line(403);
+			h.content_type('text/plain');
+			h.header_close;
+			h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+			output.finish;
+		end if;
 	end;
 
 	procedure error_dad_auth_entry
@@ -16,12 +20,19 @@ create or replace package body gateway is
 		errm varchar2
 	) is
 	begin
-		h.allow_get_post;
-		h.status_line(500);
-		h.content_type('text/plain');
-		h.header_close;
-		h.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
-		h.line('error text = ' || code || '/' || errm);
+		if pv.msg_stream then
+			h.line(r.dbu);
+			h.line(r.prog);
+			h.line(sqlcode);
+			h.line(sqlerrm);
+		else
+			h.allow_get_post;
+			h.status_line(500);
+			h.content_type('text/plain');
+			h.header_close;
+			h.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
+			h.line('error text = ' || code || '/' || errm);
+		end if;
 	end;
 
 	-- Refactored procedure quit

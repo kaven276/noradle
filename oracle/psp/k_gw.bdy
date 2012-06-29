@@ -2,17 +2,21 @@ create or replace package body k_gw is
 
 	procedure error_not_exist is
 	begin
-		h.status_line(404);
-		h.content_type;
-		h.header_close;
+		if not pv.msg_stream then
+			h.status_line(404);
+			h.content_type;
+			h.header_close;
+		end if;
 		h.line('The program unit "' || r.prog || '" is not exist');
 	end;
 
 	procedure error_no_subprog is
 	begin
-		h.status_line(404);
-		h.content_type;
-		h.header_close;
+		if not pv.msg_stream then
+			h.status_line(404);
+			h.content_type;
+			h.header_close;
+		end if;
 		h.line('The package "' || r.pack || '" exists but the sub procedure "' || r.proc || '" in it' || ' is not exist');
 	end;
 
@@ -24,17 +28,23 @@ create or replace package body k_gw is
 		estack     varchar2
 	) is
 	begin
-		h.status_line(500);
-		h.content_type('text/html');
-		h.header_close;
-		p.init;
-		p.h('', emsg);
-		p.hn(3, '[WARNING] execute with error');
-		p.pre_open;
-		p.d(estack);
-		p.d(ebacktrace);
-		p.pre_close;
-		-- p.a('refresh', 'javascript:window.location.reload();');
+		if not pv.msg_stream then
+			h.status_line(500);
+			h.content_type('text/html');
+			h.header_close;
+			p.init;
+			p.h('', emsg);
+			p.hn(3, '[WARNING] execute with error');
+			p.pre_open;
+			p.d(estack);
+			p.d(ebacktrace);
+			p.pre_close;
+			-- p.a('refresh', 'javascript:window.location.reload();');
+		else
+			h.line('[WARNING] execute with error');
+			h.line(estack);
+			h.line(ebacktrace);
+		end if;
 	end;
 
 	procedure do is
