@@ -165,6 +165,9 @@ create or replace package body gateway is
 					error_dad_auth_entry(sqlcode, sqlerrm);
 			end;
 			if pv.msg_stream then
+				if pv.buffered_length > 0 then
+					bkr.emit_msg;
+				end if;
 				goto the_end; -- when stream quit, quit process also, to release resource
 			end if;
 			output.finish;
