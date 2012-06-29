@@ -42,7 +42,7 @@ create or replace package body k_broker is
 			else
 				v_wlen := utl_tcp.write_line(pv.c, to_char(pv.buffered_length));
 			end if;
-			output.do_write(pv.buffered_length, false);
+			output.do_write(pv.buffered_length);
 			pv.buffered_length := 0;
 		end if;
 		p.init;
