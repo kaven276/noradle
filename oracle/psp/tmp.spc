@@ -2,6 +2,8 @@ create or replace package tmp is
 
 	dt  date;
 	ts  timestamp;
+	bi  binary_integer;
+	pi  pls_integer;
 	i   integer;
 	j   integer;
 	k   integer;
