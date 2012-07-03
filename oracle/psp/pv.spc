@@ -44,10 +44,6 @@ create or replace package pv is
 	entity blob;
 	nlbr   varchar2(2);
 
-	outcon utl_tcp.connection;
-	outmsg blob;
-	outpos pls_integer;
-
 	feedback    boolean;
 	csslink     boolean;
 	csstext     blob;
