@@ -10,3 +10,5 @@ exports.DBCall = require('./lib/DBCall.js').Class;
 exports.RSParser = require('./lib/RSParser.js');
 
 exports.connectionMonitor = require('./lib/db.js').connectionMonitor;
+
+exports.DCOWorkerProxy = require('./lib/dco_proxy.js');

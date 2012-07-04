@@ -8,8 +8,7 @@ var SGIP = require('../../sms/node_sms')
   , SP = SGIP.nodeSP.Class
   , Submit = SGIP.msgSubmit.Class
   , Attrs = SGIP.AttrCfg
-  , net = require('net')
-  , StreamSpliter = require('../lib/StreamSpliter.js').Class
+  , DCOWorkerProxy = require('../lib/dco_proxy.js')
   ;
 
 var sp = new SP('202.99.87.201', 8801, 'dialbook', 'dialbooktest', 8801, '', 'dialbook', 'dialbooktest');
@@ -23,33 +22,33 @@ sp.on('request', function(req){
   console.log(req);
 });
 
-var server = net.createServer(function(extHubSock){
-  console.log('connect from ext_hub');
-  var spliter = new StreamSpliter(extHubSock, 'readInt32BE');
-  spliter.on('message', function onMessage(req){
-    console.log('message length is ', req.length);
-    sendOneSimple(req.slice(8).toString('utf8'));
-  });
-});
+DCOWorkerProxy.createServer(sendOneSimple).listen(1526);
 
-server.listen(1526);
+function SimpleSmsSubmit(req){
+  var lines = req.content.toString('utf8').split('\n');
+  this.smg = lines.shift();
+  this.target = lines.shift();
+  this.content = lines.join('\n');
+}
 
-function sendOneSimple(req){
-  var lines = req.split('\n');
-  var smg = lines.shift();
-  var target = lines.shift();
-  var content = lines.join('\n');
-  var msg = new Submit(target, 8, content, {"SPNumber" : '106550224003'});
-  console.log(msg);
-  sp.send(msg, function(res, req){
-    console.log('\n\nrespond :');
-    console.log('the result for %j is %d', res.header, res.Result);
-    console.log('You can use oracle rowid %s to fill SMS id columns with %j', req.rowid, res.header);
+function sendOneSimple(dcoReq, dcoRes){
+  var req = new SimpleSmsSubmit(dcoReq);
+  var submit = new Submit(req.target, 8, req.content, {"SPNumber" : '106550224003'});
+  console.log('\nSGIP request send:');
+  sp.send(submit, function(sgipRes, sgipReq){
+    console.log('\nSGIP respond :');
+    console.log('the result for %j is %d', sgipRes.header, sgipRes.Result);
+    console.log(sgipReq);
+    if (dcoRes) {
+      setTimeout(function(){
+        dcoRes.end(req.content.split('\n')[0] + '... sent to ' + req.target + ' is completed.\n');
+      }, 1000);
+    }
   });
 }
 
-function send(PDU){
-  var lines = PDU.split('\n')
+function sendBulkWithReport(req, resp){
+  var lines = req.content.split('\n')
     , rowid = lines.shift()
     , cont = lines.shift()
     , encode = parseInt(lines.shift() || '0')
