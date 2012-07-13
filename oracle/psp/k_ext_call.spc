@@ -1,6 +1,6 @@
 create or replace package k_ext_call is
 
-	procedure init;
+	procedure connect_router_proxy;
 
 	procedure write(content in out nocopy raw);
 
@@ -11,9 +11,19 @@ create or replace package k_ext_call is
 		indent pls_integer := null
 	);
 
-	function send_request(proxy_id pls_integer) return pls_integer;
+	function send_request
+	(
+		proxy_id pls_integer,
+		buffered boolean := false
+	) return pls_integer;
 
-	procedure send_request(proxy_id pls_integer);
+	procedure send_request
+	(
+		proxy_id pls_integer,
+		buffered boolean := false
+	);
+
+	procedure flush;
 
 	function read_response
 	(
