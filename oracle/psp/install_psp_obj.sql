@@ -6,6 +6,11 @@
 spool install_psp_obj.log
 
 prompt
+prompt Creating table EXTHUB_CONFIG_T
+prompt ========================
+prompt
+@@exthub_config_t.tab
+prompt
 prompt Creating table EXT_URL_T
 prompt ========================
 prompt
