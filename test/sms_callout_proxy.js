@@ -4,11 +4,17 @@
  * Date: 12-6-26
  * Time: 上午10:32
  */
+
+function dummy(){
+  ;
+}
+
 var SGIP = require('../../sms/node_sms')
   , SP = SGIP.nodeSP.Class
   , Submit = SGIP.msgSubmit.Class
   , Attrs = SGIP.AttrCfg
   , DCOWorkerProxy = require('../lib/dco_proxy.js')
+  , logger = dummy
   ;
 
 var sp = new SP('202.99.87.201', 8801, 'dialbook', 'dialbooktest', 8801, '', 'dialbook', 'dialbooktest');
@@ -22,8 +28,9 @@ sp.on('request', function(req){
   console.log(req);
 });
 
-DCOWorkerProxy.createServer(sendOneSimple).listen(1526);
+DCOWorkerProxy.createServer(sendOneSimple).listen(parseInt(process.argv[2]) || 1526);
 
+// simple sms PDU parser
 function SimpleSmsSubmit(req){
   var lines = req.content.toString('utf8').split('\n');
   this.smg = lines.shift();
@@ -33,16 +40,16 @@ function SimpleSmsSubmit(req){
 
 function sendOneSimple(dcoReq, dcoRes){
   var req = new SimpleSmsSubmit(dcoReq);
-  var submit = new Submit(req.target, 8, req.content, {"SPNumber" : '106550224003'});
-  console.log('\nSGIP request send:');
+  var submit = new Submit(req.target, 8, req.content, {"SPNumber" : '106550224003', 'ReportFlag' : 0});
+  logger('\nSGIP request send:');
   sp.send(submit, function(sgipRes, sgipReq){
-    console.log('\nSGIP respond :');
-    console.log('the result for %j is %d', sgipRes.header, sgipRes.Result);
-    console.log(sgipReq);
-    if (dcoRes) {
-      setTimeout(function(){
-        dcoRes.end(req.content.split('\n')[0] + '... sent to ' + req.target + ' is completed.\n');
-      }, 1000);
+    logger('\nSGIP respond :');
+    logger('the result for %j is %d', sgipRes.header, sgipRes.Result);
+    logger(sgipReq);
+    if (dcoReq.sync) {
+      dcoRes.end(req.content.split('\n')[0] + '... sent to ' + req.target + ' is completed.\n');
+    } else {
+      dcoRes.end();
     }
   });
 }
@@ -55,7 +62,7 @@ function sendBulkWithReport(req, resp){
     , srcenc = lines.shift()
     , UserCount = lines.shift()
     , UserNumbers = lines.splice(0, UserCount)
-    , option = {"SPNumber" : '10655022400312345678', "ReportFlag" : 2}
+    , option = {"SPNumber" : '106550224003', "ReportFlag" : 2}
     ;
   if (srcenc === 'hex') {
     cont = new Buffer(cont, 'hex');
@@ -81,13 +88,13 @@ function sendBulkWithReport(req, resp){
       msg = new Submit(UserNumber, encode, cont, option);
     }
     msg.rowid = rowid;
-    console.log('\n send at', new Date());
-    console.log(msg);
-    console.log(JSON.stringify(msg));
+    logger('\n send at', new Date());
+    logger(msg);
+    logger(JSON.stringify(msg));
     sp.send(msg, function(res, req){
-      console.log('\n\nrespond :');
-      console.log('the result for %j is %d', res.header, res.Result);
-      console.log('You can use oracle rowid %s to fill SMS id columns with %j', req.rowid, res.header);
+      logger('\n\nrespond :');
+      logger('the result for %j is %d', res.header, res.Result);
+      logger('You can use oracle rowid %s to fill SMS id columns with %j', req.rowid, res.header);
     });
   });
 }
