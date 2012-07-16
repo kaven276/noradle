@@ -1,11 +1,16 @@
 create or replace package body k_dco_adm is
 
-	procedure wait_reconnect_exthub is
+	procedure wait_reconnect_exthub
+	(
+		host   varchar2,
+		port   number,
+		unused boolean := false
+	) is
 		v_resp   varchar2(20);
 		v_errmsg varchar2(100) := 'can not signal ext-hub to exit';
 	begin
-		dcopv.con := utl_tcp.open_connection(remote_host     => '192.168.177.1',
-																				 remote_port     => 1524,
+		dcopv.con := utl_tcp.open_connection(remote_host     => host,
+																				 remote_port     => port,
 																				 charset         => null,
 																				 in_buffer_size  => 32767,
 																				 out_buffer_size => 0,
@@ -23,6 +28,13 @@ create or replace package body k_dco_adm is
 			commit;
 		else
 			raise_application_error(-20001, v_errmsg);
+		end if;
+		if unused then
+			update exthub_config_t a
+				 set a.sts = null
+			 where a.host = wait_reconnect_exthub.host
+				 and a.port = wait_reconnect_exthub.port;
+			commit;
 		end if;
 	end;
 

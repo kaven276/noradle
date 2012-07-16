@@ -16,6 +16,9 @@ create or replace package dcopv is
 	onway pls_integer; -- pending reply count on wire
 	onbuf pls_integer; -- pending reply count on buffer
 
+	host varchar2(99); -- current connected server host
+	port number(5); -- current connected server port
+
 	crseq pls_integer;
 	crpos pls_integer;
 

@@ -40,24 +40,28 @@ create or replace package body k_ext_call is
 				null;
 		end;
 		<<make_connection>>
-		begin
-			v_count   := v_count + 1;
-			dcopv.con := utl_tcp.open_connection(remote_host     => '192.168.177.1',
-																					 remote_port     => 1524,
-																					 charset         => null,
-																					 in_buffer_size  => 32767,
-																					 out_buffer_size => 0,
-																					 tx_timeout      => 0);
-			k_debug.trace(st('connected'));
-		exception
-			when utl_tcp.network_error then
-				k_debug.trace(st('connect error'));
-				if v_count >= 10 then
-					raise;
-				end if;
-				dbms_lock.sleep(3);
-				goto make_connection;
-		end;
+		v_count := v_count + 1;
+		for i in (select * from exthub_config_t a where a.sts = 'Y' order by a.seq asc nulls last) loop
+			begin
+				dcopv.con := utl_tcp.open_connection(remote_host     => i.host,
+																						 remote_port     => i.port,
+																						 charset         => null,
+																						 in_buffer_size  => 32767,
+																						 out_buffer_size => 0,
+																						 tx_timeout      => 0);
+				k_debug.trace(st('connected'));
+				dcopv.host := i.host;
+				dcopv.port := i.port;
+				goto connected;
+			exception
+				when utl_tcp.network_error then
+					k_debug.trace(st('connect error'));
+					continue;
+			end;
+		end loop;
+		dbms_lock.sleep(3);
+		goto make_connection;
+		<<connected>>
 		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
 		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con, utl_raw.concat(pi2r(v_sid), pi2r(v_serial), pi2r(dcopv.rseq2)));
 	end;
@@ -114,7 +118,7 @@ create or replace package body k_ext_call is
 		v_sts number(1);
 	begin
 		dbms_alert.waitone('Noradle-DCO-EXTHUB-QUIT', dcopv.tmp_s, v_sts, 0);
-		if v_sts = 0 then
+		if v_sts = 0 and dcopv.tmp_s = dcopv.host || ':' || dcopv.port then
 			k_debug.trace(st('check_reconnect find exthub quit signal', dcopv.onway));
 			-- read all pending reply and then to reconnect
 			loop
