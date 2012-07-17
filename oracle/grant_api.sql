@@ -22,3 +22,4 @@ grant execute on rs to public;
 grant execute on k_broker to public;
 grant execute on k_ext_call to public;
 grant execute on pdu to public;
+grant execute on mv2bg to public;
