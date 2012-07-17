@@ -10,18 +10,20 @@ create or replace package mv2bg is
 		evt_type    varchar2(30));
 	type events is table of event;
 
-	procedure add_event(v event);
+	procedure add(v event);
 	procedure after_commit;
 	procedure after_rollback;
-	procedure write_event
+	procedure write
 	(
 		broker varchar2,
 		v      event
 	);
-	function read_event(stream_name varchar2 := null) return event;
+
+	procedure listen(stream_name varchar2 := null);
+	function read return event;
 	procedure stop(broker varchar2);
 
-	procedure auto_stream(stream_name varchar2 := r.getc('stream_name'));
+	procedure get(evt in out nocopy event);
 
 end mv2bg;
 /

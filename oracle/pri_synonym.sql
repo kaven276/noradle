@@ -23,3 +23,4 @@ create or replace synonym bkr for k_broker;
 create or replace synonym dco for k_ext_call;
 create or replace synonym pdu for pdu;
 create or replace synonym mv2bg for mv2bg;
+create or replace synonym auto_stream_h for auto_stream_h;
