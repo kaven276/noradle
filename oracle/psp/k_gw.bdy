@@ -2,11 +2,9 @@ create or replace package body k_gw is
 
 	procedure error_not_exist is
 	begin
-		if not pv.msg_stream then
-			h.status_line(404);
-			h.content_type;
-			h.header_close;
-		end if;
+		h.status_line(404);
+		h.content_type;
+		h.header_close;
 		h.line('The program unit "' || r.prog || '" is not exist');
 	end;
 
