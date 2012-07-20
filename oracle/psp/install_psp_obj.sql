@@ -1,13 +1,13 @@
-----------------------------------------------
--- Export file for user NEWPSPTEST          --
--- Created by Li Yong on 2012-3-19, 9:22:37 --
-----------------------------------------------
+-----------------------------------------------
+-- Export file for user PSP                  --
+-- Created by Li Yong on 2012-7-20, 10:14:51 --
+-----------------------------------------------
 
 spool install_psp_obj.log
 
 prompt
 prompt Creating table EXTHUB_CONFIG_T
-prompt ========================
+prompt ==============================
 prompt
 @@exthub_config_t.tab
 prompt
@@ -30,6 +30,11 @@ prompt Creating view EXT_URL_V
 prompt =======================
 prompt
 @@ext_url_v.vw
+prompt
+prompt Creating package DCOPV
+prompt ======================
+prompt
+@@dcopv.spc
 prompt
 prompt Creating package E
 prompt ==================
@@ -66,6 +71,11 @@ prompt ======================
 prompt
 @@k_cfg.spc
 prompt
+prompt Creating package K_DCO_ADM
+prompt ==========================
+prompt
+@@k_dco_adm.spc
+prompt
 prompt Creating type ST
 prompt ================
 prompt
@@ -75,6 +85,11 @@ prompt Creating package K_DEBUG
 prompt ========================
 prompt
 @@k_debug.spc
+prompt
+prompt Creating package K_EXT_CALL
+prompt ===========================
+prompt
+@@k_ext_call.spc
 prompt
 prompt Creating package K_FILTER
 prompt =========================
@@ -96,10 +111,20 @@ prompt =====================
 prompt
 @@k_gw.spc
 prompt
+prompt Creating package PV
+prompt ===================
+prompt
+@@pv.spc
+prompt
 prompt Creating package K_HTTP
 prompt =======================
 prompt
 @@k_http.spc
+prompt
+prompt Creating package K_INIT
+prompt =======================
+prompt
+@@k_init.spc
 prompt
 prompt Creating package K_PMON
 prompt =======================
@@ -131,15 +156,25 @@ prompt =======================
 prompt
 @@k_xhtp.spc
 prompt
+prompt Creating package MV2BG
+prompt ======================
+prompt
+@@mv2bg.spc
+prompt
 prompt Creating package OUTPUT
 prompt =======================
 prompt
 @@output.spc
 prompt
-prompt Creating package PV
-prompt ===================
+prompt Creating package PDU
+prompt ====================
 prompt
-@@pv.spc
+@@pdu.spc
+prompt
+prompt Creating package PVEVK
+prompt ======================
+prompt
+@@pvevk.spc
 prompt
 prompt Creating package R
 prompt ==================
@@ -176,6 +211,11 @@ prompt ===================
 prompt
 @@u.fnc
 prompt
+prompt Creating procedure AUTO_STREAM_H
+prompt ================================
+prompt
+@@auto_stream_h.prc
+prompt
 prompt Creating package body E
 prompt =======================
 prompt
@@ -211,10 +251,20 @@ prompt ===========================
 prompt
 @@k_cfg.bdy
 prompt
+prompt Creating package body K_DCO_ADM
+prompt ===============================
+prompt
+@@k_dco_adm.bdy
+prompt
 prompt Creating package body K_DEBUG
 prompt =============================
 prompt
 @@k_debug.bdy
+prompt
+prompt Creating package body K_EXT_CALL
+prompt ================================
+prompt
+@@k_ext_call.bdy
 prompt
 prompt Creating package body K_FILTER
 prompt ==============================
@@ -241,6 +291,11 @@ prompt ============================
 prompt
 @@k_http.bdy
 prompt
+prompt Creating package body K_INIT
+prompt ============================
+prompt
+@@k_init.bdy
+prompt
 prompt Creating package body K_PMON
 prompt ============================
 prompt
@@ -266,10 +321,20 @@ prompt ============================
 prompt
 @@k_xhtp.bdy
 prompt
+prompt Creating package body MV2BG
+prompt ===========================
+prompt
+@@mv2bg.bdy
+prompt
 prompt Creating package body OUTPUT
 prompt ============================
 prompt
 @@output.bdy
+prompt
+prompt Creating package body PDU
+prompt =========================
+prompt
+@@pdu.bdy
 prompt
 prompt Creating package body R
 prompt =======================
@@ -277,7 +342,7 @@ prompt
 @@r.bdy
 prompt
 prompt Creating package body RS
-prompt =======================
+prompt ========================
 prompt
 @@rs.bdy
 
