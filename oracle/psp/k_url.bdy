@@ -17,7 +17,7 @@ create or replace package body k_url is
 		dad varchar2(100);
 		ext varchar2(1000) := k_cfg.get_ext_fs;
 		pwd varchar2(100) := lower(user);
-	
+
 		function pri_file(file varchar2) return varchar2 is
 		begin
 			if ext is not null then
@@ -26,7 +26,7 @@ create or replace package body k_url is
 				return t.nvl2(dad, '../' || dad || '/') || 'packs/' || nvl(r.pack, r.proc) || '/' || file;
 			end if;
 		end;
-	
+
 		function normal(s varchar2) return varchar2 is
 			pack varchar2(10);
 		begin
@@ -49,7 +49,7 @@ create or replace package body k_url is
 				end if;
 			end if;
 		end;
-	
+
 	begin
 		case c1
 			when '=' then

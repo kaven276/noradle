@@ -37,7 +37,7 @@ create or replace package body r is
 		if passport != 80526 then
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
-	
+
 		-- basic input
 		case pv.call_type
 			when 0 then
@@ -57,11 +57,11 @@ create or replace package body r is
 				v_type   := substrb(nvl(v_pack, v_proc), -1);
 				gv_caddr := utl_tcp.get_line(c, true);
 				gv_cport := to_number(utl_tcp.get_line(c, true));
-			
+
 				if v_dad is null then
 					v_dad := lower(k_cfg.server_control().default_dbu);
 				end if;
-			
+
 				select /*+ result_cache */
 				 max(lower(a.username))
 					into gv_dbu
@@ -70,18 +70,18 @@ create or replace package body r is
 				if gv_dbu is null then
 					gv_dbu := lower(k_cfg.server_control().default_dbu);
 				end if;
-			
+
 			when 1 then
 				gv_dbu := lower(utl_tcp.get_line(c, true));
 				v_prog := utl_tcp.get_line(c, true);
 				v_proc := utl_tcp.get_line(c, true);
 				v_pack := utl_tcp.get_line(c, true);
 		end case;
-	
+
 		ra.headers.delete;
 		ra.cookies.delete;
 		ra.params.delete;
-	
+
 		-- read headers
 		loop
 			v_name := utl_tcp.get_line(c, true);
@@ -89,7 +89,7 @@ create or replace package body r is
 			v_value := utl_tcp.get_line(c, true);
 			ra.headers(v_name) := v_value;
 		end loop;
-	
+
 		-- credentials
 		if pv.call_type = 0 then
 			declare
@@ -117,7 +117,7 @@ create or replace package body r is
 					v_pass := null;
 			end;
 		end if;
-	
+
 		-- read cookies
 		if pv.call_type = 0 then
 			loop
@@ -127,8 +127,8 @@ create or replace package body r is
 				ra.cookies(v_name) := v_value;
 			end loop;
 		end if;
-	
-		-- read query string  
+
+		-- read query string
 		loop
 			v_name := utl_tcp.get_line(c, true);
 			exit when v_name is null;
@@ -140,7 +140,7 @@ create or replace package body r is
 			end if;
 			ra.params(v_name) := v_st;
 		end loop;
-	
+
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if pv.call_type = 0 and v_method = 'POST' then
 			if ra.headers('content-type') like 'application/x-www-form-urlencoded%' or
@@ -183,7 +183,7 @@ create or replace package body r is
 				end;
 			end if;
 		end if;
-	
+
 	end;
 
 	procedure body2clob is

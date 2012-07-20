@@ -52,7 +52,6 @@ create or replace package body k_type_tool is
 	end;
 
 	function gen_token(p_algorithm binary_integer := 0) return varchar2 is
-	
 		v_seed        varchar2(80) := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
 		v_algorithm   binary_integer := 2; -- 16 bytes key
 		v_time        char(6);
