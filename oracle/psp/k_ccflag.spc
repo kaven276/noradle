@@ -16,7 +16,5 @@ create or replace package k_ccflag is
 
 	xml_check constant boolean := false;
 
-	function get_ext_fs return varchar2;
-
 end k_ccflag;
 /
