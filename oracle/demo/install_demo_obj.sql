@@ -1,7 +1,7 @@
-----------------------------------------------
--- Export file for user DEMO                --
--- Created by Li Yong on 2012-3-19, 9:29:31 --
-----------------------------------------------
+-----------------------------------------------
+-- Export file for user DEMO                 --
+-- Created by Li Yong on 2012-7-20, 10:58:29 --
+-----------------------------------------------
 
 spool install_demo_obj.log
 
@@ -32,7 +32,7 @@ prompt
 @@cache_b.spc
 prompt
 prompt Creating package CALLOUT_BROKER_H
-prompt ========================
+prompt =================================
 prompt
 @@callout_broker_h.spc
 prompt
@@ -42,7 +42,7 @@ prompt
 @@charset_b.spc
 prompt
 prompt Creating package DB_SRC_B
-prompt ========================
+prompt =========================
 prompt
 @@db_src_b.spc
 prompt
@@ -187,7 +187,7 @@ prompt
 @@cache_b.bdy
 prompt
 prompt Creating package body CALLOUT_BROKER_H
-prompt =============================
+prompt ======================================
 prompt
 @@callout_broker_h.bdy
 prompt
@@ -197,7 +197,7 @@ prompt
 @@charset_b.bdy
 prompt
 prompt Creating package body DB_SRC_B
-prompt ========================
+prompt ==============================
 prompt
 @@db_src_b.bdy
 prompt
