@@ -11,7 +11,7 @@ create or replace package body db_src_b is
 		elsif r.call_type = r.ct_nodejs then
 			h.line('# You are not required to write " h.content_type(h.mime_text, ''UTF-8'') " if call by NodeJS.');
 		end if;
-	
+
 		h.line('# a stardard psp.web result sets example page');
 		h.line('# It can be used in browser or NodeJS');
 		h.line('# You can use some standard parser or write your own ' ||

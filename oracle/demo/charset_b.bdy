@@ -7,9 +7,9 @@ create or replace package body charset_b is
 		vc    varchar2(100);
 		nvc   nvarchar2(100);
 	begin
-	
+
 		v_str := utl_i18n.raw_to_nchar(hextoraw(v_src), 'AL32UTF8');
-	
+
 		-- h.content_type(charset => 'GBK');
 		h.allow_get_post;
 		h.header_close;
@@ -17,11 +17,11 @@ create or replace package body charset_b is
 		src_b.link_proc;
 		p.br;
 		-- p.h('http://code.jquery.com/jquery-1.7.1.min.js');
-	
+
 		p.style_open;
 		p.line('div { border:1px dotted gray;margin:1em;padding:1em;}');
 		p.style_close;
-	
+
 		p.hn(3, 'basic output API for nvarchar2');
 		p.div_open;
 		p.prn('h.write : ');
@@ -45,7 +45,7 @@ create or replace package body charset_b is
 		p.prn('p.line : ');
 		p.line(v_str);
 		p.div_close;
-	
+
 		p.hn(3, 'other tag API using nvarchar2');
 		p.div_open;
 		p.prn('p.li : ');
@@ -53,7 +53,7 @@ create or replace package body charset_b is
 		p.prn('p.caption : ');
 		p.caption(v_str);
 		p.div_close;
-	
+
 		p.hn(3, 'function tag API using nvarchar2');
 		p.div_open;
 		p.prn('p.p(p.span()) using function API: ');
@@ -61,11 +61,11 @@ create or replace package body charset_b is
 		p.prn('p.p(p.a()) using function API: ');
 		p.p(p.a(v_str, 'form?a=¿Õ½µ·­¿´'));
 		p.div_close;
-	
+
 		p.br;
 		p.p(utl_raw.cast_to_raw(substr(v_str, 1, 1)));
 		--p.p(utl_raw.cast_to_raw(convert(substr(v_str, 1, 1), 'AL32UTF8')));
-	
+
 		-- r.req_charset_utf8;
 		p.hn(3, 'request parameters');
 		p.div_open;
@@ -78,7 +78,7 @@ create or replace package body charset_b is
 		r.getc('utf', nvc, 'null');
 		p.p(n'utf r.getc() procedure nvarchar2 = ' || nvc);
 		p.div_close;
-	
+
 		p.hn(3, 'APIs that can specify what charset to use for request parameter parsing');
 		p.div_open;
 		p.p('h.content_type(charset) : set both the output charset and request charset.');
@@ -87,16 +87,16 @@ create or replace package body charset_b is
 		p.p('r.req_charset_db : set request charset as the db varchar2 used charset.');
 		p.p('You can use form''s accept-charset=xxx attribure to specify what charset will the form submit use.');
 		p.div_close;
-	
+
 		-- basic_io_b.req_info
-		p.form_open('f', 'form', method => 'post'); -- accept-charset="gbk"    
+		p.form_open('f', 'form', method => 'post'); -- accept-charset="gbk"
 		p.input_text('url', 'http://www.google.com?q=HELLO');
 		p.input_text('ch', 'ÖÐÎÄ');
 		p.input_text('en', 'english');
 		p.input_text('utf', v_str);
 		p.input_submit();
 		p.form_close;
-	
+
 		p.script_text('f.onsubmit = function() {
 
 		)');

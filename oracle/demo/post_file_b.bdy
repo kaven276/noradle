@@ -5,7 +5,7 @@ create or replace package body post_file_b is
 		h.allow('GET,POST');
 		h.status_line(200);
 		h.header_close;
-    
+
 		p.h;
 		p.p('file: ' || r.getc('file', 'no upload file for "file"'));
 		begin
@@ -67,7 +67,7 @@ xhr.send("<p>abedefg</p>\n\
 	begin
 		h.allow('POST');
 		h.content_type('text/plain');
-	
+
 		case 2
 			when 1 then
 				p.http_header_close;

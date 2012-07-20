@@ -6,15 +6,15 @@ create or replace package body user_c is
 		v.name  := r.getc('name');
 		v.pass  := r.getc('pass');
 		v.ctime := sysdate;
-	
+
 		e.report(v.name is null, 'User''s name is empty!');
 		e.report(v.pass is null, 'User''s password is empty!');
 		select count(*) into tmp.cnt from user_t a where a.name = v.name;
 		e.report(tmp.cnt = 1, 'Username ' || v.name || ' is existed already.');
 		e.report(not regexp_like(v.name, '^[A-Za-z ]*$'), 'Username must composed of characters and space only.');
-	
+
 		insert into user_t a values v;
-	
+
 		case r.getc('fb', null)
 			when 'N' then
 				h.go('@b.register');

@@ -18,28 +18,28 @@ create or replace package body ora_good_b is
 		p.dd('You can use table%rowtype to easily define your local and package variables,' ||
 				 ' and use rowtype variables in sql binding, and not need to redefine your data structure when row structure changed ' ||
 				 ' for example ' || p.a('user_c.register', '=src_b.proc/user_c.register', '_blank'));
-	
+
 		p.dt('PACKAGED CURSUR');
 		p.dd('packaged cursur just like a function, but can used direct in for-loop.');
 		p.dd('I''t a good way to support incapsulation to query sql code.');
-	
+
 		p.dt('REF CURSUR');
 		p.dd('You can design API that accept ref-cursor to reuse the procesing of result set generated from different code.');
 		p.dd('I''t a good way to support incapsulation to result-set processing.');
-	
+
 		p.dt('TABLE FUNCTION');
 		p.dd('So you can generate a result set from any data source and any way.');
 		p.dd('And you can pipeline the table function and use them in sql as a table do.');
-	
+
 		p.dt('TRIGGER');
 		p.dd('So you can detect table data change and invoke your pl/sql.');
 		p.dd('If you use java or some of the many none store procedure languages, how could you react to data change.');
-	
+
 		p.dt('PACKAGE VARIABLE');
 		p.dd('With a request processing, You can set your data in PV(package variable) and access them at all line of codewhen processing the request .');
 		p.dd('So you avoid to transfer the data through parameters, you treat them as a environment variables for the request.');
 		p.dd('If you use java or some of the many none store procedure languages, how could you react to data change.');
-	
+
 		p.dt('RESULT CACHE FUNCTION');
 		p.dd('You can result cache function to cache result-set in memory, and avoid frequent table read.');
 		p.dd('One step futher, you can use versioned row rc func with kv, so you can detect row change well using rc func.');

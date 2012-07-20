@@ -6,7 +6,7 @@ create or replace package body test_c is
 		h.status_line(200);
 		h.content_type;
 		h.header_close;
-	
+
 		p.doc_type('5');
 		p.h;
 		p.ul_open;

@@ -9,12 +9,12 @@ create or replace package body url_b is
 		p.line('a{display:block;line-height:1.5em;}');
 		p.line('p{margin:0.2em;}');
 		p.style_close;
-	
+
 		src_b.link_proc;
 		p.p('r.prog=' || r.prog);
 		p.p('r.pack=' || r.pack);
 		p.p('r.proc=' || r.proc);
-	
+
 		p.hn(3, 'URL reference test suite includes the following items£º');
 		p.ol_open;
 		p.li('pack1.proc1->pack1.proc2 : a packaged proc include another proc in the same package (other_proc)');
@@ -24,7 +24,7 @@ create or replace package body url_b is
 		p.li('any->static/packn_or_procn/file.ext : any code refers other packaged/standalone unit''s static files (other_prog_x/file.ext)');
 		p.li('pack1_b.procn->pack1_c.procm : refer same name unit but with a differ suffix, @ stand for name without _x suffix (@x.proc, @x/file.ext)');
 		p.li('any->dir/file.txt : refer my dad/app''s normal static file (dir/file.ext)');
-	
+
 		p.li('refer my dad/app''s static file in root dir (./file.ext)');
 		p.li('refer other dad/app''s normal static file (../app/..., \app/...)');
 		p.li('refer my http server''s path from root "/" (/...)');
@@ -33,16 +33,16 @@ create or replace package body url_b is
 		p.li('allow static service to switch from between internal(same as plsql dynamic page server) and external servers, or move between external servers ');
 		p.li('switch [prefix] to third party''s backup path');
 		p.ol_close;
-	
+
 		p.hr;
-	
+
 		p.br;
 		p.p('>>> Links to other dynamic pages.');
 		p.a('proc1 in proc form', 'proc1');
 		p.a('proc1 in @x.proc form', '@b.proc1');
 		p.a('url_b.proc2 in pack.proc form', 'url_b.proc2?p_b=ab.c&p1=LiYong');
 		p.a('to standalone proc', 'url_test1_b');
-	
+
 		p.br;
 		p.p('>>> Links to static files.');
 		p.p('this is myself''s img (CHN.gif)' || p.img('CHN.gif'));
@@ -54,14 +54,14 @@ create or replace package body url_b is
 		p.p('this is app/dad''s root/''s img (./GER.gif)' || p.img('./GER.gif'));
 		p.p('this is other dad''s img using ../ (../demo/img/nations/CAN.gif)' || p.img('../demo/img/nations/CAN.gif'));
 		p.p('this is other dad''s img using  \ (\demo/packs/url_b/CHN.gif)' || p.img('\demo/packs/url_b/CHN.gif'));
-	
+
 		p.br;
 		p.p('>>> Links to other site''s resources');
 		p.p('this is outsite''s img ([myself]/demo/img/nations/ITA.gif)' ||
 				p.img('[myself]' || r.base || '/demo/img/nations/ITA.gif'));
 		p.p('this is for abs path (http://www.oracleimg.com/us/assets/oralogo-small.gif)' ||
 				p.img('http://www.oracleimg.com/us/assets/oralogo-small.gif'));
-	
+
 		p.br;
 		p.p('>>> Links to other url schemas');
 		p.p(p.a('javascript', 'javascript:alert(''link to javascript'')', ac => st('#display:inline;')) ||
@@ -77,7 +77,7 @@ create or replace package body url_b is
 		p.form_open('f', 'proc2');
 		p.input_text('p1');
 		p.form_close;
-	
+
 		p.hn(4, 'http headers');
 		p.pre_open;
 		n := ra.headers.first;

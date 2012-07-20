@@ -59,7 +59,7 @@ create or replace package body term_b is
 			-- You can del key-ver GAC mapping, so you will set them according from table row data
 			kv.del('term', v.msid);
 		else
-			-- or You can commit and 
+			-- or You can commit and
 			commit;
 			select ora_rowscn into rcpv.term_ver from term_t a where a.msid = v.msid;
 			kv.set('term', v.msid, rcpv.term_ver);
