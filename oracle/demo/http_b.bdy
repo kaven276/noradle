@@ -7,6 +7,8 @@ create or replace package body http_b is
 				h.content_encoding_try_zip;
 			when 'off' then
 				h.content_encoding_identity;
+			when 'auto' then 
+				h.content_encoding_auto;
 		end case;
 	
 		src_b.link_proc;
@@ -17,9 +19,11 @@ create or replace package body http_b is
 		h.line('<form action="http_b.gzip">');
 		h.line('gzip options: ');
 		h.line('<input name="use" type="radio" value="on" checked/>');
-		h.line('<label>ON</label>');
+		h.line('<label>ON(if support)</label>');
 		h.line('<input name="use" type="radio" value="off"/>');
 		h.line('<label>OFF</label>');
+		h.line('<input name="use" type="radio" value="auto"/>');
+		h.line('<label>AUTO(if support and response is deserve for zip)</label>');
 		h.line('<br/>');
 		h.line('how many numbers to print: ');
 		h.line('<input name="count" type="text" value="' || r.getc('count', 100) || '">');
