@@ -10,7 +10,7 @@ create or replace package body k_filter is
 		if true then
 			p.h;
 			p.p('execute in k_filter.before only, cancel execute the main prog');
-			g.finish;
+			g.cancel;
 		end if;
 	end;
 

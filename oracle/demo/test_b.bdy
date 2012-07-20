@@ -15,14 +15,14 @@ create or replace package body test_b is
 			h.sts_404_not_found;
 			h.header_close;
 			h.writeln('resource with count=404 does not exits');
-			g.finish;
+			g.cancel;
 		end if;
 	
 		if r.getn('count', 0) = 403 then
 			h.sts_403_forbidden;
 			h.header_close;
 			h.writeln('You have not the right to access resource with count=403');
-			g.finish;
+			g.cancel;
 		end if;
 	
 		-- h.allow_post;
@@ -50,7 +50,6 @@ create or replace package body test_b is
 		p.p(r.proc);
 		p.p(r.path);
 		p.p(r.qstr);
-		p.p(r.hash);
 	
 		p.line('<br/>');
 		p.line(r.header('accept-encoding'));

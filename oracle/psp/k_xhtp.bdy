@@ -527,7 +527,7 @@ create or replace package body k_xhtp is
 			end if;
 			script_close;
 		end if;
-		g.finish(true);
+		g.finish;
 	end;
 
 	-- public

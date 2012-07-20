@@ -1,6 +1,8 @@
 create or replace package g is
 
-	procedure finish(commit boolean := false);
+	procedure finish;
+
+	procedure cancel;
 
 	procedure filter_pass;
 

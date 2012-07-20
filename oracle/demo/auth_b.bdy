@@ -138,7 +138,7 @@ create or replace package body auth_b is
 			p.h;
 			p.p('You should login first');
 			p.script_text('alert("You should login first.");');
-			g.finish;
+			g.cancel;
 		elsif r.user = v_user and r.pass = v_pass then
 			s.login(r.user);
 			k_debug.trace('user psp.web passed');
@@ -157,7 +157,7 @@ create or replace package body auth_b is
 				p.p('Username should be ' || v_user || ' to pass');
 				p.p('Password should be ' || v_pass || ' to pass');
 				p.p('Or user/pass should be in user_t table.' || p.a('see data', 'user_b.register'));
-				g.finish;
+				g.cancel;
 			else
 				k_debug.trace('user dbu passed');
 				s.login(r.user);

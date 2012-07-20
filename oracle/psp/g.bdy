@@ -1,12 +1,14 @@
 create or replace package body g is
 
-	procedure finish(commit boolean := false) is
+	procedure finish is
 	begin
-		if commit then
-			commit;
-		else
-			rollback;
-		end if;
+		commit;
+		raise pv.ex_resp_done;
+	end;
+
+	procedure cancel is
+	begin
+		rollback;
 		raise pv.ex_resp_done;
 	end;
 

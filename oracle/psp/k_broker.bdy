@@ -20,9 +20,6 @@ create or replace package body k_broker is
 	procedure stream_close is
 		v_wlen pls_integer;
 	begin
-		-- write blob buffer 0 length, 
-		-- g.finish;
-		-- quit process will do end signal also, so nothing need to do
 		if pv.call_type = 0 then
 			v_wlen := utl_tcp.write_line(pv.c, '</pre>' || pv.end_marker);
 			utl_tcp.flush(pv.c);
