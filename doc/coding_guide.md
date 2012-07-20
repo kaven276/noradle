@@ -163,6 +163,8 @@ layers of code
 ==============
 	1. compare to J2EE
 	
+  use 
+	
 
 basic web developing
 ==============
@@ -178,6 +180,18 @@ get request info by r.xxx API
 --------------
 
 ### get basic request line info
+
+  The request line is of the format http://hostname:port[/base]/dad/pack.proc/path?querystring
+
+* r.host
+* r.port
+* r.base
+* r.prog
+* r.pack
+* r.proc
+* r.path
+* r.qstr
+
 
 ### get form submit info
 

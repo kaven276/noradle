@@ -11,7 +11,7 @@ Install at oracle's side
 
 ## Install PSP.WEB engine schema objects and demo schema objects.
 
-  Change working directory into oracle, use sqlplus to login into the target oracle database as sysdba, then execute install.sql script file. Example like this:
+  Change working directory into oracle subdir of this project, use sqlplus to login into the target oracle database as sysdba, then execute install.sql script file. Example like this:
 
 	sqlplus "sys/password@targetdb as sysdba"
 	SQL> @install
