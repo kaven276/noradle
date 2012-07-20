@@ -7,7 +7,7 @@ create or replace package body http_b is
 				h.content_encoding_try_zip;
 			when 'off' then
 				h.content_encoding_identity;
-			when 'auto' then 
+			when 'auto' then
 				h.content_encoding_auto;
 		end case;
 	
@@ -50,7 +50,7 @@ create or replace package body http_b is
 		h.line('<br/>');
 	
 		h.line('<form action="http_b.chunked_transfer">');
-		h.line('chunked transfer options: ');
+		h.line('flush in half way(chunked transfer) options: ');
 		h.line('<input name="use" type="radio" value="on"/>');
 		h.line('<label>ON</label>');
 		h.line('<input name="use" type="radio" value="off"/>');
@@ -64,8 +64,12 @@ create or replace package body http_b is
 		h.line('When this page is print out at this point, it will wait a while for big data processing.<br/>');
 		h.line('So it should use "h.flush" API to send the already generated part to client/browser.<br/>');
 		h.line('You call h.flush after p.h,p.script(s),p.link(s) to load referenced files early.<br/>');
+		h.line('Call h.flush will use chunked transfer-encode, the default use Content-Length<br/>');
 	
-		h.flush;
+		if r.getc('use', 'on') = 'on' then
+			h.flush;
+		end if;
+	
 		dbms_lock.sleep(2);
 	
 		for i in 1 .. r.getc('count', 100) loop
