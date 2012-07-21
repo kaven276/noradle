@@ -74,7 +74,6 @@ create or replace package body output is
 			v := v || 'Content-Type: text/css' || nl;
 			v := v || 'ETag:"' || 'cssmd5"' || nl;
 			l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
-			utl_tcp.flush(pv.c);
 		end;
 	
 		for i in 1 .. ceil(pv.css_len / pv.write_buff_size) loop
@@ -85,8 +84,7 @@ create or replace package body output is
 			end if;
 			dbms_lob.read(pv.csstext, v_wlen, v_pos + 1, v_raw);
 			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			utl_tcp.flush(pv.c);
-			v_pos := v_pos + v_wlen;
+			v_pos  := v_pos + v_wlen;
 		end loop;
 	end;
 
