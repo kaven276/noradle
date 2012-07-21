@@ -85,7 +85,6 @@ create or replace package body gateway is
 		end;
 	
 		loop
-			k_init.by_request;
 			<<read_request>>
 		
 			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime then
@@ -126,6 +125,7 @@ create or replace package body gateway is
 		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
+			k_init.by_request;
 			r."_init"(pv.c, 80526);
 			v_done := false;
 		
