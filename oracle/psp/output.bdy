@@ -9,6 +9,7 @@ create or replace package body output is
 		pv.buffered_length := 0;
 		pv.css_len         := 0;
 		pv.css_ins         := null;
+		pv.flushed         := false;
 	end;
 
 	procedure write_head is
