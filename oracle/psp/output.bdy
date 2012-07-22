@@ -73,7 +73,7 @@ create or replace package body output is
 			v := '200' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 			v := v || 'Content-Length: ' || pv.css_len || nl;
 			v := v || 'Content-Type: text/css' || nl;
-			v := v || 'ETag:"' || 'cssmd5"' || nl;
+			v := v || 'ETag: "' || pv.headers('x-css-md5') || '"' || nl;
 			l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 		end;
 	
@@ -266,6 +266,7 @@ create or replace package body output is
 			if pv.css_len > 0 then
 				if pv.csslink then
 					-- compute md5 digest and replace css/xxx54
+					dbms_lob.trim(pv.csstext, pv.css_len);
 					v_md5 := rawtohex(dbms_crypto.hash(pv.csstext, dbms_crypto.hash_md5));
 					v_raw := utl_i18n.string_to_raw(v_md5, pv.charset_ora);
 					dbms_lob.write(pv.entity, 32, pv.css_hld_pos + 50, v_raw);
