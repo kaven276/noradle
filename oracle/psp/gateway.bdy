@@ -134,12 +134,17 @@ create or replace package body gateway is
 				continue;
 			end if;
 		
-			if r.method = 'GET' then
-				pv.flushed := false;
-				k_http.auto_chunk_max_size;
-				k_http.auto_chunk_max_idle;
-				k_http.content_encoding_auto;
-			end if;
+			case r.method
+				when 'GET' then
+					k_http.auto_chunk_max_size;
+					k_http.auto_chunk_max_idle;
+					k_http.content_encoding_auto;
+				when 'POST' then
+					k_http.auto_chunk_max_size(null);
+					k_http.auto_chunk_max_idle(null);
+				else
+					null;
+			end case;
 		
 			dbms_application_info.set_module(r.prog, null);
 		
