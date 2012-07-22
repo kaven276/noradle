@@ -232,7 +232,7 @@ create or replace package body output is
 	end do_write;
 
 	procedure finish is
-		v_len  integer;
+		v_len  integer := pv.buffered_length;
 		v_len2 integer := 0;
 		v_raw  raw(32767);
 		v_md5  varchar2(32);
@@ -248,10 +248,9 @@ create or replace package body output is
 			return;
 		end if;
 	
-		-- when no content, just return;
-		v_len := pv.buffered_length;
 		if v_len = 0 then
 			if r.type = 'c' and pv.status_code = 200 then
+				-- when no content, just return back to previous page;
 				if r.header('referer') is not null then
 					h.go(r.header('referer'));
 				else
@@ -260,6 +259,21 @@ create or replace package body output is
 				end if;
 			end if;
 			goto print_http_headers;
+		elsif pv.feedback or (r.type = 'c' and pv.status_code = 200 and pv.end_marker != 'feedback') then
+			-- have content, but have feedback indication or _c
+			declare
+				v  varchar2(4000);
+				nl varchar2(2) := chr(13) || chr(10);
+				l  pls_integer;
+			begin
+				-- write fixed head
+				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
+				v := v || 'Content-Length: 0' || nl;
+				v := v || 'Location: feedback?id=' || nl;
+				v := v || 'Cache-Control: no-cache' || nl;
+				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+			end;
+			return;
 		end if;
 	
 		if pv.csslink is not null then
@@ -282,6 +296,7 @@ create or replace package body output is
 			end if;
 		end if;
 	
+		-- zip is for streamed output, it's conflict with content_md5 computation
 		if pv.content_md5 and pv.headers('Content-Encoding') in ('try', '?') then
 			pv.content_md5 := false;
 		end if;
@@ -308,23 +323,6 @@ create or replace package body output is
 		pv.headers('Content-Length') := to_char(v_len + v_len2);
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
-	
-		-- have content, but have feedback indication or _c
-		if v_len > 0 and pv.end_marker != 'feedback' and (pv.feedback or r.type = 'c' and pv.status_code = 200) then
-			declare
-				v  varchar2(4000);
-				nl varchar2(2) := chr(13) || chr(10);
-				l  pls_integer;
-			begin
-				-- write fixed head
-				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
-				v := v || 'Content-Length: 0' || nl;
-				v := v || 'Location: feedback?id=' || nl;
-				v := v || 'Cache-Control: no-cache' || nl;
-				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
-			end;
-			return;
-		end if;
 	
 		pv.use_stream := false;
 		write_head;
