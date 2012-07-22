@@ -44,7 +44,7 @@ create or replace package pv is
 	entity blob;
 	nlbr   varchar2(2);
 
-	feedback    boolean;
+	feedback    boolean; -- force to use feedback mechanism
 	csslink     boolean;
 	csstext     blob;
 	css_len     pls_integer;
