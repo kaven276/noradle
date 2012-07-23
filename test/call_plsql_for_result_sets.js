@@ -7,8 +7,6 @@
 var Noradle = require('..')
   ;
 
-Noradle.connectionMonitor.once('connect', UnitTest);
-
 function UnitTest(){
   var dbc = new Noradle.DBCall('demo', 'theOnlyDB');
   dbc.call('db_src_b.example', function(status, page, headers){
@@ -24,3 +22,4 @@ function UnitTest(){
     }
   });
 }
+UnitTest();
