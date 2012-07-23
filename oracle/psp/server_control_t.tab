@@ -8,7 +8,8 @@ create table SERVER_CONTROL_T
   MAX_REQUESTS NUMBER(9),
   MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0),
   STATIC_URL   VARCHAR2(100),
-  DEFAULT_DBU  VARCHAR2(30)
+  DEFAULT_DBU  VARCHAR2(30),
+  DBU_FILTER   VARCHAR2(1000)
 )
 ;
 comment on column SERVER_CONTROL_T.CFG_ID
@@ -29,5 +30,7 @@ comment on column SERVER_CONTROL_T.STATIC_URL
   is 'the common static file root url prefix';
 comment on column SERVER_CONTROL_T.DEFAULT_DBU
   is 'if dad do not match any db_user, then map to this dbu';
+comment on column SERVER_CONTROL_T.DBU_FILTER
+  is 'only filter passed dbu can access, use regexp';
 alter table SERVER_CONTROL_T
   add constraint PK_SVR_CFG primary key (CFG_ID);

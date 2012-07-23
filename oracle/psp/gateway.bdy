@@ -14,6 +14,20 @@ create or replace package body gateway is
 		end if;
 	end;
 
+	procedure error_invalid_dbu is
+	begin
+		if pv.msg_stream then
+			h.line('The requested DB user "' || r.dbu || '" is not allowed to access');
+		else
+			h.allow_get_post;
+			h.status_line(403);
+			h.content_type('text/plain');
+			h.header_close;
+			h.line('The requested DB user "' || r.dbu || '" is not allowed to access');
+			output.finish;
+		end if;
+	end;
+
 	procedure error_dad_auth_entry
 	(
 		code number,
@@ -57,6 +71,7 @@ create or replace package body gateway is
 		no_dad_auth_entry_right exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry_right, -01031);
 		v_done boolean := false;
+		v_dbuf server_control_t.dbu_filter%type;
 	begin
 		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5)
 			into pv.cur_cfg_id
@@ -126,6 +141,11 @@ create or replace package body gateway is
 			k_init.by_request;
 			r."_init"(pv.c, 80526);
 			v_done := false;
+		
+			v_dbuf := k_cfg.server_control().dbu_filter;
+			if v_dbuf is not null and not regexp_like(r.dbu, v_dbuf) then
+				error_invalid_dbu;
+			end if;
 		
 			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 				error_not_bch;
