@@ -83,6 +83,13 @@ create or replace package body gateway is
 		pv.svr_request_count := 0;
 		pv.svr_start_time    := sysdate;
 		<<make_connection>>
+		declare
+			v_sid    pls_integer;
+			v_serial pls_integer;
+			function pi2r(i binary_integer) return raw is
+			begin
+				return utl_raw.cast_from_binary_integer(i);
+			end;
 		begin
 			pv.c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
 																			remote_port     => k_cfg.server_control().gw_port,
@@ -90,6 +97,8 @@ create or replace package body gateway is
 																			in_buffer_size  => pv.write_buff_size,
 																			out_buffer_size => 0,
 																			tx_timeout      => 3);
+			select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
+			tmp.pi := utl_tcp.write_raw(pv.c, utl_raw.concat(pi2r(v_sid), pi2r(v_serial)));
 		exception
 			when utl_tcp.network_error then
 				if quit then
