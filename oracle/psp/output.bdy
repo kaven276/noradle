@@ -259,7 +259,7 @@ create or replace package body output is
 				end if;
 			end if;
 			goto print_http_headers;
-		elsif pv.feedback or (r.type = 'c' and pv.status_code = 200 and pv.end_marker != 'feedback') then
+		elsif pv.feedback or (r.type = 'c' and pv.status_code = 200 and pv.ct_marker != 'feedback') then
 			-- have content, but have feedback indication or _c
 			declare
 				v  varchar2(4000);

@@ -120,7 +120,7 @@ create or replace package body gateway is
 			end if;
 		
 			begin
-				pv.end_marker := utl_tcp.get_line(pv.c, true);
+				pv.ct_marker := utl_tcp.get_line(pv.c, true);
 			exception
 				when utl_tcp.transfer_timeout then
 					goto read_request;
@@ -130,19 +130,21 @@ create or replace package body gateway is
 					goto the_end;
 			end;
 		
-			case pv.end_marker
-				when 'quit_process' then
-					return;
+			case pv.ct_marker
+				when 'HTTP Call' then
+					pv.call_type := 0; -- normal process
+				when 'NodeJS Call' then
+					pv.call_type := 1;
 				when 'feedback' then
 					output.finish;
 					continue;
 				when 'csslink' then
 					output.do_css_write;
 					continue;
-				when 'NodeJS Call' then
-					pv.call_type := 1;
+				when 'quit_process' then
+					return;
 				else
-					pv.call_type := 0; -- normal process
+					raise_application_error(-20000, 'wrong call type for ' || pv.ct_marker);
 			end case;
 		
 			pv.elpt := dbms_utility.get_time;
