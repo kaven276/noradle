@@ -1,5 +1,11 @@
 Noradle is for Node & Oracle integration. Noradle has three large parts.
 
+
+The work at Now
+==========
+
+  To stabilize the runtime, improve oracle connection pool management, avoid idle occupation for busy-marked oraSock, timeout in some cases to release resource, reconnect if needed. Refactor to add wrapper for net.socket, that will have no chance to conflict with the system defined properties, so it'll more safe.
+
 Overview
 ==========
 
