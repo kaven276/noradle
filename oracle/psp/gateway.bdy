@@ -73,8 +73,8 @@ create or replace package body gateway is
 		v_done boolean := false;
 		v_dbuf server_control_t.dbu_filter%type;
 	begin
-		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5)
-			into pv.cur_cfg_id
+		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
+			into pv.cur_cfg_id, pv.seq_in_id
 			from user_scheduler_running_jobs a
 		 where a.session_id = sys_context('userenv', 'sid');
 		k_debug.trace(st(sys_context('USERENV', 'SID'), pv.cur_cfg_id), 'bgjobid');
@@ -98,7 +98,7 @@ create or replace package body gateway is
 																			out_buffer_size => 0,
 																			tx_timeout      => 3);
 			select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-			tmp.pi := utl_tcp.write_raw(pv.c, utl_raw.concat(pi2r(v_sid), pi2r(v_serial)));
+			tmp.pi := utl_tcp.write_raw(pv.c, utl_raw.concat(pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id)));
 		exception
 			when utl_tcp.network_error then
 				if quit then
