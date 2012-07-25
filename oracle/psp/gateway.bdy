@@ -77,7 +77,6 @@ create or replace package body gateway is
 			into pv.cur_cfg_id, pv.seq_in_id
 			from user_scheduler_running_jobs a
 		 where a.session_id = sys_context('userenv', 'sid');
-		k_debug.trace(st(sys_context('USERENV', 'SID'), pv.cur_cfg_id), 'bgjobid');
 	
 		dbms_alert.register('PW_STOP_SERVER');
 		pv.svr_request_count := 0;
