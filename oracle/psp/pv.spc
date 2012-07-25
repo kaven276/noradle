@@ -21,7 +21,7 @@ create or replace package pv is
 	chunk_max_idle  interval day(0) to second(1); -- when write see last write time is more than
 	last_flush      timestamp(1);
 	buffered_length number(8) := 0;
-	end_marker      varchar2(100);
+	end_marker      varchar2(100) := 'EOF';
 
 	header_writen boolean;
 	allow_content boolean;

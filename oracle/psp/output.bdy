@@ -243,7 +243,7 @@ create or replace package body output is
 	
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
-			line(pv.end_marker, chr(13) || chr(10));
+			line(pv.end_marker, '');
 			flush;
 			return;
 		end if;
