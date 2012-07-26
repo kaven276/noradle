@@ -49,6 +49,30 @@ create or replace package body gateway is
 		end if;
 	end;
 
+	-- private
+	procedure make_conn
+	(
+		c    in out nocopy utl_tcp.connection,
+		flag pls_integer
+	) is
+		v_sid    pls_integer;
+		v_serial pls_integer;
+		v_result pls_integer;
+		function pi2r(i binary_integer) return raw is
+		begin
+			return utl_raw.cast_from_binary_integer(i);
+		end;
+	begin
+		c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
+																 remote_port     => k_cfg.server_control().gw_port,
+																 charset         => null,
+																 in_buffer_size  => pv.write_buff_size,
+																 out_buffer_size => 0,
+																 tx_timeout      => 3);
+		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
+		v_result := utl_tcp.write_raw(c, utl_raw.concat(pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id * flag)));
+	end;
+
 	-- Refactored procedure quit
 	function quit return boolean is
 		v_msg varchar2(1);
@@ -61,6 +85,18 @@ create or replace package body gateway is
 		else
 			return false;
 		end if;
+	end;
+
+	function can_quit return boolean is
+		c   utl_tcp.connection;
+		rpl char(1);
+		len pls_integer;
+	begin
+		make_conn(c, -1);
+		len := utl_tcp.read_text(c, rpl, 1);
+		utl_tcp.close_connection(c);
+		k_debug.trace(st('allow quit ?', rpl));
+		return rpl = 'Y';
 	end;
 
 	procedure listen is
@@ -82,22 +118,8 @@ create or replace package body gateway is
 		pv.svr_request_count := 0;
 		pv.svr_start_time    := sysdate;
 		<<make_connection>>
-		declare
-			v_sid    pls_integer;
-			v_serial pls_integer;
-			function pi2r(i binary_integer) return raw is
-			begin
-				return utl_raw.cast_from_binary_integer(i);
-			end;
 		begin
-			pv.c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
-																			remote_port     => k_cfg.server_control().gw_port,
-																			charset         => null,
-																			in_buffer_size  => pv.write_buff_size,
-																			out_buffer_size => 0,
-																			tx_timeout      => 3);
-			select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-			tmp.pi := utl_tcp.write_raw(pv.c, utl_raw.concat(pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id)));
+			make_conn(pv.c, 1);
 		exception
 			when utl_tcp.network_error then
 				if quit then
@@ -110,11 +132,11 @@ create or replace package body gateway is
 		loop
 			<<read_request>>
 		
-			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime then
+			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime and can_quit then
 				goto the_end;
 			end if;
 		
-			if quit then
+			if quit and can_quit then
 				goto the_end;
 			end if;
 		
@@ -197,6 +219,7 @@ create or replace package body gateway is
 													 dbms_utility.format_error_backtrace));
 					error_dad_auth_entry(sqlcode, sqlerrm);
 			end;
+		
 			if pv.msg_stream then
 				if pv.buffered_length > 0 then
 					bkr.emit_msg(true);
@@ -204,8 +227,9 @@ create or replace package body gateway is
 				goto the_end; -- when stream quit, quit process also, to release resource
 			end if;
 			output.finish;
+		
 			pv.svr_request_count := pv.svr_request_count + 1;
-			if pv.svr_request_count >= k_cfg.server_control().max_requests then
+			if pv.svr_request_count >= k_cfg.server_control().max_requests and can_quit then
 				goto the_end;
 			end if;
 		
