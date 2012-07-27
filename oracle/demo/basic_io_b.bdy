@@ -7,7 +7,7 @@ create or replace package body basic_io_b is
 	begin
 		src_b.link_proc;
 		h.line('<pre>');
-
+	
 		h.line('[ This is the basic request info derived from http request line and host http header ]');
 		h.line('r.method : ' || r.method);
 		h.line('r.url : ' || r.url);
@@ -21,7 +21,9 @@ create or replace package body basic_io_b is
 		h.line('r.proc : ' || r.proc);
 		h.line('r.path : ' || r.path);
 		h.line('r.qstr : ' || r.qstr);
-
+		h.line('r.bsid : ' || r.bsid);
+		h.line('r.msid : ' || r.msid);
+	
 		h.line;
 		h.line('[ This is all http request headers ]');
 		n := ra.headers.first;
@@ -31,7 +33,7 @@ create or replace package body basic_io_b is
 			h.line(n || ' : ' || v);
 			n := ra.headers.next(n);
 		end loop;
-
+	
 		h.line;
 		h.line('[ This is all http request cookies ]');
 		n := ra.cookies.first;
@@ -41,7 +43,7 @@ create or replace package body basic_io_b is
 			h.line(n || ' : ' || v);
 			n := ra.cookies.next(n);
 		end loop;
-
+	
 		h.line;
 		h.line('[ This is all http request parameter that may be got from the following ways ]');
 		h.line('query string, post with application/x-www-form-urlencoded, post with multipart/form-data');
@@ -52,7 +54,7 @@ create or replace package body basic_io_b is
 			h.line(n || ' : ' || t.join(va, ','));
 			n := ra.params.next(n);
 		end loop;
-
+	
 		p.line('</pre>');
 	end;
 
@@ -60,24 +62,24 @@ create or replace package body basic_io_b is
 	begin
 		src_b.link_proc;
 		h.line('<pre>');
-
+	
 		h.line('Basic output include the following APIs');
 		h.line('h.write(text) : write text to http entity content');
 		h.line('h.writeln(text) : write text and newline character(s) to http entity content');
 		h.line('h.string(text) : write text to http entity content');
 		h.line('h.line(text) : write text and newline character(s) to http entity content');
 		h.line('h.set_line_break(nlbr) : set the newline break character(s), usually LF,CR,CRLF');
-
+	
 		h.line;
 		h.write('output by h.write');
 		h.writeln('output by h.writeln');
 		h.string('output by h.string');
 		h.line('output by h.line');
-
+	
 		h.line;
 		h.line('h.write = h.string, they are just alias each other');
 		h.line('h.writeln = h.line, they are just alias each other');
-
+	
 		h.line;
 		h.line('line break can be set using h.set_line_break()');
 		h.set_line_break(chr(10));
@@ -94,7 +96,7 @@ create or replace package body basic_io_b is
 		p.h;
 		src_b.link_proc;
 		p.br;
-
+	
 		p.form_open('f', 'req_info?qstr1=A&qstr1=B&p1=0', method => 'get');
 		p.select_open('mtd');
 		p.select_option('get');
@@ -105,11 +107,11 @@ create or replace package body basic_io_b is
 		p.input_text('p1', '2');
 		p.input_submit;
 		p.form_close;
-
+	
 		p.br;
 		p.p('Method get will erase the query string in form.action.');
 		p.p('Method post will keep the query string in form.action but replace the parameter in qstr if there are same named form items.');
-
+	
 	end;
 
 end basic_io_b;
