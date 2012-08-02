@@ -7,6 +7,8 @@ h2{counter-increment:section;}
 h1:before{content:"Chapter " counter(chapter) " - ";display:inline-block;margin-right:1em;}
 h2:before{content:"Sect " counter(chapter) "." counter(section) " : ";}
 h3:before{content:" => "}
+h4:before{content:"[ "}
+h4:after{content:" ]"}
 p{text-indent:2em;line-height:1.5em;letter-spacing:2px;}
 h1{text-transform:capitalize;}
 pre{background-color:#eeeeee;border:1px dashed gray;padding:1em;-webkit-border-radius:1em;}
