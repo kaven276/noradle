@@ -31,7 +31,6 @@ create or replace package body auth_b is
 		src_b.link_proc;
 		p.br;
 	
-		s.use('BSID');
 		if s.user_id is not null then
 			p.p(t.ps('You are :1, You have already logged ( at :2 ) in.', st(s.user_id, t.dt2s(s.login_time))));
 			p.a('Logout', 'logout');
@@ -44,6 +43,14 @@ create or replace package body auth_b is
 		p.input_text('name', '', 'username: ');
 		p.br;
 		p.input_text('pass', '', 'password: ');
+		p.br;
+		p.input_text('maxidle', 15, 'max idle(s): ');
+		p.br;
+		p.input_text('maxlive', 30, 'max live(s): ');
+		p.br;
+		p.input_text('attr1', 'value1', 'attr1: ');
+		p.br;
+		p.input_text('attr2', 'value2', 'attr2: ');
 		p.br;
 		p.input_reset('', 'reset');
 		p.input_submit('', 'login');
@@ -63,43 +70,76 @@ create or replace package body auth_b is
 			 and a.pass = v.pass;
 		e.report(tmp.cnt = 0, 'User name or password is wrong.');
 	
-		s.use;
-		s.login(v.name);
+		-- record login status in session
+		s.login(v.name, 'password');
+		s.attr('maxidle', r.getn('maxidle'));
+		s.attr('maxlive', r.getn('maxlive'));
+		s.attr('attr1', r.getc('attr1'));
+		s.attr('attr2', r.getc('attr2'));
 	
 		p.h;
 		src_b.link_proc;
-		p.p('Welcome ' || v.name || ', you have logged in successfully.');
+		p.p('Welcome ' || s.user_id || ', you have logged in successfully.');
 		p.a('relogin', 'cookie_gac');
 	end;
 
 	procedure logout is
 	begin
 		s.logout;
-		-- k_sess.rm;
 		h.go('cookie_gac');
+	end;
+
+	procedure check_maxidle is
+	begin
+		if s.lat + to_number(s.attr('maxidle')) / 24 / 60 / 60 < sysdate then
+			p.h;
+			p.p('You logged in session is timeout for idle more than 15s, session is removed.');
+			p.p('last access time : ' || to_char(s.lat, 'hh:mm:ss'));
+			p.p('current time : ' || to_char(sysdate, 'hh:mm:ss'));
+			p.p('max idle threshold : ' || s.attr('maxidle'));
+			s.logout;
+			g.cancel;
+		end if;
+	end;
+
+	procedure check_maxlive is
+	begin
+		if s.login_time + to_number(s.attr('maxlive')) / 24 / 60 / 60 < sysdate then
+			p.h;
+			p.p('You logged in session lived for too long, that is more than 1 minute, session is removed.');
+			p.p('login time : ' || to_char(s.login_time, 'hh:mm:ss'));
+			p.p('current time : ' || to_char(sysdate, 'hh:mm:ss'));
+			p.p('max live threshold : ' || s.attr('maxlive'));
+			s.logout;
+			g.cancel;
+		end if;
+	end;
+
+	procedure check_update is
+	begin
+		check_maxidle;
+		check_maxlive;
+		s.touch;
 	end;
 
 	procedure protected_page is
 	begin
 		p.h;
-		rcpv.msid := s.use_msid_cookie;
-		s.use;
-	
 		if s.user_id is null then
 			h.sts_403_forbidden;
 			p.p('You have not logged in.');
 			p.a('login now', 'cookie_gac');
-			s.rm;
 			return;
 		end if;
-	
-		s.chk_max_idle('+00 00:01:00');
-		s.chk_max_keep('+00 00:10:00');
 	
 		src_b.link_proc;
 		p.br;
 		p.p('This page show how to deal with login/logout fair, instead of using k_filter.before.');
-		p.p(t.ps('You are :1, You have already logged ( at :2 ) in.', st(s.user_id, t.dt2s(s.login_time))));
+		p.p(t.ps('You are :1, You have are logged in at :2 with method(:3).',
+						 st(s.user_id, t.dt2s(s.login_time), s.attr('method'))));
+		p.p('some example session attribute include');
+		p.p('attr1 = ' || s.attr('attr1'));
+		p.p('attr2 = ' || s.attr('attr2'));
 		p.a('relogin', 'cookie_gac');
 	
 		p.br(4);
@@ -128,7 +168,6 @@ create or replace package body auth_b is
 		v_pass varchar2(30) := 'best';
 		v      user_t%rowtype;
 	begin
-		s.use;
 		if s.user_id is not null then
 			null;
 			k_debug.trace('user in login sts');

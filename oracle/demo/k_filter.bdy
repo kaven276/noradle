@@ -5,6 +5,11 @@ create or replace package body k_filter is
 		p.format_src;
 		pv.id  := 'liyong';
 		pv.now := sysdate;
+	
+		if s.logged then
+			auth_b.check_update;
+		end if;
+	
 		g.filter_pass;
 	
 		if true then

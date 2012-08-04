@@ -16,5 +16,7 @@ create or replace package auth_b is
 
 	procedure logout_basic;
 
+	procedure check_update;
+
 end auth_b;
 /
