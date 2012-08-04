@@ -95,7 +95,6 @@ create or replace package body gateway is
 		make_conn(c, -1);
 		len := utl_tcp.read_text(c, rpl, 1);
 		utl_tcp.close_connection(c);
-		k_debug.trace(st('allow quit ?', rpl));
 		return rpl = 'Y';
 	end;
 
@@ -172,6 +171,11 @@ create or replace package body gateway is
 			pv.cput := dbms_utility.get_cpu_time;
 			k_init.by_request;
 			r."_init"(pv.c, 80526);
+			if r.bsid is null then
+				dbms_session.clear_identifier;
+			else
+				dbms_session.set_identifier(r.bsid);
+			end if;
 			v_done := false;
 		
 			v_dbuf := k_cfg.server_control().dbu_filter;
