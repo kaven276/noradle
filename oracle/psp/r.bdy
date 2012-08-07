@@ -33,6 +33,7 @@ create or replace package body r is
 		v_name  varchar2(1000);
 		v_value varchar2(1000);
 		v_st    st;
+		v_uamd5 varchar2(22);
 	begin
 		if passport != 80526 then
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
@@ -59,6 +60,7 @@ create or replace package body r is
 				gv_cport := to_number(utl_tcp.get_line(c, true));
 				pv.bsid  := utl_tcp.get_line(c, true);
 				pv.msid  := utl_tcp.get_line(c, true);
+				v_uamd5  := utl_tcp.get_line(c, true);
 			
 				if v_dad is null then
 					v_dad := lower(k_cfg.server_control().default_dbu);
@@ -91,6 +93,14 @@ create or replace package body r is
 			v_value := utl_tcp.get_line(c, true);
 			ra.headers(v_name) := v_value;
 		end loop;
+	
+		dbms_session.clear_identifier;
+		if ua is not null then
+			-- at session creation
+			k_gac.gset('UA', v_uamd5, ua);
+		else
+			ra.headers('user-agent') := sys_context('UA', v_uamd5);
+		end if;
 	
 		-- credentials
 		if pv.call_type = 0 then
