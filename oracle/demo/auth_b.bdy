@@ -40,6 +40,8 @@ create or replace package body auth_b is
 	
 		p.p('Please fill your name and password to log in.');
 		p.form_open('f', 'login', method => 'post');
+		p.input_text('company', '', 'company: ');
+		p.br;
 		p.input_text('name', '', 'username: ');
 		p.br;
 		p.input_text('pass', '', 'password: ');
@@ -71,7 +73,7 @@ create or replace package body auth_b is
 		e.report(tmp.cnt = 0, 'User name or password is wrong.');
 	
 		-- record login status in session
-		s.login(v.name, 'password');
+		s.login(v.name, r.getc('company'), method => 'password');
 		s.attr('maxidle', r.getn('maxidle'));
 		s.attr('maxlive', r.getn('maxlive'));
 		s.attr('attr1', r.getc('attr1'));
@@ -135,8 +137,8 @@ create or replace package body auth_b is
 		src_b.link_proc;
 		p.br;
 		p.p('This page show how to deal with login/logout fair, instead of using k_filter.before.');
-		p.p(t.ps('You are :1, You have are logged in at :2 with method(:3).',
-						 st(s.user_id, t.dt2s(s.login_time), s.attr('method'))));
+		p.p(t.ps('You are :1 at :4, You have are logged in at :2 with method(:3).',
+						 st(s.user_id, t.dt2s(s.login_time), s.attr('method'), s.gid)));
 		p.p('some example session attribute include');
 		p.p('attr1 = ' || s.attr('attr1'));
 		p.p('attr2 = ' || s.attr('attr2'));

@@ -19,6 +19,7 @@ create or replace package k_sess authid current_user is
 	procedure login
 	(
 		uid    varchar2,
+		gid    varchar2 := null,
 		method varchar2 := null
 	);
 	procedure logout;
@@ -26,6 +27,9 @@ create or replace package k_sess authid current_user is
 
 	function logged return boolean;
 	function user_id return varchar2;
+	function group_id return varchar2;
+	function uid return varchar2;
+	function gid return varchar2;
 	function login_time return date;
 	function last_access_time return date;
 	function lat return date;
