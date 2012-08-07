@@ -95,11 +95,13 @@ create or replace package body r is
 		end loop;
 	
 		dbms_session.clear_identifier;
-		if ua is not null then
-			-- at session creation
-			k_gac.gset('UA', v_uamd5, ua);
-		else
-			ra.headers('user-agent') := sys_context('UA', v_uamd5);
+		if pv.bsid is not null then
+			if ua is not null then
+				-- at session creation
+				k_gac.gset('UA', v_uamd5, ua);
+			else
+				ra.headers('user-agent') := sys_context('UA', v_uamd5);
+			end if;
 		end if;
 	
 		-- credentials
