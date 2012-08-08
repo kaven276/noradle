@@ -70,8 +70,8 @@ create or replace package pv is
 	cs_nchar varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
 	cs_req   varchar2(30);
 
-	bsid varchar2(22);
-	msid varchar2(22);
+	bsid varchar2(30);
+	msid varchar2(30);
 
 	ex_dummy exception;
 	ex_resp_done exception;
