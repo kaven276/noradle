@@ -73,11 +73,7 @@ create or replace package body auth_b is
 		e.report(tmp.cnt = 0, 'User name or password is wrong.');
 	
 		-- record login status in session
-		s.login(v.name, r.getc('company'), method => 'password');
-		s.attr('maxidle', r.getn('maxidle'));
-		s.attr('maxlive', r.getn('maxlive'));
-		s.attr('attr1', r.getc('attr1'));
-		s.attr('attr2', r.getc('attr2'));
+		auth_s.login_complex(v.name);
 	
 		p.h;
 		src_b.link_proc;
@@ -87,7 +83,7 @@ create or replace package body auth_b is
 
 	procedure logout is
 	begin
-		s.logout;
+		auth_s.logout;
 		h.go('cookie_gac');
 	end;
 
@@ -99,7 +95,7 @@ create or replace package body auth_b is
 			p.p('last access time : ' || to_char(s.lat, 'hh:mm:ss'));
 			p.p('current time : ' || to_char(sysdate, 'hh:mm:ss'));
 			p.p('max idle threshold : ' || s.attr('maxidle'));
-			s.logout;
+			auth_s.logout;
 			g.cancel;
 		end if;
 	end;
@@ -112,7 +108,7 @@ create or replace package body auth_b is
 			p.p('login time : ' || to_char(s.login_time, 'hh:mm:ss'));
 			p.p('current time : ' || to_char(sysdate, 'hh:mm:ss'));
 			p.p('max live threshold : ' || s.attr('maxlive'));
-			s.logout;
+			auth_s.logout;
 			g.cancel;
 		end if;
 	end;
@@ -121,7 +117,7 @@ create or replace package body auth_b is
 	begin
 		check_maxidle;
 		check_maxlive;
-		s.touch;
+		auth_s.touch;
 	end;
 
 	procedure protected_page is
@@ -181,7 +177,7 @@ create or replace package body auth_b is
 			p.script_text('alert("You should login first.");');
 			g.cancel;
 		elsif r.user = v_user and r.pass = v_pass then
-			s.login(r.user);
+			auth_s.login_simple(r.user);
 			k_debug.trace('user psp.web passed');
 		else
 			v.name := r.user;
@@ -201,7 +197,7 @@ create or replace package body auth_b is
 				g.cancel;
 			else
 				k_debug.trace('user dbu passed');
-				s.login(r.user);
+				auth_s.login_simple(r.user);
 			end if;
 		end if;
 	
@@ -221,7 +217,7 @@ create or replace package body auth_b is
 
 	procedure logout_basic is
 	begin
-		s.logout;
+		auth_s.logout;
 		h.www_authenticate_basic('please click cancel to logout basic authentication.');
 		p.h;
 		p.a('login', 'basic_and_cookie');

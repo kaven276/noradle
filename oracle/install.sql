@@ -37,5 +37,7 @@ alter session set current_schema = &demodbu;
 @@grant2demo.sql
 set scan off
 @demo/install_demo_obj.sql
+create or replace context A#DEMO using auth_s accessed globally;
+grant execute on A#DEMO to &pspdbu;
 set scan on
 exec DBMS_UTILITY.COMPILE_SCHEMA('&demodbu',false);
