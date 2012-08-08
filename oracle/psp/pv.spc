@@ -58,8 +58,8 @@ create or replace package pv is
 	svr_start_time    date;
 
 	base64_cookie varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
-	base64_gac    varchar2(26) := '!"#$%&''()*,-./:;<>?@[\]{|}';
-	gac_dtfmt constant varchar2(17) := 'yyyymmddhh24miss-';
+	base64_gac    varchar2(26) := '!"#$%&()*,-:;<>?@[]^_`{|}~';
+	gac_dtfmt constant varchar2(14) := 'yyyymmddhh24mi';
 	ls_gid varchar2(99);
 	ls_uid varchar2(99);
 	ls_lgt date;

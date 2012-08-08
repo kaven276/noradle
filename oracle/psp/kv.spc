@@ -19,5 +19,7 @@ create or replace package kv authid current_user is
 		key  varchar2
 	);
 
+	procedure clear;
+
 end kv;
 /
