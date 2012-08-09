@@ -6,6 +6,8 @@ create or replace package body k_gc is
 		v_bsid varchar2(30) := translate(bsid, pv.base64_cookie, pv.base64_gac);
 		v_val  varchar2(30);
 		v_now  varchar2(15) := to_char(sysdate, pv.gac_dtfmt);
+		v_lat  varchar2(12);
+		v_idle boolean;
 	begin
 		dbms_session.clear_identifier;
 		if bsid is null then
@@ -17,12 +19,26 @@ create or replace package body k_gc is
 			dbms_session.set_context('SESS_CID_CTX', v_bsid, v_now || v_now);
 		else
 			-- update session LAT only if minute change, to avoid frequent GAC update
-			if v_now != substr(v_val, 13, 24) then
+			v_lat := substr(v_val, 13, 24);
+			if v_now != v_lat then
+				v_idle := sysdate - to_date(v_lat, pv.gac_dtfmt) > 30 / 24 / 60;
 				dbms_session.set_context('SESS_CID_CTX', v_bsid, substr(v_val, 1, 12) || v_now);
 			end if;
 		end if;
+	
 		dbms_session.set_identifier(bsid);
 		pv.ctx := null;
+	
+		-- session timeout for system threshold
+		if v_idle then
+			for j in (select distinct a.namespace from global_context a where a.client_identifier is not null) loop
+				for ns in (select a.namespace, a.schema || '.' || a.package as proc
+										 from dba_context a
+										where a.namespace = j.namespace) loop
+					execute immediate 'call ' || ns.proc || '.clear()';
+				end loop;
+			end loop;
+		end if;
 	end;
 
 	procedure clear_all_session is
@@ -31,7 +47,7 @@ create or replace package body k_gc is
 	end;
 
 	procedure login_session is
-		v_thres date := sysdate - 1 / 24 / 60;
+		v_thres date := sysdate - 1 / 2 / 24 / 60;
 		v_cid   varchar2(30);
 		v_sps   ns_pack_t;
 	begin
