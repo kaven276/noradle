@@ -45,14 +45,22 @@ create or replace package body auth_b is
 		p.input_text('name', '', 'username: ');
 		p.br;
 		p.input_text('pass', '', 'password: ');
+	
 		p.br;
 		p.input_text('maxidle', 15, 'max idle(s): ');
 		p.br;
 		p.input_text('maxlive', 30, 'max live(s): ');
+	
 		p.br;
 		p.input_text('attr1', 'value1', 'attr1: ');
 		p.br;
 		p.input_text('attr2', 'value2', 'attr2: ');
+	
+		p.br;
+		p.input_text('scheme', 'NORMAL', 'scheme: ');
+		p.br;
+		p.input_text('rows_per_page', '10', 'rows per page: ');
+	
 		p.br;
 		p.input_reset('', 'reset');
 		p.input_submit('', 'login');
@@ -74,6 +82,8 @@ create or replace package body auth_b is
 	
 		-- record login status in session
 		auth_s.login_complex(v.name);
+		profile_s.set_scheme(r.getc('scheme'));
+		profile_s.set_rows_per_page(r.getn('rows_per_page'));
 	
 		p.h;
 		src_b.link_proc;
@@ -138,6 +148,9 @@ create or replace package body auth_b is
 		p.p('some example session attribute include');
 		p.p('attr1 = ' || s.attr('attr1'));
 		p.p('attr2 = ' || s.attr('attr2'));
+		p.p('session in GAC demo_profile');
+		p.p('scheme = ' || profile_s.get_scheme);
+		p.p('rows per page = ' || profile_s.get_rows_per_page);
 		p.a('relogin', 'cookie_gac');
 	
 		p.br(4);
