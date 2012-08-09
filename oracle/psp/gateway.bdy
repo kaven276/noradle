@@ -171,11 +171,7 @@ create or replace package body gateway is
 			pv.cput := dbms_utility.get_cpu_time;
 			k_init.by_request;
 			r."_init"(pv.c, 80526);
-			if r.bsid is null then
-				dbms_session.clear_identifier;
-			else
-				dbms_session.set_identifier(r.bsid);
-			end if;
+			k_gc.touch(r.bsid);
 			v_done := false;
 		
 			v_dbuf := k_cfg.server_control().dbu_filter;
