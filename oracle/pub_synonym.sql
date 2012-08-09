@@ -24,3 +24,4 @@ create or replace public synonym dco for k_ext_call;
 create or replace public synonym pdu for pdu;
 create or replace public synonym mv2bg for mv2bg;
 create or replace public synonym auto_stream_h for auto_stream_h;
+create or replace public synonym k_gac for k_gac;

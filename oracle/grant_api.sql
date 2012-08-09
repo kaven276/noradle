@@ -24,3 +24,4 @@ grant execute on k_ext_call to public;
 grant execute on pdu to public;
 grant execute on mv2bg to public;
 grant execute on auto_stream_h to public;
+grant execute on k_gac to public;

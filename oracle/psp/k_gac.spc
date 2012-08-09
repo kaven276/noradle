@@ -30,5 +30,11 @@ create or replace package k_gac authid current_user is
 
 	procedure grm(ctx varchar2);
 
+	function get
+	(
+		ctx  varchar2,
+		attr varchar2
+	) return varchar2;
+
 end k_gac;
 /
