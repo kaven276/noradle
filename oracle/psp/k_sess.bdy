@@ -5,7 +5,7 @@ create or replace package body k_sess is
 	-- private
 	function ctx return varchar2 is
 	begin
-		return 'A#' || upper(r.dbu);
+		return nvl(pv.ctx, 'A#' || upper(r.dbu));
 	end;
 
 	procedure attr
@@ -94,6 +94,11 @@ create or replace package body k_sess is
 	procedure rm is
 	begin
 		k_gac.grm(ctx);
+	end;
+
+	procedure use_ctx(ctx varchar2) is
+	begin
+		pv.ctx := ctx;
 	end;
 
 end k_sess;

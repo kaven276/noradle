@@ -22,6 +22,7 @@ create or replace package body k_gc is
 			end if;
 		end if;
 		dbms_session.set_identifier(bsid);
+		pv.ctx := null;
 	end;
 
 	procedure clear_all_session is

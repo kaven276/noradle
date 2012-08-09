@@ -34,6 +34,8 @@ create or replace package k_sess authid current_user is
 	function last_access_time return date;
 	function lat return date;
 
+	procedure use_ctx(ctx varchar2);
+
 	procedure rm;
 
 end k_sess;

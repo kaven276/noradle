@@ -72,6 +72,7 @@ create or replace package pv is
 
 	bsid varchar2(30);
 	msid varchar2(30);
+	ctx  varchar2(30); -- current ctx for k_sess to access
 
 	ex_dummy exception;
 	ex_resp_done exception;
