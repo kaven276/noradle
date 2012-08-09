@@ -14,12 +14,12 @@ create or replace package body profile_s is
 
 	procedure set_rows_per_page(rows number) is
 	begin
-		k_gac.gset(gc_ctx, 'rows', to_char(rows));
+		k_gac.gsetn(gc_ctx, 'rows', rows);
 	end;
 
 	function get_rows_per_page return number is
 	begin
-		return to_number(k_gac.get(gc_ctx, 'rows'));
+		return k_gac.getn(gc_ctx, 'rows');
 	end;
 
 	procedure clear is

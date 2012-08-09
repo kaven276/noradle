@@ -22,6 +22,20 @@ create or replace package k_gac authid current_user is
 		value varchar2
 	);
 
+	procedure gsetn
+	(
+		ctx   varchar2,
+		attr  varchar2,
+		value number
+	);
+
+	procedure gsetd
+	(
+		ctx   varchar2,
+		attr  varchar2,
+		value date
+	);
+
 	procedure grm
 	(
 		ctx  varchar2,
@@ -35,6 +49,18 @@ create or replace package k_gac authid current_user is
 		ctx  varchar2,
 		attr varchar2
 	) return varchar2;
+
+	function getn
+	(
+		ctx  varchar2,
+		attr varchar2
+	) return number;
+
+	function getd
+	(
+		ctx  varchar2,
+		attr varchar2
+	) return date;
 
 end k_gac;
 /
