@@ -21,11 +21,6 @@ prompt ===============================
 prompt
 @@server_control_t.tab
 prompt
-prompt Creating sequence GAC_CID_SEQ
-prompt =============================
-prompt
-@@gac_cid_seq.seq
-prompt
 prompt Creating view EXT_URL_V
 prompt =======================
 prompt
