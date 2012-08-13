@@ -38,7 +38,7 @@ alter session set current_schema = &demodbu;
 set scan off
 @demo/install_demo_obj.sql
 create or replace context A#DEMO using auth_s accessed globally;
-grant execute on A#DEMO to &pspdbu;
+grant execute on auth_s to &pspdbu;
 create or replace context demo_profile using profile_s accessed globally;
 grant execute on profile_s to &pspdbu;
 set scan on
