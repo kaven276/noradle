@@ -3,7 +3,7 @@ create or replace package body term_b is
 	procedure setting_form is
 	begin
 		begin
-			rc.set_term_info(s.use_msid_cookie);
+			rc.set_term_info(r.msid);
 		exception
 			when no_data_found then
 				null;
@@ -48,7 +48,7 @@ create or replace package body term_b is
 		v term_t%rowtype;
 	begin
 		h.allow_post;
-		v.msid    := s.use_msid_cookie;
+		v.msid    := r.msid;
 		v.bgcolor := r.getc('bgcolor');
 		v.fgcolor := r.getc('fgcolor');
 		update term_t a set row = v where a.msid = v.msid;
