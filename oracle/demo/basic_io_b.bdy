@@ -11,9 +11,6 @@ create or replace package body basic_io_b is
 		h.line('[ This is the basic request info derived from http request line and host http header ]');
 		h.line('r.method : ' || r.method);
 		h.line('r.url : ' || r.url);
-		h.line('r.host : ' || r.host);
-		h.line('r.host_prefix : ' || r.host_prefix);
-		h.line('r.port : ' || r.port);
 		h.line('r.base : ' || r.base);
 		h.line('r.dad : ' || r.dad);
 		h.line('r.prog : ' || r.prog);
@@ -21,11 +18,25 @@ create or replace package body basic_io_b is
 		h.line('r.proc : ' || r.proc);
 		h.line('r.path : ' || r.path);
 		h.line('r.qstr : ' || r.qstr);
+		h.line('r.host : ' || r.host);
+		h.line('r.host_prefix : ' || r.host_prefix);
+		h.line('r.port : ' || r.port);
+		h.line('r.url_full : ' || r.url_full);
+	
+		h.line;
+		h.line('[ This is the basic request info derived from http header ]');
+		h.line('r.ua : ' || r.ua);
+		h.line('r.referer : ' || r.referer);
 		h.line('r.bsid : ' || r.bsid);
 		h.line('r.msid : ' || r.msid);
 	
 		h.line;
-		h.line('[ This is all http request headers ]');
+		h.line('[ This is about client address]');
+		h.line('r.client_addr : ' || r.client_addr);
+		h.line('r.client_port : ' || r.client_port);
+	
+		h.line;
+		h.line('[ This is all original http request headers ]');
 		n := ra.headers.first;
 		loop
 			exit when n is null;
