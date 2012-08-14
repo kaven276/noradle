@@ -150,9 +150,9 @@ create or replace package body r is
 			if v_value is null then
 				v_st := st(null);
 			else
-				t.split(v_st, v_value, ',');
+				t.split(v_st, v_value, ',', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
 			end if;
-			ra.params(v_name) := v_st;
+			ra.params(trim(v_name)) := v_st;
 		end loop;
 	
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
@@ -166,9 +166,9 @@ create or replace package body r is
 					if v_value is null then
 						v_st := st(null);
 					else
-						t.split(v_st, v_value, ',');
+						t.split(v_st, v_value, ',', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
 					end if;
-					ra.params(v_name) := v_st;
+					ra.params(trim(v_name)) := v_st;
 				end loop;
 			else
 				declare
