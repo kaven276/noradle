@@ -23,7 +23,7 @@ create or replace package body http_b is
 		h.line('<input name="use" type="radio" value="off"/>');
 		h.line('<label>OFF</label>');
 		h.line('<input name="use" type="radio" value="auto"/>');
-		h.line('<label>AUTO(if support and response is deserve for zip)</label>');
+		h.line('<label>AUTO(if support and response deserve for zip)</label>');
 		h.line('<br/>');
 		h.line('how many numbers to print: ');
 		h.line('<input name="count" type="text" value="' || r.getc('count', 100) || '">');
@@ -64,7 +64,7 @@ create or replace package body http_b is
 		h.line('When this page is print out at this point, it will wait a while for big data processing.<br/>');
 		h.line('So it should use "h.flush" API to send the already generated part to client/browser.<br/>');
 		h.line('You call h.flush after p.h,p.script(s),p.link(s) to load referenced files early.<br/>');
-		h.line('Call h.flush will use chunked transfer-encode, the default use Content-Length<br/>');
+		h.line('Call h.flush will use chunked transfer-encode mode instead of the default Content-Length mode<br/>');
 	
 		if r.getc('use', 'on') = 'on' then
 			h.flush;
