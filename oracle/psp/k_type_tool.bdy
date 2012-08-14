@@ -187,7 +187,8 @@ create or replace package body k_type_tool is
 	(
 		stv in out nocopy st,
 		p   varchar2,
-		sep varchar2 := ','
+		sep varchar2 := ',',
+		trm boolean := true
 	) is
 		v_pos pls_integer;
 		v_old pls_integer := 0;
@@ -200,10 +201,18 @@ create or replace package body k_type_tool is
 				v_pos := instr(p, sep, v_old + 1, 1);
 				exit when v_pos = 0 or v_pos is null;
 				v_cnt := v_cnt + 1;
-				stv(v_cnt) := trim(substr(p, v_old + 1, v_pos - v_old - 1));
+				if trm then
+					stv(v_cnt) := trim(substr(p, v_old + 1, v_pos - v_old - 1));
+				else
+					stv(v_cnt) := substr(p, v_old + 1, v_pos - v_old - 1);
+				end if;
 				v_old := v_pos;
 			end loop;
-			stv(v_cnt + 1) := trim(substr(p, v_old + 1));
+			if trm then
+				stv(v_cnt + 1) := trim(substr(p, v_old + 1));
+			else
+				stv(v_cnt + 1) := substr(p, v_old + 1);
+			end if;
 		end if;
 	end;
 

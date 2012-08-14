@@ -67,7 +67,8 @@ create or replace package k_type_tool is
 	(
 		stv in out nocopy st,
 		p   varchar2,
-		sep varchar2 := ','
+		sep varchar2 := ',',
+		trm boolean := true
 	);
 
 	function join
