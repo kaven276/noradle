@@ -149,6 +149,7 @@ create or replace package r is
 
 	function from_prog return varchar2;
 	function url return varchar2;
+	function url_full return varchar2;
 
 	function dad_path_full return varchar2;
 	-- function gu_full_base return varchar2;

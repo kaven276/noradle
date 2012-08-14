@@ -620,6 +620,15 @@ create or replace package body r is
 		return v_url;
 	end;
 
+	function url_full return varchar2 is
+	begin
+		if instr(v_url, '://') <= 0 then
+			return v_proto || '://' || header('host') || v_url;
+		else
+			return v_url;
+		end if;
+	end;
+
 	function dad_path return varchar2 is
 	begin
 		return t.nvl2(v_base, '/' || v_base) || '/' || v_dad;
