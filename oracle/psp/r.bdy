@@ -600,11 +600,6 @@ create or replace package body r is
 		return pv.msid;
 	end;
 
-	function lsid return varchar2 is
-	begin
-		return cookie('lsid');
-	end;
-
 	function bsid return varchar2 is
 	begin
 		return pv.bsid;
