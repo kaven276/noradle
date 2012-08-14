@@ -32,7 +32,7 @@ create or replace package body src_b is
 								 and a.type = 'PACKAGE BODY'
 							 order by a.line) loop
 			if not v_sts then
-				if i.text like v_proc then
+				if i.text like v_proc and regexp_like(i.text, '\s' || v_prog(2) || '\s') then
 					v_sts := true;
 				end if;
 			end if;
