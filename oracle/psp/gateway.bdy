@@ -257,7 +257,6 @@ create or replace package body gateway is
 			p.pre_close;
 			output.finish;
 			utl_tcp.close_all_connections;
-			raise;
 	end;
 
 begin
