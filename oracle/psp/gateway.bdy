@@ -244,6 +244,18 @@ create or replace package body gateway is
 											 sqlcode,
 											 sqlerrm,
 											 dbms_utility.format_error_backtrace));
+			-- report error to NodeJS
+			h.sts_500_internal_server_error;
+			h.content_type;
+			p.init;
+			p.h('server exception');
+			p.p('db connection cfg : ' || pv.cur_cfg_id);
+			p.p(sqlcode);
+			p.p(sqlerrm);
+			p.pre_open;
+			p.p(dbms_utility.format_error_backtrace);
+			p.pre_close;
+			output.finish;
 			utl_tcp.close_all_connections;
 			raise;
 	end;
