@@ -62,16 +62,14 @@ create or replace package body pdu is
 		v_start integer(8) := dcopv.crpos;
 		v_end   integer(8) := dbms_lob.instr(dcopv.rsps(dcopv.crseq), dcopv.nl, dcopv.crpos, 1);
 	begin
-		return get_varchar2(v_end - v_start);
-		dcopv.crpos := v_end + 1;
+		return rtrim(get_varchar2(v_end - v_start + 1), chr(10));
 	end;
 
 	function get_nchar_line return nvarchar2 is
 		v_start integer(8) := dcopv.crpos;
 		v_end   integer(8) := dbms_lob.instr(dcopv.rsps(dcopv.crseq), dcopv.nl, dcopv.crpos, 1);
 	begin
-		dcopv.crpos := v_end + 1;
-		return get_nvarchar2(v_end - v_start - 1);
+		return rtrim(get_nvarchar2(v_end - v_start + 1), chr(10));
 	end;
 
 	procedure get_name_value(hash in out nocopy name_value_t) is
