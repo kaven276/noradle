@@ -4,6 +4,9 @@
  * Date: 12-6-5
  * Time: 下午9:01
  */
+
+require('../lib/cfg.js').oracle_port = 1522;
+
 var Noradle = require('..')
   ;
 
