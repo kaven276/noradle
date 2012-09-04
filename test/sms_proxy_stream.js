@@ -17,9 +17,29 @@ var SGIP = require('../../sms/node_sms')
   , sp = require('./sms_common_sp.js').sp
   ;
 
+function fixTime(params){
+  params.cmdTime = params.cmdTime.toString();
+  if (params.cmdTime.length < 10) {
+    params.cmdTime = '0' + params.cmdTime;
+  }
+}
+
 sp.on('request', function(req){
   if (req instanceof SGIP.msgReport.Class) {
     console.log('\nReport:');
+    var params = {
+      srcNodeID : req.srcNodeID,
+      cmdTime : req.cmdTime,
+      cmdSeq : req.cmdSeq,
+      UserNumber : req.UserNumber,
+      State : req.State,
+      ErrCode : req.ErrCode
+    };
+    fixTime(params);
+    console.log(params);
+    dbc.call('sms_sts_h.report', params, function(err, msg){
+      err && console.warn('call sms_sts_h.smg_back for %j error :%s \n %s', params, err, msg);
+    });
   } else if (req instanceof SGIP.msgDeliver.Class) {
     console.log('\nDeliver:');
   } else {
@@ -80,12 +100,27 @@ function monitoring(){
         msg = new Submit(UserNumber, encode, cont, option);
       }
       msg.rowid = rowid;
+
       smsLogger('\n send at', new Date());
       smsLogger(cont.split('\n')[0] + ' ...', subs);
+
+      dbc.call('sms_sts_h.sp_back', {sts : 'Y', rid : rowid}, function(err, msg){
+        err && console.warn('call sms_sts_h.sp_back for rid=%s error : %s \n %s', rowid, err, msg);
+      });
+
       sp.send(msg, function(res, req){
         smsLogger('\n\nrespond :');
         smsLogger('the result for %j is %d', res.header, res.Result);
         smsLogger('You can use oracle rowid %s to fill SMS id columns with %j', req.rowid, res.header);
+
+        var params = res.header;
+        fixTime(params);
+        params.rid = rowid;
+        params.Result = res.Result;
+        console.log(params);
+        dbc.call('sms_sts_h.smg_back', params, function(err, msg){
+          err && console.warn('call sms_sts_h.smg_back for rid=%s error :%s \n %s', rowid, err, msg);
+        });
       });
     });
   });
