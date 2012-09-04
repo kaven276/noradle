@@ -71,7 +71,7 @@ function monitoring(){
         , msg
         ;
       if (subs) {
-        msg = new Submit(UserNumber, encode, cont.replace(/:1/, subs), option);
+        msg = new Submit(UserNumber, encode, cont.replace(/:n/, subs), option);
       } else {
         msg = new Submit(UserNumber, encode, cont, option);
       }
