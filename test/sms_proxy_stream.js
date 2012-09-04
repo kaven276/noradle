@@ -22,6 +22,8 @@ sp.on('request', function(req){
     console.log('\nReport:');
   } else if (req instanceof SGIP.msgDeliver.Class) {
     console.log('\nDeliver:');
+  } else {
+    console.log('\nUnknown Cmd Type:');
   }
   console.log(req);
 });
@@ -79,8 +81,7 @@ function monitoring(){
       }
       msg.rowid = rowid;
       smsLogger('\n send at', new Date());
-      smsLogger(msg);
-      smsLogger(JSON.stringify(msg));
+      smsLogger(cont.split('\n')[0] + ' ...', subs);
       sp.send(msg, function(res, req){
         smsLogger('\n\nrespond :');
         smsLogger('the result for %j is %d', res.header, res.Result);
@@ -99,9 +100,8 @@ function monitoring(){
 // can start multiple oracle message stream broker job process for heavy load
 monitoring();
 monitoring();
-monitoring();
 
-function beforeExit(){
+Noradle.gracefulExit(function(){
   quitFlag = true;
   console.log('executing beforeExit');
   dbc.call('sms_broker_h.quit', function(err, msg){
@@ -109,18 +109,7 @@ function beforeExit(){
     // console.log(err, msg);
     console.log('after quit alert has been sent, wait broker to finish the current message making loop before process.exit()');
     setTimeout(function(){
-      process.exit();
+      process.exit(1);
     }, 3000);
   });
-}
-
-process.on('SIGTERM', beforeExit); // kill or kill -15
-process.on('SIGINT', beforeExit); // Ctrl-C
-process.on('SIGQUIT', beforeExit); // press quit7
-process.on('SIGTSTP', beforeExit);
-process.on('SIGHUP', beforeExit); // when logout
-process.on('SIGKILL', beforeExit); // kill -9
-
-process.on('exit', function(){
-  console.log('To be exit.');
 });
