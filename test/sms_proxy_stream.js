@@ -99,7 +99,6 @@ function monitoring(){
 }
 // can start multiple oracle message stream broker job process for heavy load
 monitoring();
-monitoring();
 
 Noradle.gracefulExit(function(){
   quitFlag = true;
