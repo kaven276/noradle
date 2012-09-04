@@ -11,9 +11,8 @@ var SGIP = require('../../sms/node_sms')
   , Noradle = require('..')
   , smsLogger = console.log
   , quitFlag = false
+  , sp = require('./sms_common_sp.js').sp
   ;
-
-var sp = new SP('202.99.87.201', 8801, 'dialbook', 'dialbooktest', 8801, '', 'dialbook', 'dialbooktest');
 
 sp.on('request', function(req){
   if (req instanceof SGIP.msgReport.Class) {

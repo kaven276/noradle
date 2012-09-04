@@ -15,9 +15,8 @@ var SGIP = require('../../sms/node_sms')
   , Attrs = SGIP.AttrCfg
   , DCOWorkerProxy = require('../lib/dco_proxy.js')
   , logger = dummy
+  , sp = require('./sms_common_sp.js').sp
   ;
-
-var sp = new SP('202.99.87.201', 8801, 'dialbook', 'dialbooktest', 8801, '', 'dialbook', 'dialbooktest');
 
 sp.on('request', function(req){
   if (req instanceof SGIP.msgReport.Class) {
