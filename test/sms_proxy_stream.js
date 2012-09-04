@@ -4,6 +4,9 @@
  * Date: 12-6-6
  * Time: 上午8:54
  */
+
+require('../lib/cfg.js').oracle_port = 1522;
+
 var SGIP = require('../../sms/node_sms')
   , SP = SGIP.nodeSP.Class
   , Submit = SGIP.msgSubmit.Class
