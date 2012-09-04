@@ -5,12 +5,31 @@
  * Time: 下午5:25
  */
 
-exports.DBCall = require('./lib/DBCall.js').Class;
+var DBCall
+  , RSParser
+  , DCOWorkerProxy
+  , gracefulExit
+  ;
 
-exports.RSParser = require('./lib/RSParser.js');
-
-exports.connectionMonitor = require('./lib/db.js').connectionMonitor;
-
-exports.DCOWorkerProxy = require('./lib/dco_proxy.js');
-
-exports.gracefulExit = require('./lib/util.js').gracefulExit;
+Object.defineProperties(exports, {
+  DBCall : {
+    get : function(){
+      return DBCall || (DBCall = require('./lib/DBCall.js').Class);
+    }
+  },
+  RSParser : {
+    get : function(){
+      return RSParser || (RSParser = require('./lib/RSParser.js'));
+    }
+  },
+  DCOWorkerProxy : {
+    get : function(){
+      return DCOWorkerProxy || (DCOWorkerProxy = require('./lib/dco_proxy.js'));
+    }
+  },
+  gracefulExit : {
+    get : function(){
+      return gracefulExit || (gracefulExit = require('./lib/util.js').gracefulExit);
+    }
+  },
+})
