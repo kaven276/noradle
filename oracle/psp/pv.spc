@@ -6,7 +6,7 @@ create or replace package pv is
 	tz_offset constant number(2) := 8;
 
 	c         utl_tcp.connection; -- TCP/IP connection to the Web server
-	ct_marker varchar2(10);
+	ct_marker varchar2(30);
 	call_type pls_integer; -- to oracle call type 0 for psp 1 for direct all
 
 	elpt number(10); -- elapsed-time

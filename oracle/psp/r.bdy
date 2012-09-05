@@ -31,7 +31,7 @@ create or replace package body r is
 		passport pls_integer
 	) is
 		v_name  varchar2(1000);
-		v_value varchar2(1000);
+		v_value varchar2(32000);
 		v_st    st;
 		v_uamd5 varchar2(22);
 	begin
