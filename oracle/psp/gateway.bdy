@@ -226,6 +226,10 @@ create or replace package body gateway is
 				end if;
 				goto the_end; -- when stream quit, quit process also, to release resource
 			end if;
+      
+			if p.gv_xhtp then
+				p.ensure_close;
+			end if;
 			output.finish;
 		
 			pv.svr_request_count := pv.svr_request_count + 1;

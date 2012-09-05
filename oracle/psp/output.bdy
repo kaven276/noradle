@@ -236,11 +236,7 @@ create or replace package body output is
 		v_len2 integer := 0;
 		v_raw  raw(32767);
 		v_md5  varchar2(32);
-	begin
-		if p.gv_xhtp then
-			p.ensure_close;
-		end if;
-	
+	begin	
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
 			line(pv.end_marker, '');
