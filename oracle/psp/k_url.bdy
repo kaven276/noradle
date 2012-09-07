@@ -103,7 +103,7 @@ create or replace package body k_url is
 						dad := pwd;
 						return normal(substrb(url, 4));
 					end if;
-				elsif instr(url, '://') > 0 or url like 'javascript:%' then
+				elsif regexp_like(url, '^[a-z]*:') then
 					return url; -- absolute url
 				elsif instr(url, '/') > 0 then
 					-- normal other pack or common reference
