@@ -560,11 +560,11 @@ create or replace package body k_xhtp is
 				when 0 then
 					null; -- ok;
 				when 1 then
-					assert(gv_tags(1) = 'html', 'xxx');
+					assert(gv_tags(1) = 'html', 'There are unclosed tag is before </html>.');
 				when 2 then
-					assert(gv_tags(2) = 'body', 'The unclosed tag is not body, gmaybe head tag is not closed.');
+					assert(gv_tags(2) = 'body', 'There are unclosed tag is before </body>.');
 				else
-					for i in 1 .. gv_tag_len loop
+					for i in 3 .. gv_tag_len loop
 						v_err_msg := v_err_msg || nl || gv_tags(i);
 					end loop;
 					assert(false, 'There are tags not closed ' || v_err_msg);
@@ -573,7 +573,7 @@ create or replace package body k_xhtp is
 		if gv_tag_len is null then
 			raise_application_error(-20000, 'dd');
 		end if;
-	
+
 		if gv_need_body_close then
 			body_close;
 		end if;
@@ -850,7 +850,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_tag_len := 0;
 		gv_tags(1) := null;
 		gv_tags(2) := null;
-		-- gv_has_error := false;
+		gv_has_error := false;
 	end;
 
 	procedure doc_type(name varchar2) is
