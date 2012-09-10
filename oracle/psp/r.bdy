@@ -554,6 +554,9 @@ create or replace package body r is
 	) is
 	begin
 		value := ra.params(name);
+	exception
+		when no_data_found then
+			value:= st();
 	end;
 
 	function gets(name varchar2) return st is
