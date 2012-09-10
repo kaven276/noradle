@@ -236,7 +236,7 @@ create or replace package body output is
 		v_len2 integer := 0;
 		v_raw  raw(32767);
 		v_md5  varchar2(32);
-	begin	
+	begin
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
 			line(pv.end_marker, '');
@@ -261,13 +261,21 @@ create or replace package body output is
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);
 				l  pls_integer;
+				n  varchar2(30);
+				e  pv.str_arr;
 			begin
 				-- write fixed head
 				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 				v := v || 'Content-Length: 0' || nl;
 				v := v || 'Location: feedback?id=' || nl;
 				v := v || 'Cache-Control: no-cache' || nl;
-				l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+				n := pv.cookies.first;
+				while n is not null loop
+					v := v || pv.cookies(n) || nl;
+					n := pv.cookies.next(n);
+				end loop;
+				pv.cookies := e;
+				l          := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 			end;
 			return;
 		end if;
