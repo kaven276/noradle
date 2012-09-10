@@ -272,7 +272,7 @@ create or replace package body output is
 			return;
 		end if;
 	
-		if pv.csslink is not null then
+		if pv.csslink is not null and p.gv_xhtp then
 			if pv.css_len > 0 then
 				if pv.csslink then
 					-- compute md5 digest and replace css/xxx54
