@@ -22,6 +22,7 @@ create or replace package body output is
 			return;
 		else
 			pv.header_writen := true;
+			h.header_close;
 		end if;
 	
 		begin

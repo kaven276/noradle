@@ -301,7 +301,9 @@ create or replace package body k_http is
 
 	procedure header_close is
 	begin
-		pv.buffered_length := 0;
+		if not pv.headers.exists('Content-Length') then
+			pv.buffered_length := 0;
+		end if;
 	
 		if pv.allow is null then
 			pv.allow := case r.type
@@ -317,7 +319,9 @@ create or replace package body k_http is
 		if pv.allow is not null and instr(',' || pv.allow || ',', r.method) <= 0 then
 			h.status_line(405); -- Method Not Allowed
 			pv.headers('Allow') := pv.allow;
-			raise pv.ex_resp_done;
+			if not pv.headers.exists('Content-Length') then
+				raise pv.ex_resp_done;
+			end if;
 		end if;
 	
 		if r.lmt = pv.max_lmt then
