@@ -3,6 +3,7 @@ create table EXT_URL_T
   DBU    VARCHAR2(30) default lower(sys_context('user','current_schema')) not null,
   KEY    VARCHAR2(30) not null,
   PREFIX VARCHAR2(1000) not null,
+  PREFIX_HTTPS VARCHAR2(1000),
   constraint PK_EXT_URL primary key (DBU, KEY)
 )
 organization index;
@@ -10,3 +11,5 @@ comment on column EXT_URL_T.KEY
   is 'can not exceed 30, consider it may sync with GAC, consider code will be more concise';
 comment on column EXT_URL_T.PREFIX
   is 'url prefix of whole external website''s address, it may not head with "http://", it may head with ftp:// and other schema';
+comment on column EXT_URL_T.PREFIX_HTTPS
+  is 'PREFIX for https';

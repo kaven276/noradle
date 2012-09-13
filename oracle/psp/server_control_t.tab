@@ -8,6 +8,7 @@ create table SERVER_CONTROL_T
   MAX_REQUESTS NUMBER(9),
   MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0),
   STATIC_URL   VARCHAR2(100),
+  STATIC_URL_HTTPS   VARCHAR2(100),
   DEFAULT_DBU  VARCHAR2(30),
   DBU_FILTER   VARCHAR2(1000)
 )
@@ -26,6 +27,8 @@ comment on column SERVER_CONTROL_T.MAX_REQUESTS
   is 'when the number of request a server process reach this limit, the server should/will quit';
 comment on column SERVER_CONTROL_T.MAX_LIFETIME
   is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
+comment on column SERVER_CONTROL_T.STATIC_URL_HTTPS
+  is 'the common static file root url prefix for https';
 comment on column SERVER_CONTROL_T.STATIC_URL
   is 'the common static file root url prefix';
 comment on column SERVER_CONTROL_T.DEFAULT_DBU

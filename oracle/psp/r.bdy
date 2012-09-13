@@ -44,7 +44,7 @@ create or replace package body r is
 			when 0 then
 				v_method := utl_tcp.get_line(c, true);
 				v_url    := utl_tcp.get_line(c, true);
-				v_proto  := 'http'; -- utl_tcp.get_line(c, true);
+				v_proto  := utl_tcp.get_line(c, true);
 				v_host   := utl_tcp.get_line(c, true);
 				v_hostp  := utl_tcp.get_line(c, true);
 				v_port   := to_number(utl_tcp.get_line(c, true));

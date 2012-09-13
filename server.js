@@ -13,6 +13,16 @@ var DBCall
   ;
 
 Object.defineProperties(exports, {
+  runPSP4WEB : {
+    get : function(){
+      return  require('./lib/plsql.js');
+    }
+  },
+  runCombined : {
+    get : function(){
+      return  require('./lib/combined.js');
+    }
+  },
   DBCall : {
     get : function(){
       return DBCall || (DBCall = require('./lib/DBCall.js').Class);

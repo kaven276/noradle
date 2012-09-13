@@ -22,35 +22,57 @@ create or replace package body k_cfg is
 	function find_prefix
 	(
 		p_dbu varchar2,
-		p_key varchar2
+		p_key varchar2,
+		p_prt varchar2
 	) return varchar2 result_cache relies_on(ext_url_t) is
-		v_prefix ext_url_t.prefix%type;
+		v ext_url_t%rowtype;
 	begin
-		select a.prefix
-			into v_prefix
-			from ext_url_t a
-		 where a.dbu = lower(p_dbu)
-			 and a.key = p_key;
-		return v_prefix;
-	exception
-		when no_data_found then
-			begin
-				select a.prefix
-					into v_prefix
-					from ext_url_t a
-				 where a.dbu = '/'
-					 and a.key = p_key;
-				return v_prefix;
-			exception
-				when no_data_found then
-					e.raise(-20017,
-									'no such url prefix for key : ' || p_key || ', please config ext_url_v for external url reference.');
-			end;
+		begin
+			select a.*
+				into v
+				from ext_url_t a
+			 where a.dbu = lower(p_dbu)
+				 and a.key = p_key;
+		exception
+			when no_data_found then
+				begin
+					select a.*
+						into v
+						from ext_url_t a
+					 where a.dbu = '/'
+						 and a.key = p_key;
+				exception
+					when no_data_found then
+						e.raise(-20017,
+										'no such url prefix for key : ' || p_key || ', please config ext_url_v for external url reference.');
+				end;
+		end;
+		case p_prt
+			when 'http' then
+				return nvl(v.prefix, v.prefix_https);
+			when 'https' then
+				return nvl(v.prefix_https, v.prefix);
+		end case;
+	end;
+
+	function find_prefix
+	(
+		p_dbu varchar2,
+		p_key varchar2
+	) return varchar2 is
+	begin
+		return find_prefix(p_dbu, p_key, r.protocol);
 	end;
 
 	function get_ext_fs return varchar2 is
 	begin
-		return server_control().static_url;
+		if r.protocol = 'http' then
+			return server_control().static_url;
+		elsif r.protocol = 'https' then
+			return server_control().static_url_https;
+		else
+			return nvl(server_control().static_url, server_control().static_url_https);
+		end if;
 	end;
 
 end k_cfg;

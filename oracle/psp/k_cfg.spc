@@ -6,7 +6,7 @@ create or replace package k_cfg is
 	(
 		p_dbu varchar2,
 		p_key varchar2
-	) return varchar2 result_cache;
+	) return varchar2;
 
 	function get_ext_fs return varchar2;
 
