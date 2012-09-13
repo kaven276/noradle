@@ -7,9 +7,6 @@
 
 var DBCall
   , RSParser
-  , DCOWorkerProxy
-  , ExtHub
-  , gracefulExit
   ;
 
 Object.defineProperties(exports, {
@@ -45,17 +42,17 @@ Object.defineProperties(exports, {
   },
   ExtHub : {
     get : function(){
-      return ExtHub || (ExtHub = require('./lib/ext_hub.js'));
+      return  require('./lib/ext_hub.js');
     }
   },
   DCOWorkerProxy : {
     get : function(){
-      return DCOWorkerProxy || (DCOWorkerProxy = require('./lib/dco_proxy.js'));
+      return require('./lib/dco_proxy.js');
     }
   },
   gracefulExit : {
     get : function(){
-      return gracefulExit || (gracefulExit = require('./lib/util.js').gracefulExit);
+      return  require('./lib/util.js').gracefulExit;
     }
-  },
-})
+  }
+});
