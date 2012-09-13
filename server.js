@@ -23,6 +23,16 @@ Object.defineProperties(exports, {
       return  require('./lib/combined.js');
     }
   },
+  runStatic : {
+    get : function(){
+      return  require('./lib/static.js');
+    }
+  },
+  runStaticAdv : {
+    get : function(){
+      return  require('./lib/static_adv.js');
+    }
+  },
   DBCall : {
     get : function(){
       return DBCall || (DBCall = require('./lib/DBCall.js').Class);
