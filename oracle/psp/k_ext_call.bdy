@@ -30,13 +30,13 @@ create or replace package body k_ext_call is
 		v_serial pls_integer;
 		v_count  pls_integer := 0;
 	begin
-		k_debug.trace(st('call connect_router_proxy'));
+		-- k_debug.trace(st('ext_hub try connect'));
 		begin
 			utl_tcp.close_connection(dcopv.con);
-			k_debug.trace(st('connect closed'));
+			-- k_debug.trace(st('ext_hub connect closed'));
 		exception
 			when others then
-				k_debug.trace(st('connect close error'));
+				-- k_debug.trace(st('ext_hub connect close error'));
 				null;
 		end;
 		<<make_connection>>
@@ -49,13 +49,13 @@ create or replace package body k_ext_call is
 																						 in_buffer_size  => 32767,
 																						 out_buffer_size => 0,
 																						 tx_timeout      => 0);
-				k_debug.trace(st('connected'));
+				-- k_debug.trace(st('ext_hub connected'));
 				dcopv.host := i.host;
 				dcopv.port := i.port;
 				goto connected;
 			exception
 				when utl_tcp.network_error then
-					k_debug.trace(st('connect error'));
+					-- k_debug.trace(st('ext_hub connect error'));
 					continue;
 			end;
 		end loop;
@@ -119,10 +119,10 @@ create or replace package body k_ext_call is
 	begin
 		dbms_alert.waitone('Noradle-DCO-EXTHUB-QUIT', dcopv.tmp_s, v_sts, 0);
 		if v_sts = 0 and dcopv.tmp_s = dcopv.host || ':' || dcopv.port then
-			k_debug.trace(st('check_reconnect find exthub quit signal', dcopv.onway));
+			-- k_debug.trace(st('check_reconnect find exthub quit signal', dcopv.onway));
 			-- read all pending reply and then to reconnect
 			loop
-				k_debug.trace(st('reading one pending reply countdown', dcopv.onway));
+				-- k_debug.trace(st('reading one pending reply countdown', dcopv.onway));
 				exit when dcopv.onway = 0;
 				dcopv.tmp_b := read_response(-1, dcopv.zblb, null);
 			end loop;
@@ -199,7 +199,7 @@ create or replace package body k_ext_call is
 	) return pls_integer is
 	begin
 		dcopv.onbuf := dcopv.onbuf + 1;
-		k_debug.trace(st('send', dcopv.onway, dcopv.onbuf));
+		-- k_debug.trace(st('send', dcopv.onway, dcopv.onbuf));
 		return send(proxy_id, 1, buffered);
 	end;
 
@@ -237,7 +237,7 @@ create or replace package body k_ext_call is
 			return false;
 		end if;
 		dcopv.onway := dcopv.onway - 1;
-		k_debug.trace(st('read', dcopv.onway, dcopv.onbuf));
+		-- k_debug.trace(st('read', dcopv.onway, dcopv.onbuf));
 		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
 		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_uint16, 2);
 		v_len      := utl_raw.cast_to_binary_integer(v_int32) - 6;
