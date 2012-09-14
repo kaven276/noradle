@@ -26,6 +26,7 @@ create or replace package body k_pmon is
 			v_prefix := job_prefix(c.cfg_id);
 			for i in (select rownum no
 									from dual
+								 where rownum <= c.min_servers
 								connect by rownum <= c.min_servers
 								minus
 								select to_number(substrb(a.job_name, -4))
