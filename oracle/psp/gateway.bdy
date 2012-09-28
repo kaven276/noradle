@@ -70,7 +70,7 @@ create or replace package body gateway is
 																 out_buffer_size => 0,
 																 tx_timeout      => 3);
 		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-		v_result := utl_tcp.write_raw(c, utl_raw.concat(pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id * flag)));
+		v_result := utl_tcp.write_raw(c, utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id * flag)));
 	end;
 
 	-- Refactored procedure quit
