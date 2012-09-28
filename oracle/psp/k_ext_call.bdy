@@ -63,7 +63,7 @@ create or replace package body k_ext_call is
 		goto make_connection;
 		<<connected>>
 		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con, utl_raw.concat(pi2r(v_sid), pi2r(v_serial), pi2r(dcopv.rseq2)));
+		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con, utl_raw.concat(pi2r(197610262), pi2r(v_sid), pi2r(v_serial), pi2r(dcopv.rseq2)));
 	end;
 
 	procedure init is
