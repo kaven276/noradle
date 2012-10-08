@@ -368,16 +368,16 @@ create or replace package body k_http is
 
 	procedure allow_get is
 	begin
+		pv.allow := 'GET';
 		if r.method != 'GET' then
-			pv.allow := 'GET';
 			h.header_close;
 		end if;
 	end;
 
 	procedure allow_post is
 	begin
+		pv.allow := 'POST';
 		if r.method != 'POST' then
-			pv.allow := 'POST';
 			h.header_close;
 		end if;
 	end;
