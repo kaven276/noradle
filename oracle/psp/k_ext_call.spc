@@ -35,7 +35,7 @@ create or replace package k_ext_call is
 	function call_sync
 	(
 		proxy_id pls_integer,
-		req_blb  blob,
+		req_blb  in out nocopy blob,
 		timeout  pls_integer := null
 	) return boolean;
 

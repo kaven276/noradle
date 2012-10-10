@@ -1,5 +1,15 @@
 create or replace package body k_dco_adm is
 
+	procedure signal_reconnect
+	(
+		host varchar2,
+		port number
+	) is
+	begin
+		dbms_alert.signal('Noradle-DCO-EXTHUB-QUIT', host || ':' || port);
+		commit;
+	end;
+
 	procedure wait_reconnect_exthub
 	(
 		host   varchar2,

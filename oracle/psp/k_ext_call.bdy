@@ -6,84 +6,24 @@ create or replace package body k_ext_call is
 		return utl_raw.cast_from_binary_integer(i);
 	end;
 
-	-- private
-	function trim_raw
-	(
-		int32 pls_integer,
-		bytes number := 4
-	) return raw is
-	begin
-		return utl_raw.substr(utl_raw.cast_from_binary_integer(int32), 5 - bytes);
-	end;
-
-	procedure close_tcp is
-	begin
-		utl_tcp.close_connection(dcopv.con);
-	exception
-		when others then
-			null;
-	end;
-
-	-- private
-	procedure connect_router_proxy is
-		v_sid    pls_integer;
-		v_serial pls_integer;
-		v_count  pls_integer := 0;
-	begin
-		-- k_debug.trace(st('ext_hub try connect'));
-		begin
-			utl_tcp.close_connection(dcopv.con);
-			-- k_debug.trace(st('ext_hub connect closed'));
-		exception
-			when others then
-				-- k_debug.trace(st('ext_hub connect close error'));
-				null;
-		end;
-		<<make_connection>>
-		v_count := v_count + 1;
-		for i in (select * from exthub_config_t a where a.sts = 'Y' order by a.seq asc nulls last) loop
-			begin
-				dcopv.con := utl_tcp.open_connection(remote_host     => i.host,
-																						 remote_port     => i.port,
-																						 charset         => null,
-																						 in_buffer_size  => 32767,
-																						 out_buffer_size => 0,
-																						 tx_timeout      => 0);
-				-- k_debug.trace(st('ext_hub connected'));
-				dcopv.host := i.host;
-				dcopv.port := i.port;
-				goto connected;
-			exception
-				when utl_tcp.network_error then
-					-- k_debug.trace(st('ext_hub connect error'));
-					continue;
-			end;
-		end loop;
-		dbms_lock.sleep(3);
-		goto make_connection;
-		<<connected>>
-		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con, utl_raw.concat(pi2r(197610262), pi2r(v_sid), pi2r(v_serial), pi2r(dcopv.rseq2)));
-	end;
-
 	procedure init is
 	begin
 		dbms_lob.createtemporary(dcopv.msg, cache => true, dur => dbms_lob.session);
-		dcopv.chksz := dbms_lob.getchunksize(dcopv.msg);
-		dcopv.posbk := 0;
-		dcopv.pos   := 6;
-		dcopv.rseq  := 1;
-		dcopv.rseq2 := 1;
-		dcopv.onway := 0;
-		dcopv.onbuf := 0;
+		dcopv.chksz    := dbms_lob.getchunksize(dcopv.msg);
+		dcopv.pos_head := 0;
+		dcopv.pos_tail := 12;
+		dcopv.rseq     := 1;
+		dcopv.rseq2    := 1;
+		dcopv.onway    := 0;
+		dcopv.onbuf    := 0;
 		dbms_alert.register('Noradle-DCO-EXTHUB-QUIT');
 	end;
 
 	procedure write(content in out nocopy raw) is
 		v_len pls_integer := utl_raw.length(content);
 	begin
-		dbms_lob.write(dcopv.msg, v_len, dcopv.pos + 1, content);
-		dcopv.pos := dcopv.pos + v_len;
+		dbms_lob.write(dcopv.msg, v_len, dcopv.pos_tail + 1, content);
+		dcopv.pos_tail := dcopv.pos_tail + v_len;
 	end;
 
 	procedure line
@@ -112,6 +52,55 @@ create or replace package body k_ext_call is
 	end;
 
 	-- private
+	procedure close_tcp is
+	begin
+		utl_tcp.close_connection(dcopv.con);
+	exception
+		when others then
+			null;
+	end;
+
+	-- private
+	procedure connect_router_proxy is
+		v_sid    pls_integer;
+		v_serial pls_integer;
+		v_count  pls_integer := 0;
+	begin
+		close_tcp;
+		<<make_connection>>
+		v_count := v_count + 1;
+		for i in (select * from exthub_config_t a where a.sts = 'Y' order by a.seq asc nulls last) loop
+			begin
+				dcopv.con := utl_tcp.open_connection(remote_host     => i.host,
+																						 remote_port     => i.port,
+																						 charset         => null,
+																						 in_buffer_size  => 32767,
+																						 out_buffer_size => 0,
+																						 tx_timeout      => 0);
+				-- k_debug.trace(st('ext_hub connected'));
+				-- record which current connected ext-hub is, used when ask to reconnect the particular ext-hub
+				dcopv.host := i.host;
+				dcopv.port := i.port;
+				goto connected;
+			exception
+				when utl_tcp.network_error then
+					-- k_debug.trace(st('ext_hub connect error'));
+					continue;
+			end;
+		end loop;
+		dbms_lock.sleep(3);
+		goto make_connection;
+		<<connected>>
+		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
+		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con,
+																			utl_raw.concat(pi2r(197610262),
+																										 pi2r(v_sid),
+																										 pi2r(v_serial),
+																										 pi2r(sys_context('userenv', 'sessionid')),
+																										 pi2r(dcopv.rseq2)));
+	end;
+
+	-- private, detect ext-hub quit and try reconnect
 	-- as autonomouse transaction to avoid main code in transaction
 	procedure check_reconnect is
 		pragma autonomous_transaction;
@@ -120,7 +109,7 @@ create or replace package body k_ext_call is
 		dbms_alert.waitone('Noradle-DCO-EXTHUB-QUIT', dcopv.tmp_s, v_sts, 0);
 		if v_sts = 0 and dcopv.tmp_s = dcopv.host || ':' || dcopv.port then
 			-- k_debug.trace(st('check_reconnect find exthub quit signal', dcopv.onway));
-			-- read all pending reply and then to reconnect
+			-- read all pending reply and then reconnect
 			loop
 				-- k_debug.trace(st('reading one pending reply countdown', dcopv.onway));
 				exit when dcopv.onway = 0;
@@ -131,24 +120,27 @@ create or replace package body k_ext_call is
 		rollback;
 	end check_reconnect;
 
+	-- real network I/O write
 	procedure flush is
 		v_raw  raw(8132);
 		v_wlen number(8);
 		v_pos  number := 0;
-		v_cnt  number(1) := 0;
+		v_err  number(1) := 0;
 	begin
-		if dcopv.pos <= 6 then
-			return;
+		if dcopv.pos_head <= 12 then
+			return; -- no whole request to send, buffer is empty
+		end if;
+		if dcopv.pos_tail - dcopv.pos_head > 12 then
+			raise_application_error(-20000, 'DCO flush attempt in half filled request, action aborted');
 		end if;
 		check_reconnect;
+		v_pos := 0;
 		<<write_tcp>>
 		begin
-			v_pos := 0;
-			for i in 1 .. ceil(dcopv.pos / dcopv.chksz) loop
-				if v_pos + dcopv.chksz > dcopv.pos then
-					v_wlen := dcopv.pos - v_pos;
-				else
-					v_wlen := dcopv.chksz;
+			v_wlen := dcopv.chksz;
+			for i in 1 .. ceil(dcopv.pos_head / dcopv.chksz) loop
+				if v_pos + dcopv.chksz > dcopv.pos_head then
+					v_wlen := dcopv.pos_head - v_pos;
 				end if;
 				dbms_lob.read(dcopv.msg, v_wlen, v_pos + 1, v_raw);
 				v_wlen := utl_tcp.write_raw(dcopv.con, v_raw, v_wlen);
@@ -156,19 +148,19 @@ create or replace package body k_ext_call is
 			end loop;
 		exception
 			when utl_tcp.network_error or dcopv.ex_tcp_security then
-				if v_cnt > 0 then
+				if v_err > 0 then
 					raise;
 				end if;
-				v_cnt := v_cnt + 1;
-				dbms_output.put_line('auto conn starting2 dcopv.rseq=' || dcopv.rseq);
+				v_err := v_err + 1;
+				-- dbms_output.put_line('auto conn starting2 dcopv.rseq=' || dcopv.rseq);
 				connect_router_proxy;
 				goto write_tcp;
 		end;
-		dcopv.posbk := 0;
-		dcopv.pos   := 6;
-		dcopv.rseq2 := dcopv.rseq;
-		dcopv.onway := dcopv.onway + dcopv.onbuf;
-		dcopv.onbuf := 0;
+		dcopv.pos_head := 0;
+		dcopv.pos_tail := 12;
+		dcopv.rseq2    := dcopv.rseq;
+		dcopv.onway    := dcopv.onway + dcopv.onbuf;
+		dcopv.onbuf    := 0;
 	end flush;
 
 	-- private
@@ -178,13 +170,18 @@ create or replace package body k_ext_call is
 		sync     pls_integer,
 		buffered boolean
 	) return pls_integer is
+		v_len pls_integer := dcopv.pos_tail - dcopv.pos_head;
 	begin
-		dbms_lob.write(dcopv.msg, 4, dcopv.posbk + 1, trim_raw((dcopv.pos - dcopv.posbk) * sync, 4));
-		dbms_lob.write(dcopv.msg, 2, dcopv.posbk + 5, trim_raw(proxy_id, 2));
-		if buffered then
-			dcopv.posbk := dcopv.pos;
-			dcopv.pos   := dcopv.pos + 6;
-		else
+		if v_len = 0 then
+			return 0; -- ignore empty request body
+		end if;
+		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 1, pi2r(v_len * sync));
+		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 5, pi2r(proxy_id));
+		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 9, pi2r(sys_context('userenv', 'sessionid')));
+		dcopv.onbuf    := dcopv.onbuf + 1;
+		dcopv.pos_head := dcopv.pos_tail;
+		dcopv.pos_tail := dcopv.pos_tail + 12;
+		if not buffered then
 			flush;
 		end if;
 		dcopv.rsps(dcopv.rseq) := null;
@@ -198,8 +195,6 @@ create or replace package body k_ext_call is
 		buffered boolean := false
 	) return pls_integer is
 	begin
-		dcopv.onbuf := dcopv.onbuf + 1;
-		-- k_debug.trace(st('send', dcopv.onway, dcopv.onbuf));
 		return send(proxy_id, 1, buffered);
 	end;
 
@@ -219,10 +214,10 @@ create or replace package body k_ext_call is
 		timeout pls_integer := null
 	) return boolean is
 		v_int32   raw(4);
-		v_uint16  raw(2) := hextoraw('0');
 		v_len     pls_integer;
 		v_raw     raw(8132);
 		v_rseq    pls_integer;
+		v_asid    pls_integer;
 		v_timeout number(8) := timeout * 100;
 		v_start   number;
 	begin
@@ -239,10 +234,12 @@ create or replace package body k_ext_call is
 		dcopv.onway := dcopv.onway - 1;
 		-- k_debug.trace(st('read', dcopv.onway, dcopv.onbuf));
 		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
-		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_uint16, 2);
-		v_len      := utl_raw.cast_to_binary_integer(v_int32) - 6;
-		v_rseq     := utl_raw.cast_to_binary_integer(v_uint16);
-		k_debug.trace(st('read rseq', v_rseq));
+		v_len      := utl_raw.cast_to_binary_integer(v_int32) - 12;
+		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
+		v_rseq     := utl_raw.cast_to_binary_integer(v_int32);
+		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
+		v_asid     := utl_raw.cast_to_binary_integer(v_int32);
+		k_debug.trace(st('read: rseq,asid', v_rseq, v_asid));
 		dbms_lob.createtemporary(req_blb, cache => true, dur => dbms_lob.session);
 		for i in 1 .. floor(v_len / 8132) loop
 			dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_raw, 8132);
@@ -275,11 +272,11 @@ create or replace package body k_ext_call is
 	function call_sync
 	(
 		proxy_id pls_integer,
-		req_blb  blob,
+		req_blb  in out nocopy blob,
 		timeout  pls_integer := null
 	) return boolean is
 	begin
-		return false;
+		return read_response(send_request(proxy_id, false), req_blb, timeout);
 	end;
 
 begin
