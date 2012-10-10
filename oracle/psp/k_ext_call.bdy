@@ -231,7 +231,6 @@ create or replace package body k_ext_call is
 		if utl_tcp.available(dcopv.con, v_timeout / 100) = 0 then
 			return false;
 		end if;
-		dcopv.onway := dcopv.onway - 1;
 		-- k_debug.trace(st('read', dcopv.onway, dcopv.onbuf));
 		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
 		v_len      := utl_raw.cast_to_binary_integer(v_int32) - 12;
@@ -252,6 +251,7 @@ create or replace package body k_ext_call is
 		end if;
 	
 		dcopv.rsps(v_rseq) := req_blb;
+		dcopv.onway := dcopv.onway - 1;
 		if req_seq = v_rseq then
 			pdu.start_parse(req_seq);
 			return true;
