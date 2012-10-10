@@ -6,19 +6,6 @@ create or replace package body k_ext_call is
 		return utl_raw.cast_from_binary_integer(i);
 	end;
 
-	procedure init is
-	begin
-		dbms_lob.createtemporary(dcopv.msg, cache => true, dur => dbms_lob.session);
-		dcopv.chksz    := dbms_lob.getchunksize(dcopv.msg);
-		dcopv.pos_head := 0;
-		dcopv.pos_tail := 12;
-		dcopv.rseq     := 1;
-		dcopv.rseq2    := 1;
-		dcopv.onway    := 0;
-		dcopv.onbuf    := 0;
-		dbms_alert.register('Noradle-DCO-EXTHUB-QUIT');
-	end;
-
 	procedure write(content in out nocopy raw) is
 		v_len pls_integer := utl_raw.length(content);
 	begin
@@ -184,9 +171,9 @@ create or replace package body k_ext_call is
 		if not buffered then
 			flush;
 		end if;
-		dcopv.rsps(dcopv.rseq) := null;
 		dcopv.rseq := dcopv.rseq + 1;
-		return dcopv.rseq - 1;
+		dcopv.rsps(dcopv.rseq) := null;
+		return dcopv.rseq;
 	end;
 
 	function send_request
@@ -279,7 +266,5 @@ create or replace package body k_ext_call is
 		return read_response(send_request(proxy_id, false), req_blb, timeout);
 	end;
 
-begin
-	init;
 end k_ext_call;
 /
