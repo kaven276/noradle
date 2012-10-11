@@ -5,7 +5,6 @@ begin
 	pos_head := 0;
 	pos_tail := 12;
 	rseq     := 0;
-	rseq2    := 0;
 	onway    := 0;
 	onbuf    := 0;
 	dbms_alert.register('Noradle-DCO-EXTHUB-QUIT');

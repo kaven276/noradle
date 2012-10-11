@@ -64,14 +64,13 @@ create or replace package body k_ext_call is
 																						 in_buffer_size  => 32767,
 																						 out_buffer_size => 0,
 																						 tx_timeout      => 0);
-				-- k_debug.trace(st('ext_hub connected'));
 				-- record which current connected ext-hub is, used when ask to reconnect the particular ext-hub
 				dcopv.host := i.host;
 				dcopv.port := i.port;
 				goto connected;
 			exception
 				when utl_tcp.network_error then
-					-- k_debug.trace(st('ext_hub connect error'));
+					k_debug.trace(st('ext_hub connect error (host:port)', i.host, i.port));
 					continue;
 			end;
 		end loop;
@@ -83,8 +82,7 @@ create or replace package body k_ext_call is
 																			utl_raw.concat(pi2r(197610262),
 																										 pi2r(v_sid),
 																										 pi2r(v_serial),
-																										 pi2r(sys_context('userenv', 'sessionid')),
-																										 pi2r(dcopv.rseq2)));
+																										 pi2r(sys_context('userenv', 'sessionid'))));
 	end;
 
 	-- private, detect ext-hub quit and try reconnect
@@ -95,10 +93,10 @@ create or replace package body k_ext_call is
 	begin
 		dbms_alert.waitone('Noradle-DCO-EXTHUB-QUIT', dcopv.tmp_s, v_sts, 0);
 		if v_sts = 0 and dcopv.tmp_s = dcopv.host || ':' || dcopv.port then
-			-- k_debug.trace(st('check_reconnect find exthub quit signal', dcopv.onway));
+			k_debug.trace(st('check_reconnect find quit signal', sys_context('userenv', 'sessionid'), dcopv.onway));
 			-- read all pending reply and then reconnect
 			loop
-				-- k_debug.trace(st('reading one pending reply countdown', dcopv.onway));
+				k_debug.trace(st('reading one pending reply', sys_context('userenv', 'sessionid'), dcopv.onway));
 				exit when dcopv.onway = 0;
 				dcopv.tmp_b := read_response(-1, dcopv.zblb, null);
 			end loop;
@@ -139,13 +137,11 @@ create or replace package body k_ext_call is
 					raise;
 				end if;
 				v_err := v_err + 1;
-				-- dbms_output.put_line('auto conn starting2 dcopv.rseq=' || dcopv.rseq);
 				connect_router_proxy;
 				goto write_tcp;
 		end;
 		dcopv.pos_head := 0;
 		dcopv.pos_tail := 12;
-		dcopv.rseq2    := dcopv.rseq;
 		dcopv.onway    := dcopv.onway + dcopv.onbuf;
 		dcopv.onbuf    := 0;
 	end flush;
@@ -162,16 +158,16 @@ create or replace package body k_ext_call is
 		if v_len = 0 then
 			return 0; -- ignore empty request body
 		end if;
+		dcopv.rseq := dcopv.rseq + 1;
 		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 1, pi2r(v_len * sync));
 		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 5, pi2r(proxy_id));
-		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 9, pi2r(sys_context('userenv', 'sessionid')));
+		dbms_lob.write(dcopv.msg, 4, dcopv.pos_head + 9, pi2r(dcopv.rseq));
 		dcopv.onbuf    := dcopv.onbuf + 1;
 		dcopv.pos_head := dcopv.pos_tail;
 		dcopv.pos_tail := dcopv.pos_tail + 12;
 		if not buffered then
 			flush;
 		end if;
-		dcopv.rseq := dcopv.rseq + 1;
 		dcopv.rsps(dcopv.rseq) := null;
 		return dcopv.rseq;
 	end;
@@ -218,14 +214,13 @@ create or replace package body k_ext_call is
 		if utl_tcp.available(dcopv.con, v_timeout / 100) = 0 then
 			return false;
 		end if;
-		-- k_debug.trace(st('read', dcopv.onway, dcopv.onbuf));
 		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
 		v_len      := utl_raw.cast_to_binary_integer(v_int32) - 12;
 		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
-		v_rseq     := utl_raw.cast_to_binary_integer(v_int32);
-		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
 		v_asid     := utl_raw.cast_to_binary_integer(v_int32);
-		k_debug.trace(st('read: rseq,asid', v_rseq, v_asid));
+		dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_int32, 4);
+		v_rseq     := utl_raw.cast_to_binary_integer(v_int32);
+	
 		dbms_lob.createtemporary(req_blb, cache => true, dur => dbms_lob.session);
 		for i in 1 .. floor(v_len / 8132) loop
 			dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_raw, 8132);
@@ -247,8 +242,10 @@ create or replace package body k_ext_call is
 		else
 			v_timeout := v_timeout - (dbms_utility.get_time - v_start);
 			if timeout is null or v_timeout > 0 then
+				-- k_debug.trace(st('dco before time out, continue try'));
 				goto read_response;
 			else
+				-- k_debug.trace(st('dco after time out, abort'));
 				req_blb := null;
 				dcopv.rsps.delete(req_seq);
 				return false;
