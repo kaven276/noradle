@@ -18,13 +18,13 @@ Part 1 : psp.web
 
 please see [Introduction of PSP.WEB](psp.web/blob/master/doc/introduction.md) at doc/introduction.md on github (format will lose)
 
-please see [Introduction of PSP.WEB](http://60.29.143.244:8001/doc/introduction.html) at my site
+please see [Introduction of PSP.WEB](http://www.noradle.com:8001/doc/introduction.html) at my site
 
-please see [Deployment of PSP.WEB](http://60.29.143.244:8001/doc/deployment.html) at my site
+please see [Deployment of PSP.WEB](http://www.noradle.com:8001/doc/deployment.html) at my site
 
-please see [API demo of PSP.WEB](http://60.29.143.244/demo/index_b.frame) at my demo site
+please see [API demo of PSP.WEB](http://www.noradle.com/demo/index_b.frame) at my demo site
 
-please see [App dialbook developed on PSP.WEB](http://60.29.143.244/tjuc) at production clone site (you can use 18602247741 to login)
+please see [App dialbook developed on PSP.WEB](http://www.noradle.com/tjuc) at production clone site (you can use 18602247741 to login)
 
 please see [License of PSP.WEB](psp.web/blob/master/doc/license.md) at doc/license.md
 
@@ -34,10 +34,10 @@ please see [Call oracle plsql stored procedure with javascript](http://60.29.143
 Part 2 : call in db driver
 ======
 
-please see [js_call_plsql of Noradle](http://60.29.143.244/doc/js_call_plsql.html) at my introduction site
+please see [js_call_plsql of Noradle](http://www.noradle.com/doc/js_call_plsql.html) at my introduction site
 
 
 Part 3 : call out net proxy
 ======
 
-please see [call external service from PL/SQL on Noradle](http://60.29.143.244/doc/call_out.html) at my introduction site
+please see [call external service from PL/SQL on Noradle](http://www.noradle.com/doc/call_out.html) at my introduction site
