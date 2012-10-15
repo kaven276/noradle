@@ -22,13 +22,13 @@ please see [Introduction of PSP.WEB](http://www.noradle.com:8001/doc/introductio
 
 please see [Deployment of PSP.WEB](http://www.noradle.com:8001/doc/deployment.html) at my site
 
-please see [API demo of PSP.WEB](http://www.noradle.com/demo/index_b.frame) at my demo site
+please see [API demo of PSP.WEB](http://qht.noradle.com:81/demo/index_b.frame) at my demo site
 
 please see [App dialbook developed on PSP.WEB](http://www.noradle.com/tjuc) at production clone site (you can use 18602247741 to login)
 
 please see [License of PSP.WEB](psp.web/blob/master/doc/license.md) at doc/license.md
 
-please see [Call oracle plsql stored procedure with javascript](http://60.29.143.244/doc/js_call_plsql.html) at doc/js_call_plsql.md
+please see [Call oracle plsql stored procedure with javascript](http://www.noradle.com/doc/js_call_plsql.html) at doc/js_call_plsql.md
 
 
 Part 2 : call in db driver
