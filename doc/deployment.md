@@ -22,9 +22,10 @@ Install at oracle's side
 
   Oracle DB is able to make TCP/IP connection to outside world by `UTL_TCP` pl/sql API, but by default, oracle forbit network ACL to make connection to any address, you must use `DBMS_NETWORK_ACL_ADMIN` package to create a new ACL to allow access to nodeJS listener. NodeJS http server will manage all the connections made by oracle, and use them as communication path for the http gateway behavior.The configuration script is as the following code:
 
-	exec dbms_network_acl_admin.create_acl('pwgw.xml','oracle2nodejs',principal => 'PSP',is_grant => true,privilege=> 'connect');
-	-- dbms_network_acl_admin.add_privilege('pwgw.xml',principal => 'PSP2',is_grant => true,privilege => 'connect')
-	exec dbms_network_acl_admin.assign_acl(acl => 'pwgw.xml', host => '192.168.177.1')
+	exec dbms_network_acl_admin.create_acl('noradle.xml','oracle2nodejs',principal => 'PSP',is_grant => true,
+	privilege=> 'connect');
+	-- dbms_network_acl_admin.add_privilege('noradle.xml',principal => 'PSP2',is_grant => true,privilege => 'connect')
+	exec dbms_network_acl_admin.assign_acl(acl => 'noradle.xml', host => '192.168.177.1')
 	commit;
 	
 	-- The "principal" parameter in "dbms_network_acl_admin.create_acl" must specify the schema that hold the PSP.WEB engine software, it's case sensitive. use "dbms_network_acl_admin.add_privilege" to grant right to other db user that act as PSP.WEB engine user.
