@@ -14,7 +14,7 @@ create or replace package body r is
 	v_pack   varchar2(30);
 	v_proc   varchar2(30);
 	v_path   varchar2(500);
-	v_qstr   varchar2(256);
+	v_qstr   varchar2(4000);
 	v_type   char(1);
 	v_user   varchar2(30);
 	v_pass   varchar2(30);
