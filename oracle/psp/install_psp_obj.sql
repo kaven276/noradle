@@ -6,6 +6,11 @@
 spool install_psp_obj.log
 
 prompt
+prompt Creating table ASYNC_CONTROL_T
+prompt ==============================
+prompt
+@@async_control_t.tab
+prompt
 prompt Creating table EXTHUB_CONFIG_T
 prompt ==============================
 prompt

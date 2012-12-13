@@ -12,6 +12,7 @@ create or replace public synonym h for k_http;
 create or replace public synonym p for k_xhtp;
 create or replace public synonym t for k_type_tool;
 create or replace public synonym k_gw for k_gw;
+create or replace public synonym k_bg for k_bg;
 create or replace public synonym k_filter for k_filter;
 create or replace public synonym ext_url_v for ext_url_v;
 create or replace public synonym k_debug for k_debug;

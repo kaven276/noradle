@@ -12,6 +12,7 @@ grant execute on k_http to public;
 grant execute on k_xhtp to public;
 grant execute on k_type_tool to public;
 grant execute on k_gw to public;
+grant execute on k_bg to public;
 grant execute on k_filter to public;
 grant all on ext_url_v to public;
 grant execute on k_debug to public;
