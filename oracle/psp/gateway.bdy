@@ -151,7 +151,7 @@ create or replace package body gateway is
 			end;
 		
 			case pv.ct_marker
-				when 'HTTP Call' then
+				when 'HTTP' then
 					pv.call_type := 0; -- normal process
 				when 'NodeJS Call' then
 					pv.call_type := 1;
