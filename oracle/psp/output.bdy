@@ -278,7 +278,7 @@ create or replace package body output is
 				pv.cookies := e;
 				l          := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 			end;
-			return;
+			-- return;
 		end if;
 	
 		if pv.csslink is not null and p.gv_xhtp then
