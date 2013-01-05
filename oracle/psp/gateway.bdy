@@ -155,12 +155,6 @@ create or replace package body gateway is
 					pv.call_type := 0; -- normal process
 				when 'NodeJS Call' then
 					pv.call_type := 1;
-				when 'feedback' then
-					output.finish;
-					continue;
-				when 'csslink' then
-					output.do_css_write;
-					continue;
 				when 'quit_process' then
 					return;
 				else

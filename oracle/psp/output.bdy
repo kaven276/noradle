@@ -337,6 +337,9 @@ create or replace package body output is
 			end if;
 		end if;
 		do_write(v_len);
+		if pv.csslink and pv.css_len > 0 then
+			do_css_write;
+		end if;
 	end;
 
 end output;
