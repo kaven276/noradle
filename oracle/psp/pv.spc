@@ -74,6 +74,8 @@ create or replace package pv is
 	msid varchar2(30);
 	ctx  varchar2(30); -- current ctx for k_sess to access
 
+	ex_continue exception;
+	ex_quit exception;
 	ex_dummy exception;
 	ex_resp_done exception;
 	ex_fltr_done exception;
@@ -83,6 +85,8 @@ create or replace package pv is
 	ex_package_state_invalid exception;
 	ex_invalid_proc exception;
 
+	pragma exception_init(ex_continue, -20995);
+	pragma exception_init(ex_quit, -20996);
 	pragma exception_init(ex_dummy, -20997);
 	pragma exception_init(ex_resp_done, -20998);
 	pragma exception_init(ex_fltr_done, -20999);
