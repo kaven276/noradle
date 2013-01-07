@@ -8,7 +8,9 @@
 require('../lib/cfg.js').oracle_port = 1522;
 
 var Noradle = require('..')
+  , DBCall = Noradle.DBCall
   ;
+DBCall.init();
 
 function UnitTest(){
   var dbc = new Noradle.DBCall('demo', 'theOnlyDB');
