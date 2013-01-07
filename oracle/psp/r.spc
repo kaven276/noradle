@@ -12,6 +12,12 @@ create or replace package r is
 		passport pls_integer
 	);
 
+	procedure getblob
+	(
+		p_len  in pls_integer,
+		p_blob in out nocopy blob
+	);
+
 	procedure body2clob;
 	procedure body2nclob;
 	procedure body2auto;

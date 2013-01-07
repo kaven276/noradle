@@ -25,6 +25,25 @@ create or replace package body r is
 	gv_caddr varchar2(30);
 	gv_cport positive;
 
+	procedure getblob
+	(
+		p_len  in pls_integer,
+		p_blob in out nocopy blob
+	) is
+		v_raw  raw(32767);
+		v_size pls_integer;
+		v_read pls_integer := 0;
+		v_rest pls_integer := p_len;
+	begin
+		dbms_lob.createtemporary(p_blob, cache => true, dur => dbms_lob.call);
+		loop
+			v_size := utl_tcp.read_raw(pv.c, v_raw, least(32767, v_rest));
+			v_rest := v_rest - v_size;
+			dbms_lob.writeappend(p_blob, v_size, v_raw);
+			exit when v_rest = 0;
+		end loop;
+	end;
+
 	procedure "_init"
 	(
 		c        in out nocopy utl_tcp.connection,
@@ -172,23 +191,14 @@ create or replace package body r is
 				end loop;
 			else
 				declare
-					v_len   number(10);
-					v_read  number(10) := 0;
-					v_raw   raw(32767);
-					v_chunk number(8);
-					v_pos   pls_integer;
+					v_len number(10);
+					v_pos pls_integer;
 				begin
 					v_len := to_number(ra.headers('content-length'));
 					if v_len is null or v_len = 0 then
 						return;
 					end if;
-					dbms_lob.createtemporary(rb.blob_entity, cache => true, dur => dbms_lob.session);
-					loop
-						v_chunk := utl_tcp.read_raw(c, v_raw, 32767);
-						v_read  := v_read + v_chunk;
-						dbms_lob.writeappend(rb.blob_entity, v_chunk, v_raw);
-						exit when v_read = v_len;
-					end loop;
+					getblob(v_len, rb.blob_entity);
 					-- maybe for security lobs only
 					-- dbms_lob.setcontenttype(rb.blob_entity, gv_headers('content-type'));
 					v_pos           := instrb(ra.headers('content-type'), '=');
@@ -556,7 +566,7 @@ create or replace package body r is
 		value := ra.params(name);
 	exception
 		when no_data_found then
-			value:= st();
+			value := st();
 	end;
 
 	function gets(name varchar2) return st is
