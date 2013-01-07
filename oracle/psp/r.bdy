@@ -40,8 +40,8 @@ create or replace package body r is
 		end if;
 	
 		-- basic input
-		case pv.call_type
-			when 0 then
+		case pv.protocol
+			when 'HTTP' then
 				v_method := utl_tcp.get_line(c, true);
 				v_url    := utl_tcp.get_line(c, true);
 				v_proto  := utl_tcp.get_line(c, true);
@@ -75,7 +75,7 @@ create or replace package body r is
 					gv_dbu := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
-			when 1 then
+			when 'DATA' then
 				gv_dbu := lower(utl_tcp.get_line(c, true));
 				v_prog := utl_tcp.get_line(c, true);
 				v_proc := utl_tcp.get_line(c, true);
@@ -105,7 +105,7 @@ create or replace package body r is
 		end if;
 	
 		-- credentials
-		if pv.call_type = 0 then
+		if pv.protocol = 'HTTP' then
 			declare
 				v_credential varchar2(100);
 				v_parts      st;
@@ -133,7 +133,7 @@ create or replace package body r is
 		end if;
 	
 		-- read cookies
-		if pv.call_type = 0 then
+		if pv.protocol = 'HTTP' then
 			loop
 				v_name := utl_tcp.get_line(c, true);
 				exit when v_name is null;
@@ -156,7 +156,7 @@ create or replace package body r is
 		end loop;
 	
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
-		if pv.call_type = 0 and v_method = 'POST' then
+		if pv.protocol = 'HTTP' and v_method = 'POST' then
 			if ra.headers('content-type') like 'application/x-www-form-urlencoded%' or
 				 ra.headers('content-type') like 'multipart/form-data%' then
 				loop
@@ -698,9 +698,9 @@ create or replace package body r is
 		return gv_cport;
 	end;
 
-	function call_type return pls_integer is
+	function call_type return varchar2 is
 	begin
-		return pv.call_type;
+		return pv.protocol;
 	end;
 
 end r;

@@ -21,6 +21,7 @@ create or replace package r is
 	procedure read_nline(line in out nocopy nvarchar2);
 	function read_line_no_more return boolean;
 
+	function call_type return varchar2;
 	function protocol return varchar2;
 	function host return varchar2;
 	function host_prefix return varchar2;
@@ -163,8 +164,6 @@ create or replace package r is
 
 	function client_addr return varchar2;
 	function client_port return pls_integer;
-
-	function call_type return pls_integer;
 
 end r;
 /

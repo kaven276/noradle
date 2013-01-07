@@ -7,7 +7,7 @@ create or replace package pv is
 
 	c         utl_tcp.connection; -- TCP/IP connection to the Web server
 	ct_marker varchar2(30);
-	call_type pls_integer; -- to oracle call type 0 for psp 1 for direct all
+	protocol  varchar2(30);
 
 	elpt number(10); -- elapsed-time
 	cput number(10); -- cpu-time
