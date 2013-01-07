@@ -6,9 +6,9 @@ create or replace package body db_src_b is
 		v2  number := 123456;
 		v3  date := date '1976-10-26';
 	begin
-		if r.call_type = r.ct_http then
+		if r.call_type = 'HTTP' then
 			h.content_type(h.mime_text, 'UTF-8');
-		elsif r.call_type = r.ct_nodejs then
+		elsif r.call_type = 'DATA' then
 			h.line('# You are not required to write " h.content_type(h.mime_text, ''UTF-8'') " if call by NodeJS.');
 		end if;
 
