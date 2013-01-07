@@ -74,7 +74,7 @@ create or replace package body gateway is
 	end;
 
 	-- Refactored procedure quit
-	function quit return boolean is
+	function get_alert_quit return boolean is
 		v_msg varchar2(1);
 		v_sts number;
 	begin
@@ -87,7 +87,7 @@ create or replace package body gateway is
 		end if;
 	end;
 
-	function can_quit return boolean is
+	function client_allow_quit return boolean is
 		c   utl_tcp.connection;
 		rpl char(1);
 		len pls_integer;
@@ -121,7 +121,7 @@ create or replace package body gateway is
 			make_conn(pv.c, 1);
 		exception
 			when utl_tcp.network_error then
-				if quit then
+				if get_alert_quit then
 					goto the_end;
 				end if;
 				dbms_lock.sleep(3);
@@ -131,11 +131,11 @@ create or replace package body gateway is
 		loop
 			<<read_request>>
 		
-			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime and can_quit then
+			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime and client_allow_quit then
 				goto the_end;
 			end if;
 		
-			if quit and can_quit then
+			if get_alert_quit and client_allow_quit then
 				goto the_end;
 			end if;
 		
@@ -227,7 +227,7 @@ create or replace package body gateway is
 			output.finish;
 		
 			pv.svr_request_count := pv.svr_request_count + 1;
-			if pv.svr_request_count >= k_cfg.server_control().max_requests and can_quit then
+			if pv.svr_request_count >= k_cfg.server_control().max_requests and client_allow_quit then
 				goto the_end;
 			end if;
 		
