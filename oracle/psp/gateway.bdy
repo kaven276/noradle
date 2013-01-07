@@ -1,54 +1,5 @@
 create or replace package body gateway is
 
-	procedure error_not_bch is
-	begin
-		if pv.msg_stream then
-			h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
-		else
-			h.allow_get_post;
-			h.status_line(403);
-			h.content_type('text/plain');
-			h.header_close;
-			h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
-			output.finish;
-		end if;
-	end;
-
-	procedure error_invalid_dbu is
-	begin
-		if pv.msg_stream then
-			h.line('The requested DB user "' || r.dbu || '" is not allowed to access');
-		else
-			h.allow_get_post;
-			h.status_line(403);
-			h.content_type('text/plain');
-			h.header_close;
-			h.line('The requested DB user "' || r.dbu || '" is not allowed to access');
-			output.finish;
-		end if;
-	end;
-
-	procedure error_dad_auth_entry
-	(
-		code number,
-		errm varchar2
-	) is
-	begin
-		if pv.msg_stream then
-			h.line(r.dbu);
-			h.line(r.prog);
-			h.line(sqlcode);
-			h.line(sqlerrm);
-		else
-			h.allow_get_post;
-			h.status_line(500);
-			h.content_type('text/plain');
-			h.header_close;
-			h.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
-			h.line('error text = ' || code || '/' || errm);
-		end if;
-	end;
-
 	-- private
 	procedure make_conn
 	(
@@ -70,7 +21,8 @@ create or replace package body gateway is
 																 out_buffer_size => 0,
 																 tx_timeout      => 3);
 		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-		v_result := utl_tcp.write_raw(c, utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id * flag)));
+		v_result := utl_tcp.write_raw(c,
+																	utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id * flag)));
 	end;
 
 	-- Refactored procedure quit
@@ -106,7 +58,6 @@ create or replace package body gateway is
 		no_dad_auth_entry_right exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry_right, -01031);
 		v_done boolean := false;
-		v_dbuf server_control_t.dbu_filter%type;
 	begin
 		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
 			into pv.cur_cfg_id, pv.seq_in_id
@@ -141,6 +92,7 @@ create or replace package body gateway is
 		
 			begin
 				pv.ct_marker := utl_tcp.get_line(pv.c, true);
+				pv.protocol  := pv.ct_marker;
 			exception
 				when utl_tcp.transfer_timeout then
 					goto read_request;
@@ -150,49 +102,33 @@ create or replace package body gateway is
 					goto the_end;
 			end;
 		
-			case pv.ct_marker
-				when 'HTTP' then
-					pv.call_type := 0; -- normal process
-				when 'NodeJS Call' then
-					pv.call_type := 1;
-				when 'quit_process' then
-					return;
-				else
-					raise_application_error(-20000, 'wrong call type for ' || pv.ct_marker);
-			end case;
-		
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
-			k_init.by_request;
-			r."_init"(pv.c, 80526);
-			k_gc.touch(r.bsid);
-			v_done := false;
 		
-			v_dbuf := k_cfg.server_control().dbu_filter;
-			if v_dbuf is not null and not regexp_like(r.dbu, v_dbuf) then
-				error_invalid_dbu;
-			end if;
-		
-			if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
-				error_not_bch;
-				continue;
-			end if;
-		
-			case r.method
-				when 'GET' then
-					k_http.auto_chunk_max_size;
-					k_http.auto_chunk_max_idle;
-					k_http.content_encoding_auto;
-				when 'POST' then
-					k_http.auto_chunk_max_size(null);
-					k_http.auto_chunk_max_idle(null);
-				else
-					null;
-			end case;
-		
-			dbms_application_info.set_module(r.prog, null);
+			begin
+				case pv.protocol
+					when 'quit_process' then
+						return;
+					when 'HTTP' then
+						http_server.serv;
+					when 'DATA' then
+						data_server.serv;
+					else
+						execute immediate 'call ' || pv.protocol || '_server.serv()';
+				end case;
+			exception
+				when pv.ex_continue then
+					continue;
+				when pv.ex_quit then
+					goto the_end;
+				when others then
+					k_debug.trace(st('protocol,sqlcode,sqlerrm', pv.protocol, sqlcode, sqlerrm));
+					goto the_end;
+			end;
 		
 			-- this is for become user
+		
+			v_done := false;
 			<<redo>>
 			begin
 				execute immediate 'call ' || r.dbu || '.dad_auth_entry()';
@@ -211,7 +147,8 @@ create or replace package body gateway is
 													 sqlcode,
 													 sqlerrm,
 													 dbms_utility.format_error_backtrace));
-					error_dad_auth_entry(sqlcode, sqlerrm);
+					execute immediate 'call ' || pv.protocol || '_server.onex(:1,:2)'
+						using sqlcode, sqlerrm;
 			end;
 		
 			if pv.msg_stream then
@@ -220,7 +157,7 @@ create or replace package body gateway is
 				end if;
 				goto the_end; -- when stream quit, quit process also, to release resource
 			end if;
-      
+		
 			if p.gv_xhtp then
 				p.ensure_close;
 			end if;
@@ -242,17 +179,6 @@ create or replace package body gateway is
 											 sqlcode,
 											 sqlerrm,
 											 dbms_utility.format_error_backtrace));
-			-- report error to NodeJS
-			h.sts_500_internal_server_error;
-			h.content_type;
-			p.init;
-			p.h('server exception');
-			p.p('db connection cfg : ' || pv.cur_cfg_id);
-			p.p(sqlcode);
-			p.p(sqlerrm);
-			p.pre_open;
-			p.p(dbms_utility.format_error_backtrace);
-			p.pre_close;
 			output.finish;
 			utl_tcp.close_all_connections;
 	end;
