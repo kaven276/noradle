@@ -57,7 +57,8 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry2, -6576);
 		no_dad_auth_entry_right exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry_right, -01031);
-		v_done boolean := false;
+		v_done      boolean := false;
+		v_req_ender varchar2(30);
 	begin
 		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
 			into pv.cur_cfg_id, pv.seq_in_id
@@ -167,6 +168,20 @@ create or replace package body gateway is
 			if pv.svr_request_count >= k_cfg.server_control().max_requests and client_allow_quit then
 				goto the_end;
 			end if;
+		
+			begin
+				v_req_ender := utl_tcp.get_text(pv.c, 16, false);
+				if v_req_ender != '-- end of req --' then
+					k_debug.trace(st('gateway find no fin marker request'));
+					utl_tcp.close_connection(pv.c);
+					make_conn(pv.c, 1);
+				end if;
+			exception
+				when others then
+					k_debug.trace(st('gateway find fin marker error, maybe timeout'));
+					utl_tcp.close_connection(pv.c);
+					make_conn(pv.c, 1);
+			end;
 		
 		end loop;
 	
