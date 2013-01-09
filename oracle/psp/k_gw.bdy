@@ -86,7 +86,7 @@ create or replace package body k_gw is
 		v_tried := false;
 		<<retry_prog>>
 		begin
-			execute immediate 'call ' || r.prog || '()';
+			execute immediate 'call ' || pv.prog || '()';
 			commit;
 		exception
 			when pv.ex_package_state_invalid then
@@ -110,6 +110,7 @@ create or replace package body k_gw is
 			when pv.ex_resp_done then
 				null;
 			when others then
+				k_debug.trace(st('k_gw.do core', sqlcode, sqlerrm));
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
 		end;

@@ -9,6 +9,9 @@ create or replace package pv is
 	ct_marker varchar2(30);
 	protocol  varchar2(30);
 
+	schema varchar2(30);
+	prog   varchar2(30);
+
 	elpt number(10); -- elapsed-time
 	cput number(10); -- cpu-time
 

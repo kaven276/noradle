@@ -101,6 +101,9 @@ create or replace package body r is
 				v_pack := utl_tcp.get_line(c, true);
 		end case;
 	
+		pv.schema := dbu;
+		pv.prog   := v_prog;
+	
 		ra.headers.delete;
 		ra.cookies.delete;
 		ra.params.delete;

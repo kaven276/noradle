@@ -132,13 +132,13 @@ create or replace package body gateway is
 			v_done := false;
 			<<redo>>
 			begin
-				execute immediate 'call ' || r.dbu || '.dad_auth_entry()';
+				execute immediate 'call ' || pv.schema || '.dad_auth_entry()';
 			exception
 				when no_dad_auth_entry1 or no_dad_auth_entry2 or no_dad_auth_entry_right then
 					if v_done then
 						raise;
 					end if;
-					sys.pw.add_dad_auth_entry(r.dbu);
+					sys.pw.add_dad_auth_entry(pv.schema);
 					v_done := true;
 					goto redo;
 				when others then
