@@ -103,6 +103,8 @@ create or replace package body gateway is
 					goto the_end;
 			end;
 		
+			pv.elpl := dbms_utility.get_time;
+			pv.cpul := dbms_utility.get_cpu_time;
 			pv.elpt := dbms_utility.get_time;
 			pv.cput := dbms_utility.get_cpu_time;
 		

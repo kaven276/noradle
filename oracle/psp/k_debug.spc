@@ -1,5 +1,11 @@
 create or replace package k_debug is
 
+	procedure meter
+	(
+		info varchar2,
+		name varchar2 := 'prof'
+	);
+
 	procedure trace
 	(
 		info varchar2,

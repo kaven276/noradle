@@ -1,5 +1,23 @@
 create or replace package body k_debug is
 
+	procedure meter
+	(
+		info varchar2,
+		name varchar2 := 'prof'
+	) is
+	begin
+		if dbms_utility.get_time - pv.elpl < 3 then
+			return;
+		end if;
+		dbms_pipe.pack_message(dbms_utility.get_time - pv.elpl);
+		pv.elpl := dbms_utility.get_time;
+		dbms_pipe.pack_message(info);
+		tmp.i := dbms_pipe.send_message(name, 0);
+	exception
+		when others then
+			dbms_pipe.purge(name);
+	end;
+
 	procedure trace
 	(
 		info varchar2,

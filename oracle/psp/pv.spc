@@ -15,6 +15,9 @@ create or replace package pv is
 	elpt number(10); -- elapsed-time
 	cput number(10); -- cpu-time
 
+	elpl number(10);
+	cpul number(10);
+
 	write_buff_size pls_integer := 8132; -- will be auto set to lob chunk size, maxium to 32767
 
 	msg_stream      boolean;
