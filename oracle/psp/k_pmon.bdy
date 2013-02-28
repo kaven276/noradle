@@ -65,6 +65,9 @@ create or replace package body k_pmon is
 
 	procedure run_job is
 	begin
+		if user != sys_context('userenv', 'current_schema') then
+			raise_application_error(-20000, '必须以psp用户登录才能启动Noradle服务');
+		end if;
 		dbms_scheduler.create_job('"PSP.WEB_PMON"',
 															job_type        => 'STORED_PROCEDURE',
 															job_action      => 'k_pmon.run',
