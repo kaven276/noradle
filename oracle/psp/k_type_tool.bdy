@@ -259,5 +259,35 @@ create or replace package body k_type_tool is
 		select rownum bulk collect into ntv from dual a connect by rownum <= amount;
 	end;
 
+	procedure loop_init is
+	begin
+		tmp.cnt := 0;
+	end;
+
+	function loop_first return boolean is
+	begin
+		tmp.cnt := tmp.cnt + 1;
+		if tmp.cnt = 1 then
+			return true;
+		else
+			return false;
+		end if;
+	end;
+
+	procedure loop_count is
+	begin
+		tmp.cnt := tmp.cnt + 1;
+	end;
+
+	function loop_count return pls_integer is
+	begin
+		return tmp.cnt;
+	end;
+
+	function loop_empty return boolean is
+	begin
+		return tmp.cnt = 0;
+	end;
+
 end k_type_tool;
 /

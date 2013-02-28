@@ -88,5 +88,11 @@ create or replace package k_type_tool is
 		ntv    in out nocopy nt
 	);
 
+	procedure loop_init;
+	function loop_first return boolean;
+	procedure loop_count;
+	function loop_count return pls_integer;
+	function loop_empty return boolean;
+
 end k_type_tool;
 /
