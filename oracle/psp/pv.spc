@@ -102,5 +102,7 @@ create or replace package pv is
 	pragma exception_init(ex_package_state_invalid, -04061); -- 04061
 	pragma exception_init(ex_invalid_proc, -6576);
 
+	pspuser varchar2(30);
+
 end pv;
 /

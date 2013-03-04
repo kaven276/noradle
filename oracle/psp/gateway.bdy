@@ -204,6 +204,7 @@ begin
 	dbms_lob.createtemporary(pv.entity, cache => true, dur => dbms_lob.session);
 	dbms_lob.createtemporary(pv.csstext, cache => true, dur => dbms_lob.session);
 	pv.write_buff_size := dbms_lob.getchunksize(pv.entity);
+	pv.pspuser         := sys_context('userenv', 'current_schema');
 
 end gateway;
 /

@@ -15,10 +15,9 @@ create or replace package body k_url is
 		c2  char(1) := substrb(url, 2, 1);
 		pos pls_integer;
 		dad varchar2(100);
-		ext varchar2(1000) := k_cfg.get_ext_fs;
-		pwd varchar2(100) := lower(user);
-
+	
 		function pri_file(file varchar2) return varchar2 is
+			ext varchar2(1000) := k_cfg.get_ext_fs;
 		begin
 			if ext is not null then
 				return ext || '/' || nvl(dad, r.dbu) || '/packs/' || nvl(r.pack, r.proc) || '/' || file;
@@ -26,9 +25,10 @@ create or replace package body k_url is
 				return t.nvl2(dad, '../' || dad || '/') || 'packs/' || nvl(r.pack, r.proc) || '/' || file;
 			end if;
 		end;
-
+	
 		function normal(s varchar2) return varchar2 is
 			pack varchar2(10);
+			ext  varchar2(1000) := k_cfg.get_ext_fs;
 		begin
 			if regexp_like(s, '^[^./]+_\w(\.[^./]+)?(\?.*)?$') then
 				if s = 'default_b.d' then
@@ -49,7 +49,7 @@ create or replace package body k_url is
 				end if;
 			end if;
 		end;
-
+	
 	begin
 		case c1
 			when '=' then
@@ -95,12 +95,12 @@ create or replace package body k_url is
 					pos := instrb(url, '/', 4);
 					if pos <= 0 then
 						-- common css,js
-						dad := pwd;
+						dad := pv.pspuser;
 						-- u:pw/xxx.ext -> /psp/pub/ext/xxx.ext
 						return normal(regexp_replace(url, '^pw/([^.]+)\.([^.]+)$', 'pub/\2/\1.\2'));
 					else
 						-- the same as ../psp/...
-						dad := pwd;
+						dad := pv.pspuser;
 						return normal(substrb(url, 4));
 					end if;
 				elsif regexp_like(url, '^[a-z]*:') then
