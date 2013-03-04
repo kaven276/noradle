@@ -86,10 +86,10 @@ create or replace package body r is
 				end if;
 			
 				select /*+ result_cache */
-				 max(lower(a.username))
+				 max(lower(a.name))
 					into gv_dbu
-					from dba_users a
-				 where a.username = upper(v_dad);
+					from sys.user$ a
+				 where a.name = upper(v_dad);
 				if gv_dbu is null then
 					gv_dbu := lower(k_cfg.server_control().default_dbu);
 				end if;
