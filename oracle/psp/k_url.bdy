@@ -95,12 +95,12 @@ create or replace package body k_url is
 					pos := instrb(url, '/', 4);
 					if pos <= 0 then
 						-- common css,js
-						dad := pv.pspuser;
+						dad := lower(pv.pspuser);
 						-- u:pw/xxx.ext -> /psp/pub/ext/xxx.ext
 						return normal(regexp_replace(url, '^pw/([^.]+)\.([^.]+)$', 'pub/\2/\1.\2'));
 					else
 						-- the same as ../psp/...
-						dad := pv.pspuser;
+						dad := lower(pv.pspuser);
 						return normal(substrb(url, 4));
 					end if;
 				elsif regexp_like(url, '^[a-z]*:') then
