@@ -66,13 +66,7 @@ create or replace package body k_cfg is
 
 	function get_ext_fs return varchar2 is
 	begin
-		if r.protocol = 'http' then
-			return server_control().static_url;
-		elsif r.protocol = 'https' then
-			return server_control().static_url_https;
-		else
-			return nvl(server_control().static_url, server_control().static_url_https);
-		end if;
+		return server_control().static_url;
 	end;
 
 end k_cfg;

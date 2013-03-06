@@ -59,11 +59,14 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry_right, -01031);
 		v_done      boolean := false;
 		v_req_ender varchar2(30);
+		v_trc       varchar2(99);
+		v_hprof     char(1);
 	begin
 		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
 			into pv.cur_cfg_id, pv.seq_in_id
 			from user_scheduler_running_jobs a
 		 where a.session_id = sys_context('userenv', 'sid');
+		v_trc := pv.cur_cfg_id || '-' || pv.seq_in_id;
 	
 		dbms_alert.register('PW_STOP_SERVER');
 		pv.svr_request_count := 0;
@@ -102,6 +105,11 @@ create or replace package body gateway is
 				when utl_tcp.network_error then
 					goto the_end;
 			end;
+		
+			v_hprof := k_cfg.server_control().hprof;
+			if v_hprof is not null then
+				dbms_hprof.start_profiling('PLSHPROF_DIR', v_trc || '.trc');
+			end if;
 		
 			pv.elpl := dbms_utility.get_time;
 			pv.cpul := dbms_utility.get_cpu_time;
@@ -165,6 +173,13 @@ create or replace package body gateway is
 				p.ensure_close;
 			end if;
 			output.finish;
+		
+			if v_hprof is not null then
+				dbms_hprof.stop_profiling;
+				tmp.n := dbms_hprof.analyze('PLSHPROF_DIR',
+																		v_trc || '.trc',
+																		run_comment => 'psp.web://' || r.dbu || '/' || r.prog);
+			end if;
 		
 			pv.svr_request_count := pv.svr_request_count + 1;
 			if pv.svr_request_count >= k_cfg.server_control().max_requests and client_allow_quit then
