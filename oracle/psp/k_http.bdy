@@ -58,6 +58,16 @@ create or replace package body k_http is
 		pv.nlbr := nlbr;
 	end;
 
+	procedure save_pointer is
+	begin
+		pv.pg_svptr := pv.pg_len + lengthb(pv.pg_buf);
+	end;
+
+	function appended return boolean is
+	begin
+		return pv.pg_svptr = pv.pg_len + lengthb(pv.pg_buf);
+	end;
+
 	procedure status_line(code pls_integer := 200) is
 	begin
 		pv.status_code := code;

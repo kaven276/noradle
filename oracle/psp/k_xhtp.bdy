@@ -72,7 +72,6 @@ create or replace package body k_xhtp is
 	gv_tag_len pls_integer; -- first tag is body, depth is 1
 	gv_tags    st;
 
-	gv_save_pt   pls_integer;
 	gv_css_link  boolean := false;
 	gv_css_size  pls_integer;
 	gv_head_over boolean; -- control where to output
@@ -239,64 +238,6 @@ create or replace package body k_xhtp is
 	end;
 
 	----------------------
-
-	/*
-  procedure range_begin(p_id varchar2) is
-  begin
-    gv_parts(p_id).start_pos := dbms_lob.getlength(gv_blob);
-  end;
-  
-  procedure range_end(p_id varchar2) is
-  begin
-    gv_parts(p_id).stop_pos := dbms_lob.getlength(gv_blob);
-  end;
-  
-  procedure range_replace
-  (
-    id      varchar2,
-    pattern varchar2,
-    value   varchar2
-  ) is
-    v_rec     t_part := gv_parts(id);
-    v_start   pls_integer := v_rec.start_pos;
-    v_stop    pls_integer := v_rec.stop_pos;
-    v_raw_bfr raw(32767);
-    v_raw_aft raw(32767);
-    v_str_bfr varchar2(32000);
-    v_str_aft varchar2(32000);
-    v_len_bfr pls_integer;
-    v_len_aft pls_integer;
-  begin
-    v_raw_bfr := dbms_lob.substr(gv_blob, v_stop - v_start, v_start + 1);
-    v_str_bfr := utl_i18n.raw_to_char(data => v_raw_bfr, src_charset => dad_charset);
-    v_len_bfr := lengthb(v_str_bfr);
-    v_str_aft := replace(v_str_bfr, pattern, value);
-    v_len_aft := length(v_str_aft);
-    case
-      when v_len_aft > v_len_bfr then
-        raise_application_error(-20001, 'replace more than original');
-      when v_len_aft < v_len_bfr then
-        v_str_aft := rpad(v_str_aft, v_len_bfr, ' ');
-      when v_len_aft = v_len_bfr then
-        null;
-    end case;
-    v_raw_aft := utl_i18n.string_to_raw(v_str_aft, dst_charset => dad_charset);
-    if utl_raw.length(v_raw_bfr) != utl_raw.length(v_raw_aft) then
-      raise_application_error(-20001, 'replaced with no matched length');
-    end if;
-    dbms_lob.write(gv_blob, v_stop - v_start, v_start + 1, v_raw_aft);
-  end;
-  */
-
-	procedure save_pointer is
-	begin
-		gv_save_pt := pv.buffered_length;
-	end;
-
-	function appended return boolean is
-	begin
-		return gv_save_pt = pv.buffered_length;
-	end;
 
 	procedure prn(text varchar2 character set any_cs) is
 	begin

@@ -39,9 +39,6 @@ create or replace package k_xhtp is
 
 	----------------------------------------------------------------
 
-	procedure save_pointer;
-	function appended return boolean;
-
 	-- basic output API
 	procedure d(text varchar2 character set any_cs);
 	procedure prn(text varchar2 character set any_cs);

@@ -14,6 +14,8 @@ create or replace package k_http is
 	procedure string(text varchar2 character set any_cs);
 	procedure line(text varchar2 character set any_cs := '');
 	procedure set_line_break(nlbr varchar2);
+	procedure save_pointer;
+	function appended return boolean;
 
 	procedure status_line(code pls_integer := 200);
 	procedure sts_200_ok;
