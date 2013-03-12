@@ -54,19 +54,16 @@ create or replace package body k_xhtp is
 	$if                  k_ccflag.config_mode = k_ccflag.cm_sys $then
 
 	gv_attr_lowercase    char(1) := k_psp_cfg.get_xxx; -- require lowercase attributes
-	gv_tag_auto_indent   char(1) := k_psp_cfg.get_xxx; -- if auto indent page source
 	gv_tag_nesting_check char(1) := k_psp_cfg.get_xxx; -- if do tag nesting error check
 
 	$elsif               k_ccflag.config_mode = k_ccflag.cm_pck $then
 
 	gv_attr_lowercase    char(1) := 'Y';
-	gv_tag_auto_indent   char(1) := 'Y';
 	gv_tag_nesting_check char(1) := 'Y';
 
 	$elsif               k_ccflag.config_mode = k_ccflag.cm_def $then
 
 	gv_attr_lowercase    char(1) := 'Y';
-	gv_tag_auto_indent   char(1) := 'Y';
 	gv_tag_nesting_check char(1) := 'Y';
 
 	$end
@@ -313,18 +310,18 @@ create or replace package body k_xhtp is
 
 	procedure d(text varchar2 character set any_cs) is
 	begin
-		output.line(text, '');
+		output.line(text, '', (gv_tag_len - 2) * gc_tag_indent);
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2 character set any_cs) is
 	begin
-		output.line(text, gv_tagnl);
+		output.line(text, gv_tagnl, (gv_tag_len - 2) * gc_tag_indent);
 	end;
 
 	procedure line(text varchar2 character set any_cs := '') is
 	begin
-		output.line(text, gv_tagnl);
+		output.line(text, gv_tagnl, (gv_tag_len - 2) * gc_tag_indent);
 	end;
 
 	procedure l(txt varchar2, var st := null) is
@@ -615,19 +612,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_tag_len := gv_tag_len - 1;
 	end;
 
-	procedure tag_indent is
-	begin
-		if gv_tag_auto_indent != 'Y' or gv_cmpct then
-			return;
-		end if;
-	
-		if gv_doc_type = 'frameset' then
-			d(rpad(' ', (gv_tag_len) * gc_tag_indent, chr(32)));
-		elsif gv_tag_len > 2 then
-			d(rpad(' ', (gv_tag_len - 2) * gc_tag_indent, chr(32)));
-		end if;
-	end;
-
 	---------------------------------------------------------------------------
 
 	function w(text varchar2 character set any_cs) return varchar2 character set text%charset is
@@ -647,7 +631,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure ps(pat varchar2 character set any_cs, vals st, url boolean := null, ch char := ':') is
 	begin
-		tag_indent;
 		line(ps(pat, vals, url, ch));
 	end;
 
@@ -775,15 +758,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if output then
 			case text
 				when el_open then
-					tag_indent;
 					line2(m);
 					tag_push(v_tag);
 				when el_close then
 					tag_pop(v_tag);
-					tag_indent;
 					line2(m);
 				else
-					tag_indent;
 					line2(m);
 			end case;
 			return null;
@@ -811,7 +791,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure tag_close(name varchar2) is
 	begin
 		tag_pop(name);
-		tag_indent;
 		d('</' || name || '>' || gv_tagnl);
 	end;
 
@@ -1435,7 +1414,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure cols(classes st) is
 	begin
-		tag_indent;
 		for i in 1 .. classes.count loop
 			d('<col class="' || classes(i) || '"/>');
 		end loop;
@@ -1444,7 +1422,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure cols(classes varchar2, sep varchar2 := ',') is
 	begin
-		tag_indent;
 		line('<col class="' || replace(classes, sep, '"/><col class="') || '"/>');
 	end;
 
@@ -1505,7 +1482,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure tsect_tr_td_open(tag varchar2, colspan number := null) is
 		v_colspan pls_integer;
 	begin
-		tag_indent;
 		if colspan is null then
 			if gv_hv_ex = 'H' then
 				v_colspan := 2;
@@ -1524,7 +1500,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure tsect_tr_td_close(tag varchar2) is
 	begin
 		tag_pop(tag || '_tr_td');
-		tag_indent;
 		line('</td></tr></' || tag || '>');
 	end;
 
@@ -1560,7 +1535,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure table_tr_td_open is
 	begin
-		tag_indent;
 		line('<table class="pw_shrink"><tr><td>');
 		tag_push('table_tr_td');
 	end;
@@ -1568,7 +1542,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure table_tr_td_close is
 	begin
 		tag_pop('table_tr_td');
-		tag_indent;
 		line('</td></tr></table>');
 	end;
 
@@ -1648,7 +1621,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure ths(texts st) is
 	begin
-		tag_indent;
 		for i in 1 .. texts.count loop
 			d('<th>' || texts(i) || '</th>');
 		end loop;
@@ -1657,7 +1629,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure tds(texts st) is
 	begin
-		tag_indent;
 		for i in 1 .. texts.count loop
 			d('<td>' || texts(i) || '</td>');
 		end loop;
@@ -1666,13 +1637,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure ths(texts varchar2, sep varchar2 := ',') is
 	begin
-		tag_indent;
 		line('<th>' || replace(texts, sep, '</th><th>') || '</th>');
 	end;
 
 	procedure tds(texts varchar2, sep varchar2 := ',') is
 	begin
-		tag_indent;
 		line('<td>' || replace(texts, sep, '</td><td>') || '</td>');
 	end;
 
@@ -2615,7 +2584,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure br(count_ex pls_integer := 1) is
 	begin
 		for i in 1 .. count_ex loop
-			tag_indent;
 			line('<br/>');
 		end loop;
 	end;
@@ -2724,7 +2692,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure print(text varchar2 character set any_cs) is
 	begin
-		tag_indent;
 		line(text);
 	end;
 
@@ -2741,7 +2708,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if nvl(text, el_close) != el_open then
 			v := v || ' -->';
 		end if;
-		tag_indent;
 		line(v);
 	end;
 
