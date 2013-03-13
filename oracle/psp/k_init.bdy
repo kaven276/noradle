@@ -34,9 +34,8 @@ create or replace package body k_init is
 		else
 			h.content_type(h.mime_text, 'UTF-8');
 		end if;
-		output."_init"(80526);
+		-- output."_init"(80526);
 		p.init;
-	
 		pv.elpl := dbms_utility.get_time;
 	end;
 
