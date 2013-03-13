@@ -52,13 +52,6 @@ create or replace package k_http is
 	procedure content_encoding_identity;
 	procedure content_encoding_auto;
 
-	procedure auto_chunk_max_size(bytes pls_integer := pv.write_buff_size);
-	procedure auto_chunk_max_idle
-	(
-		seconds   number := 1,
-		min_bytes pls_integer := 512
-	);
-
 	procedure content_disposition_attachment(filename varchar2);
 	procedure content_disposition_inline(filename varchar2);
 

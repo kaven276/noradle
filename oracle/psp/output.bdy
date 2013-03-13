@@ -120,19 +120,12 @@ create or replace package body output is
 	procedure write_raw(content in out nocopy raw) is
 		v_len pls_integer := utl_raw.length(content);
 	begin
-		if pv.use_stream and pv.chunk_max_idle is not null and pv.buffered_length > nvl(pv.chunk_min_size, 512) and
-			 (systimestamp - pv.last_flush) > pv.chunk_max_idle then
-			flush;
-		end if;
 	
 		if true then
 			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, content);
 			pv.buffered_length := pv.buffered_length + v_len;
 		end if;
 	
-		if pv.use_stream and pv.chunk_max_size is not null and pv.buffered_length >= pv.chunk_max_size then
-			flush;
-		end if;
 	end;
 
 	procedure write(content varchar2 character set any_cs) is

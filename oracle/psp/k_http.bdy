@@ -208,22 +208,6 @@ create or replace package body k_http is
 		pv.headers('Location') := utl_url.escape(url, false, pv.charset_ora);
 	end;
 
-	procedure auto_chunk_max_size(bytes pls_integer) is
-	begin
-		pv.chunk_max_size := bytes;
-	end;
-
-	procedure auto_chunk_max_idle
-	(
-		seconds   number,
-		min_bytes pls_integer
-	) is
-	begin
-		pv.chunk_max_idle := numtodsinterval(seconds, 'second');
-		pv.chunk_min_size := min_bytes;
-		pv.last_flush     := systimestamp;
-	end;
-
 	procedure content_disposition_attachment(filename varchar2) is
 	begin
 		pv.headers('Content-disposition') := 'attachment; filename=' || filename;
