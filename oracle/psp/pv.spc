@@ -20,12 +20,6 @@ create or replace package pv is
 
 	write_buff_size pls_integer := 8132; -- will be auto set to lob chunk size, maxium to 32767
 
-	msg_stream      boolean;
-	use_stream      boolean;
-	flushed         boolean;
-	buffered_length number(8) := 0;
-	end_marker      varchar2(100) := 'EOF';
-
 	header_writen boolean;
 	allow_content boolean;
 	allow         varchar2(100);
@@ -47,9 +41,6 @@ create or replace package pv is
 
 	nlbr   varchar2(2);
 
-	feedback    boolean; -- force to use feedback mechanism
-	csslink     boolean;
-
 	svr_request_count number(9);
 	svr_start_time    date;
 	-- all of response entity related
@@ -60,6 +51,18 @@ create or replace package pv is
 	pg_len   pls_integer; -- written parts's total lengthb
 	pg_cssno pls_integer; -- where css should insert into pg_parts
 	pg_css   nvarchar2(32767); -- hold component css text
+
+	firstpg  boolean; -- if clear and rewrite page, following PVs keep when re-init
+	feedback boolean; -- manually say(g.feedback) to use feedback mechanism
+	csslink  boolean; -- say to use component css; true:link, false:embed
+	-- stream/flush related
+	-- use_stream will inited to true
+	-- p.comp_css_link,h.content_encoding_try_zip,g.feedback cause it to be false
+	-- flush will be ignored when use_stream=false
+	use_stream boolean; -- 
+	flushed    boolean; -- if any flush actually occurred
+	end_marker varchar2(100) := 'EOF'; -- for streamed/flushed output, append it to tell nodejs the end of response
+	msg_stream boolean;
 
 	base64_cookie varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
 	base64_gac    varchar2(26) := '!"#$%&()*,-:;<>?@[]^_`{|}~';

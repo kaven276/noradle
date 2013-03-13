@@ -15,6 +15,7 @@ create or replace package output is
 		indent pls_integer := null
 	);
 
+	function prevent_flush(text varchar2) return boolean;
 	procedure flush;
 
 	procedure finish;

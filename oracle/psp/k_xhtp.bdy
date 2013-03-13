@@ -415,9 +415,10 @@ create or replace package body k_xhtp is
 
 	procedure comp_css_link(setting boolean) is
 	begin
-		pv.csslink := setting;
-		if setting is not null then
-			pv.use_stream := false;
+		if setting is null then
+			pv.csslink := null;
+		elsif output.prevent_flush('p.comp_css_link') then
+			pv.csslink := setting;;
 		end if;
 	end;
 

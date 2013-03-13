@@ -19,7 +19,9 @@ create or replace package body g is
 
 	procedure feedback is
 	begin
-		pv.feedback := true;
+		if output.prevent_flush('g.feedback') then
+			pv.feedback := true;
+		end if;
 	end;
 
 	procedure interrupt(url varchar2) is

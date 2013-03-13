@@ -34,16 +34,6 @@ create or replace package body output is
 			h.header_close;
 		end if;
 	
-		begin
-			if pv.use_stream then
-				pv.headers.delete('Content-Length');
-				pv.headers('Transfer-Encoding') := 'chunked';
-			end if;
-		exception
-			when no_data_found then
-				null;
-		end;
-	
 		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 		n := pv.headers.first;
 		while n is not null loop
@@ -71,6 +61,17 @@ create or replace package body output is
 	procedure css(str varchar2) is
 	begin
 		pv.pg_css := pv.pg_css || str;
+	end;
+
+	function prevent_flush(text varchar2) return boolean is
+	begin
+		if pv.flushed then
+			k_debug.trace(st('prevent flush ignored', text, r.dbu, r.prog));
+			return false;
+		else
+			pv.use_stream := false;
+			return true;
+		end if;
 	end;
 
 	procedure flush is
@@ -157,7 +158,7 @@ create or replace package body output is
 	
 		if v_len = 0 then
 			if r.type = 'c' and pv.status_code = 200 then
-				-- when no content, just return back to previous page;
+				-- for _c, if no content, just return back to previous page;
 				if r.header('referer') is not null then
 					h.go(r.header('referer'));
 				else
@@ -166,8 +167,8 @@ create or replace package body output is
 				end if;
 			end if;
 			goto print_http_headers;
-		elsif pv.feedback or (r.type = 'c' and pv.status_code = 200 and pv.ct_marker != 'feedback') then
-			-- have content, but have feedback indication or _c
+		elsif pv.feedback or (r.type = 'c' and pv.status_code = 200) then
+			-- have content, but have feedback indication or _c sts=200
 			declare
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);

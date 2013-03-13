@@ -182,7 +182,6 @@ create or replace package body k_http is
 	procedure content_encoding_try_zip is
 	begin
 		pv.headers('Content-Encoding') := 'zip';
-		pv.use_stream := false;
 	end;
 
 	procedure content_encoding_identity is
@@ -255,8 +254,9 @@ create or replace package body k_http is
 
 	procedure etag_md5_on is
 	begin
-		pv.etag_md5   := true;
-		pv.use_stream := false;
+		if output.prevent_flush('h.etag_md5_on') then
+			pv.etag_md5 := true;
+		end if;
 	end;
 
 	procedure etag_md5_off is
@@ -346,7 +346,6 @@ create or replace package body k_http is
 	begin
 		status_line(401);
 		pv.headers('WWW-Authenticate') := 'Basic realm="' || realm || '"';
-		pv.buffered_length := 0;
 		-- pv.allow_content := false;
 	end;
 
