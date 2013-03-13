@@ -19,7 +19,5 @@ create or replace package output is
 
 	procedure finish;
 
-	procedure do_write(v_len in integer);
-
 end output;
 /

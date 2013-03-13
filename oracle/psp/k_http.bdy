@@ -20,17 +20,10 @@ create or replace package body k_http is
 		end if;
 	
 		if not pv.use_stream then
-			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, data);
-			pv.buffered_length := pv.buffered_length + v_len;
-			return;
+			output.line(utl_raw.cast_to_nvarchar2(data), '');
+		else
+			pv.wlen := utl_tcp.write_raw(pv.c, data);
 		end if;
-	
-		if pv.buffered_length + v_len > pv.write_buff_size then
-			utl_tcp.flush(pv.c);
-			pv.buffered_length := 0;
-		end if;
-		dummy              := utl_tcp.write_raw(pv.c, data);
-		pv.buffered_length := pv.buffered_length + v_len;
 	end;
 
 	procedure write(text varchar2 character set any_cs) is
@@ -333,7 +326,9 @@ create or replace package body k_http is
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(u(url));
 		pv.headers('Content-Length') := '0';
-		pv.buffered_length := 0;
+		pv.pg_len := 0;
+		pv.pg_buf := '';
+		pv.pg_css := '';
 		pv.allow_content := false;
 	end;
 

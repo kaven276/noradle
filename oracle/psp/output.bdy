@@ -1,15 +1,24 @@
 create or replace package body output is
 
+	-- private
+	procedure chunk_init is
+	begin
+		pv.pg_buf   := '';
+		pv.pg_index := 0;
+		pv.pg_len   := 0;
+		pv.pg_parts.delete;
+	end;
+
 	procedure "_init"(passport pls_integer) is
 	begin
 		if passport != 80526 then
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
-		pv.feedback        := false;
-		pv.buffered_length := 0;
-		pv.flushed         := false;
-		pv.pg_css     := '';
-		pv.pg_cssno   := null;
+		chunk_init;
+		pv.pg_css   := '';
+		pv.pg_cssno := null;
+		pv.flushed  := false;
+		pv.feedback := false;
 	end;
 
 	procedure write_head is
@@ -65,9 +74,6 @@ create or replace package body output is
 	end;
 
 	procedure flush is
-		v_raw  raw(32767);
-		v_wlen number(8);
-		v_pos  number := 0;
 	begin
 		if not pv.use_stream then
 			return;
@@ -76,23 +82,15 @@ create or replace package body output is
 			pv.headers('Transfer-Encoding') := 'chunked';
 			write_head;
 		end if;
-		for i in 1 .. ceil(pv.buffered_length / pv.write_buff_size) loop
-			if v_pos + pv.write_buff_size > pv.buffered_length then
-				v_wlen := pv.buffered_length - v_pos;
-			else
-				v_wlen := pv.write_buff_size;
-			end if;
-			dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
-			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			v_pos  := v_pos + v_wlen;
+		for i in 1 .. pv.pg_index loop
+			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
 		end loop;
-		pv.buffered_length := 0;
-		pv.last_flush      := systimestamp;
-		pv.flushed         := true;
+		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+	
+		chunk_init;
+		pv.flushed := true;
 	end;
 
-	procedure write_raw(content in out nocopy raw) is
-		v_len pls_integer := utl_raw.length(content);
 	procedure do_css_write is
 		v  varchar2(4000);
 		nl varchar2(2) := chr(13) || chr(10);
@@ -102,11 +100,6 @@ create or replace package body output is
 		v := v || 'Content-Length: ' || lengthb(pv.pg_css) || nl;
 		v := v || 'Content-Type: text/css' || nl;
 		v := v || 'ETag: "' || pv.headers('x-css-md5') || '"' || nl;
-	
-		if true then
-			dbms_lob.write(pv.entity, v_len, pv.buffered_length + 1, content);
-			pv.buffered_length := pv.buffered_length + v_len;
-		end if;
 	
 		pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
@@ -127,93 +120,33 @@ create or replace package body output is
 		null;
 	end;
 
-	-- public
 	procedure line
 	(
 		str    varchar2 character set any_cs,
 		nl     varchar2 := chr(10),
 		indent pls_integer := null
 	) is
-		dummy pls_integer;
-		v_out raw(32767);
-		v_len pls_integer;
-		v_str varchar2(32767);
-		v_cs  varchar2(30) := pv.charset_ora;
 	begin
-		if str is null and nl is null then
-			return;
-		end if;
-	
-		if not pv.allow_content then
-			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
-		end if;
-	
-		v_len := lengthb(str);
-		if v_len = length(str) then
-			v_cs := null;
-		else
-			v_str := str;
-			if v_len = lengthb(v_str) then
-				-- is database charset
-				if pv.charset_ora = pv.cs_char then
-					v_cs := null;
-				end if;
+		pv.pg_buf := pv.pg_buf || (lpad(' ', indent, ' ') || str || nl);
+	exception
+		when others then
+			-- 6502 numeric or value error: character string buffer too small
+			if pv.use_stream then
+				flush;
 			else
-				-- is national charset
-				if pv.charset_ora like '%' || pv.cs_nchar then
-					v_cs := null;
-				end if;
+				pv.pg_index := pv.pg_index + 1;
+				pv.pg_parts(pv.pg_index) := pv.pg_buf;
+				pv.pg_len := pv.pg_len + lengthb(pv.pg_buf);
 			end if;
-		end if;
-	
-		v_out := utl_i18n.string_to_raw(lpad(' ', indent, ' ') || str || nl, v_cs);
-		write_raw(v_out);
-	
+			pv.pg_buf := lpad(' ', indent, ' ') || str || nl;
 	end;
 
-	-- Refactored procedure do_write 
-	procedure do_write(v_len in integer) is
-		v_raw  raw(32767);
-		v_wlen number(8);
-		v_pos  number := 0;
-	begin
-	
-		if pv.csslink = false and pv.css_len > 0 then
-			v_wlen := pv.css_ins;
-			dbms_lob.read(pv.entity, pv.css_ins, 1, v_raw);
-			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-		
-			v_wlen := pv.css_len;
-			dbms_lob.read(pv.csstext, v_wlen, 1, v_raw);
-			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-		
-			v_pos := pv.css_ins;
-			for i in 1 .. ceil((v_len - pv.css_ins) / 32767) loop
-				v_wlen := t.tf(v_pos + 32767 > v_len, v_len - v_pos, 32767);
-				dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
-				v_pos  := v_pos + v_wlen;
-				v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			end loop;
-			return;
-		end if;
-	
-		for i in 1 .. ceil(v_len / pv.write_buff_size) loop
-			if v_pos + pv.write_buff_size > v_len then
-				v_wlen := v_len - v_pos;
-			else
-				v_wlen := pv.write_buff_size;
-			end if;
-			dbms_lob.read(pv.entity, v_wlen, v_pos + 1, v_raw);
-			v_wlen := utl_tcp.write_raw(pv.c, v_raw, v_wlen);
-			v_pos  := v_pos + v_wlen;
-		end loop;
-	end do_write;
-
 	procedure finish is
-		v_len  integer := pv.buffered_length;
-		v_raw  raw(32767);
-		v_md5  varchar2(32);
+		v_len integer := pv.pg_len + nvl(lengthb(pv.pg_buf), 0);
+		v_raw raw(32767);
+		v_md5 varchar2(32);
 		v_tmp nvarchar2(32767);
+		v_lob nclob;
 	begin
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
@@ -229,7 +162,7 @@ create or replace package body output is
 					h.go(r.header('referer'));
 				else
 					h.line('<script>history.back();</script>');
-					v_len := pv.buffered_length;
+					v_len := lengthb(pv.pg_buf);
 				end if;
 			end if;
 			goto print_http_headers;
@@ -280,9 +213,13 @@ create or replace package body output is
 			pv.content_md5 := false;
 		end if;
 	
-		if pv.content_md5 or pv.etag_md5 then
-			dbms_lob.trim(pv.entity, v_len);
-			v_raw := dbms_crypto.hash(pv.entity, dbms_crypto.hash_md5);
+		if false and (pv.content_md5 or pv.etag_md5) then
+			dbms_lob.createtemporary(v_lob, true, dur => dbms_lob.call);
+			for i in 1 .. pv.pg_index loop
+				dbms_lob.writeappend(v_lob, length(pv.pg_parts(i)), pv.pg_parts(i));
+			end loop;
+			dbms_lob.writeappend(v_lob, length(pv.pg_buf), pv.pg_buf);
+			v_raw := dbms_crypto.hash(v_lob, dbms_crypto.hash_md5);
 			v_md5 := utl_raw.cast_to_varchar2(utl_encode.base64_encode(v_raw));
 			if pv.content_md5 then
 				pv.headers('Content-MD5') := v_md5;
@@ -290,7 +227,7 @@ create or replace package body output is
 			if pv.etag_md5 then
 				if r.etag = v_md5 then
 					h.status_line(304);
-					v_len  := 0;
+					v_len := 0;
 				else
 					h.etag(v_md5);
 				end if;
@@ -309,7 +246,13 @@ create or replace package body output is
 				return;
 			end if;
 		end if;
-		do_write(v_len);
+	
+		for i in 1 .. pv.pg_index loop
+			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
+		end loop;
+		if pv.pg_buf is not null then
+			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+		end if;
 		if pv.csslink = true and pv.pg_css is not null then
 			do_css_write;
 		end if;

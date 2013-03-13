@@ -45,7 +45,6 @@ create or replace package pv is
 	headers str_arr;
 	cookies str_arr;
 
-	entity blob;
 	nlbr   varchar2(2);
 
 	feedback    boolean; -- force to use feedback mechanism
@@ -53,6 +52,12 @@ create or replace package pv is
 
 	svr_request_count number(9);
 	svr_start_time    date;
+	-- all of response entity related
+	type pg_parts_arr is table of nvarchar2(32767) index by binary_integer;
+	pg_buf   nvarchar2(32767); -- hold current/lastest write buffer
+	pg_parts pg_parts_arr; -- hold all written parts
+	pg_index pls_integer; -- written parts index high watermark
+	pg_len   pls_integer; -- written parts's total lengthb
 	pg_cssno pls_integer; -- where css should insert into pg_parts
 	pg_css   nvarchar2(32767); -- hold component css text
 
