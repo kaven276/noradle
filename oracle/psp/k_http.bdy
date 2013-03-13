@@ -7,7 +7,6 @@ create or replace package body k_http is
 
 	-- public
 	procedure write_raw(data in out nocopy raw) is
-		dummy pls_integer;
 		v_len pls_integer;
 	begin
 		v_len := utl_raw.length(data);

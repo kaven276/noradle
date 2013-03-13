@@ -24,7 +24,6 @@ create or replace package body output is
 	procedure write_head is
 		v  varchar2(4000);
 		nl varchar2(2) := chr(13) || chr(10);
-		l  pls_integer;
 		n  varchar2(30);
 	begin
 		if pv.header_writen then
@@ -45,7 +44,7 @@ create or replace package body output is
 			v := v || pv.cookies(n) || nl;
 			n := pv.cookies.next(n);
 		end loop;
-		l := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+		pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 	end;
 
 	procedure switch_css is
@@ -187,9 +186,9 @@ create or replace package body output is
 					n := pv.cookies.next(n);
 				end loop;
 				pv.cookies := e;
-				l          := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+				pv.wlen    := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 			end;
-			-- return;
+			-- after above, write feedback page
 		end if;
 	
 		if pv.pg_css is not null and p.gv_xhtp and pv.csslink is not null then
