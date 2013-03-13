@@ -3,7 +3,7 @@ create or replace package pv is
 	cur_cfg_id varchar2(30);
 	seq_in_id  pls_integer;
 	type vc_arr is table of varchar2(32000) index by binary_integer;
-	tz_offset constant number(2) := 8;
+	tz_offset    constant number(2) := to_number(substrb(standard.tz_offset(sessiontimezone), 2, 2));
 
 	c         utl_tcp.connection; -- TCP/IP connection to the Web server
 	ct_marker varchar2(30);
