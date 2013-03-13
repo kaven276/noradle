@@ -111,10 +111,10 @@ create or replace package body gateway is
 				dbms_hprof.start_profiling('PLSHPROF_DIR', v_trc || '.trc');
 			end if;
 		
+			$if k_ccflag.use_time_stats $then
 			pv.elpl := dbms_utility.get_time;
 			pv.cpul := dbms_utility.get_cpu_time;
-			pv.elpt := dbms_utility.get_time;
-			pv.cput := dbms_utility.get_cpu_time;
+			$end
 		
 			begin
 				case pv.protocol

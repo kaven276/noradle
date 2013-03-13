@@ -16,5 +16,7 @@ create or replace package k_ccflag is
 
 	xml_check constant boolean := false;
 
+	use_time_stats constant boolean := false;
+
 end k_ccflag;
 /

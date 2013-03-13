@@ -12,13 +12,13 @@ create or replace package pv is
 	schema varchar2(30);
 	prog   varchar2(30);
 
+	$if k_ccflag.use_time_stats $then
 	elpt number(10); -- elapsed-time
 	cput number(10); -- cpu-time
-
-	elpl number(10);
-	cpul number(10);
+	$end
 
 	write_buff_size pls_integer := 8132; -- will be auto set to lob chunk size, maxium to 32767
+	elpl number(10); -- elapsed-long, last record time, used for detecting long execution
 
 	header_writen boolean;
 	allow_content boolean;

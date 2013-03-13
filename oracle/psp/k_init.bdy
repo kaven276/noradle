@@ -37,6 +37,7 @@ create or replace package body k_init is
 		output."_init"(80526);
 		p.init;
 	
+		pv.elpl := dbms_utility.get_time;
 	end;
 
 end k_init;

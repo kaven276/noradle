@@ -237,8 +237,12 @@ create or replace package body output is
 	
 		<<print_http_headers>>
 		pv.headers('Content-Length') := to_char(v_len);
+	
+		$if k_ccflag.use_time_stats $then
 		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
 		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
+		$end
+	
 	
 		pv.use_stream := false;
 		write_head;
