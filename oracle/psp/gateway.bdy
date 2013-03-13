@@ -95,8 +95,7 @@ create or replace package body gateway is
 			end if;
 		
 			begin
-				pv.ct_marker := utl_tcp.get_line(pv.c, true);
-				pv.protocol  := pv.ct_marker;
+				pv.protocol := utl_tcp.get_line(pv.c, true);
 			exception
 				when utl_tcp.transfer_timeout then
 					goto read_request;

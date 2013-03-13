@@ -6,11 +6,10 @@ create or replace package pv is
 	tz_offset    constant number(2) := to_number(substrb(standard.tz_offset(sessiontimezone), 2, 2));
 
 	c         utl_tcp.connection; -- TCP/IP connection to the Web server
-	ct_marker varchar2(30);
-	protocol  varchar2(30);
 
 	schema varchar2(30);
 	prog   varchar2(30);
+	protocol varchar2(30); -- call type protocol
 
 	$if k_ccflag.use_time_stats $then
 	elpt number(10); -- elapsed-time
