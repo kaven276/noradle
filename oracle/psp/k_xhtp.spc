@@ -104,8 +104,6 @@ create or replace package k_xhtp is
 
 	procedure format_src;
 
-	procedure css_link(start_size pls_integer := 512);
-
 	procedure doc_type(name varchar2 := 'transitional');
 
 	procedure html_open(manifest varchar2 := null);

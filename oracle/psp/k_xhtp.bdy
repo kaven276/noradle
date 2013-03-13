@@ -72,8 +72,6 @@ create or replace package body k_xhtp is
 	gv_tag_len pls_integer; -- first tag is body, depth is 1
 	gv_tags    st;
 
-	gv_css_link  boolean := false;
-	gv_css_size  pls_integer;
 	gv_head_over boolean; -- control where to output
 
 	-- for auto close body/html tags
@@ -109,12 +107,6 @@ create or replace package body k_xhtp is
 		else
 			gv_tagnl := nl;
 		end if;
-	end;
-
-	procedure css_link(start_size pls_integer := 512) is
-	begin
-		gv_css_link := true;
-		gv_css_size := start_size;
 	end;
 
 	-- private
@@ -751,6 +743,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_doc_type := '';
 		--mime_type   := '';
 		meta_init;
+			pv.csslink  := null;
 		--gv_auto_input_class := false;
 		--gv_force_css_cv     := false;
 		--gv_css_prefix       := '';
@@ -891,17 +884,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 		gv_head_over := true;
 	
-		pv.css_hld_pos := pv.buffered_length;
-		if pv.csslink = true then
-			line('<link type="text/css" rel="stylesheet" href="css/1234567890abcdef1234567890abcdef"/>');
-		elsif pv.csslink = false then
-			line('<style>');
-			pv.css_ins := pv.buffered_length;
-			line('</style>');
-		else
-			null;
+		if pv.csslink is not null then
+			output.switch_css;
 		end if;
-		pv.css_hld_len := pv.buffered_length - pv.css_hld_pos;
 	
 		tag_pop('head');
 		line('</head>');

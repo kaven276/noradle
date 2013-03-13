@@ -50,14 +50,11 @@ create or replace package pv is
 
 	feedback    boolean; -- force to use feedback mechanism
 	csslink     boolean;
-	csstext     blob;
-	css_len     pls_integer;
-	css_ins     pls_integer;
-	css_hld_pos pls_integer;
-	css_hld_len pls_integer;
 
 	svr_request_count number(9);
 	svr_start_time    date;
+	pg_cssno pls_integer; -- where css should insert into pg_parts
+	pg_css   nvarchar2(32767); -- hold component css text
 
 	base64_cookie varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
 	base64_gac    varchar2(26) := '!"#$%&()*,-:;<>?@[]^_`{|}~';
