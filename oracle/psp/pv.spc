@@ -6,6 +6,8 @@ create or replace package pv is
 	tz_offset    constant number(2) := to_number(substrb(standard.tz_offset(sessiontimezone), 2, 2));
 
 	c         utl_tcp.connection; -- TCP/IP connection to the Web server
+	svr_req_cnt number(9);
+	svr_stime   date;
 
 	schema varchar2(30);
 	prog   varchar2(30);
@@ -40,8 +42,6 @@ create or replace package pv is
 
 	nlbr   varchar2(2);
 
-	svr_request_count number(9);
-	svr_start_time    date;
 	-- all of response entity related
 	type pg_parts_arr is table of nvarchar2(32767) index by binary_integer;
 	pg_buf   nvarchar2(32767); -- hold current/lastest write buffer

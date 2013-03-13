@@ -69,8 +69,8 @@ create or replace package body gateway is
 		v_trc := pv.cur_cfg_id || '-' || pv.seq_in_id;
 	
 		dbms_alert.register('PW_STOP_SERVER');
-		pv.svr_request_count := 0;
-		pv.svr_start_time    := sysdate;
+		pv.svr_req_cnt := 0;
+		pv.svr_stime   := sysdate;
 		<<make_connection>>
 		begin
 			make_conn(pv.c, 1);
@@ -86,7 +86,7 @@ create or replace package body gateway is
 		loop
 			<<read_request>>
 		
-			if sysdate > pv.svr_start_time + k_cfg.server_control().max_lifetime and client_allow_quit then
+			if sysdate > pv.svr_stime + k_cfg.server_control().max_lifetime and client_allow_quit then
 				goto the_end;
 			end if;
 		
@@ -180,8 +180,8 @@ create or replace package body gateway is
 																		run_comment => 'psp.web://' || r.dbu || '/' || r.prog);
 			end if;
 		
-			pv.svr_request_count := pv.svr_request_count + 1;
-			if pv.svr_request_count >= k_cfg.server_control().max_requests and client_allow_quit then
+			pv.svr_req_cnt := pv.svr_req_cnt + 1;
+			if pv.svr_req_cnt >= k_cfg.server_control().max_requests and client_allow_quit then
 				goto the_end;
 			end if;
 		
