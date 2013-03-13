@@ -29,7 +29,7 @@ create or replace package body k_init is
 		rb.nclob_entity := null;
 	
 		pv.status_code := 200;
-		if pv.protocol = 'http' then
+		if pv.protocol = 'HTTP' then
 			h.content_type;
 		else
 			h.content_type(h.mime_text, 'UTF-8');
