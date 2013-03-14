@@ -11,7 +11,6 @@ create or replace package body k_init is
 		pv.headers.delete;
 		pv.cookies.delete;
 		pv.header_writen   := false;
-		pv.allow_content   := false;
 		pv.buffered_length := 0;
 		pv.max_lmt         := null;
 		pv.msg_stream      := false;

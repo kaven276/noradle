@@ -23,7 +23,6 @@ create or replace package pv is
 	elpl number(10); -- elapsed-long, last record time, used for detecting long execution
 
 	header_writen boolean;
-	allow_content boolean;
 	allow         varchar2(100);
 
 	status_code number(3);

@@ -14,10 +14,6 @@ create or replace package body k_http is
 			return;
 		end if;
 	
-		if not pv.allow_content then
-			raise_application_error(-20001, 'Content-Type not set in http header, but want to write http body');
-		end if;
-	
 		if not pv.use_stream then
 			output.line(utl_raw.cast_to_nvarchar2(data), '');
 		else
@@ -174,7 +170,6 @@ create or replace package body k_http is
 				e.chk(true, -20001, 'other than unicode(utf-8) and db charset is not supported yet');
 		end;
 		pv.headers('Content-Type') := mime_type || '; charset=' || charset;
-		pv.allow_content := true;
 		-- r.unescape_parameters;
 	end;
 
@@ -325,10 +320,7 @@ create or replace package body k_http is
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(u(url));
 		pv.headers('Content-Length') := '0';
-		pv.pg_len := 0;
-		pv.pg_buf := '';
-		pv.pg_css := '';
-		pv.allow_content := false;
+		output."_init"(80526);
 	end;
 
 	procedure retry_after(delta number) is
@@ -345,7 +337,6 @@ create or replace package body k_http is
 	begin
 		status_line(401);
 		pv.headers('WWW-Authenticate') := 'Basic realm="' || realm || '"';
-		-- pv.allow_content := false;
 	end;
 
 	procedure www_authenticate_digest(realm varchar2) is
