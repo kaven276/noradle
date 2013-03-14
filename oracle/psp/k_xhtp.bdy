@@ -614,7 +614,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		v_s   varchar2(4000) character set text%charset;
 		v_pos pls_integer;
 		m     varchar2(32000) character set text%charset;
-		v_tag varchar2(30) := get_tag(name);
+		v_tag varchar2(30) := name;
 	begin
 		-- head part tag api will not use me, body,frameset(include itself) will call me
 		if mime_type != 'text/plain' then
