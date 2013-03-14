@@ -282,11 +282,7 @@ create or replace package body k_http is
 
 	procedure header_close is
 	begin
-		if not pv.headers.exists('Content-Length') then
-			pv.buffered_length := 0;
-		end if;
-	
-		if pv.allow is null then
+		if false and pv.allow is null then
 			pv.allow := case r.type
 										when 'b' then
 										 'GET'
