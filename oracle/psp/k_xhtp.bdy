@@ -5,8 +5,7 @@ create or replace package body k_xhtp is
 	gc_tag_indent  constant pls_integer := 2;
 	gc_headers_len constant pls_integer := 200;
 	cs             constant char(1) := '~';
-	gv_tagnl    char(1);
-	gv_cmpct    boolean;
+	gv_tagnl    varchar(2);
 	gv_1st_lcss boolean;
 
 	gv_wap          boolean := false;
@@ -99,14 +98,9 @@ create or replace package body k_xhtp is
 
 	---------
 
-	procedure format_src is
+	procedure format_src(line_break varchar2 := nl) is
 	begin
-		gv_cmpct := false;
-		if gv_cmpct then
-			gv_tagnl := null;
-		else
-			gv_tagnl := nl;
-		end if;
+		gv_tagnl := line_break;
 	end;
 
 	-- private
@@ -485,7 +479,6 @@ create or replace package body k_xhtp is
 	procedure ensure_close is
 		v_err_msg varchar2(200);
 	begin
-		gv_cmpct := true;
 		if gv_tag_nesting_check = 'Y' then
 			case nvl(gv_tag_len, 0)
 				when 0 then
@@ -504,7 +497,7 @@ create or replace package body k_xhtp is
 		if gv_tag_len is null then
 			raise_application_error(-20000, 'dd');
 		end if;
-
+	
 		if gv_need_body_close then
 			body_close;
 		end if;
@@ -745,6 +738,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		--mime_type   := '';
 		meta_init;
 			pv.csslink  := null;
+			gv_tagnl    := '';
 		--gv_auto_input_class := false;
 		--gv_force_css_cv     := false;
 		--gv_css_prefix       := '';
@@ -753,11 +747,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure http_header_close is
 	begin
-		if gv_cmpct then
-			gv_tagnl := null;
-		else
-			gv_tagnl := nl;
-		end if;
 		-- clear http headers
 		gv_doc_type := null;
 		gv_head_over := true;

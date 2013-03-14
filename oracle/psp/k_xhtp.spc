@@ -102,7 +102,7 @@ create or replace package k_xhtp is
 
 	procedure set_compatible(value varchar2);
 
-	procedure format_src;
+	procedure format_src(line_break varchar2 := nl);
 
 	procedure doc_type(name varchar2 := 'transitional');
 

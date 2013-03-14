@@ -19,8 +19,8 @@ create or replace package body k_init is
 		pv.etag_md5        := false;
 		pv.csslink         := null;
 		pv.allow           := null;
-		pv.nlbr            := chr(10);
 	
+		pv.nlbr          := chr(10);
 	
 		pv.status_code := 200;
 		if pv.protocol = 'HTTP' then
