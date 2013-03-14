@@ -1,46 +1,49 @@
 create or replace package pv is
 
-	type vc_arr is table of varchar2(32000) index by binary_integer;
-	tz_offset    constant number(2) := to_number(substrb(standard.tz_offset(sessiontimezone), 2, 2));
+	/* all private process/call level state should be here */
 
-	c         utl_tcp.connection; -- TCP/IP connection to the Web server
 	-- process level
 	cfg_id      varchar2(30); -- filled with current server_control_t id
 	in_seq      pls_integer; -- slot in in the current configuration
 	svr_req_cnt number(9);
 	svr_stime   date;
+	c           utl_tcp.connection; -- TCP/IP connection to the Web server
 
-	schema varchar2(30);
-	prog   varchar2(30);
-	protocol varchar2(30); -- call type protocol
+	-- call level
+	protocol varchar2(30); -- call protocol (gateway.listen to branch req read and init)
+	schema   varchar2(30); -- to be executing schema (gateway.listen)
+	prog     varchar2(30); -- to be executing prog (k_gw.do)
 
 	$if k_ccflag.use_time_stats $then
 	elpt number(10); -- elapsed-time
 	cput number(10); -- cpu-time
 	$end
 
-	write_buff_size pls_integer := 8132; -- will be auto set to lob chunk size, maxium to 32767
 	elpl number(10); -- elapsed-long, last record time, used for detecting long execution
+	wlen pls_integer; -- dummy pls_integer holder
 
-	header_writen boolean;
+	-- response header control/state
+	header_writen boolean; -- prevent dup header write when flush
 	allow         varchar2(100);
+	status_code   number(3);
+	mime_type     varchar2(100);
+	charset       varchar2(30); -- http output charset
+	charset_ora   varchar2(30); -- http output charset name in db
+	cs_req        varchar2(30); -- req param's cs, default to output cs
+	content_md5   boolean; -- if give content-md5 in response header
+	etag_md5      boolean; -- if autogen etag and 304 response, null for auto
+	max_lmt       date; -- used to autogen last-modified and 304 response
 
-	status_code number(3);
-	mime_type   varchar2(100);
-	charset     varchar2(30);
-	charset_ora varchar2(30);
-	content_md5 boolean;
-	etag_md5    boolean;
-	max_lmt     date;
-	rl_pos      number(10);
-	rl_end      boolean;
-	rl_nlc      varchar2(2);
-
+	-- all of request/response params, headers, cookies and their types
+	type vc_arr is table of varchar2(32767) index by binary_integer; -- r.na,r.va
 	type str_arr is table of varchar2(1000) index by varchar2(100);
-	headers str_arr;
-	cookies str_arr;
+	headers str_arr; -- output headers
+	cookies str_arr; -- output cookies
 
-	nlbr   varchar2(2);
+	-- read line from rb.clob_entity(request entity body)
+	rl_pos number(10); -- read line current position
+	rl_end boolean; -- if read line is end
+	rl_nlc varchar2(2); -- read line break characters
 
 	-- all of response entity related
 	type pg_parts_arr is table of nvarchar2(32767) index by binary_integer;
@@ -49,47 +52,48 @@ create or replace package pv is
 	pg_index pls_integer; -- written parts index high watermark
 	pg_len   pls_integer; -- written parts's total lengthb
 	pg_cssno pls_integer; -- where css should insert into pg_parts
+	pg_svptr pls_integer; -- output savepoint, used for h.save_pointer,h.appended
 	pg_css   nvarchar2(32767); -- hold component css text
 
+	-- all output variation control state
 	firstpg  boolean; -- if clear and rewrite page, following PVs keep when re-init
-	feedback boolean; -- manually say(g.feedback) to use feedback mechanism
 	csslink  boolean; -- say to use component css; true:link, false:embed
-	-- stream/flush related
+	nlbr     varchar2(2); -- set by h.set_line_break, used by output.line after all
+
+	-- stream/flush output flow control related
 	-- use_stream will inited to true
 	-- p.comp_css_link,h.content_encoding_try_zip,g.feedback cause it to be false
 	-- flush will be ignored when use_stream=false
 	use_stream boolean; -- 
 	flushed    boolean; -- if any flush actually occurred
+	feedback boolean; -- manually say(g.feedback) to use feedback mechanism
 	end_marker varchar2(100) := 'EOF'; -- for streamed/flushed output, append it to tell nodejs the end of response
 	msg_stream boolean;
 
-	base64_cookie varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
-	base64_gac    varchar2(26) := '!"#$%&()*,-:;<>?@[]^_`{|}~';
-	gac_dtfmt constant varchar2(14) := 'yyyymmddhh24mi';
-	ls_gid varchar2(99);
-	ls_uid varchar2(99);
-	ls_lgt date;
-	ls_lat date;
-
-	cs_utf8  varchar2(30) := utl_i18n.map_charset('utf-8', 0, 1);
-	cs_char  varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
-	cs_nchar varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
-	cs_req   varchar2(30);
-
-	bsid varchar2(30);
-	msid varchar2(30);
+	bsid varchar2(30); -- client session browser sid
+	msid varchar2(30); -- client session machine(terminal) sid
 	ctx  varchar2(30); -- current ctx for k_sess to access
 
-	ex_continue exception;
-	ex_quit exception;
-	ex_dummy exception;
-	ex_resp_done exception;
-	ex_fltr_done exception;
-	ex_no_prog exception;
-	ex_no_subprog exception; -- user.table.column, table.column 
-	ex_no_filter exception;
+	-- constants
+	tz_offset     constant number(2) := to_number(substrb(standard.tz_offset(sessiontimezone), 2, 2));
+	base64_cookie constant varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
+	base64_gac    constant varchar2(26) := '!"#$%&()*,-:;<>?@[]^_`{|}~';
+	gac_dtfmt     constant varchar2(14) := 'yyyymmddhh24mi';
+	cs_utf8       constant varchar2(30) := utl_i18n.map_charset('utf-8', 0, 1);
+	cs_char       constant varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
+	cs_nchar      constant varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
+	pspuser       constant varchar2(30) := sys_context('userenv', 'current_schema');
+
+	ex_continue              exception;
+	ex_quit                  exception;
+	ex_dummy                 exception;
+	ex_resp_done             exception;
+	ex_fltr_done             exception;
+	ex_no_prog               exception;
+	ex_no_subprog            exception; -- user.table.column, table.column 
+	ex_no_filter             exception;
 	ex_package_state_invalid exception;
-	ex_invalid_proc exception;
+	ex_invalid_proc          exception;
 
 	pragma exception_init(ex_continue, -20995);
 	pragma exception_init(ex_quit, -20996);
@@ -101,8 +105,6 @@ create or replace package pv is
 	pragma exception_init(ex_no_filter, -06550); -- Usually a PL/SQL compilation error.
 	pragma exception_init(ex_package_state_invalid, -04061); -- 04061
 	pragma exception_init(ex_invalid_proc, -6576);
-
-	pspuser varchar2(30);
 
 end pv;
 /

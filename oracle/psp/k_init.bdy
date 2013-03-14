@@ -5,31 +5,34 @@ create or replace package body k_init is
 		null;
 	end;
 
-	procedure by_request is
+	procedure header_init is
 	begin
-		-- initialize package variables
 		pv.headers.delete;
 		pv.cookies.delete;
-		pv.header_writen   := false;
-		pv.buffered_length := 0;
-		pv.max_lmt         := null;
-		pv.msg_stream      := false;
-		pv.use_stream      := true;
-		pv.content_md5     := false;
-		pv.etag_md5        := false;
-		pv.csslink         := null;
-		pv.allow           := null;
-	
+		pv.status_code   := 200;
+		pv.header_writen := false;
+		pv.content_md5   := false;
+		pv.etag_md5      := false;
+		pv.max_lmt       := null;
+		pv.allow         := null;
 		pv.nlbr          := chr(10);
 	
-		pv.status_code := 200;
 		if pv.protocol = 'HTTP' then
 			h.content_type;
 		else
 			h.content_type(h.mime_text, 'UTF-8');
 		end if;
-		-- output."_init"(80526);
+		h.content_encoding_auto;
+	end;
+
+	procedure by_request is
+	begin
+		-- initialize output flow control pv   
+		pv.msg_stream := false;
+		pv.use_stream := true;
 		pv.feedback   := false;
+	
+		header_init;
 		p.init;
 		pv.elpl := dbms_utility.get_time;
 	end;

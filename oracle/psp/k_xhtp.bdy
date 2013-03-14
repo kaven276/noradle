@@ -730,15 +730,19 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure init is
 	begin
-		output."_init"(80526);
 		--scn         := null;
 		gv_xhtp     := false;
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
 		gv_doc_type := '';
 		--mime_type   := '';
 		meta_init;
+		if pv.firstpg then
 			pv.csslink  := null;
 			gv_tagnl    := '';
+		elsif pv.flushed then
+			raise_application_error(-20991, 'flushed page can not be regenerated!');
+		end if;
+		output."_init"(80526);
 		--gv_auto_input_class := false;
 		--gv_force_css_cv     := false;
 		--gv_css_prefix       := '';
