@@ -184,8 +184,6 @@ create or replace package body http_b is
 		if false then
 			-- md5 is computed in Oracle
 			h.content_encoding_identity;
-			h.auto_chunk_max_size(null);
-			h.auto_chunk_max_idle(null);
 		else
 			-- md5 is computed in NodeJS;
 			null;
