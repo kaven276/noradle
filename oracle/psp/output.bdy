@@ -212,7 +212,7 @@ create or replace package body output is
 			pv.content_md5 := false;
 		end if;
 	
-		if false and (pv.content_md5 or pv.etag_md5) then
+		if pv.content_md5 or pv.etag_md5 then
 			dbms_lob.createtemporary(v_lob, true, dur => dbms_lob.call);
 			for i in 1 .. pv.pg_index loop
 				dbms_lob.writeappend(v_lob, length(pv.pg_parts(i)), pv.pg_parts(i));
@@ -245,9 +245,9 @@ create or replace package body output is
 		end;
 		$end
 	
-	
 		pv.use_stream := false;
 		write_head;
+	
 		if pv.etag_md5 then
 			if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
 				return;
@@ -260,6 +260,7 @@ create or replace package body output is
 		if pv.pg_buf is not null then
 			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
 		end if;
+	
 		if pv.csslink = true and pv.pg_css is not null then
 			do_css_write;
 		end if;
