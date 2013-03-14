@@ -1,5 +1,13 @@
 create or replace package body gateway is
 
+	/* main functions
+  0. establish connection to nodejs and listen for request
+  1. control lifetime by max requests and max runtime
+  2. switch to target user current_schema
+  3. collect request cpu/ellapsed time
+  4. collect hprof statistics
+  */
+
 	-- private
 	procedure make_conn
 	(
@@ -7,7 +15,7 @@ create or replace package body gateway is
 		flag pls_integer
 	) is
 		v_sid    pls_integer;
-		v_serial pls_integer;
+		v_seq    pls_integer;
 		v_result pls_integer;
 		function pi2r(i binary_integer) return raw is
 		begin
@@ -17,12 +25,11 @@ create or replace package body gateway is
 		c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
 																 remote_port     => k_cfg.server_control().gw_port,
 																 charset         => null,
-																 in_buffer_size  => pv.write_buff_size,
+																 in_buffer_size  => 32767,
 																 out_buffer_size => 0,
 																 tx_timeout      => 3);
-		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
-		v_result := utl_tcp.write_raw(c,
-																	utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_serial), pi2r(pv.seq_in_id * flag)));
+		select a.sid, a.serial# into v_sid, v_seq from v$session a where a.sid = sys_context('userenv', 'sid');
+		v_result := utl_tcp.write_raw(c, utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_seq), pi2r(pv.in_seq * flag)));
 	end;
 
 	-- Refactored procedure quit
@@ -66,18 +73,19 @@ create or replace package body gateway is
 			into pv.cfg_id, pv.in_seq
 			from user_scheduler_running_jobs a
 		 where a.session_id = sys_context('userenv', 'sid');
-		v_trc := pv.cfg_id || '-' || pv.in_seq;
-	
-		dbms_alert.register('PW_STOP_SERVER');
 		pv.svr_req_cnt := 0;
 		pv.svr_stime   := sysdate;
+	
+		dbms_alert.register('PW_STOP_SERVER');
+		v_trc := pv.cfg_id || '-' || pv.in_seq || '.trc';
+	
 		<<make_connection>>
 		begin
 			make_conn(pv.c, 1);
 		exception
 			when utl_tcp.network_error then
 				if get_alert_quit then
-					goto the_end;
+					goto the_end; -- prevent endless connect fail&retry, allow quit
 				end if;
 				dbms_lock.sleep(3);
 				goto make_connection;
@@ -86,14 +94,17 @@ create or replace package body gateway is
 		loop
 			<<read_request>>
 		
+			-- check if max lifetime reach
 			if sysdate > pv.svr_stime + k_cfg.server_control().max_lifetime and client_allow_quit then
 				goto the_end;
 			end if;
 		
+			-- check if stop singal arrived
 			if get_alert_quit and client_allow_quit then
 				goto the_end;
 			end if;
 		
+			-- accept arrival of new request
 			begin
 				pv.protocol := utl_tcp.get_line(pv.c, true);
 			exception
@@ -102,12 +113,12 @@ create or replace package body gateway is
 				when utl_tcp.end_of_input then
 					goto make_connection;
 				when utl_tcp.network_error then
-					goto the_end;
+					goto make_connection;
 			end;
 		
 			v_hprof := k_cfg.server_control().hprof;
 			if v_hprof is not null then
-				dbms_hprof.start_profiling('PLSHPROF_DIR', v_trc || '.trc');
+				dbms_hprof.start_profiling('PLSHPROF_DIR', v_trc);
 			end if;
 		
 			$if k_ccflag.use_time_stats $then
@@ -115,29 +126,37 @@ create or replace package body gateway is
 			pv.cpul := dbms_utility.get_cpu_time;
 			$end
 		
+			-- read & parse request info and do init work
+			pv.firstpg := true;
 			begin
 				case pv.protocol
 					when 'quit_process' then
-						return;
+						goto the_end;
 					when 'HTTP' then
 						http_server.serv;
 					when 'DATA' then
 						data_server.serv;
 					else
-						execute immediate 'call ' || pv.protocol || '_server.serv()';
+						begin
+							execute immediate 'call ' || pv.protocol || '_server.serv()';
+						exception
+							when pv.ex_invalid_proc then
+								any_server.serv;
+						end;
 				end case;
 			exception
 				when pv.ex_continue then
-					continue;
+					continue; -- give up current request service
 				when pv.ex_quit then
 					goto the_end;
 				when others then
 					k_debug.trace(st('protocol,sqlcode,sqlerrm', pv.protocol, sqlcode, sqlerrm));
 					goto the_end;
 			end;
+			pv.firstpg := false;
+			-- do all pv init beforehand, next call to page init will not be first page
 		
 			-- this is for become user
-		
 			v_done := false;
 			<<redo>>
 			begin
@@ -151,17 +170,11 @@ create or replace package body gateway is
 					v_done := true;
 					goto redo;
 				when others then
+					-- system(not app level) exception occurred
 					k_debug.trace(st('page exception', r.url, pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 					execute immediate 'call ' || pv.protocol || '_server.onex(:1,:2)'
 						using sqlcode, sqlerrm;
 			end;
-		
-			if pv.msg_stream then
-				if pv.buffered_length > 0 then
-					bkr.emit_msg(true);
-				end if;
-				goto the_end; -- when stream quit, quit process also, to release resource
-			end if;
 		
 			if p.gv_xhtp then
 				p.ensure_close;
@@ -170,9 +183,8 @@ create or replace package body gateway is
 		
 			if v_hprof is not null then
 				dbms_hprof.stop_profiling;
-				tmp.n := dbms_hprof.analyze('PLSHPROF_DIR',
-																		v_trc || '.trc',
-																		run_comment => 'psp.web://' || r.dbu || '/' || r.prog);
+				tmp.s := 'psp.web://' || r.dbu || '/' || r.prog;
+				tmp.n := dbms_hprof.analyze('PLSHPROF_DIR', v_trc, run_comment => tmp.s);
 			end if;
 		
 			pv.svr_req_cnt := pv.svr_req_cnt + 1;
@@ -180,10 +192,11 @@ create or replace package body gateway is
 				goto the_end;
 			end if;
 		
+			-- keep sync with nodejs
 			begin
 				v_req_ender := utl_tcp.get_text(pv.c, 16, false);
 				if v_req_ender != '-- end of req --' then
-					k_debug.trace(st('gateway find no fin marker request'));
+					k_debug.trace(st('gateway find wrong fin marker request'));
 					utl_tcp.close_connection(pv.c);
 					make_conn(pv.c, 1);
 				end if;
@@ -201,12 +214,8 @@ create or replace package body gateway is
 	exception
 		when others then
 			k_debug.trace(st('gateway listen exception', pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
-			output.finish;
 			utl_tcp.close_all_connections;
 	end;
-
-begin
-	pv.pspuser := sys_context('userenv', 'current_schema');
 
 end gateway;
 /
