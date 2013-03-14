@@ -22,11 +22,6 @@ create or replace package body k_init is
 		pv.allow           := null;
 		pv.nlbr            := chr(10);
 	
-		rb.charset_http := null;
-		rb.charset_db   := null;
-		rb.blob_entity  := null;
-		rb.clob_entity  := null;
-		rb.nclob_entity := null;
 	
 		pv.status_code := 200;
 		if pv.protocol = 'HTTP' then

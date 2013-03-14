@@ -108,6 +108,11 @@ create or replace package body r is
 		ra.cookies.delete;
 		ra.params.delete;
 	
+		rb.charset_http := null;
+		rb.charset_db   := null;
+		rb.blob_entity  := null;
+		rb.clob_entity  := null;
+		rb.nclob_entity := null;
 		-- read headers
 		loop
 			v_name := utl_tcp.get_line(c, true);
