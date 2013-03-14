@@ -1,2 +1,2 @@
-create or replace type st is table of varchar2(32000);
+create or replace type st is table of varchar2(32767);
 /
