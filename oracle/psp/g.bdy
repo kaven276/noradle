@@ -21,6 +21,7 @@ create or replace package body g is
 	begin
 		if output.prevent_flush('g.feedback') then
 			pv.feedback := true;
+			raise pv.ex_resp_done;
 		end if;
 	end;
 

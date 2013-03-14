@@ -18,7 +18,6 @@ create or replace package body output is
 		pv.pg_css   := '';
 		pv.pg_cssno := null;
 		pv.flushed  := false;
-		pv.feedback := false;
 	end;
 
 	procedure write_head is
@@ -161,6 +160,7 @@ create or replace package body output is
 				if r.header('referer') is not null then
 					h.go(r.header('referer'));
 				else
+					h.content_type;
 					h.line('<script>history.back();</script>');
 					v_len := lengthb(pv.pg_buf);
 				end if;
