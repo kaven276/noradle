@@ -15,6 +15,7 @@ create or replace package body file_dl_b is
 
 	procedure text is
 	begin
+		p.format_src(chr(13) || chr(10));
 		h.content_disposition_attachment('test.txt');
 		p.line('some text');
 		p.line('some other text');
@@ -27,7 +28,7 @@ create or replace package body file_dl_b is
 		h.content_disposition_attachment('test.xls');
 		p.doc_type('5');
 		p.h;
-
+	
 		p.table_open(rules => 'all', cellspacing => 0, cellpadding => 5, ac => st('#border:1px solid silver;'));
 		p.caption('table example');
 		p.thead_open;
@@ -49,14 +50,14 @@ create or replace package body file_dl_b is
 		h.content_disposition_attachment('test.doc');
 		p.doc_type('5');
 		p.h;
-
+	
 		p.div_open(id => 'text', ac => st('#border:1px solid silver;width:80%;padding:8px 20px;'));
 		for i in 1 .. 6 loop
 			p.hn(i, 'header ' || i);
 			p.p('a paragraph');
 		end loop;
 		p.div_close;
-
+	
 	end;
 
 end file_dl_b;
