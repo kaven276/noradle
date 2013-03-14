@@ -418,7 +418,7 @@ create or replace package body k_xhtp is
 		if setting is null then
 			pv.csslink := null;
 		elsif output.prevent_flush('p.comp_css_link') then
-			pv.csslink := setting;;
+			pv.csslink := setting;
 		end if;
 	end;
 
@@ -738,8 +738,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure init is
 	begin
 		output."_init"(80526);
-		--gv_xhtp     := false;
 		--scn         := null;
+		gv_xhtp     := false;
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
 		gv_doc_type := '';
 		--mime_type   := '';
@@ -986,7 +986,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure base(href varchar2 := null, target varchar2 := null) is
-		v_href varchar2(1000);
 	begin
 		assert_in_head('base');
 		gv := tpl(true, 'base', null, null, st('href', l(href), 'target', nvl(target, '_self')));

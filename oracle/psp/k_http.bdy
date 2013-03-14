@@ -307,7 +307,9 @@ create or replace package body k_http is
 	
 		if r.lmt = pv.max_lmt then
 			h.status_line(304);
-			raise pv.ex_resp_done;
+			if pv.use_stream then
+				raise pv.ex_resp_done;
+			end if;
 		end if;
 	end;
 
@@ -319,6 +321,7 @@ create or replace package body k_http is
 	begin
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(u(url));
+		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
 		output."_init"(80526);
 	end;

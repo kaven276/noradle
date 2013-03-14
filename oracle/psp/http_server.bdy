@@ -69,7 +69,9 @@ create or replace package body http_server is
 		dbms_application_info.set_module(r.prog, null);
 	
 		if r.type = 'c' then
-			output.prevent_flush('_c in http_server');
+			if output.prevent_flush('_c in http_server') then
+				null;
+			end if;
 		end if;
 	end;
 

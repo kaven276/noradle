@@ -171,7 +171,6 @@ create or replace package body output is
 			declare
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);
-				l  pls_integer;
 				n  varchar2(30);
 				e  pv.str_arr;
 			begin
@@ -198,7 +197,7 @@ create or replace package body output is
 				when true then
 					v_md5 := rawtohex(dbms_crypto.hash(utl_raw.cast_to_raw(pv.pg_css), dbms_crypto.hash_md5));
 					pv.headers('x-css-md5') := v_md5;
-					v_tmp := '<link type="text/css" rel="stylesheet" href="css/' || v_md5 || '</>';
+					v_tmp := '<link type="text/css" rel="stylesheet" href="css/' || v_md5 || '"/>';
 				when false then
 					v_tmp := '<style>' || pv.pg_css || '</style>';
 				else

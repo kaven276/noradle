@@ -79,7 +79,7 @@ create or replace package body k_url is
 			when '@' then
 				-- for @c @b end case;
 				pos := lengthb(r.pack) - 1;
-				return normal(substrb(r.pack, 1, pos) || substrb(url, 2));
+				return './' ||(substrb(r.pack, 1, pos) || substrb(url, 2));
 			when '/' then
 				-- for local website ref
 				return url;

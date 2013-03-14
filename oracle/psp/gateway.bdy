@@ -122,8 +122,8 @@ create or replace package body gateway is
 			end if;
 		
 			$if k_ccflag.use_time_stats $then
-			pv.elpl := dbms_utility.get_time;
-			pv.cpul := dbms_utility.get_cpu_time;
+			pv.elpt := dbms_utility.get_time;
+			pv.cput := dbms_utility.get_cpu_time;
 			$end
 		
 			-- read & parse request info and do init work
