@@ -63,10 +63,10 @@ create or replace package body gateway is
 		v_hprof     char(1);
 	begin
 		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
-			into pv.cur_cfg_id, pv.seq_in_id
+			into pv.cfg_id, pv.in_seq
 			from user_scheduler_running_jobs a
 		 where a.session_id = sys_context('userenv', 'sid');
-		v_trc := pv.cur_cfg_id || '-' || pv.seq_in_id;
+		v_trc := pv.cfg_id || '-' || pv.in_seq;
 	
 		dbms_alert.register('PW_STOP_SERVER');
 		pv.svr_req_cnt := 0;
@@ -151,12 +151,7 @@ create or replace package body gateway is
 					v_done := true;
 					goto redo;
 				when others then
-					k_debug.trace(st('page exception',
-													 r.url,
-													 pv.cur_cfg_id,
-													 sqlcode,
-													 sqlerrm,
-													 dbms_utility.format_error_backtrace));
+					k_debug.trace(st('page exception', r.url, pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 					execute immediate 'call ' || pv.protocol || '_server.onex(:1,:2)'
 						using sqlcode, sqlerrm;
 			end;
@@ -205,11 +200,7 @@ create or replace package body gateway is
 		utl_tcp.close_all_connections;
 	exception
 		when others then
-			k_debug.trace(st('gateway listen exception',
-											 pv.cur_cfg_id,
-											 sqlcode,
-											 sqlerrm,
-											 dbms_utility.format_error_backtrace));
+			k_debug.trace(st('gateway listen exception', pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 			output.finish;
 			utl_tcp.close_all_connections;
 	end;
