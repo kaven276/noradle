@@ -237,8 +237,12 @@ create or replace package body output is
 		pv.headers('Content-Length') := to_char(v_len);
 	
 		$if k_ccflag.use_time_stats $then
-		pv.headers('x-pw-elapsed-time') := to_char((dbms_utility.get_time - pv.elpt) * 10) || ' ms';
-		pv.headers('x-pw-cpu-time') := to_char((dbms_utility.get_cpu_time - pv.cput) * 10) || ' ms';
+		declare
+			v1 number(10) := dbms_utility.get_time;
+			v2 number(10) := dbms_utility.get_cpu_time;
+		begin
+			pv.headers('x-pw-timespan') := ((v1 - pv.elpt) * 10) || ' / ' || ((v2 - pv.cput) * 10) || ' ms';
+		end;
 		$end
 	
 	
