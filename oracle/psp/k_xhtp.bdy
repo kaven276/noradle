@@ -3,7 +3,6 @@ create or replace package body k_xhtp is
 	pragma serially_reusable;
 
 	gc_tag_indent  constant pls_integer := 2;
-	gc_headers_len constant pls_integer := 200;
 	cs             constant char(1) := '~';
 	gv_tagnl    varchar(2);
 	gv_1st_lcss boolean;
