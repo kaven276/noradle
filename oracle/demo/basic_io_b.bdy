@@ -5,6 +5,7 @@ create or replace package body basic_io_b is
 		v  varchar2(999);
 		va st;
 	begin
+		h.set_line_break(chr(10));
 		src_b.link_proc;
 		h.line('<pre>');
 	
@@ -71,6 +72,7 @@ create or replace package body basic_io_b is
 
 	procedure output is
 	begin
+		h.set_line_break(chr(10));
 		src_b.link_proc;
 		h.line('<pre>');
 	

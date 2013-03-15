@@ -79,6 +79,8 @@ create or replace package body http_b is
 
 	procedure long_job is
 	begin
+		p.format_src;
+		h.set_line_break(chr(10));
 		h.header_close;
 		-- h.auto_chunk_max_idle(0.5, 10);
 	

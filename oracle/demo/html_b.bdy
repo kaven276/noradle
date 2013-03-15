@@ -142,6 +142,7 @@ create or replace package body html_b is
 
 	procedure print_cgi_env is
 	begin
+		p.format_src;
 		p.h;
 		src_b.link_proc('html_b.print_cgi_env');
 		p.br;
@@ -152,6 +153,7 @@ create or replace package body html_b is
 
 	procedure complex is
 	begin
+		p.format_src;
 		p.h;
 		src_b.link_proc;
 		p.p('I''m a page composed of components');

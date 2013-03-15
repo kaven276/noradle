@@ -3,6 +3,7 @@ create or replace package body k_filter is
 	procedure before is
 	begin
 		p.format_src;
+		-- h.set_line_break(null);
 		pv.id  := 'liyong';
 		pv.now := sysdate;
 	
