@@ -718,7 +718,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		--scn         := null;
 		gv_xhtp     := false; -- after p.doc_type, become true
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
-		gv_xhtp := false;
 		meta_init;
 		if pv.firstpg then
 			pv.csslink := null;
@@ -1112,11 +1111,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if not is_dhc then
 			return;
 		end if;
-		if not gv_xhtp and gv_tag_len = 0 then
-			null;
-		else
-			doc_type;
-		end if;
+		doc_type;
 		html_open(manifest);
 		head_open;
 		title2(title);
