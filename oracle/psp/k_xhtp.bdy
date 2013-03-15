@@ -2,10 +2,10 @@ create or replace package body k_xhtp is
 
 	pragma serially_reusable;
 
-	gc_tag_indent  constant pls_integer := 2;
 	cs             constant char(1) := '~';
-	gv_tagnl    varchar(2);
-	gv_1st_lcss boolean;
+	gv_tag_indent  pls_integer;
+	gv_tagnl       varchar(2);
+	gv_1st_lcss    boolean;
 
 	gv_wap          boolean := false;
 	gv_doc_type_str varchar2(200);
@@ -81,6 +81,11 @@ create or replace package body k_xhtp is
 	procedure format_src(line_break varchar2 := nl) is
 	begin
 		gv_tagnl := line_break;
+		if line_break is null then
+			gv_tag_indent := 0;
+		else
+			gv_tag_indent := 2;
+		end if;
 	end;
 
 	-- private
@@ -217,18 +222,18 @@ create or replace package body k_xhtp is
 
 	procedure d(text varchar2 character set any_cs) is
 	begin
-		output.line(text, '', (gv_tag_len - 2) * gc_tag_indent);
+		output.line(text, '', (gv_tag_len - 2) * gv_tag_indent);
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2 character set any_cs) is
 	begin
-		output.line(text, gv_tagnl, (gv_tag_len - 2) * gc_tag_indent);
+		output.line(text, gv_tagnl, (gv_tag_len - 2) * gv_tag_indent);
 	end;
 
 	procedure line(text varchar2 character set any_cs := '') is
 	begin
-		output.line(text, gv_tagnl, (gv_tag_len - 2) * gc_tag_indent);
+		output.line(text, gv_tagnl, (gv_tag_len - 2) * gv_tag_indent);
 	end;
 
 	procedure l(txt varchar2, var st := null) is
@@ -716,8 +721,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_xhtp := false;
 		meta_init;
 		if pv.firstpg then
-			pv.csslink  := null;
-			gv_tagnl    := '';
+			pv.csslink := null;
+			format_src(null);
 		elsif pv.flushed then
 			raise_application_error(-20991, 'flushed page can not be regenerated!');
 		end if;
