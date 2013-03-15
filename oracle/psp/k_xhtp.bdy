@@ -9,7 +9,6 @@ create or replace package body k_xhtp is
 	gv_1st_lcss boolean;
 
 	gv_wap          boolean := false;
-	gv_doc_typed    boolean;
 	gv_doc_type_str varchar2(200);
 	gv_compatible   varchar2(100);
 	gv_vml          boolean := false;
@@ -733,7 +732,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		--scn         := null;
 		gv_xhtp     := false; -- after p.doc_type, become true
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
-		gv_doc_typed := false;
+		gv_xhtp := false;
 		meta_init;
 		if pv.firstpg then
 			pv.csslink  := null;
@@ -751,7 +750,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure http_header_close is
 	begin
 		-- clear http headers
-		gv_doc_typed := false;
+		gv_xhtp := false;
 		gv_head_over := true;
 		gv_tag_len := 0;
 		gv_tags(1) := null;
@@ -793,7 +792,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		k_http.content_type('text/html', pv.charset);
 		-- '<?xml version="1.0"?>' || nl;
 		output.line(gv_doc_type_str, nl);	
-		gv_doc_typed := true;
 	
 		if pv.cs_char = pv.charset_ora then
 			gv_nc := false;
@@ -975,7 +973,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure meta_init is
 	begin
-		assert(not gv_doc_typed, 'p.meta_init must be used before page output begin');
+		assert(not gv_xhtp, 'p.meta_init must be used before page output begin');
 		gv_st     := st();
 		gv_texts  := st();
 		gv_values := st();
@@ -986,7 +984,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	begin
 		assert(not (http_equiv is not null and name is not null), 'http_equiv and name can be set ether, but not both.');
 		assert(http_equiv is null or name is null, 'both http_equiv and name is null, it must have one set.');
-		if not gv_doc_typed then
+		if not gv_xhtp then
 			-- if meta has not output yet, save them to package array
 			gv_st.extend;
 			gv_texts.extend;
@@ -1092,7 +1090,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure html_head(title varchar2 character set any_cs default 'psp.web', links st := null, scripts st := null,
 											body boolean default true) is
 	begin
-		if not gv_doc_typed then
+		if not gv_xhtp then
 			doc_type;
 		end if;
 		html_open;
@@ -1128,7 +1126,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if not is_dhc then
 			return;
 		end if;
-		if not gv_doc_typed and gv_tag_len = 0 then
+		if not gv_xhtp and gv_tag_len = 0 then
 			null;
 		else
 			doc_type;
