@@ -47,24 +47,6 @@ create or replace package body k_xhtp is
 	gv_level pls_integer := 0;
 	gv_type  varchar2(10); -- tree,menu
 
-	-- configuration parameters
-	$if                  k_ccflag.config_mode = k_ccflag.cm_sys $then
-
-	gv_attr_lowercase    char(1) := k_psp_cfg.get_xxx; -- require lowercase attributes
-	gv_tag_nesting_check char(1) := k_psp_cfg.get_xxx; -- if do tag nesting error check
-
-	$elsif               k_ccflag.config_mode = k_ccflag.cm_pck $then
-
-	gv_attr_lowercase    char(1) := 'Y';
-	gv_tag_nesting_check char(1) := 'Y';
-
-	$elsif               k_ccflag.config_mode = k_ccflag.cm_def $then
-
-	gv_attr_lowercase    char(1) := 'Y';
-	gv_tag_nesting_check char(1) := 'Y';
-
-	$end
-
 	-- tag stack
 	gv_tag_len pls_integer; -- first tag is body, depth is 1
 	gv_tags    st;
@@ -477,7 +459,7 @@ create or replace package body k_xhtp is
 	procedure ensure_close is
 		v_err_msg varchar2(200);
 	begin
-		if gv_tag_nesting_check = 'Y' then
+		if true then
 			case nvl(gv_tag_len, 0)
 				when 0 then
 					null; -- ok;
