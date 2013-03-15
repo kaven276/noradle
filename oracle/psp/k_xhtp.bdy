@@ -9,7 +9,7 @@ create or replace package body k_xhtp is
 	gv_1st_lcss boolean;
 
 	gv_wap          boolean := false;
-	gv_doc_type     varchar2(20);
+	gv_doc_typed    boolean;
 	gv_doc_type_str varchar2(200);
 	gv_compatible   varchar2(100);
 	gv_vml          boolean := false;
@@ -731,9 +731,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure init is
 	begin
 		--scn         := null;
-		gv_xhtp     := false;
+		gv_xhtp     := false; -- after p.doc_type, become true
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
-		gv_doc_type := '';
+		gv_doc_typed := false;
 		--mime_type   := '';
 		meta_init;
 		if pv.firstpg then
@@ -752,7 +752,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure http_header_close is
 	begin
 		-- clear http headers
-		gv_doc_type := null;
+		gv_doc_typed := false;
 		gv_head_over := true;
 		gv_tag_len := 0;
 		gv_tags(1) := null;
@@ -792,19 +792,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	
 		gv_head_over := false;
 		k_http.content_type('text/html', pv.charset);
-		gv_headers_str := gv_doc_type_str || nl; -- || '<?xml version="1.0"?>' || nl;
-		-- must first doctype and then xml prolog, other wise it will be in backcompatible mode
-		if k_ccflag.xml_check then
-			line(rpad(' ', gc_headers_len, ' '));
-		else
-			if true or instr(r.header('http_user_agent'), 'AppleWebKit') = 0 then
-				--gv_headers_str := '<!DOCTYPE HTML PUBLIC ''-//W3C//DTD HTML 4.01//EN''>';
-				--gv_headers_str := '';
-				prn(gv_headers_str); -- for vml to function, continue allow doctype and xml declaration.
-			end if;
-		end if;
-	
-		gv_doc_type := name;
+		-- '<?xml version="1.0"?>' || nl;
+		output.line(gv_doc_type_str, nl);	
+		gv_doc_typed := true;
 	
 		if pv.cs_char = pv.charset_ora then
 			gv_nc := false;
@@ -986,7 +976,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure meta_init is
 	begin
-		assert(gv_doc_type is null, 'p.meta_init must be used before page output begin' || gv_doc_type);
+		assert(not gv_doc_typed, 'p.meta_init must be used before page output begin');
 		gv_st     := st();
 		gv_texts  := st();
 		gv_values := st();
@@ -997,7 +987,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	begin
 		assert(not (http_equiv is not null and name is not null), 'http_equiv and name can be set ether, but not both.');
 		assert(http_equiv is null or name is null, 'both http_equiv and name is null, it must have one set.');
-		if gv_doc_type is null then
+		if not gv_doc_typed then
 			-- if meta has not output yet, save them to package array
 			gv_st.extend;
 			gv_texts.extend;
@@ -1103,7 +1093,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure html_head(title varchar2 character set any_cs default 'psp.web', links st := null, scripts st := null,
 											body boolean default true) is
 	begin
-		if gv_doc_type is null then
+		if not gv_doc_typed then
 			doc_type;
 		end if;
 		html_open;
@@ -1139,7 +1129,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if not is_dhc then
 			return;
 		end if;
-		if gv_doc_type is not null and gv_tag_len = 0 then
+		if not gv_doc_typed and gv_tag_len = 0 then
 			null;
 		else
 			doc_type;
