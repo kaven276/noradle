@@ -10,8 +10,6 @@ create or replace package k_xhtp is
 
 	gv_xhtp boolean := false;
 
-	mime_type   varchar2(100);
-
 	gv_headers_str varchar2(200);
 
 	function next_seq return varchar2;

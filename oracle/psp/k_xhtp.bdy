@@ -617,7 +617,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		v_tag varchar2(30) := name;
 	begin
 		-- head part tag api will not use me, body,frameset(include itself) will call me
-		if mime_type != 'text/plain' then
+		if pv.mime_type != 'text/plain' then
 			assert(instrb(',html,head,body,frameset,frame,hta:application,title,base,meta,link,script,style,',
 										',' || v_tag || ',') > 0 or gv_tags(2) = 'body',
 						 ' this tag ' || v_tag || 'must used in body tag');
@@ -734,7 +734,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_xhtp     := false; -- after p.doc_type, become true
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
 		gv_doc_typed := false;
-		--mime_type   := '';
 		meta_init;
 		if pv.firstpg then
 			pv.csslink  := null;
