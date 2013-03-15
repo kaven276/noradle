@@ -123,11 +123,11 @@ create or replace package body r is
 	
 		dbms_session.clear_identifier;
 		if pv.bsid is not null then
-			if ua is not null then
+			if ra.headers.exists('user-agent') then
 				-- at session creation
-				k_gac.gset('UA_CTX', v_uamd5, ua);
+				k_gac.gset('UA_CTX', v_uamd5, nvl(ra.headers('user-agent'), 'NULL'));
 			else
-				ra.headers('user-agent') := sys_context('UA_CTX', v_uamd5);
+				ra.headers('user-agent') := nvl(sys_context('UA_CTX', v_uamd5), 'LOST');
 			end if;
 		end if;
 	
@@ -703,7 +703,7 @@ create or replace package body r is
 
 	function ua return varchar2 is
 	begin
-		return header('user-agent');
+		return nullif(header('user-agent'), 'NULL');
 	end;
 
 	function client_addr return varchar2 is
