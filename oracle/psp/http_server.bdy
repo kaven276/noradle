@@ -56,11 +56,6 @@ create or replace package body http_server is
 		r."_init"(pv.c, 80526);
 		k_gc.touch(r.bsid);
 	
-		v_dbuf := k_cfg.server_control().dbu_filter;
-		if v_dbuf is not null and not regexp_like(r.dbu, v_dbuf) then
-			raise pv.ex_continue;
-		end if;
-	
 		if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 			error_not_bch;
 			raise pv.ex_continue;

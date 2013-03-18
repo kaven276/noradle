@@ -85,12 +85,7 @@ create or replace package body r is
 					v_dad := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
-				select /*+ result_cache */
-				 max(lower(a.name))
-					into gv_dbu
-					from sys.user$ a
-				 where a.name = upper(v_dad);
-				if gv_dbu is null then
+				if instrb(',' || lower(k_cfg.server_control().dbu_filter) || ',', v_dad) = 0 then
 					gv_dbu := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
