@@ -48,8 +48,9 @@ create or replace package body k_xhtp is
 	gv_type  varchar2(10); -- tree,menu
 
 	-- tag stack
+	type t_tags is table of varchar2(30) index by pls_integer;
 	gv_tag_len pls_integer; -- first tag is body, depth is 1
-	gv_tags    st;
+	gv_tags    t_tags;
 	gv_check   boolean;
 
 	gv_head_over boolean; -- control where to output
@@ -2932,10 +2933,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		plsql_marker(unit, lineno, '.END.');
 		line;
 	end;
-
-begin
-	gv_tags := st();
-	gv_tags.extend(30);
 
 end k_xhtp;
 /
