@@ -726,15 +726,14 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		if pv.firstpg then
 			gv_check   := not pv.production;
 			pv.csslink := null;
+			gv_auto_input_class := false;
+			gv_force_css_cv     := false;
+			gv_css_prefix       := '';
 			format_src(null);
 		elsif pv.flushed then
 			raise_application_error(-20991, 'flushed page can not be regenerated!');
 		end if;
 		output."_init"(80526);
-		--gv_auto_input_class := false;
-		--gv_force_css_cv     := false;
-		--gv_css_prefix       := '';
-		--gv_css_link         := false;
 	end;
 
 	procedure http_header_close is
