@@ -2,10 +2,10 @@ create or replace package body k_xhtp is
 
 	pragma serially_reusable;
 
-	cs             constant char(1) := '~';
-	gv_tag_indent  pls_integer;
-	gv_tagnl       varchar(2);
-	gv_1st_lcss    boolean;
+	cs constant char(1) := '~';
+	gv_tag_indent pls_integer;
+	gv_tagnl      varchar(2);
+	gv_1st_lcss   boolean;
 
 	gv_wap          boolean := false;
 	gv_doc_type_str varchar2(200);
@@ -576,7 +576,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 		return ' ' || name || '="' || value || '"';
 	end;
-	
+
 	procedure tag_push(tag varchar2) is
 	begin
 		gv_tag_len := gv_tag_len + 1;
@@ -586,7 +586,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure tag_pop(tag varchar2) is
 	begin
 		if gv_check then
-		   assert(gv_tags(gv_tag_len) = tag, 'tag nesting error, no matching open tag for this close tag.' || gv_tag_len);
+			assert(gv_tags(gv_tag_len) = tag, 'tag nesting error, no matching open tag for this close tag.' || gv_tag_len);
 		end if;
 		gv_tag_len := gv_tag_len - 1;
 	end;
@@ -637,12 +637,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			raise_application_error(-20000, 'attributes must use =, and not :, for [' || v_ac || ']');
 		end if;
 	
-	
 		-- free attributes part
 		if da is not null then
 			for i in 1 .. floor(da.count / 2) loop
 				if gv_check then
-					 assert(da(i * 2 - 1) = lower(da(i * 2 - 1)), 'xhtml attribute name must be in lower case:' || da(i * 2 - 1));
+					assert(da(i * 2 - 1) = lower(da(i * 2 - 1)), 'xhtml attribute name must be in lower case:' || da(i * 2 - 1));
 				end if;
 				if da(i * 2) is not null then
 					v_a2 := v_a2 || (' ' || da(i * 2 - 1) || '="' || da(i * 2) || '"');
@@ -720,12 +719,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure init is
 	begin
 		--scn         := null;
-		gv_xhtp     := false; -- after p.doc_type, become true
-		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
+		gv_xhtp    := false; -- after p.doc_type, become true
+		gv_in_body := false; -- reset is_dhc to true for not using k_gw
 		meta_init;
 		if pv.firstpg then
-			gv_check   := not pv.production;
-			pv.csslink := null;
+			gv_check            := not pv.production;
+			pv.csslink          := null;
 			gv_auto_input_class := false;
 			gv_force_css_cv     := false;
 			gv_css_prefix       := '';
@@ -780,7 +779,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_head_over := false;
 		k_http.content_type('text/html', pv.charset);
 		-- '<?xml version="1.0"?>' || nl;
-		output.line(gv_doc_type_str, nl);	
+		output.line(gv_doc_type_str, nl);
 	
 		if pv.cs_char = pv.charset_ora then
 			gv_nc := false;
@@ -798,7 +797,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	begin
 		gv_compatible := value;
 	end;
-	
+
 	procedure set_check(value boolean) is
 	begin
 		gv_check := value;
@@ -893,7 +892,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure assert_in_head(tag varchar2) is
 	begin
 		if gv_check then
-		   assert(gv_tag_len = 2 and gv_tags(2) = 'head', tag || ' must used in head tag range.');
+			assert(gv_tag_len = 2 and gv_tags(2) = 'head', tag || ' must used in head tag range.');
 		end if;
 	end;
 
