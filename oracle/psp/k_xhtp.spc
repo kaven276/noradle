@@ -99,6 +99,8 @@ create or replace package k_xhtp is
 	procedure set_compatible(value varchar2);
 
 	procedure format_src(line_break varchar2 := nl);
+	
+	procedure set_check(value boolean);
 
 	procedure doc_type(name varchar2 := 'transitional');
 

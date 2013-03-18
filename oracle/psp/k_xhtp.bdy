@@ -50,6 +50,7 @@ create or replace package body k_xhtp is
 	-- tag stack
 	gv_tag_len pls_integer; -- first tag is body, depth is 1
 	gv_tags    st;
+	gv_check   boolean;
 
 	gv_head_over boolean; -- control where to output
 
@@ -448,15 +449,13 @@ create or replace package body k_xhtp is
 
 	procedure assert(cond boolean, info varchar2) is
 	begin
-		if k_ccflag.xhtml_check_printing then
-			if not cond then
-				raise_application_error(-20996, info);
-				gv_has_error := true;
-				line('<noscript>');
-				line(info || gv_tagnl);
-				line(dbms_utility.format_call_stack);
-				line('</noscript>');
-			end if;
+		if not cond then
+			raise_application_error(-20996, info);
+			gv_has_error := true;
+			line('<noscript>');
+			line(info || gv_tagnl);
+			line(dbms_utility.format_call_stack);
+			line('</noscript>');
 		end if;
 	end;
 
@@ -509,19 +508,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure x0___________ is
 	begin
 		null;
-	end;
-
-	procedure tag_push(tag varchar2) is
-	begin
-		gv_tag_len := gv_tag_len + 1;
-		gv_tags(gv_tag_len) := tag;
-	end;
-
-	procedure tag_pop(tag varchar2) is
-	begin
-		assert(gv_tags(gv_tag_len) = tag, 'tag nesting error, no matching open tag for this close tag.' || gv_tag_len);
-		gv_tags(gv_tag_len) := null;
-		gv_tag_len := gv_tag_len - 1;
 	end;
 
 	---------------------------------------------------------------------------
@@ -589,6 +575,20 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 		return ' ' || name || '="' || value || '"';
 	end;
+	
+	procedure tag_push(tag varchar2) is
+	begin
+		gv_tag_len := gv_tag_len + 1;
+		gv_tags(gv_tag_len) := tag;
+	end;
+
+	procedure tag_pop(tag varchar2) is
+	begin
+		if gv_check then
+		   assert(gv_tags(gv_tag_len) = tag, 'tag nesting error, no matching open tag for this close tag.' || gv_tag_len);
+		end if;
+		gv_tag_len := gv_tag_len - 1;
+	end;
 
 	-- private, common tag output API
 	function tpl(output boolean, name varchar2, text varchar2 character set any_cs, ac in st, da st,
@@ -602,7 +602,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		v_tag varchar2(30) := name;
 	begin
 		-- head part tag api will not use me, body,frameset(include itself) will call me
-		if pv.mime_type != 'text/plain' then
+		if gv_check and pv.mime_type != 'text/plain' then
 			assert(instrb(',html,head,body,frameset,frame,hta:application,title,base,meta,link,script,style,',
 										',' || v_tag || ',') > 0 or gv_tags(2) = 'body',
 						 ' this tag ' || v_tag || 'must used in body tag');
@@ -624,7 +624,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 				v_s  := ' style="' || substrb(v_ac, 2) || '"';
 			else
 				-- xxx
-				if substr(v_ac, -1) != ';' then
+				if gv_check and substr(v_ac, -1) != ';' then
 					raise_application_error(-20000, 'maybe lose ;');
 				end if;
 				-- name=#sddsf;name2=#dfsdf#css1:dsfds;css2:xcxcv;
@@ -632,16 +632,19 @@ for(i=0;i<k_xhtp.errors.length;i++)
 				v_s  := null;
 			end if;
 		end if;
-		if instrb(v_a1, ':') > 0 then
+		if gv_check and instrb(v_a1, ':') > 0 then
 			raise_application_error(-20000, 'attributes must use =, and not :, for [' || v_ac || ']');
 		end if;
+	
 	
 		-- free attributes part
 		if da is not null then
 			for i in 1 .. floor(da.count / 2) loop
-				assert(da(i * 2 - 1) = lower(da(i * 2 - 1)), 'xhtml attribute name must be in lower case:' || da(i * 2 - 1));
+				if gv_check then
+					 assert(da(i * 2 - 1) = lower(da(i * 2 - 1)), 'xhtml attribute name must be in lower case:' || da(i * 2 - 1));
+				end if;
 				if da(i * 2) is not null then
-					v_a2 := v_a2 || ' ' || da(i * 2 - 1) || '="' || da(i * 2) || '"';
+					v_a2 := v_a2 || (' ' || da(i * 2 - 1) || '="' || da(i * 2) || '"');
 				end if;
 			end loop;
 			if gv_auto_input_class and name = 'input' then
@@ -720,6 +723,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_in_body  := false; -- reset is_dhc to true for not using k_gw
 		meta_init;
 		if pv.firstpg then
+			gv_check   := not pv.production;
 			pv.csslink := null;
 			format_src(null);
 		elsif pv.flushed then
@@ -793,6 +797,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure set_compatible(value varchar2) is
 	begin
 		gv_compatible := value;
+	end;
+	
+	procedure set_check(value boolean) is
+	begin
+		gv_check := value;
 	end;
 
 	procedure html_open(manifest varchar2 := null) is
@@ -883,7 +892,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 
 	procedure assert_in_head(tag varchar2) is
 	begin
-		assert(gv_tag_len = 2 and gv_tags(2) = 'head', tag || ' must used in head tag range.');
+		if gv_check then
+		   assert(gv_tag_len = 2 and gv_tags(2) = 'head', tag || ' must used in head tag range.');
+		end if;
 	end;
 
 	procedure hta(ac st := null, id varchar2 := null, applicationname varchar2 := null, version varchar2 := null,
