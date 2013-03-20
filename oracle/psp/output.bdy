@@ -74,6 +74,23 @@ create or replace package body output is
 		end if;
 	end;
 
+	-- private
+	procedure write_buf(keep boolean) is
+	begin
+		if keep then
+			for i in 1 .. pv.pg_index loop
+				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
+			end loop;
+			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+		else
+			for i in 1 .. pv.pg_index loop
+				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_parts(i), pv.charset_ora, pv.cs_nchar));
+			end loop;
+			pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar));
+		end if;
+		chunk_init;
+	end;
+
 	procedure flush is
 	begin
 		if not pv.use_stream then
@@ -83,12 +100,7 @@ create or replace package body output is
 			pv.headers('Transfer-Encoding') := 'chunked';
 			write_head;
 		end if;
-		for i in 1 .. pv.pg_index loop
-			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
-		end loop;
-		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
-	
-		chunk_init;
+		write_buf(pv.charset_ora = pv.cs_nchar);
 		pv.flushed := true;
 	end;
 
@@ -236,7 +248,6 @@ create or replace package body output is
 		end if;
 	
 		<<print_http_headers>>
-		pv.headers('Content-Length') := to_char(v_len);
 	
 		$if k_ccflag.use_time_stats $then
 		declare
@@ -247,25 +258,25 @@ create or replace package body output is
 		end;
 		$end
 	
-		pv.use_stream := false;
-		write_head;
-	
-		if pv.etag_md5 then
-			if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
-				return;
+		if pv.charset_ora = pv.cs_nchar then
+			pv.headers('Content-Length') := to_char(v_len);
+			write_head;
+			write_buf(true);
+			if pv.etag_md5 then
+				if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
+					return;
+				end if;
 			end if;
-		end if;
-	
-		for i in 1 .. pv.pg_index loop
-			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
-		end loop;
-		if pv.pg_buf is not null then
-			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+		else
+			write_head;
+			write_buf(false);
+			pv.wlen := utl_tcp.write_text(pv.c, pv.end_marker);
 		end if;
 	
 		if pv.csslink = true and pv.pg_css is not null then
 			do_css_write;
 		end if;
+	
 	end;
 
 end output;
