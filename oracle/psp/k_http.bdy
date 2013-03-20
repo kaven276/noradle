@@ -1,5 +1,15 @@
 create or replace package body k_http is
 
+	procedure force_stream is
+	begin
+		pv.use_stream := true;
+		-- cancel all settings that prevent stream
+		pv.csslink := null;
+		h.etag_md5_off;
+		h.content_md5_off;
+		h.content_encoding_identity;
+	end;
+
 	procedure flush is
 	begin
 		output.flush;

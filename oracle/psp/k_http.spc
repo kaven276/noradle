@@ -7,6 +7,7 @@ create or replace package k_http is
 	mime_word  constant varchar2(30) := 'application/msword';
 	mime_excel constant varchar2(30) := 'application/vnd.ms-excel';
 
+  procedure force_stream;
 	procedure flush;
 	procedure write_raw(data in out nocopy raw);
 	procedure write(text varchar2 character set any_cs);
