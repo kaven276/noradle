@@ -1,0 +1,14 @@
+create table ASYNC_CONTROL_T
+(
+  PIPE_NAME    VARCHAR2(30) not null,
+  DBU          VARCHAR2(30),
+  PROG         VARCHAR2(99),
+  MIN_SERVERS  NUMBER(4),
+  MAX_SERVERS  NUMBER(4),
+  MAX_REQUESTS NUMBER(9),
+  MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0)
+)
+;
+alter table ASYNC_CONTROL_T
+  add constraint ASYNC_CONTROL_PK primary key (PIPE_NAME);
+
