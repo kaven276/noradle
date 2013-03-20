@@ -8,6 +8,7 @@ create or replace package body k_xhtp is
 	gv_1st_lcss   boolean;
 
 	gv_wap          boolean := false;
+	gv_html_type    varchar2(100);
 	gv_doc_type_str varchar2(200);
 	gv_compatible   varchar2(100);
 	gv_vml          boolean := false;
@@ -728,6 +729,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			gv_auto_input_class := false;
 			gv_force_css_cv     := false;
 			gv_css_prefix       := '';
+			gv_html_type        := 'transitional';
 			format_src(null);
 		elsif pv.flushed then
 			raise_application_error(-20991, 'flushed page can not be regenerated!');
@@ -751,7 +753,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		http_header_close;
 		gv_xhtp := true;
 	
-		case lower(name)
+		case lower(nvl(name, gv_html_type))
 			when '5' then
 				gv_doc_type_str := '<!DOCTYPE html>';
 			when 'RDFa' then
@@ -777,7 +779,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end case;
 	
 		gv_head_over := false;
-		k_http.content_type('text/html', pv.charset);
 		-- '<?xml version="1.0"?>' || nl;
 		output.line(gv_doc_type_str, nl);
 	
@@ -801,6 +802,11 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	procedure set_check(value boolean) is
 	begin
 		gv_check := value;
+	end;
+	
+	procedure set_html_type(value varchar2) is
+	begin
+		gv_html_type := value;
 	end;
 
 	procedure html_open(manifest varchar2 := null) is
