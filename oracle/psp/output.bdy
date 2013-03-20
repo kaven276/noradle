@@ -32,6 +32,8 @@ create or replace package body output is
 			h.header_close;
 		end if;
 	
+		pv.headers('x-pw-ori-len') := to_number(pv.pg_len + nvl(lengthb(pv.pg_buf), 0));
+	
 		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 		n := pv.headers.first;
 		while n is not null loop
