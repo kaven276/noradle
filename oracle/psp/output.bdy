@@ -75,18 +75,23 @@ create or replace package body output is
 	end;
 
 	-- private
-	procedure write_buf(keep boolean) is
+	procedure write_buf is
 	begin
-		if keep then
+		if pv.pg_conv then
 			for i in 1 .. pv.pg_index loop
 				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
 			end loop;
 			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
-		else
+		elsif pv.pg_nchar then
 			for i in 1 .. pv.pg_index loop
 				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_parts(i), pv.charset_ora, pv.cs_nchar));
 			end loop;
 			pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar));
+		else
+			for i in 1 .. pv.pg_index loop
+				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_parts(i), pv.charset_ora, pv.cs_nchar));
+			end loop;
+			pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_buf, pv.charset_ora, pv.cs_nchar));
 		end if;
 		chunk_init;
 	end;
@@ -100,7 +105,7 @@ create or replace package body output is
 			pv.headers('Transfer-Encoding') := 'chunked';
 			write_head;
 		end if;
-		write_buf(pv.charset_ora = pv.cs_nchar);
+		write_buf;
 		pv.flushed := true;
 	end;
 
@@ -140,7 +145,11 @@ create or replace package body output is
 		indent pls_integer := null
 	) is
 	begin
-		pv.pg_buf := pv.pg_buf || (lpad(' ', indent, ' ') || str || nl);
+		if pv.pg_nchar then
+			pv.pg_buf := pv.pg_buf || (lpad(' ', indent, ' ') || str || nl);
+		else
+			pv.ph_buf := pv.ph_buf || (lpad(' ', indent, ' ') || str || nl);
+		end if;
 	exception
 		when others then
 			-- 6502 numeric or value error: character string buffer too small
@@ -148,10 +157,19 @@ create or replace package body output is
 				flush;
 			else
 				pv.pg_index := pv.pg_index + 1;
-				pv.pg_parts(pv.pg_index) := pv.pg_buf;
-				pv.pg_len := pv.pg_len + lengthb(pv.pg_buf);
+				if pv.pg_nchar then
+					pv.pg_parts(pv.pg_index) := pv.pg_buf;
+					pv.pg_len := pv.pg_len + lengthb(pv.pg_buf);
+				else
+					pv.ph_parts(pv.pg_index) := pv.ph_buf;
+					pv.pg_len := pv.pg_len + lengthb(pv.ph_buf);
+				end if;
 			end if;
-			pv.pg_buf := lpad(' ', indent, ' ') || str || nl;
+			if pv.pg_nchar then
+				pv.pg_buf := lpad(' ', indent, ' ') || str || nl;
+			else
+				pv.ph_buf := lpad(' ', indent, ' ') || str || nl;
+			end if;
 	end;
 
 	procedure finish is
@@ -258,10 +276,10 @@ create or replace package body output is
 		end;
 		$end
 	
-		if pv.charset_ora = pv.cs_nchar then
+		if not pv.pg_conv then
 			pv.headers('Content-Length') := to_char(v_len);
 			write_head;
-			write_buf(true);
+			write_buf;
 			if pv.etag_md5 then
 				if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
 					return;
@@ -269,7 +287,7 @@ create or replace package body output is
 			end if;
 		else
 			write_head;
-			write_buf(false);
+			write_buf;
 			pv.wlen := utl_tcp.write_text(pv.c, pv.end_marker);
 		end if;
 	

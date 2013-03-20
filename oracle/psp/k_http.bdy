@@ -173,7 +173,9 @@ create or replace package body k_http is
 		if pv.charset_ora = 'AL32UTF8' and pv.cs_nchar = 'UTF8' then
 			pv.charset_ora := 'UTF8';
 		end if;
-		pv.cs_req := pv.charset_ora;
+		pv.pg_nchar := not (pv.charset_ora = pv.cs_char);
+		pv.pg_conv  := not pv.charset_ora in (pv.cs_char, pv.cs_nchar);
+		pv.cs_req   := pv.charset_ora;
 		declare
 			v_raw raw(1);
 		begin

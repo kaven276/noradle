@@ -48,6 +48,7 @@ create or replace package pv is
 
 	-- all of response entity related
 	type pg_parts_arr is table of nvarchar2(32767) index by binary_integer;
+	type ph_parts_arr is table of varchar2(32767) index by binary_integer;
 	pg_buf   nvarchar2(32767); -- hold current/lastest write buffer
 	pg_parts pg_parts_arr; -- hold all written parts
 	pg_index pls_integer; -- written parts index high watermark
@@ -55,11 +56,15 @@ create or replace package pv is
 	pg_cssno pls_integer; -- where css should insert into pg_parts
 	pg_svptr pls_integer; -- output savepoint, used for h.save_pointer,h.appended
 	pg_css   nvarchar2(32767); -- hold component css text
+	pg_nchar boolean;
+	pg_conv  boolean;
+	ph_buf   varchar2(32767); -- hold current/lastest write buffer
+	ph_parts pg_parts_arr; -- hold all written parts
 
 	-- all output variation control state
-	firstpg  boolean; -- if clear and rewrite page, following PVs keep when re-init
-	csslink  boolean; -- say to use component css; true:link, false:embed
-	nlbr     varchar2(2); -- set by h.set_line_break, used by output.line after all
+	firstpg boolean; -- if clear and rewrite page, following PVs keep when re-init
+	csslink boolean; -- say to use component css; true:link, false:embed
+	nlbr    varchar2(2); -- set by h.set_line_break, used by output.line after all
 
 	-- stream/flush output flow control related
 	-- use_stream will inited to true
@@ -67,7 +72,7 @@ create or replace package pv is
 	-- flush will be ignored when use_stream=false
 	use_stream boolean; -- 
 	flushed    boolean; -- if any flush actually occurred
-	feedback boolean; -- manually say(g.feedback) to use feedback mechanism
+	feedback   boolean; -- manually say(g.feedback) to use feedback mechanism
 	end_marker varchar2(100) := 'EOF'; -- for streamed/flushed output, append it to tell nodejs the end of response
 	msg_stream boolean;
 
@@ -80,7 +85,6 @@ create or replace package pv is
 	base64_cookie constant varchar2(26) := 'abcdefghijklmnopqrstuvwxyz';
 	base64_gac    constant varchar2(26) := '!"#$%&()*,-:;<>?@[]^_`{|}~';
 	gac_dtfmt     constant varchar2(14) := 'yyyymmddhh24mi';
-	cs_utf8       constant varchar2(30) := utl_i18n.map_charset('utf-8', 0, 1);
 	cs_char       constant varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
 	cs_nchar      constant varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
 	pspuser       constant varchar2(30) := sys_context('userenv', 'current_schema');
