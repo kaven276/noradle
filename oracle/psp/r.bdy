@@ -117,7 +117,7 @@ create or replace package body r is
 		end loop;
 	
 		dbms_session.clear_identifier;
-		if pv.bsid is not null then
+		if false then
 			if ra.headers.exists('user-agent') then
 				-- at session creation
 				k_gac.gset('UA_CTX', v_uamd5, nvl(ra.headers('user-agent'), 'NULL'));
