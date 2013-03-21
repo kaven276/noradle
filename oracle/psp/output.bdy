@@ -4,9 +4,11 @@ create or replace package body output is
 	procedure chunk_init is
 	begin
 		pv.pg_buf   := '';
+		pv.ph_buf   := '';
 		pv.pg_index := 0;
 		pv.pg_len   := 0;
 		pv.pg_parts.delete;
+		pv.ph_parts.delete;
 	end;
 
 	procedure "_init"(passport pls_integer) is
@@ -18,6 +20,16 @@ create or replace package body output is
 		pv.pg_css   := '';
 		pv.pg_cssno := null;
 		pv.flushed  := false;
+	end;
+
+	-- private
+	function get_len return pls_integer is
+	begin
+		if pv.pg_nchar then
+			return pv.pg_len + lengthb(pv.pg_buf) + t.tf(pv.use_bom, 3, 0);
+		else
+			return pv.pg_len + lengthb(pv.ph_buf) + t.tf(pv.use_bom, 3, 0);
+		end if;
 	end;
 
 	procedure write_head is
@@ -32,7 +44,7 @@ create or replace package body output is
 			h.header_close;
 		end if;
 	
-		pv.headers('x-pw-ori-len') := to_number(pv.pg_len + nvl(lengthb(pv.pg_buf), 0));
+		pv.headers('x-pw-ori-len') := to_char(get_len);
 	
 		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 		n := pv.headers.first;
@@ -50,10 +62,17 @@ create or replace package body output is
 
 	procedure switch_css is
 	begin
-		pv.pg_parts(pv.pg_index + 1) := pv.pg_buf;
-		pv.pg_parts(pv.pg_index + 2) := ' ';
-		pv.pg_len := pv.pg_len + lengthb(pv.pg_buf) + 1;
-		pv.pg_buf := '';
+		if pv.pg_nchar then
+			pv.pg_parts(pv.pg_index + 1) := pv.pg_buf;
+			pv.pg_parts(pv.pg_index + 2) := ' ';
+			pv.pg_len := pv.pg_len + lengthb(pv.pg_buf) + 1;
+			pv.pg_buf := '';
+		else
+			pv.ph_parts(pv.pg_index + 1) := pv.ph_buf;
+			pv.ph_parts(pv.pg_index + 2) := ' ';
+			pv.pg_len := pv.pg_len + lengthb(pv.ph_buf) + 1;
+			pv.ph_buf := '';
+		end if;
 		pv.pg_cssno := pv.pg_index + 2;
 		pv.pg_index := pv.pg_index + 2;
 	end;
@@ -77,21 +96,30 @@ create or replace package body output is
 	-- private
 	procedure write_buf is
 	begin
-		if pv.pg_conv then
-			for i in 1 .. pv.pg_index loop
-				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
-			end loop;
-			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
-		elsif pv.pg_nchar then
-			for i in 1 .. pv.pg_index loop
-				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_parts(i), pv.charset_ora, pv.cs_nchar));
-			end loop;
-			pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar));
+		if not pv.pg_conv then
+			if pv.pg_nchar then
+				for i in 1 .. pv.pg_index loop
+					pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
+				end loop;
+				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+			else
+				for i in 1 .. pv.pg_index loop
+					pv.wlen := utl_tcp.write_text(pv.c, pv.ph_parts(i));
+				end loop;
+				pv.wlen := utl_tcp.write_text(pv.c, pv.ph_buf);
+			end if;
 		else
-			for i in 1 .. pv.pg_index loop
-				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_parts(i), pv.charset_ora, pv.cs_nchar));
-			end loop;
-			pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_buf, pv.charset_ora, pv.cs_nchar));
+			if pv.pg_nchar then
+				for i in 1 .. pv.pg_index loop
+					pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_parts(i), pv.charset_ora, pv.cs_nchar));
+				end loop;
+				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar));
+			else
+				for i in 1 .. pv.pg_index loop
+					pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_parts(i), pv.charset_ora, pv.cs_nchar));
+				end loop;
+				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_buf, pv.charset_ora, pv.cs_nchar));
+			end if;
 		end if;
 		chunk_init;
 	end;
@@ -173,7 +201,7 @@ create or replace package body output is
 	end;
 
 	procedure finish is
-		v_len integer := pv.pg_len + nvl(lengthb(pv.pg_buf), 0);
+		v_len integer := get_len;
 		v_raw raw(32767);
 		v_md5 varchar2(32);
 		v_tmp nvarchar2(32767);
@@ -194,7 +222,7 @@ create or replace package body output is
 				else
 					h.content_type;
 					h.line('<script>history.back();</script>');
-					v_len := lengthb(pv.pg_buf);
+					v_len := get_len;
 				end if;
 			end if;
 			goto print_http_headers;
@@ -243,7 +271,7 @@ create or replace package body output is
 			pv.content_md5 := false;
 		end if;
 	
-		if pv.content_md5 or pv.etag_md5 then
+		if (pv.content_md5 or pv.etag_md5) and pv.pg_nchar then
 			dbms_lob.createtemporary(v_lob, true, dur => dbms_lob.call);
 			for i in 1 .. pv.pg_index loop
 				dbms_lob.writeappend(v_lob, length(pv.pg_parts(i)), pv.pg_parts(i));
