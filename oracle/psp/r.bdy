@@ -402,6 +402,11 @@ create or replace package body r is
 		pv.cs_req := pv.cs_char;
 	end;
 
+	procedure req_charset_ndb is
+	begin
+		pv.cs_req := pv.cs_nchar;
+	end;
+
 	procedure req_charset_utf8 is
 	begin
 		pv.cs_req := 'AL32UTF8';

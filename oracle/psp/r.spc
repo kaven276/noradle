@@ -49,6 +49,7 @@ create or replace package r is
 
 	procedure req_charset(cs varchar2);
 	procedure req_charset_db;
+	procedure req_charset_ndb;
 	procedure req_charset_utf8;
 
 	procedure setc
