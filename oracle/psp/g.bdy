@@ -17,11 +17,15 @@ create or replace package body g is
 		raise pv.ex_fltr_done;
 	end;
 
-	procedure feedback is
+	procedure feedback(value boolean := true) is
 	begin
-		if output.prevent_flush('g.feedback') then
-			pv.feedback := true;
-			raise pv.ex_resp_done;
+		if value then
+			if output.prevent_flush('g.feedback') then
+				pv.feedback := true;
+				raise pv.ex_resp_done;
+			end if;
+		else
+			pv.feedback := false;
 		end if;
 	end;
 
