@@ -204,7 +204,6 @@ create or replace package body output is
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);
 				n  varchar2(30);
-				e  pv.str_arr;
 			begin
 				-- write fixed head
 				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
@@ -216,8 +215,8 @@ create or replace package body output is
 					v := v || pv.cookies(n) || nl;
 					n := pv.cookies.next(n);
 				end loop;
-				pv.cookies := e;
-				pv.wlen    := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+				pv.cookies.delete;
+				pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
 			end;
 			-- after above, write feedback page
 		end if;
