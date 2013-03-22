@@ -182,12 +182,12 @@ create or replace package body k_http is
 		pv.pg_conv  := not pv.charset_ora in (pv.cs_char, pv.cs_nchar);
 		pv.cs_req   := pv.charset_ora;
 		declare
-			v_raw raw(1);
+			v_raw raw(6);
 		begin
 			v_raw := utl_i18n.string_to_raw('?', pv.charset_ora);
 		exception
 			when others then
-				e.chk(true, -20001, 'other than unicode(utf-8) and db charset is not supported yet');
+				e.chk(true, -20001, 'other than unicode(utf-8) and db charset is not supported yet ' || pv.charset_ora);
 		end;
 		pv.headers('Content-Type') := mime_type || '; charset=' || charset;
 		-- r.unescape_parameters;
