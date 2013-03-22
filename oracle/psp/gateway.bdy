@@ -46,17 +46,6 @@ create or replace package body gateway is
 		end if;
 	end;
 
-	function client_allow_quit return boolean is
-		c   utl_tcp.connection;
-		rpl char(1);
-		len pls_integer;
-	begin
-		make_conn(c, -1);
-		len := utl_tcp.read_text(c, rpl, 1);
-		utl_tcp.close_connection(c);
-		return rpl = 'Y';
-	end;
-
 	procedure listen is
 		no_dad_auth_entry1 exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry1, -942);
@@ -95,12 +84,12 @@ create or replace package body gateway is
 			<<read_request>>
 		
 			-- check if max lifetime reach
-			if sysdate > pv.svr_stime + k_cfg.server_control().max_lifetime and client_allow_quit then
+			if sysdate > pv.svr_stime + k_cfg.server_control().max_lifetime then
 				goto the_end;
 			end if;
 		
 			-- check if stop singal arrived
-			if get_alert_quit and client_allow_quit then
+			if get_alert_quit then
 				goto the_end;
 			end if;
 		
@@ -188,7 +177,7 @@ create or replace package body gateway is
 			end if;
 		
 			pv.svr_req_cnt := pv.svr_req_cnt + 1;
-			if pv.svr_req_cnt >= k_cfg.server_control().max_requests and client_allow_quit then
+			if pv.svr_req_cnt >= k_cfg.server_control().max_requests then
 				goto the_end;
 			end if;
 		
