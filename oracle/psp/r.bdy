@@ -85,7 +85,7 @@ create or replace package body r is
 					v_dad := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
-				if instrb(',' || lower(k_cfg.server_control().dbu_filter) || ',', v_dad) = 0 then
+				if not regexp_like(v_dad, lower(k_cfg.server_control().dbu_filter)) then
 					gv_dbu := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
