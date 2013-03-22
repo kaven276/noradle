@@ -262,8 +262,14 @@ create or replace package body output is
 				else
 					null;
 			end case;
-			pv.pg_parts(pv.pg_cssno) := v_tmp;
-			v_len := v_len + lengthb(v_tmp) - 1;
+			if pv.pg_nchar then
+				pv.pg_parts(pv.pg_cssno) := v_tmp;
+				v_len := v_len + lengthb(v_tmp) - 1;
+			else
+				pv.ph_parts(pv.pg_cssno) := to_char(v_tmp);
+				v_len := v_len + lengthb(pv.ph_parts(pv.pg_cssno)) - 1;
+			end if;
+		
 		end if;
 	
 		-- zip is for streamed output, it's conflict with content_md5 computation
