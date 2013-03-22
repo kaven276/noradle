@@ -26,9 +26,9 @@ create or replace package body output is
 	function get_len return pls_integer is
 	begin
 		if pv.pg_nchar then
-			return pv.pg_len + lengthb(pv.pg_buf) + nvl(lengthb(pv.bom) / 2, 0);
+			return pv.pg_len + nvl(lengthb(pv.pg_buf), 0) + nvl(lengthb(pv.bom) / 2, 0);
 		else
-			return pv.pg_len + lengthb(pv.ph_buf) + nvl(lengthb(pv.bom) / 2, 0);
+			return pv.pg_len + nvl(lengthb(pv.ph_buf), 0) + nvl(lengthb(pv.bom) / 2, 0);
 		end if;
 	end;
 
