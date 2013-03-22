@@ -26,9 +26,9 @@ create or replace package body output is
 	function get_len return pls_integer is
 	begin
 		if pv.pg_nchar then
-			return pv.pg_len + lengthb(pv.pg_buf) + t.tf(pv.use_bom, 3, 0);
+			return pv.pg_len + lengthb(pv.pg_buf) + nvl(lengthb(pv.bom) / 2, 0);
 		else
-			return pv.pg_len + lengthb(pv.ph_buf) + t.tf(pv.use_bom, 3, 0);
+			return pv.pg_len + lengthb(pv.ph_buf) + nvl(lengthb(pv.bom) / 2, 0);
 		end if;
 	end;
 
@@ -44,6 +44,9 @@ create or replace package body output is
 			h.header_close;
 		end if;
 	
+		if pv.bom is not null then
+			pv.headers('x-pw-bom-hex') := pv.bom;
+		end if;
 		pv.headers('x-pw-ori-len') := to_char(get_len);
 	
 		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
@@ -58,6 +61,7 @@ create or replace package body output is
 			n := pv.cookies.next(n);
 		end loop;
 		pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+		pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
 	end;
 
 	procedure switch_css is

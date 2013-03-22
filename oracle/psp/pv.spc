@@ -25,6 +25,7 @@ create or replace package pv is
 
 	-- response header control/state
 	header_writen boolean; -- prevent dup header write when flush
+	bom           varchar2(10);
 	allow         varchar2(100);
 	status_code   number(3);
 	mime_type     varchar2(100);

@@ -15,6 +15,11 @@ create or replace package body k_http is
 		output.flush;
 	end;
 
+	procedure use_bom(value varchar2) is
+	begin
+		pv.bom := replace(value, ' ', '');
+	end;
+
 	-- public
 	procedure write_raw(data in out nocopy raw) is
 		v_len pls_integer;
