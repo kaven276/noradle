@@ -4,7 +4,6 @@ create or replace package body url_b is
 	begin
 		p.h('.css,.js');
 		p.script('url_test1_b/proc.js');
-		p.scripts('pw/jquery/jquery-1.6.4.min,pw/pwTree');
 		p.style_open;
 		p.line('a{display:block;line-height:1.5em;}');
 		p.line('p{margin:0.2em;}');
