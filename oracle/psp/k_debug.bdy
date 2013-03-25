@@ -46,5 +46,10 @@ create or replace package body k_debug is
 			dbms_pipe.purge(name);
 	end;
 
+	procedure set_run_comment(value varchar2) is
+	begin
+		pv.hp_label := value;
+	end;
+
 end k_debug;
 /

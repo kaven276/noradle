@@ -18,5 +18,7 @@ create or replace package k_debug is
 		name varchar2 := 'node2psp'
 	);
 
+	procedure set_run_comment(value varchar2);
+
 end k_debug;
 /
