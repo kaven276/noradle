@@ -110,7 +110,7 @@ create or replace package body k_gw is
 			when pv.ex_resp_done then
 				null;
 			when others then
-				k_debug.trace(st('k_gw.do core', sqlcode, sqlerrm));
+				k_debug.trace(st('k_gw.do core', sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
 		end;

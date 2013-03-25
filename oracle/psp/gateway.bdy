@@ -14,9 +14,8 @@ create or replace package body gateway is
 		c    in out nocopy utl_tcp.connection,
 		flag pls_integer
 	) is
-		v_sid    pls_integer;
-		v_seq    pls_integer;
-		v_result pls_integer;
+		v_sid pls_integer;
+		v_seq pls_integer;
 		function pi2r(i binary_integer) return raw is
 		begin
 			return utl_raw.cast_from_binary_integer(i);
@@ -29,7 +28,7 @@ create or replace package body gateway is
 																 out_buffer_size => 0,
 																 tx_timeout      => 3);
 		select a.sid, a.serial# into v_sid, v_seq from v$session a where a.sid = sys_context('userenv', 'sid');
-		v_result := utl_tcp.write_raw(c, utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_seq), pi2r(pv.in_seq * flag)));
+		pv.wlen := utl_tcp.write_raw(c, utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_seq), pi2r(pv.in_seq * flag)));
 	end;
 
 	-- Refactored procedure quit
@@ -140,7 +139,7 @@ create or replace package body gateway is
 				when pv.ex_quit then
 					goto the_end;
 				when others then
-					k_debug.trace(st('protocol,sqlcode,sqlerrm', pv.protocol, sqlcode, sqlerrm));
+					k_debug.trace(st('page before exection', pv.protocol, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 					goto the_end;
 			end;
 			pv.firstpg := false;
