@@ -85,7 +85,9 @@ create or replace package body r is
 					v_dad := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
-				if not regexp_like(v_dad, lower(k_cfg.server_control().dbu_filter)) then
+				if regexp_like(v_dad, lower(k_cfg.server_control().dbu_filter)) then
+					gv_dbu := v_dad;
+				else
 					gv_dbu := lower(k_cfg.server_control().default_dbu);
 				end if;
 			
@@ -628,7 +630,7 @@ create or replace package body r is
 
 	function dbu return varchar2 is
 	begin
-		return nvl(gv_dbu, v_dad);
+		return gv_dbu;
 	end;
 
 	function file return varchar2 is
