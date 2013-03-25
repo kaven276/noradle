@@ -40,10 +40,8 @@ create or replace package body output is
 	begin
 		if pv.header_writen then
 			return;
-		else
-			pv.header_writen := true;
-			h.header_close;
 		end if;
+		pv.header_writen := true;
 	
 		if pv.bom is not null then
 			pv.headers('x-pw-bom-hex') := pv.bom;
