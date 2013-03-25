@@ -98,8 +98,11 @@ create or replace package body output is
 	end;
 
 	-- private
-	procedure write_buf is
+	procedure write_buf(p_len pls_integer := get_len) is
 	begin
+		if p_len = 0 then
+			return;
+		end if;
 		if not pv.pg_conv then
 			if pv.pg_nchar then
 				for i in 1 .. pv.pg_index loop
@@ -316,7 +319,7 @@ create or replace package body output is
 		if not pv.pg_conv then
 			pv.headers('Content-Length') := to_char(v_len);
 			write_head;
-			write_buf;
+			write_buf(v_len);
 			if pv.etag_md5 then
 				if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
 					return;
@@ -324,7 +327,7 @@ create or replace package body output is
 			end if;
 		else
 			write_head;
-			write_buf;
+			write_buf(v_len);
 			pv.wlen := utl_tcp.write_text(pv.c, pv.end_marker);
 		end if;
 	
