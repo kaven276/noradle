@@ -20,6 +20,7 @@ create or replace package body output is
 		pv.pg_css   := '';
 		pv.pg_cssno := null;
 		pv.flushed  := false;
+		p.gv_xhtp   := false;
 	end;
 
 	-- private
