@@ -70,13 +70,22 @@ create or replace package body k_ext_call is
 				goto connected;
 			exception
 				when utl_tcp.network_error then
-					k_debug.trace(st('ext_hub connect error (host:port)', i.host, i.port));
+					if v_count = 1 then
+						k_debug.trace(st('DCO: connect error (host:port,ausid)',
+														 i.host || ':' || i.port,
+														 sys_context('userenv', 'sessionid')));
+					end if;
 					continue;
 			end;
 		end loop;
 		dbms_lock.sleep(3);
 		goto make_connection;
 		<<connected>>
+		if v_count > 1 then
+			k_debug.trace(st('DCO: connect after failure (host:port,ausid)',
+											 dcopv.host || ':' || dcopv.port,
+											 sys_context('userenv', 'sessionid')));
+		end if;
 		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
 		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con,
 																			utl_raw.concat(pi2r(197610262),
@@ -90,13 +99,14 @@ create or replace package body k_ext_call is
 	procedure check_reconnect is
 		pragma autonomous_transaction;
 		v_sts number(1);
+		v_raw raw(1);
 	begin
 		dbms_alert.waitone('Noradle-DCO-EXTHUB-QUIT', dcopv.tmp_s, v_sts, 0);
 		if v_sts = 0 and dcopv.tmp_s = dcopv.host || ':' || dcopv.port then
-			k_debug.trace(st('check_reconnect find quit signal', sys_context('userenv', 'sessionid'), dcopv.onway));
+			k_debug.trace(st('DCO: check_reconnect find quit signal', sys_context('userenv', 'sessionid'), dcopv.onway));
 			-- read all pending reply and then reconnect
 			loop
-				k_debug.trace(st('reading one pending reply', sys_context('userenv', 'sessionid'), dcopv.onway));
+				k_debug.trace(st('DCO: reading one pending reply', sys_context('userenv', 'sessionid'), dcopv.onway));
 				exit when dcopv.onway = 0;
 				dcopv.tmp_b := read_response(-1, dcopv.zblb, null);
 			end loop;
@@ -119,27 +129,31 @@ create or replace package body k_ext_call is
 			raise_application_error(-20000, 'DCO flush attempt in half filled request, action aborted');
 		end if;
 		check_reconnect;
-		v_pos := 0;
-		<<write_tcp>>
-		begin
-			v_wlen := dcopv.chksz;
-			for i in 1 .. ceil(dcopv.pos_head / dcopv.chksz) loop
-				if v_pos + dcopv.chksz > dcopv.pos_head then
-					v_wlen := dcopv.pos_head - v_pos;
-				end if;
-				dbms_lob.read(dcopv.msg, v_wlen, v_pos + 1, v_raw);
+		v_pos  := 0;
+		v_wlen := dcopv.chksz;
+		for i in 1 .. ceil(dcopv.pos_head / dcopv.chksz) loop
+			if v_pos + dcopv.chksz > dcopv.pos_head then
+				v_wlen := dcopv.pos_head - v_pos;
+			end if;
+			dbms_lob.read(dcopv.msg, v_wlen, v_pos + 1, v_raw);
+		
+			<<write_tcp>>
+			begin
 				v_wlen := utl_tcp.write_raw(dcopv.con, v_raw, v_wlen);
-				v_pos  := v_pos + v_wlen;
-			end loop;
-		exception
-			when utl_tcp.network_error or dcopv.ex_tcp_security then
-				if v_err > 0 then
-					raise;
-				end if;
-				v_err := v_err + 1;
-				connect_router_proxy;
-				goto write_tcp;
-		end;
+			exception
+				when utl_tcp.network_error or dcopv.ex_tcp_security then
+					k_debug.trace('DCO tcp write error');
+					if v_err > 0 then
+						raise;
+					end if;
+					v_err := v_err + 1;
+					connect_router_proxy;
+					goto write_tcp;
+			end;
+			v_pos := v_pos + v_wlen;
+		end loop;
+		k_debug.trace('DCO tcp write a batch');
+	
 		dcopv.pos_head := 0;
 		dcopv.pos_tail := 12;
 		dcopv.onway    := dcopv.onway + dcopv.onbuf;
