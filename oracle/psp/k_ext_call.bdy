@@ -113,6 +113,20 @@ create or replace package body k_ext_call is
 				dcopv.tmp_b := read_response(-1, dcopv.zblb, null);
 			end loop;
 			connect_router_proxy;
+		else
+			-- use read test
+			begin
+				-- This function does not return 
+				-- until the specified number of bytes have been read, 
+				-- or the end of input has been reached.
+				dcopv.rtcp := utl_tcp.read_raw(dcopv.con, v_raw, 1, true);
+			exception
+				when utl_tcp.end_of_input or utl_tcp.network_error then
+					k_debug.trace(st('find ext-hub end connection'), 'DCO');
+					connect_router_proxy;
+				when others then
+					null;
+			end;
 		end if;
 		rollback;
 	end check_reconnect;
