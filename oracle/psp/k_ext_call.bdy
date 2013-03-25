@@ -71,9 +71,10 @@ create or replace package body k_ext_call is
 			exception
 				when utl_tcp.network_error then
 					if v_count = 1 then
-						k_debug.trace(st('DCO: connect error (host:port,ausid)',
+						k_debug.trace(st('connect error (host:port,ausid)',
 														 i.host || ':' || i.port,
-														 sys_context('userenv', 'sessionid')));
+														 sys_context('userenv', 'sessionid')),
+													'DCO');
 					end if;
 					continue;
 			end;
@@ -82,9 +83,10 @@ create or replace package body k_ext_call is
 		goto make_connection;
 		<<connected>>
 		if v_count > 1 then
-			k_debug.trace(st('DCO: connect after failure (host:port,ausid)',
+			k_debug.trace(st('connect after failure (host:port,ausid)',
 											 dcopv.host || ':' || dcopv.port,
-											 sys_context('userenv', 'sessionid')));
+											 sys_context('userenv', 'sessionid')),
+										'DCO');
 		end if;
 		select a.sid, a.serial# into v_sid, v_serial from v$session a where a.sid = sys_context('userenv', 'sid');
 		dcopv.tmp_pi := utl_tcp.write_raw(dcopv.con,
@@ -103,10 +105,10 @@ create or replace package body k_ext_call is
 	begin
 		dbms_alert.waitone('Noradle-DCO-EXTHUB-QUIT', dcopv.tmp_s, v_sts, 0);
 		if v_sts = 0 and dcopv.tmp_s = dcopv.host || ':' || dcopv.port then
-			k_debug.trace(st('DCO: check_reconnect find quit signal', sys_context('userenv', 'sessionid'), dcopv.onway));
+			k_debug.trace(st('check_reconnect find quit signal', sys_context('userenv', 'sessionid'), dcopv.onway), 'DCO');
 			-- read all pending reply and then reconnect
 			loop
-				k_debug.trace(st('DCO: reading one pending reply', sys_context('userenv', 'sessionid'), dcopv.onway));
+				k_debug.trace(st('reading one pending reply', sys_context('userenv', 'sessionid'), dcopv.onway), 'DCO');
 				exit when dcopv.onway = 0;
 				dcopv.tmp_b := read_response(-1, dcopv.zblb, null);
 			end loop;
@@ -142,7 +144,7 @@ create or replace package body k_ext_call is
 				v_wlen := utl_tcp.write_raw(dcopv.con, v_raw, v_wlen);
 			exception
 				when utl_tcp.network_error or dcopv.ex_tcp_security then
-					k_debug.trace('DCO tcp write error');
+					k_debug.trace('tcp write error', 'DCO');
 					if v_err > 0 then
 						raise;
 					end if;
@@ -152,7 +154,7 @@ create or replace package body k_ext_call is
 			end;
 			v_pos := v_pos + v_wlen;
 		end loop;
-		k_debug.trace('DCO tcp write a batch');
+		k_debug.trace('tcp write a batch', 'DCO');
 	
 		dcopv.pos_head := 0;
 		dcopv.pos_tail := 12;
@@ -256,10 +258,10 @@ create or replace package body k_ext_call is
 		else
 			v_timeout := v_timeout - (dbms_utility.get_time - v_start);
 			if timeout is null or v_timeout > 0 then
-				-- k_debug.trace(st('dco before time out, continue try'));
+				-- k_debug.trace(st('before time out, continue try'),'DCO');
 				goto read_response;
 			else
-				-- k_debug.trace(st('dco after time out, abort'));
+				-- k_debug.trace(st('after time out, abort'),'DCO');
 				req_blb := null;
 				dcopv.rsps.delete(req_seq);
 				return false;
