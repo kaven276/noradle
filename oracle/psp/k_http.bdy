@@ -302,25 +302,6 @@ create or replace package body k_http is
 
 	procedure header_close is
 	begin
-		if false and pv.allow is null then
-			pv.allow := case r.type
-										when 'b' then
-										 'GET'
-										when 'c' then
-										 'POST'
-										else
-										 'GET,POST'
-									end;
-		end if;
-	
-		if pv.allow is not null and instr(',' || pv.allow || ',', r.method) <= 0 then
-			h.status_line(405); -- Method Not Allowed
-			pv.headers('Allow') := pv.allow;
-			if not pv.headers.exists('Content-Length') then
-				raise pv.ex_resp_done;
-			end if;
-		end if;
-	
 		if r.lmt = pv.max_lmt then
 			h.status_line(304);
 			if pv.use_stream then
@@ -363,11 +344,20 @@ create or replace package body k_http is
 		e.raise(-20025, 'PSP.WEB have not implenment http digest authentication.');
 	end;
 
+	procedure return_405_not_allow is
+	begin
+		h.status_line(405); -- Method Not Allowed
+		pv.headers('Allow') := pv.allow;
+		output."_init"(80526);
+		h.line('http method "' || r.method || '" are not allowed, accept "' || pv.allow || ' "only');
+		raise pv.ex_resp_done;
+	end;
+
 	procedure allow_get is
 	begin
 		pv.allow := 'GET';
 		if r.method != 'GET' then
-			h.header_close;
+			return_405_not_allow;
 		end if;
 	end;
 
@@ -375,7 +365,7 @@ create or replace package body k_http is
 	begin
 		pv.allow := 'POST';
 		if r.method != 'POST' then
-			h.header_close;
+			return_405_not_allow;
 		end if;
 	end;
 
@@ -387,8 +377,8 @@ create or replace package body k_http is
 	procedure allow(methods varchar2) is
 	begin
 		pv.allow := methods;
-		if instrb(',' || methods || ',', r.method) <= 0 then
-			h.header_close;
+		if instrb(',' || methods || ',', ',' || r.method || ',') <= 0 then
+			return_405_not_allow;
 		end if;
 	end;
 
