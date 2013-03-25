@@ -96,6 +96,8 @@ create or replace package k_http is
 	procedure allow_get_post;
 	procedure allow(methods varchar2);
 
+	procedure check_if_not_modified_since;
+
 	procedure set_cookie
 	(
 		name    in varchar2,

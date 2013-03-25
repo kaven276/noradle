@@ -300,14 +300,18 @@ create or replace package body k_http is
 		pv.content_md5 := null;
 	end;
 
-	procedure header_close is
+	procedure check_if_not_modified_since is
 	begin
 		if r.lmt = pv.max_lmt then
 			h.status_line(304);
-			if pv.use_stream then
-				raise pv.ex_resp_done;
-			end if;
+			output."_init"(80526);
+			raise pv.ex_resp_done;
 		end if;
+	end;
+
+	procedure header_close is
+	begin
+		check_if_not_modified_since;
 	end;
 
 	procedure go
