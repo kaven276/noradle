@@ -23,8 +23,8 @@ create or replace package body e is
 
 	procedure report
 	(
-		cond   boolean,
-		msg    varchar2
+		cond boolean,
+		msg  varchar2
 	) is
 	begin
 		if not cond then
@@ -32,7 +32,6 @@ create or replace package body e is
 		end if;
 		h.status_line(403);
 		h.content_type('text/html');
-		h.header_close;
 		p.init;
 		p.h;
 		p.p(msg);
