@@ -6,5 +6,7 @@ create or replace package basic_io_b is
 
 	procedure parameters;
 
+	procedure any_size;
+
 end basic_io_b;
 /

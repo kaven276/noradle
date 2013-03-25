@@ -14,6 +14,7 @@ create or replace package pv is
 	protocol varchar2(30); -- call protocol (gateway.listen to branch req read and init)
 	schema   varchar2(30); -- to be executing schema (gateway.listen)
 	prog     varchar2(30); -- to be executing prog (k_gw.do)
+	hp_label varchar2(2047); -- set to dbmshp run comment
 
 	$if k_ccflag.use_time_stats $then
 	elpt number(10); -- elapsed-time

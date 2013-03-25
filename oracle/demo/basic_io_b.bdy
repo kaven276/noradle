@@ -127,5 +127,15 @@ create or replace package body basic_io_b is
 	
 	end;
 
+	procedure any_size is
+		v_size  number(8) := r.getn('size', 0);
+		v_chunk varchar2(1024) := rpad('H', 1024, '.');
+	begin
+		k_debug.set_run_comment('size:' || v_size);
+		for i in 1 .. v_size loop
+			h.write(v_chunk);
+		end loop;
+	end;
+
 end basic_io_b;
 /

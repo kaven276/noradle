@@ -108,6 +108,7 @@ create or replace package body gateway is
 			v_hprof := k_cfg.server_control().hprof;
 			if v_hprof is not null then
 				dbms_hprof.start_profiling('PLSHPROF_DIR', v_trc);
+				pv.hp_label := '';
 			end if;
 		
 			$if k_ccflag.use_time_stats $then
@@ -172,7 +173,7 @@ create or replace package body gateway is
 		
 			if v_hprof is not null then
 				dbms_hprof.stop_profiling;
-				tmp.s := 'psp.web://' || r.dbu || '/' || r.prog;
+				tmp.s := nvl(pv.hp_label, 'psp.web://' || r.dbu || '/' || r.prog);
 				tmp.n := dbms_hprof.analyze('PLSHPROF_DIR', v_trc, run_comment => tmp.s);
 			end if;
 		
