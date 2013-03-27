@@ -1,4 +1,4 @@
-create or replace package data_server is
+create or replace package any_server is
 
 	procedure serv;
 
@@ -8,5 +8,5 @@ create or replace package data_server is
 		errm varchar2
 	);
 
-end data_server;
+end any_server;
 /
