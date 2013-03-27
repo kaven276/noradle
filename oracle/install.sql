@@ -24,12 +24,16 @@ whenever sqlerror continue
 drop sequence GAC_CID_SEQ;
 drop table SERVER_CONTROL_T cascade constraints
 drop table EXT_URL_T cascade constraints
+drop table EXTHUB_CONFIG_T cascade constraints
+drop table ASYNC_CONTROL_T cascade constraints
+
 whenever sqlerror exit
 @psp/install_psp_obj.sql
 set scan on
 exec DBMS_UTILITY.COMPILE_SCHEMA('&pspdbu',false);
-insert into SERVER_CONTROL_T (GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME, STATIC_URL)
-values ('127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:30', 'http://127.0.0.1:81');
+insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,
+STATIC_URL, DBU_FILTER)
+values ('default', '127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:00', 'http://127.0.0.1','(demo)');
 commit;
 @@contexts.sql
 @@grant_api.sql
