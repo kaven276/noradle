@@ -61,6 +61,11 @@ prompt ======================
 prompt
 @@async.spc
 prompt
+prompt Creating package CACHE
+prompt ======================
+prompt
+@@cache.spc
+prompt
 prompt Creating package DATA_SERVER
 prompt ============================
 prompt
@@ -151,11 +156,6 @@ prompt =====================
 prompt
 @@k_gw.spc
 prompt
-prompt Creating package PV
-prompt ===================
-prompt
-@@pv.spc
-prompt
 prompt Creating package K_HTTP
 prompt =======================
 prompt
@@ -211,7 +211,10 @@ prompt ====================
 prompt
 @@pdu.spc
 prompt
+prompt Creating package PV
+prompt ===================
 prompt
+@@pv.spc
 prompt
 prompt Creating package R
 prompt ==================
@@ -233,11 +236,6 @@ prompt ===================
 prompt
 @@rs.spc
 prompt
-prompt Creating package SQL_SERVER
-prompt ===========================
-prompt
-@@sql_server.spc
-prompt
 prompt Creating package TESTS
 prompt ======================
 prompt
@@ -247,6 +245,11 @@ prompt Creating package TMP
 prompt ====================
 prompt
 @@tmp.spc
+prompt
+prompt Creating function HASH
+prompt ======================
+prompt
+@@hash.fnc
 prompt
 prompt Creating function N
 prompt ===================
@@ -258,6 +261,10 @@ prompt ===================
 prompt
 @@u.fnc
 prompt
+prompt Creating procedure DAD_AUTH_ENTRY
+prompt =================================
+prompt
+@@dad_auth_entry.prc
 prompt
 prompt Creating package body ANY_SERVER
 prompt ================================
@@ -269,6 +276,10 @@ prompt ===========================
 prompt
 @@async.bdy
 prompt
+prompt Creating package body CACHE
+prompt ===========================
+prompt
+@@cache.bdy
 prompt
 prompt Creating package body DATA_SERVER
 prompt =================================
