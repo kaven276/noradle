@@ -56,10 +56,7 @@ prompt ===================
 prompt
 @@kv.spc
 prompt
-prompt Creating package K_BROKER
-prompt =========================
 prompt
-@@k_broker.spc
 prompt
 prompt Creating package K_CCFLAG
 prompt =========================
@@ -156,10 +153,7 @@ prompt =======================
 prompt
 @@k_xhtp.spc
 prompt
-prompt Creating package MV2BG
-prompt ======================
 prompt
-@@mv2bg.spc
 prompt
 prompt Creating package OUTPUT
 prompt =======================
@@ -171,10 +165,7 @@ prompt ====================
 prompt
 @@pdu.spc
 prompt
-prompt Creating package PVEVK
-prompt ======================
 prompt
-@@pvevk.spc
 prompt
 prompt Creating package R
 prompt ==================
@@ -211,10 +202,8 @@ prompt ===================
 prompt
 @@u.fnc
 prompt
-prompt Creating procedure AUTO_STREAM_H
 prompt ================================
 prompt
-@@auto_stream_h.prc
 prompt
 prompt Creating package body E
 prompt =======================
@@ -236,10 +225,7 @@ prompt ========================
 prompt
 @@kv.bdy
 prompt
-prompt Creating package body K_BROKER
-prompt ==============================
 prompt
-@@k_broker.bdy
 prompt
 prompt Creating package body K_CCFLAG
 prompt ==============================
@@ -321,10 +307,7 @@ prompt ============================
 prompt
 @@k_xhtp.bdy
 prompt
-prompt Creating package body MV2BG
-prompt ===========================
 prompt
-@@mv2bg.bdy
 prompt
 prompt Creating package body OUTPUT
 prompt ============================
@@ -345,5 +328,4 @@ prompt Creating package body RS
 prompt ========================
 prompt
 @@rs.bdy
-
 spool off
