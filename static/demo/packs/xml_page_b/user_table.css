@@ -1,0 +1,15 @@
+body {
+	text-align:center;
+}
+table {
+	border:1px solid orange;
+	border-collapse:collapse;
+	text-align:left;
+	margin-top:10em;
+}
+table tr.black {
+	background-color:yellow;
+}
+table tr td {
+	padding:10px;
+}

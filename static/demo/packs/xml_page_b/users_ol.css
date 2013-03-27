@@ -1,0 +1,13 @@
+users {
+	display:block;
+	list-style:upper-alpha outside;
+	margin:1em;
+}
+user {
+	display:list-item;
+	line-height:2em;
+}
+user_seq, user_id, user_name, password {
+	display:inline;
+	border-bottom:1px solid gray;
+}
