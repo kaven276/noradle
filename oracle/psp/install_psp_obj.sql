@@ -11,6 +11,21 @@ prompt ==============================
 prompt
 @@async_control_t.tab
 prompt
+prompt Creating table DBMSHP_RUNS
+prompt ==========================
+prompt
+@@dbmshp_runs.tab
+prompt
+prompt Creating table DBMSHP_FUNCTION_INFO
+prompt ===================================
+prompt
+@@dbmshp_function_info.tab
+prompt
+prompt Creating table DBMSHP_PARENT_CHILD_INFO
+prompt =======================================
+prompt
+@@dbmshp_parent_child_info.tab
+prompt
 prompt Creating table EXTHUB_CONFIG_T
 prompt ==============================
 prompt
@@ -25,6 +40,11 @@ prompt Creating table SERVER_CONTROL_T
 prompt ===============================
 prompt
 @@server_control_t.tab
+prompt
+prompt Creating sequence DBMSHP_RUNNUMBER
+prompt ==================================
+prompt
+@@dbmshp_runnumber.seq
 prompt
 prompt Creating view EXT_URL_V
 prompt =======================

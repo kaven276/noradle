@@ -5,6 +5,10 @@ whenever sqlerror exit
 accept pspdbu char default 'psp' prompt 'Enter the schema/User(must already exist) for psp.web software (psp) : '
 accept demodbu char default 'demo' prompt 'Enter the schema/User(must already exist) for psp.web demo (demo) : '
 
+prompt PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path first.
+CREATE or replace DIRECTORY PLSHPROF_DIR AS '';
+remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
+
 prompt Installing objects in sys,
 pause press any key to continue ...
 remark install on sys

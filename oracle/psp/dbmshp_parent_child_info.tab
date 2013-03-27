@@ -1,0 +1,18 @@
+create table DBMSHP_PARENT_CHILD_INFO
+(
+  runid                 NUMBER,
+  parentsymid           NUMBER,
+  childsymid            NUMBER,
+  subtree_elapsed_time  INTEGER,
+  function_elapsed_time INTEGER,
+  calls                 INTEGER
+)
+;
+comment on table DBMSHP_PARENT_CHILD_INFO
+  is 'Parent-child information from a profiler runs';
+alter table DBMSHP_PARENT_CHILD_INFO
+  add foreign key (RUNID, CHILDSYMID)
+  references DBMSHP_FUNCTION_INFO (RUNID, SYMBOLID) on delete cascade;
+alter table DBMSHP_PARENT_CHILD_INFO
+  add foreign key (RUNID, PARENTSYMID)
+  references DBMSHP_FUNCTION_INFO (RUNID, SYMBOLID) on delete cascade;

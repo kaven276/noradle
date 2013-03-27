@@ -1,0 +1,23 @@
+create table DBMSHP_FUNCTION_INFO
+(
+  runid                 NUMBER not null,
+  symbolid              NUMBER not null,
+  owner                 VARCHAR2(32),
+  module                VARCHAR2(32),
+  type                  VARCHAR2(32),
+  function              VARCHAR2(4000),
+  line#                 NUMBER,
+  hash                  RAW(32),
+  namespace             VARCHAR2(32),
+  subtree_elapsed_time  INTEGER,
+  function_elapsed_time INTEGER,
+  calls                 INTEGER
+)
+;
+comment on table DBMSHP_FUNCTION_INFO
+  is 'Information about each function in a run';
+alter table DBMSHP_FUNCTION_INFO
+  add primary key (RUNID, SYMBOLID);
+alter table DBMSHP_FUNCTION_INFO
+  add foreign key (RUNID)
+  references DBMSHP_RUNS (RUNID) on delete cascade;
