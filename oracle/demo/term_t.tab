@@ -1,8 +1,8 @@
 create table TERM_T
 (
-  MSID    VARCHAR2(30) not null,
-  BGCOLOR VARCHAR2(30),
-  FGCOLOR VARCHAR2(30)
+  msid    VARCHAR2(30) not null,
+  bgcolor VARCHAR2(30),
+  fgcolor VARCHAR2(30)
 )
 ;
 alter table TERM_T

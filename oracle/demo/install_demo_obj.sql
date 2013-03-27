@@ -1,8 +1,9 @@
------------------------------------------------
--- Export file for user DEMO                 --
--- Created by Li Yong on 2012-7-20, 10:58:29 --
------------------------------------------------
+-----------------------------------------------------
+-- Export file for user DEMO                       --
+-- Created by Administrator on 2013-3-27, 21:19:36 --
+-----------------------------------------------------
 
+set define off
 spool install_demo_obj.log
 
 prompt
@@ -21,6 +22,11 @@ prompt =======================
 prompt
 @@auth_b.spc
 prompt
+prompt Creating package AUTH_S
+prompt =======================
+prompt
+@@auth_s.spc
+prompt
 prompt Creating package BASIC_IO_B
 prompt ===========================
 prompt
@@ -31,11 +37,6 @@ prompt ========================
 prompt
 @@cache_b.spc
 prompt
-prompt Creating package CALLOUT_BROKER_H
-prompt =================================
-prompt
-@@callout_broker_h.spc
-prompt
 prompt Creating package CHARSET_B
 prompt ==========================
 prompt
@@ -45,6 +46,11 @@ prompt Creating package DB_SRC_B
 prompt =========================
 prompt
 @@db_src_b.spc
+prompt
+prompt Creating package DEFAULT_B
+prompt ==========================
+prompt
+@@default_b.spc
 prompt
 prompt Creating package ERROR_B
 prompt ========================
@@ -100,6 +106,11 @@ prompt Creating package POST_FILE_B
 prompt ============================
 prompt
 @@post_file_b.spc
+prompt
+prompt Creating package PROFILE_S
+prompt ==========================
+prompt
+@@profile_s.spc
 prompt
 prompt Creating package PV
 prompt ===================
@@ -161,6 +172,16 @@ prompt ===========================
 prompt
 @@xml_page_b.spc
 prompt
+prompt Creating procedure DAD_AUTH_ENTRY
+prompt =================================
+prompt
+@@dad_auth_entry.prc
+prompt
+prompt Creating procedure HELLO
+prompt ========================
+prompt
+@@hello.prc
+prompt
 prompt Creating procedure URL_TEST1_B
 prompt ==============================
 prompt
@@ -176,6 +197,11 @@ prompt ============================
 prompt
 @@auth_b.bdy
 prompt
+prompt Creating package body AUTH_S
+prompt ============================
+prompt
+@@auth_s.bdy
+prompt
 prompt Creating package body BASIC_IO_B
 prompt ================================
 prompt
@@ -186,11 +212,6 @@ prompt =============================
 prompt
 @@cache_b.bdy
 prompt
-prompt Creating package body CALLOUT_BROKER_H
-prompt ======================================
-prompt
-@@callout_broker_h.bdy
-prompt
 prompt Creating package body CHARSET_B
 prompt ===============================
 prompt
@@ -200,6 +221,11 @@ prompt Creating package body DB_SRC_B
 prompt ==============================
 prompt
 @@db_src_b.bdy
+prompt
+prompt Creating package body DEFAULT_B
+prompt ===============================
+prompt
+@@default_b.bdy
 prompt
 prompt Creating package body ERROR_B
 prompt =============================
@@ -255,6 +281,11 @@ prompt Creating package body POST_FILE_B
 prompt =================================
 prompt
 @@post_file_b.bdy
+prompt
+prompt Creating package body PROFILE_S
+prompt ===============================
+prompt
+@@profile_s.bdy
 prompt
 prompt Creating package body RC
 prompt ========================

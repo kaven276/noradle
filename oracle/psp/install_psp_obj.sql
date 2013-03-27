@@ -321,11 +321,6 @@ prompt ==========================
 prompt
 @@k_bg.bdy
 prompt
-prompt Creating package body K_CCFLAG
-prompt ==============================
-prompt
-@@k_ccflag.bdy
-prompt
 prompt Creating package body K_CFG
 prompt ===========================
 prompt

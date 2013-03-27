@@ -6,7 +6,7 @@ create or replace package body test_c is
 		h.status_line(200);
 		h.content_type;
 		h.header_close;
-
+	
 		p.doc_type('5');
 		p.h;
 		p.ul_open;
@@ -16,7 +16,7 @@ create or replace package body test_c is
 		p.ul_close;
 	end;
 
-	-- 201——提示知道新文件的URL
+	-- 201 tip for the newly created file's URL
 	procedure do_201 is
 	begin
 		h.status_line(201);
@@ -24,28 +24,28 @@ create or replace package body test_c is
 		h.header_close;
 	end;
 
-	-- 202——接受和处理、但处理未完成
+	-- 202 accept and processing, but not done completely
 	procedure do_202 is
 	begin
 		h.status_line(202);
 		h.header_close;
 	end;
 
-	-- 203——返回信息不确定或不完整
+	-- 203 infomation is not sure or not complete
 	procedure do_203 is
 	begin
 		h.status_line(203);
 		h.header_close;
 	end;
 
-	-- 204——请求收到，但返回信息为空
+	-- 204 accept, but return null response
 	procedure do_204 is
 	begin
 		h.status_line(204);
 		h.header_close;
 	end;
 
-	-- 205——服务器完成了请求，用户代理必须复位当前已经浏览过的文件
+	-- 205 processed, but UA must
 	procedure do_205 is
 	begin
 		h.status_line(205);

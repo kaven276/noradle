@@ -103,8 +103,6 @@ create or replace package body xml_page_b is
 		v := dbms_xmlgen.newcontext(c);
 		dbms_xmlgen.setrowsettag(v, 'users');
 		dbms_xmlgen.setrowtag(v, 'user');
-		p.line('<?xml version="1.0"?>');
-		p.a('url', 'users_ol.css');
 		p.ps('<?xml-stylesheet type="text/css" href=":1" media="screen"?>', st(u('users_ol.css')));
 		p.d(dbms_xmlgen.getxmltype(v).getclobval);
 		close c;
@@ -126,7 +124,6 @@ create or replace package body xml_page_b is
 		p.ps('<?xml-stylesheet type="text/xsl" href=":1" media="screen"?>', st(u('users.xsl')));
 		p.d(dbms_xmlgen.getxmltype(v).getclobval());
 		close c;
-		p.gv_headers_str := null;
 	end;
 
 	-- has problem by now

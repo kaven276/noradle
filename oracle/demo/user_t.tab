@@ -1,8 +1,8 @@
 create table USER_T
 (
-  NAME  VARCHAR2(30) not null,
-  PASS  VARCHAR2(30) not null,
-  CTIME DATE not null
+  name  VARCHAR2(30) not null,
+  pass  VARCHAR2(30) not null,
+  ctime DATE not null
 )
 ;
 comment on table USER_T

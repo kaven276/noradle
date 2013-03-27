@@ -7,6 +7,12 @@ create or replace package body test_b is
 		h.line('<a href="test_b.d">Link to test_b.d (basic request info) </a>');
 		h.line('<a href="test_b.redirect">Link to test_b.redirect (test for redirect)</a>');
 		h.line('</pre>');
+		h.line(r.protocol);
+		h.line(r.client_addr);
+		h.line(r.client_port);
+		h.line(r.header('x-forwarded-proto'));
+		h.line(r.header('x-forwarded-for'));
+		h.line(r.header('x-forwarded-port'));
 	end;
 
 	procedure d is
@@ -39,7 +45,7 @@ create or replace package body test_b is
 		p.style_open;
 		p.line('p{line-height:1.1em;margin:0px;}');
 		p.style_close;
-		p.p('测试一下非ascii字符紧邻http header的情况');
+		p.p('test case that none ascii charset following http header');
 		p.p(r.host_prefix);
 		p.p(r.port);
 		p.p(r.method);
@@ -74,8 +80,8 @@ create or replace package body test_b is
 		h.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
 		h.line('<form action="test_c.do?type=both&type=bothtoo" method="post" accept-charset="gbk">');
 		h.line('<input name="text_input" type="text" value="http://www.google.com?q=HELLO"/>');
-		h.line('您好');
-		h.line(utl_i18n.escape_reference('您好', 'us7ascii'));
+		h.line('Hello');
+		h.line(utl_i18n.escape_reference('Hello', 'us7ascii'));
 		h.flush;
 		h.line('<input name="checkbox_input" type="checkbox" value="checkedvalue1" checked="true"/>');
 		h.line('<input name="checkbox_input" type="checkbox" value="checkedvalue2" checked="true"/>');
