@@ -176,7 +176,10 @@ prompt =======================
 prompt
 @@k_xhtp.spc
 prompt
+prompt Creating package LOB_TEST
+prompt =========================
 prompt
+@@lob_test.spc
 prompt
 prompt Creating package OUTPUT
 prompt =======================
@@ -214,6 +217,11 @@ prompt Creating package SQL_SERVER
 prompt ===========================
 prompt
 @@sql_server.spc
+prompt
+prompt Creating package TESTS
+prompt ======================
+prompt
+@@tests.spc
 prompt
 prompt Creating package TMP
 prompt ====================
@@ -362,7 +370,10 @@ prompt ============================
 prompt
 @@k_xhtp.bdy
 prompt
+prompt Creating package body LOB_TEST
+prompt ==============================
 prompt
+@@lob_test.bdy
 prompt
 prompt Creating package body OUTPUT
 prompt ============================
@@ -383,4 +394,9 @@ prompt Creating package body RS
 prompt ========================
 prompt
 @@rs.bdy
+prompt
+prompt Creating package body TESTS
+prompt ===========================
+prompt
+@@tests.bdy
 spool off
