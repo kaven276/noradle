@@ -1,40 +1,39 @@
 create table SERVER_CONTROL_T
 (
-  CFG_ID       VARCHAR2(15) default 'default' not null,
-  GW_HOST      VARCHAR2(99),
-  GW_PORT      NUMBER(5),
-  MIN_SERVERS  NUMBER(4),
-  MAX_SERVERS  NUMBER(4),
-  MAX_REQUESTS NUMBER(9),
-  MAX_LIFETIME INTERVAL DAY(4) TO SECOND(0),
-  STATIC_URL   VARCHAR2(100),
-  DEFAULT_DBU  VARCHAR2(30),
-  DBU_FILTER   VARCHAR2(1000),
-  HPROF        CHAR(1)
+  cfg_id       VARCHAR2(15) default 'default' not null,
+  gw_host      VARCHAR2(99),
+  gw_port      NUMBER(5),
+  min_servers  NUMBER(4),
+  max_servers  NUMBER(4),
+  max_requests NUMBER(9),
+  max_lifetime INTERVAL DAY(4) TO SECOND(0),
+  static_url   VARCHAR2(100),
+  default_dbu  VARCHAR2(30),
+  dbu_filter   VARCHAR2(1000),
+  hprof        CHAR(1)
 )
 ;
-comment on column SERVER_CONTROL_T.CFG_ID
+comment on column SERVER_CONTROL_T.cfg_id
   is 'different config can connect to different nodeJS gateway';
-comment on column SERVER_CONTROL_T.GW_HOST
+comment on column SERVER_CONTROL_T.gw_host
   is 'host of nodeJS gateway that listen for oracle to connect';
-comment on column SERVER_CONTROL_T.GW_PORT
+comment on column SERVER_CONTROL_T.gw_port
   is 'port of nodeJS gateway that listen for oracle to connect';
-comment on column SERVER_CONTROL_T.MIN_SERVERS
+comment on column SERVER_CONTROL_T.min_servers
   is 'minimun servers to keep, it''s also the starting servers';
-comment on column SERVER_CONTROL_T.MAX_SERVERS
+comment on column SERVER_CONTROL_T.max_servers
   is 'maximum servers in parallel';
-comment on column SERVER_CONTROL_T.MAX_REQUESTS
+comment on column SERVER_CONTROL_T.max_requests
   is 'when the number of request a server process reach this limit, the server should/will quit';
-comment on column SERVER_CONTROL_T.MAX_LIFETIME
+comment on column SERVER_CONTROL_T.max_lifetime
   is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
-comment on column SERVER_CONTROL_T.STATIC_URL
+comment on column SERVER_CONTROL_T.static_url
   is 'the common static file root url prefix';
-comment on column SERVER_CONTROL_T.DEFAULT_DBU
+comment on column SERVER_CONTROL_T.default_dbu
   is 'if dad do not match any db_user, then map to this dbu';
-comment on column SERVER_CONTROL_T.DBU_FILTER
+comment on column SERVER_CONTROL_T.dbu_filter
   is 'only filter passed dbu can access, use regexp';
-comment on column SERVER_CONTROL_T.HPROF
+comment on column SERVER_CONTROL_T.hprof
   is 'if oracle hprof is open for tuning';
 alter table SERVER_CONTROL_T
   add constraint PK_SVR_CFG primary key (CFG_ID);
-
