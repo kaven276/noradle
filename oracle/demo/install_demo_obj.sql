@@ -177,11 +177,6 @@ prompt =================================
 prompt
 @@dad_auth_entry.prc
 prompt
-prompt Creating procedure HELLO
-prompt ========================
-prompt
-@@hello.prc
-prompt
 prompt Creating procedure URL_TEST1_B
 prompt ==============================
 prompt
