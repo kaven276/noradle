@@ -1,14 +1,14 @@
 create table EXTHUB_CONFIG_T
 (
-  HOST VARCHAR2(99) not null,
-  PORT NUMBER(5) not null,
-  STS  CHAR(1),
-  SEQ  NUMBER(1)
+  host VARCHAR2(99) not null,
+  port NUMBER(5) not null,
+  sts  CHAR(1),
+  seq  NUMBER(1)
 )
 ;
-comment on column EXTHUB_CONFIG_T.STS
+comment on column EXTHUB_CONFIG_T.sts
   is 'not null for open, null for close';
-comment on column EXTHUB_CONFIG_T.SEQ
+comment on column EXTHUB_CONFIG_T.seq
   is 'lower seq is tried first, hight seq is tried after, null seq is tried last';
 alter table EXTHUB_CONFIG_T
   add constraint EXTHUB_CFG_PK primary key (HOST, PORT);
