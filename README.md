@@ -20,7 +20,7 @@ Part 1 : psp.web
 
 please see [Introduction](doc/introduction.md) at doc/introduction.md on github (format will lose)
 
-please see [Documentation Index](http://static-test.noradle.com/doc/introduction.html) at my site
+please see [Documentation Index](http://static-test.noradle.com/doc/index.html) at my site
 
 please see [Introduction](http://static-test.noradle.com/doc/introduction.html) at my site
 
