@@ -26,16 +26,15 @@ please see [API demo of PSP.WEB](http://qht-test.noradle.com/demo) at my demo si
 
 please see [App dialbook developed on PSP.WEB](http://qht-test.noradle.com/com) at production clone site (you can use 18602247741 to login)
 
-please see [License of PSP.WEB](http://static-test.noradle.com/doc/license.md) at doc/license.md
+please see [License of PSP.WEB](http://static-test.noradle.com/doc/license.html) at doc/license.md
 
-please see [Call oracle plsql stored procedure with javascript](http://static-test.noradle.com/doc/js_call_plsql.html) at doc/js_call_plsql.md
+
 
 
 Part 2 : call in db driver
 ======
 
-please see [js_call_plsql of Noradle](http://static-test.noradle.com/doc/js_call_plsql.html) at my introduction site
-
+please see [Call oracle plsql stored procedure with javascript](http://static-test.noradle.com/doc/js_call_plsql.html) at doc/js_call_plsql.md
 
 Part 3 : call out net proxy
 ======
