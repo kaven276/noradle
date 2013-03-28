@@ -40,4 +40,5 @@ please see [js_call_plsql of Noradle](http://static-test.noradle.com/doc/js_call
 Part 3 : call out net proxy
 ======
 
-please see [call external service from PL/SQL on Noradle](http://static-test.noradle.com/doc/call_out.html) at my introduction site
+please see [call external service from PL/SQL on Noradle](http://static-test.noradle.com/doc/direct_call_out.html) at
+my introduction site
