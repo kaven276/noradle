@@ -12,6 +12,7 @@ Part 1 : psp.web
 
 * [Introduction of PSP.WEB](introduction.html)
 * [Deployment of Noradle](deployment.html)
+* [Coding Guide of Noradle](coding_guide.html)
 * [DB connection pool management](db_conn_pool_mgm.html)
 * [Session](session.html)
 * [API demo of PSP.WEB](http://qht-test.noradle.com/demo) at Noradle's demo site

@@ -16,19 +16,22 @@ Overview
 Part 1 : psp.web
 ==========
 
-please see [Introduction of PSP.WEB](psp.web/blob/master/doc/introduction.md) at doc/introduction.md on github (format will lose)
 
-please see [Introduction of PSP.WEB](http://static-test.noradle.com/doc/introduction.html) at my site
 
-please see [Deployment of PSP.WEB](http://static-test.noradle.com/doc/deployment.html) at my site
+please see [Introduction](doc/introduction.md) at doc/introduction.md on github (format will lose)
 
-please see [API demo of PSP.WEB](http://qht-test.noradle.com/demo) at my demo site
+please see [Documentation Index](http://static-test.noradle.com/doc/introduction.html) at my site
 
-please see [App dialbook developed on PSP.WEB](http://qht-test.noradle.com/com) at production clone site (you can use 18602247741 to login)
+please see [Introduction](http://static-test.noradle.com/doc/introduction.html) at my site
+
+please see [Deployment](http://static-test.noradle.com/doc/deployment.html) at my site
+
+please see [API demo](http://qht-test.noradle.com/demo) at my demo site
+
+please see [SAAS app "dialbook" developed on Noradle](http://qht-test.noradle.com/com) at production
+clone site (you can use 18602247741 to login)
 
 please see [License of PSP.WEB](http://static-test.noradle.com/doc/license.html) at doc/license.md
-
-
 
 
 Part 2 : call in db driver
