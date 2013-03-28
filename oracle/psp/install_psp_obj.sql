@@ -3,8 +3,6 @@
 -- Created by Li Yong on 2013-3-27, 10:06:39 --
 -----------------------------------------------------
 
-spool install_psp_obj.log
-
 prompt
 prompt Creating table ASYNC_CONTROL_T
 prompt ==============================
@@ -425,4 +423,4 @@ prompt Creating package body TESTS
 prompt ===========================
 prompt
 @@tests.bdy
-spool off
+

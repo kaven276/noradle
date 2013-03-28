@@ -3,8 +3,6 @@
 -- Created by Administrator on 2013-3-27, 21:19:36 --
 -----------------------------------------------------
 
-set define off
-spool install_demo_obj.log
 
 prompt
 prompt Creating table TERM_T
@@ -336,5 +334,3 @@ prompt Creating trigger T_USER
 prompt =======================
 prompt
 @@t_user.trg
-
-spool off
