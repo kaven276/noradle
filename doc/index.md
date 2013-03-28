@@ -27,7 +27,7 @@ Part 2 : call in db driver
 Part 3 : call out net proxy
 ======
 
-* [call external service from PL/SQL on Noradle](call_out.html)
+* [call external service from PL/SQL on Noradle](direct_call_out.html)
 
 
 **********************************************
