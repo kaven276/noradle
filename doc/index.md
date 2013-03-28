@@ -14,8 +14,8 @@ Part 1 : psp.web
 * [Deployment of Noradle](deployment.html)
 * [DB connection pool management](db_conn_pool_mgm.html)
 * [Session](session.html)
-* [API demo of PSP.WEB](http://example.noradle.com/demo/index_b.frame) at Noradle's demo site
-* [App dialbook developed on PSP.WEB](http://demo.unidialbook.com) at production clone site (you can use 18602247741 to login)
+* [API demo of PSP.WEB](http://qht-test.noradle.com/demo) at Noradle's demo site
+* [App dialbook developed on PSP.WEB](http://qht-test.noradle.com/com) at production clone site (you can use 18602247741 to login)
 * [License of PSP.WEB](license.html)
 
 Part 2 : call in db driver

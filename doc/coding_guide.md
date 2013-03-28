@@ -238,5 +238,61 @@ advanced p.xxx APIs
 ### scalable css
 
 
+print API
+=========
+
+## basic tag output
+
+* table: table caption thead tbody tfoot tr td trs tds
+* form: form fieldset lengend input_xxx button textarea select-single select-multiple option options
+* doc: h1-h6 p i b
+* layout : div span
+* head : head body script link style meta-http-equiv meta-name base h
+
+## extent functions
+
+### p.h
+
+  all header can be included in this one API call
+
+  scripts,links,base,title
+
+### table print
+
+  can layout form up-side-down or left-right side-by-side
+
+### form input
+
+  can add class by input.type, so browsers that do not support input[type=xxx] can just use input.type_xxx to select
+
+  p.auto_input_class(boolean)
+
+### radio,checkbox,select-option,options buld output
+
+  can output text/value with name_arr,val_arr params
+
+### ths,tds
+
+  can output
+
+### input can append/prepend label,td,tr
+
+  p.input_text('display text', 'default value', lable=>'your name:')
+  will output
+  1. <label>your name:<input type="text" value="default value"/></label>
+  or <tr><th><label>your name:</label></th><td><input type="text" value="default value"/></td></tr>
+  or <tr><th><label>your name:</label></th></tr><tr><td><input type="text" value="default value"/></td></tr>
+
+## version difference
+
+  原先的版本注重将tag的常用属性做成属性参数，p2(q) 版本不再支持所谓常见参数，需要用户自己写对参数名称。主要是一下考虑
+
+1. 侧重于简化 API
+	* 没有 tag/tag_open/tag_close 多个版本，无需 p.el_open, p.el_close
+	* id class attr 都通过一行完成
+	* 动态绑定一律通过 :n 替换
+2. 并减少应用代码量
+3. 对常量字符串减少 param => "value" 的写法，更为紧凑，因为没有了 => "" 这些额外的字符，
+
 **********************************************
 <span class="psp_logo footer">*PSP*.*WEB*<span>
