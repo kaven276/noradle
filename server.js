@@ -7,9 +7,17 @@
 
 var DBCall
   , RSParser
+  , PSP4WEB
   ;
 
 Object.defineProperties(exports, {
+  // http handler for PSP(PLSQL Stored Procedure) servlet
+  // todo: need include configuration support
+  PSP4WEB : {
+    get : function(){
+      return PSP4WEB || (PSP4WEB = require('./lib/psp.web.js'));
+    }
+  },
   runPSP4WEB : {
     get : function(){
       return  require('./lib/plsql.js');
