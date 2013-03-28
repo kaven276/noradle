@@ -12,7 +12,7 @@ prompt You can try the sql scripts below to achive the preparation required abov
 prompt drop user psp cascade;;
 prompt drop user demo cascade;;
 prompt create user psp identified by psp default tablespace users;;
-prompt create user demo identified by psp default tablespace users;;
+prompt create user demo identified by demo default tablespace users;;
 pause if not, break(CTRL-C) and create empty PSP/DEMO db users beforehand
 
 accept pspdbu char default 'psp' prompt 'Enter the schema/User(must already exist) for psp.web software (psp) : '
@@ -77,6 +77,7 @@ grant execute on auth_s to &pspdbu;
 create or replace context demo_profile using profile_s accessed globally;
 grant execute on profile_s to &pspdbu;
 exec DBMS_UTILITY.COMPILE_SCHEMA('&demodbu',false);
+insert into ext_url_v(key,prefix) values('myself','//static-test.noradle.com');
 
 set echo off
 prompt Noradle bundle in oracle db part have been installed successfully!
