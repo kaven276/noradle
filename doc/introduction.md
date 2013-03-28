@@ -6,7 +6,7 @@ div.path{display:inline-block;font-size:smaller;}
 <span class="psp_logo">*PSP*.*WEB*<span>
 ****************************************
 
-<div id="title"> Introduction to PSP.WEB   </div>
+<div id="title"> Introduction to Noradle(PSP.WEB)   </div>
 
 What's PSP.WEB
 ===============
@@ -67,6 +67,16 @@ Why invent PSP.WEB
 ## In-DB result cache with low design/coding cost
 
   ORACLE support result-cache, but PSP.WEB provide **row level versioned result_cache**, often used data can be result cached such as user profile, terminal properties. None stored procedure based platforms will do hard to provide data cache and will be too complex.
+
+What is Noradle
+================
+
+use cases:
+
+1. psp.web: nodejs as http reverse proxy, oracle implement the http server
+2. DBCall : nodejs db access driver, get sql result sets
+3. Ajax/WS data src : browser can feed sql results sets and JSON for ajax or websocket request
+3. DCO: oracle can call nodejs worker proxy through ext-hub, extending oracle's capability
 
 Compare to other platforms
 =================

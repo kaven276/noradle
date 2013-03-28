@@ -1,11 +1,10 @@
-<base target="_blank">
 Noradle is for Node & Oracle integration. Noradle has three large parts.
 
 
 The work at Now
 ==========
 
-  To stabilize the runtime, improve oracle connection pool management, avoid idle occupation for busy-marked oraSock, timeout in some cases to release resource, reconnect if needed. Refactor to add wrapper for net.socket, that will have no chance to conflict with the system defined properties, so it'll more safe.
+  Check installation scripts and demos, improve documetation. prepare to v0.2 release.
 
 Overview
 ==========
@@ -25,9 +24,9 @@ please see [Deployment of PSP.WEB](http://static-test.noradle.com/doc/deployment
 
 please see [API demo of PSP.WEB](http://qht-test.noradle.com/demo) at my demo site
 
-please see [App dialbook developed on PSP.WEB](http://qht-test.noradle.com/tjuc1) at production clone site (you can use 18602247741 to login)
+please see [App dialbook developed on PSP.WEB](http://qht-test.noradle.com/com) at production clone site (you can use 18602247741 to login)
 
-please see [License of PSP.WEB](psp.web/blob/master/doc/license.md) at doc/license.md
+please see [License of PSP.WEB](http://static-test.noradle.com/doc/license.md) at doc/license.md
 
 please see [Call oracle plsql stored procedure with javascript](http://static-test.noradle.com/doc/js_call_plsql.html) at doc/js_call_plsql.md
 

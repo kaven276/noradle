@@ -2,9 +2,12 @@
 <span class="psp_logo">*PSP*.*WEB*<span>
 ****************************************
 
-<div id="title"> License of PSP.WEB  </div>
+<div id="title"> License of Noradle(PSP.WEB)  </div>
 
-  PSP.WEB is a open source project, but it's not free.
+  This is the license plan for the formal release of Noradle in the futher.
+  By now, if everyone want it for commercial purpose, is's free.
+
+  Noradle(PSP.WEB) is a open source project, but it's not free.
 If you use it in a enterprise production environment, you must pay for it.
 PSP.WEB is priced as tenth price of it's resident oracle.
 But if you use it in oracle XE, then PSP.WEB is free since Oracle DB XE is just free.

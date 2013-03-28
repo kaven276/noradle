@@ -5,6 +5,8 @@
 <div id="title">  Noradle Documentation Index  </div>
 
 
+* [Noradle's Goal](NoradleGoal.html)
+
 Part 1 : psp.web
 ==========
 
@@ -14,7 +16,7 @@ Part 1 : psp.web
 * [Session](session.html)
 * [API demo of PSP.WEB](http://example.noradle.com/demo/index_b.frame) at Noradle's demo site
 * [App dialbook developed on PSP.WEB](http://demo.unidialbook.com) at production clone site (you can use 18602247741 to login)
-* [License of PSP.WEB](plicense.html)
+* [License of PSP.WEB](license.html)
 
 Part 2 : call in db driver
 ======
