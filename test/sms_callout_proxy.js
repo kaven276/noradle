@@ -14,18 +14,21 @@ var SGIP = require('../../sms/node_sms')
   , Submit = SGIP.msgSubmit.Class
   , Attrs = SGIP.AttrCfg
   , DCOWorkerProxy = require('../lib/dco_proxy.js')
-  , logger = dummy
+  , logger = console.log
   , sp = require('./sms_common_sp.js').sp
+  , SPNumbers = require('./sms_common_sp.js').SPNumbers
   ;
 
-sp.on('request', function(req){
-  if (req instanceof SGIP.msgReport.Class) {
-    console.log('\nReport:');
-  } else if (req instanceof SGIP.msgDeliver.Class) {
-    console.log('\nDeliver:');
-  }
-  console.log(req);
-});
+if (false) {
+  sp.on('request', function(req){
+    if (req instanceof SGIP.msgReport.Class) {
+      console.log('\nReport:');
+    } else if (req instanceof SGIP.msgDeliver.Class) {
+      console.log('\nDeliver:');
+    }
+    console.log(req);
+  });
+}
 
 DCOWorkerProxy.createServer(sendOneSimple).listen(parseInt(process.argv[2]) || 1526);
 
@@ -35,13 +38,15 @@ function SimpleSmsSubmit(req){
   this.smg = lines.shift();
   this.target = lines.shift();
   this.content = lines.join('\n');
+  console.log(this);
 }
+
 
 function sendOneSimple(dcoReq, dcoRes){
   var req = new SimpleSmsSubmit(dcoReq);
-  var submit = new Submit(req.target, 8, req.content, {"SPNumber" : '106550224003', 'ReportFlag' : 0});
+  var submit = new Submit(req.target, 8, req.content, {"SPNumber" : SPNumbers[req.smg], 'ReportFlag' : 2});
   logger('\nSGIP request send:');
-  sp.send(submit, function(sgipRes, sgipReq){
+  sp[req.smg].send(submit, function(sgipRes, sgipReq){
     logger('\nSGIP respond :');
     logger('the result for %j is %d', sgipRes.header, sgipRes.Result);
     logger(sgipReq);
