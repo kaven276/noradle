@@ -1,0 +1,1 @@
+require('..').runStatic({show_dir : true});

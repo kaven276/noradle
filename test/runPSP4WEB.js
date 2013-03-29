@@ -1,0 +1,1 @@
+require('..').runPSP4WEB();

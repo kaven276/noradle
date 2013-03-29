@@ -1,21 +1,25 @@
 {
-  "author" : "Li Yong <kaven276@vip.sina.com>",
-  "name" : "Noradle",
-  "description" : "A NodeJS and Oracle DB integration, and NodeJS can act as gateway for plsql server pages",
-  "version" : "0.5.2",
-  "repository" : {
-    "type" : "git",
-    "url" : "git://github.com/kaven276/psp.web.git"
-  },
-  "main" : "server.js",
-  "scripts" : {
-  },
-  "engines" : {
-    "node" : ">=0.6.2"
-  },
-  "dependencies" : {
-    "connect" : ">=1.0"
-  },
-  "devDependencies" : {
-  }
+	"author" : "Li Yong <kaven276@vip.sina.com>",
+	"name" : "Noradle",
+	"description" : "A NodeJS and Oracle DB integration, and NodeJS can act as gateway for plsql server pages",
+	"version" : "0.5.2",
+	"repository" : {
+		"type" : "git",
+		"url" : "git://github.com/kaven276/psp.web.git"
+	},
+	"main" : "server.js",
+	"scripts" : {
+		"runCombined" : "node test/runCombined.js",
+		"runPSP4WEB" : "node test/runPSP4WEB.js",
+		"runStatic" : "node test/runStatic.js",
+		"runStaticAdv" : "node test/runStaticAdv.js"
+	},
+	"engines" : {
+		"node" : ">=0.6.2"
+	},
+	"dependencies" : {
+		"connect" : ">=1.0"
+	},
+	"devDependencies" : {
+	}
 }

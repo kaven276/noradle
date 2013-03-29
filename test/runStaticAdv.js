@@ -1,0 +1,1 @@
+require('..').runStaticAdv({show_dir : true});

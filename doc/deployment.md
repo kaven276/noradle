@@ -49,7 +49,7 @@ begin
 		privilege => 'connect'
 	);
 	*/
-	// for each record in server_control_t, call assign_acl to grant network access right from oracle to nodejs
+	-- for each record in server_control_t, call assign_acl to grant network access right from oracle to nodejs
 	dbms_network_acl_admin.assign_acl(
 		acl => 'noradle.xml',
 		host => '127.0.0.1'
@@ -188,6 +188,13 @@ require('noradle').runPSP4WEB([options]);
 require('noradle').runCombined([options]);
 ```
 
+or quickly run combined server with default configuration by this:
+```
+# cd project root
+npm run-script runCombined
+npm run-script runPSP4WEB
+```
+
 Note: If you run plsql dynamic page only, run Noradle.runPSP4WEB, and it rely on pure NodeJS installation only,
 no additional node modules are required.
 
@@ -259,6 +266,14 @@ require('noradle').runStatic([options]);
 
 // start static file server (include Noradle docs at /doc/index.html)
 require('noradle').runStaticAdv([options]);
+```
+
+or quickly run static server with default configuration by this:
+
+```
+# cd project root
+npm run-script runStatic
+npm run-script runStaticAdv
 ```
 
   You may run static file server with plsql dynamic page server(Noradle.runCombined) or run it separately(Noradle

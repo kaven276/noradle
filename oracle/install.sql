@@ -87,6 +87,7 @@ create or replace context demo_profile using profile_s accessed globally;
 grant execute on profile_s to &pspdbu;
 exec DBMS_UTILITY.COMPILE_SCHEMA('&demodbu',false);
 insert into ext_url_v(key,prefix) values('myself','//static-test.noradle.com');
+commit;
 
 set echo off
 prompt Noradle bundle in oracle db part have been installed successfully!
