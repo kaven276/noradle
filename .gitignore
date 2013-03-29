@@ -9,3 +9,5 @@ pem/*
 .idea/*
 */*.out
 */*.log
+doc/history/*
+refs/*
