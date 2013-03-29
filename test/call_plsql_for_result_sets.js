@@ -5,14 +5,11 @@
  * Time: 下午9:01
  */
 
-require('../lib/cfg.js').oracle_port = 1522;
-
 var Noradle = require('..')
-  , DBCall = Noradle.DBCall
   ;
-DBCall.init();
+Noradle.DBCall.init({oracle_port : 1523});
 
-function UnitTest(){
+function UnitTest1(){
   var dbc = new Noradle.DBCall('demo', 'theOnlyDB');
   dbc.call('db_src_b.example', function(status, page, headers){
     console.log('status code is %d', status);
@@ -27,4 +24,4 @@ function UnitTest(){
     }
   });
 }
-UnitTest();
+UnitTest1();
