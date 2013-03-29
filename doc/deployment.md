@@ -78,12 +78,16 @@ You can modify the default configuration or add additional records to match your
 connection listening addresses.
 
 ```plsql
-insert into SERVER_CONTROL_T
-(CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME, STATIC_URL, DBU_FILTER)
-values ('default', '127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:00', 'http://127.0.0.1','(demo)');
 insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,
 STATIC_URL, DBU_FILTER)
-values ('driver-test', '127.0.0.1', 1523, 2, 6, 1000, '+0001 00:00:00', 'http://127.0.0.1','(demo)');
+values ('runPSP4WEB', '127.0.0.1', 1522, 0, 12, 1000, '+0001 00:00:00', 'http://127.0.0.1:8000','(demo)');
+
+insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,
+STATIC_URL, DBU_FILTER)
+values ('runCombined', '127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:00', '/fs','(demo)');
+
+insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME, DBU_FILTER)
+values ('db-driver', '127.0.0.1', 1523, 2, 6, 1000, '+0001 00:00:00','(demo)');
 ```
 
 To let PSP.WEB known where the nodeJS http gateway is, You must specify `gw_host` and `gw_port` columns for `server_control_t`. The nodeJS http server as PL/SQL gateway is listening for oracle connection at tcp address of `gw_host:gw_port`.
@@ -206,7 +210,7 @@ module.exports = {
   check_session_hijack : false, // if enable the browser session hijack detection
 
   plsql_mount_point : '/', // where to mount all plsql page for combined server
-  file_mount_point : '/', // where to mount all static file for combined server
+  file_mount_point : '/fs', // where to mount all static file for combined server
 
   favicon_path : path.join(__dirname, '../public/favicon.ico'), // where is the site's favicon icon at
   favicon_max_age : 24 * 60 * 60, // how long is browser hold the favicon in cache

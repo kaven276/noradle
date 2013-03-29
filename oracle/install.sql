@@ -51,12 +51,18 @@ set echo on
 exec DBMS_UTILITY.COMPILE_SCHEMA('&pspdbu',false);
 
 desc SERVER_CONTROL_T
+
 insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,
 STATIC_URL, DBU_FILTER)
-values ('default', '127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:00', 'http://127.0.0.1','(demo)');
+values ('runPSP4WEB', '127.0.0.1', 1522, 0, 12, 1000, '+0001 00:00:00', 'http://127.0.0.1:8000','(demo)');
+
 insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,
 STATIC_URL, DBU_FILTER)
-values ('default_driver', '127.0.0.1', 1523, 2, 6, 1000, '+0001 00:00:00', 'http://127.0.0.1','(demo)');
+values ('runCombined', '127.0.0.1', 1522, 6, 12, 1000, '+0001 00:00:00', '/fs','(demo)');
+
+insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME, DBU_FILTER)
+values ('db-driver', '127.0.0.1', 1523, 2, 6, 1000, '+0001 00:00:00','(demo)');
+
 commit;
 @@contexts.sql
 @@grant_api.sql
