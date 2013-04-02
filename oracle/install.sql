@@ -26,6 +26,7 @@ remark install on sys
 prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path first.
 CREATE or replace DIRECTORY PLSHPROF_DIR AS '';
 @@pw.pck
+@@grant_network.sql
 
 prompt Installing Noradle(psp.web) engine software to schema "&pspdbu", 
 pause press any key to continue ...
