@@ -4,7 +4,24 @@
 
 <div id="title"> Deployment & Configuration & Administration </div>
 
-  The PSP.WEB software is tested on ORACLE DATABASE 11g（EE & XE) and NodeJS v0.6.2 and v0.8.8.
+  PSP.WEB is tested on ORACLE DATABASE 11g（EE & XE) and NodeJS v0.6.2 and v0.8.8.
+
+brief steps guide
+===========================
+
+* (in os) install nodejs package (http://nodejs.org)
+* (in os) install noradle (`npm -g install noradle`)
+* (in oracle) run `sqlplus "/ as sysdba" @install.sql` to install at oracle side
+* (in oracle) config `sever_control_t` --optional
+* (in oracle) grant network ACL to PSP db user --optional
+* (in oracle) check oracle database parameters (ensure enough job process, SGA space, ...)
+* (in oracle) start oracle job servers (`k_pmon.run_job`)
+* (in oracle) check `user_scheduler_jobs` and `user_scheduler_running_jobs` to see if noradle jobs are running
+* (in os) config node gateway ( `npm c set noradle:key value`) --optional
+* (in os) run node http gateway ( `npm start / npm start noradle`)
+* (in browser) check http://localhost:8008/server-status
+* (in browser) learn demo at http://localhost:8080/demo
+* (in oracle) check pipe named "node2psp" to see server logs at oracle side
 
 Install at oracle's side
 =========================
@@ -70,6 +87,7 @@ end;
 
 Note:
 
+* "install.sql" will setup net ACL by default configuration, you may bypass this step.
 * read http://oradoc.noradle.com/appdev.112/e10577/d_networkacl_adm.htm for reference
 * "principal" must specify the schema(case sensitive, def to PSP) that hold the PSP.WEB engine software.
 * "dbms_network_acl_admin.add_privilege" will grant right to other db user that act as PSP.WEB engine user.
@@ -82,7 +100,7 @@ all your nodejs http gateways.
 
 ## Configure `server_config_t` table for Noradle server processes
 
-After installation script runs, The `server_control_t` table is configured by the following insert statement.
+After installation script runs, The `server_control_t` table is configured by the following insert statements.
 You can modify the default configuration or add additional records to match your NodeJS http gateway reverse
 connection listening addresses.
 
@@ -104,7 +122,7 @@ To let PSP.WEB known where the nodeJS http gateway is, You must specify `gw_host
 * `gw_port` must match ip of the nodejs http gateway.
 * `gw_port` must match Noradle.runXXX({oracle_port:xxx})
 
-The above insert will create a config called 'default', you can create additional config by insert multiple records
+The above insert will create config records, you can create additional configuration by insert multiple records
  of `server_config_table`, and specify column `cfg_id` as the name of the new configuration. That way, you can allow multiple nodeJS gateways to reverse-connect to one oracle database.
 
 For every records of `server_control_t`, call `dbms_network_acl_admin.assign_acl` for every different `gw_host`(or
