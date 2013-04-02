@@ -11,3 +11,4 @@ pem/*
 */*.log
 doc/history/*
 refs/*
+node_modules/*

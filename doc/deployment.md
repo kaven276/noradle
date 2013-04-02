@@ -139,8 +139,17 @@ the monitor deamon will re-spawn new servers, try keep server quantity to ".min_
 <dd> It will send signal to PSP.WEB'S pmon and server processes to let them to quit
 </dl>
 
-To start/stop PSP.WEB server, just login as PSP.WEB engine user (normally "PSP") in sqlplus, and execute `k_pmon.run_job/k_pmon.stop`.
+To start/stop PSP.WEB server, just login as PSP.WEB engine user (normally "PSP") in sqlplus, and execute `k_pmon.run_job/k_pmon.stop`. And then check State on the Oracle side.
 
+1. check if oracle background job processes is running by the SQLs below (login as PSP user)
+```
+select * from user_scheduler_jobs;
+select * from user_scheduler_running_jobs;
+```
+2. Read pipe named "node2psp" for any exception the Noradle servers encounters.
+For example, if you use "PL/SQL Developer" IDE, you can go to menu "tools -> event monitor",
+set "Event Type" to "pipe", "Event Name" to "node2psp",
+press "Start" button to catch all the trace log info in the oracle side.
 
 ## Configure for the demo
 
@@ -188,12 +197,19 @@ require('noradle').runPSP4WEB([options]);
 require('noradle').runCombined([options]);
 ```
 
-or quickly run combined server with default configuration by this:
+or quickly run server with default configuration by this:
 ```
 # cd project root
+npm start
+npm start noradle
 npm run-script runCombined
 npm run-script runPSP4WEB
 ```
+Note:
+
+1. `npm start` must run at the path of noradle
+2. `npm start noradle` will run globally install noradle, for combined server only
+3. all the ways of npm run servers can be set configuration by `npm c set noradle:key value`
 
 Note: If you run plsql dynamic page only, run Noradle.runPSP4WEB, and it rely on pure NodeJS installation only,
 no additional node modules are required.
@@ -287,9 +303,7 @@ When you run combined server or run my static server, you need to install connec
 If you want to serve psp.web documentation, you need to install module marked, so that the .md docs can be converted to html.
 If you want some of pre-translation function like markdown2html, stylus2css, you can add them as well. Use the following command to install them, they are all in the [NPM registry](http://search.npmjs.org/).
 
-	npm -g install connect
-	npm -g install stylus
-	npm -g install marked
+	npm install
 
   For normal use, static.js is enough, For advanced static server, it can provide services to PSP.WEB's documentation by converting .md files to .html files, So you can read PSP.WEB documentation at http://your-static-server/doc/index.html.
 

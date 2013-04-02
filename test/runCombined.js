@@ -1,1 +1,1 @@
-require('..').runCombined({show_dir : true});
+require('..').runCombined(require('../lib/get_npm_cfg.js'));

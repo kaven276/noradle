@@ -1,1 +1,1 @@
-require('..').runPSP4WEB();
+require('..').runPSP4WEB(require('../lib/get_npm_cfg.js'));

@@ -2,25 +2,39 @@
 	"author" : "Li Yong <kaven276@vip.sina.com>",
 	"name" : "noradle",
 	"description" : "A NodeJS and Oracle DB integration, and NodeJS can act as gateway for plsql server pages",
-	"version" : "0.6.1.1",
+	"version" : "0.6.2",
+	"homepage" : "https://github.com/kaven276/noradle",
 	"repository" : {
 		"type" : "git",
 		"url" : "git@github.com:kaven276/noradle.git"
 	},
 	"main" : "server.js",
+	"bin" : {
+		"noradleCombined" : "./bin/noradleCombined"
+	},
 	"scripts" : {
+		"start" : "node test/runCombined.js",
+		"prestart" : "echo 'you may run dynamic(psp)/static(file) combined server or dynamic server alone'",
 		"runCombined" : "node test/runCombined.js",
 		"runPSP4WEB" : "node test/runPSP4WEB.js",
 		"runStatic" : "node test/runStatic.js",
 		"runStaticAdv" : "node test/runStaticAdv.js",
-		"testDBCall" : "node test/call_plsql_for_result_sets.js"
+		"testDBCall" : "node test/call_plsql_for_result_sets.js",
+		"test" : "echo $npm_package_config_http_port $npm_lifecycle_event $npm_package_scripts_start $1"
+	},
+	"config" : {
 	},
 	"engines" : {
 		"node" : ">=0.6.2"
 	},
-	"dependencies" : {
-		"connect" : ">=1.0"
+	"dependencies" : {},
+	"devDependencies" : {},
+	"optionalDependencies" : {
+		"connect" : ">=1.0",
+		"marked" : "~0.2.8"
 	},
-	"devDependencies" : {
+	"bugs" : {
+		"url" : "https://github.com/kaven276/noradle/issues",
+		"email" : "kaven276@vip.sina.com"
 	}
 }

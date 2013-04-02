@@ -1,1 +1,1 @@
-require('..').runStaticAdv({show_dir : true});
+require('..').runStaticAdv(require('../lib/get_npm_cfg.js'));
