@@ -9,6 +9,7 @@ whenever sqlerror exit
 prompt Are you sure you have clean empty PSP/DEMO db user/schema already?
 prompt Noradle's units(tables,plsql,...) in oracle will be installed to the schemas
 prompt You can try the sql scripts below to achive the preparation required above.
+prompt exec psp.k_pmon.stop
 prompt drop user psp cascade;;
 prompt drop user demo cascade;;
 prompt create user psp identified by psp default tablespace users;;
@@ -94,7 +95,7 @@ set echo off
 prompt Noradle bundle in oracle db part have been installed successfully!
 prompt Please follow the steps below to learn from demo
 prompt 1. config server_config_t, let oracle known where to reverse connect nodejs
-prompt 2. run nodejs server
-prompt 3. in oracle psp schema, exec k_pmon.run_job to start processes to serv.
-prompt 4. in your browser, access http://your_nodejs_address/demo to see the demo
+prompt 2. run nodejs server, quick start with default cfg by "npm start" or "npm start -g noradle"
+prompt 3. in oracle psp schema, exec "k_pmon.run_job" to start processes to serv.
+prompt 4. in your browser, access "http://localhost:8080/demo" (for example) to see the demo
 spool off
