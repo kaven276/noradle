@@ -13,8 +13,17 @@ Install at oracle's side
 
   Change working directory into oracle subdir of this project, use sqlplus to login into the target oracle database as sysdba, then execute install.sql script file. Example like this:
 
-	sqlplus "sys/password@targetdb as sysdba"
-	SQL> @install
+```
+cd noradle/oracle
+sqlplus "sys/password@targetdb as sysdba"
+SQL> @install
+```
+Or if you are on the db server, simply run this.
+
+```
+cd noradle/oracle
+sqlplus "/ as sysdba" @install.sql
+```
 
   Note that the psp user and demo user should be created beforehand, then you will be prompted to specify the names of the two database users.
   Follow guide of the install scripts please, after it complete, check install.log.
