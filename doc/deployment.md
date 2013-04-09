@@ -288,6 +288,9 @@ NOTE: "lib/cfg.js" set the default configuration for NodeJS side server, it's un
 product. So do not touch it if you don't want lose your work when update PSP.WEB to new version.
 All the setting in lib/cfg.js has remarks and it's easy to understand.
 
+If you run noradle http gateway by `npm start` or `npm run-scripts`, you can configure by `npm c set noradle:key
+value`.
+
 ## Check if all is well
 
 * browse http://your_test_server:port/**server_status** to see the status of the server
