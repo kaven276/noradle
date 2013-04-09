@@ -25,3 +25,4 @@ function UnitTest1(){
   });
 }
 UnitTest1();
+UnitTest1();
