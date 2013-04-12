@@ -77,6 +77,7 @@ create or replace package pv is
 	feedback   boolean; -- manually say(g.feedback) to use feedback mechanism
 	end_marker varchar2(100) := 'EOF'; -- for streamed/flushed output, append it to tell nodejs the end of response
 	msg_stream boolean;
+	accum_cnt  pls_integer;
 
 	bsid varchar2(30); -- client session browser sid
 	msid varchar2(30); -- client session machine(terminal) sid

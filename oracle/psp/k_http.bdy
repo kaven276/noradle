@@ -12,7 +12,14 @@ create or replace package body k_http is
 
 	procedure flush is
 	begin
+		pv.accum_cnt := 0;
 		output.flush;
+	end;
+
+	function inc_buf_cnt return pls_integer is
+	begin
+		pv.accum_cnt := pv.accum_cnt + 1;
+		return pv.accum_cnt;
 	end;
 
 	procedure use_bom(value varchar2) is
