@@ -185,13 +185,13 @@ create or replace package body gateway is
 			begin
 				v_req_ender := utl_tcp.get_text(pv.c, 16, false);
 				if v_req_ender != '-- end of req --' then
-					k_debug.trace(st('gateway find wrong fin marker request'));
+					k_debug.trace(st('gateway find wrong fin marker request', v_req_ender, pv.schema || '.' || pv.prog));
 					utl_tcp.close_connection(pv.c);
 					make_conn(pv.c, 1);
 				end if;
 			exception
 				when others then
-					k_debug.trace(st('gateway find fin marker error, maybe timeout'));
+					k_debug.trace(st('gateway find fin marker error, maybe timeout', pv.schema || '.' || pv.prog));
 					utl_tcp.close_connection(pv.c);
 					make_conn(pv.c, 1);
 			end;
