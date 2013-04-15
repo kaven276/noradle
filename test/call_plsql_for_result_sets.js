@@ -6,11 +6,11 @@
  */
 
 var Noradle = require('..')
+  , dbc = new Noradle.DBCall('demo', 'theOnlyDB')
   ;
 Noradle.DBCall.init({oracle_port : 1523});
 
 function UnitTest1(){
-  var dbc = new Noradle.DBCall('demo', 'theOnlyDB');
   dbc.call('db_src_b.example', function(status, page, headers){
     console.log('status code is %d', status);
     console.log('\n\nthe original result page is :');
@@ -24,5 +24,7 @@ function UnitTest1(){
     }
   });
 }
+UnitTest1();
+UnitTest1();
 UnitTest1();
 UnitTest1();
