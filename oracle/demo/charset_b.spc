@@ -1,4 +1,4 @@
-create or replace package charset_b is
+﻿create or replace package charset_b is
 
 	procedure form;
 

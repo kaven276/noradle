@@ -1,4 +1,4 @@
-create or replace procedure url_test2_b is
+﻿create or replace procedure url_test2_b is
 begin
   p.h;
   p.p('I''m a standalone procedure 2');

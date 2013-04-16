@@ -1,4 +1,4 @@
-create or replace package rc is
+﻿create or replace package rc is
 
 	procedure set_user_info(p_username varchar2);
 

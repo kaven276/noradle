@@ -1,4 +1,4 @@
-create or replace package xml_page_b is
+﻿create or replace package xml_page_b is
 
   procedure xmlgen_str;
 

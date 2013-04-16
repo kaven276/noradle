@@ -1,4 +1,4 @@
-create or replace package index_b is
+﻿create or replace package index_b is
 
 	procedure frame;
 

@@ -1,4 +1,4 @@
-create or replace package body term_b is
+﻿create or replace package body term_b is
 
 	procedure setting_form is
 	begin

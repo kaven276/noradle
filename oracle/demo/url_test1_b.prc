@@ -1,4 +1,4 @@
-create or replace procedure url_test1_b is
+﻿create or replace procedure url_test1_b is
 begin
 	p.h('url_b/d.css,.css,.js');
 	p.p('I''m a standalone procedure 1');

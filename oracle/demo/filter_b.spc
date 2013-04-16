@@ -1,4 +1,4 @@
-create or replace package filter_b is
+﻿create or replace package filter_b is
 
 	procedure see_filter;
 

@@ -1,4 +1,4 @@
-create or replace package body test_b is
+﻿create or replace package body test_b is
 
 	procedure entry is
 	begin

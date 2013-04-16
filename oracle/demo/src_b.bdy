@@ -1,4 +1,4 @@
-create or replace package body src_b is
+﻿create or replace package body src_b is
 
 	procedure pack is
 		n varchar2(30) := upper(r.path);

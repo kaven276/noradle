@@ -1,4 +1,4 @@
-create or replace package body negotiation_b is
+﻿create or replace package body negotiation_b is
 
 	procedure greece_text is
 	begin
@@ -11,7 +11,7 @@ create or replace package body negotiation_b is
 			p.h;
 			src_b.link_proc;
 			p.p('OK, This page have Greece charracters your browser accept.');
-			p.p('���¦æĦŦƦǦȦɦʦ˦̦ͦΦΦϦϦѦҦӦԦզ֦צ�');
+			p.p('αβγδεζηθικλμνξξοορστυφχψω');
 		end if;
 		p.p('If the request''s accept headers can not be supported, return 406 not acceptable is ok.');
 	end;
