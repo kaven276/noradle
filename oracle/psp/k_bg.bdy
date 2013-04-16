@@ -1,4 +1,4 @@
-create or replace package body k_bg is
+﻿create or replace package body k_bg is
 
 	procedure do(p_prog varchar2) is
 		v_prog  varchar2(99);
@@ -11,7 +11,6 @@ create or replace package body k_bg is
 			v_prog := p_prog;
 		end if;
 	
-		k_debug.trace('call ' || v_prog || '()');
 		<<retry_prog>>
 		begin
 			execute immediate 'call ' || v_prog || '()';
@@ -22,8 +21,10 @@ create or replace package body k_bg is
 					k_debug.trace('async:ex_package_state_invalid', v_prog);
 					rollback;
 				else
-					v_sql := regexp_replace(dbms_utility.format_error_stack, '^.*ORA-04061:( package (body )?"(\w+\.\w+)" ).*$',
-																	'alter package \3 compile \2', modifier => 'n');
+					v_sql := regexp_replace(dbms_utility.format_error_stack,
+																	'^.*ORA-04061:( package (body )?"(\w+\.\w+)" ).*$',
+																	'alter package \3 compile \2',
+																	modifier => 'n');
 					sys.pw.recompile(v_sql);
 					v_tried := true;
 					goto retry_prog;
@@ -35,7 +36,7 @@ create or replace package body k_bg is
 			when pv.ex_resp_done then
 				null;
 			when others then
-				k_debug.trace(st(sqlcode, sqlerrm));
+				k_debug.trace(st(sqlcode, sqlerrm, dbms_utility.format_error_stack));
 				rollback;
 				raise;
 		end;
