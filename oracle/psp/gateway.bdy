@@ -1,4 +1,4 @@
-create or replace package body gateway is
+﻿create or replace package body gateway is
 
 	/* main functions
   0. establish connection to nodejs and listen for request
@@ -189,6 +189,9 @@ create or replace package body gateway is
 													 v_req_ender,
 													 pv.cfg_id,
 													 pv.schema || '.' || pv.prog));
+					if pv.protocol = 'HTTP' then
+						k_debug.trace(st(r.client_addr, r.ua));
+					end if;
 					utl_tcp.close_connection(pv.c);
 					make_conn(pv.c, 1);
 				end if;
