@@ -1,4 +1,4 @@
-create or replace package body k_type_tool is
+﻿create or replace package body k_type_tool is
 
 	fmt  constant varchar2(100) := 'Dy, DD Mon YYYY HH24:MI:SS "GMT"';
 	lang constant varchar2(100) := 'NLS_DATE_LANGUAGE = American';
@@ -82,7 +82,8 @@ create or replace package body k_type_tool is
 	function ps
 	(
 		tpl  varchar2 character set any_cs,
-		subs varchar2 character set any_cs
+		subs varchar2 character set any_cs,
+		ch   char := ':'
 	) return varchar2 character set tpl%charset is
 		v_pos1 pls_integer := 0;
 		v_pos2 pls_integer;
@@ -97,17 +98,17 @@ create or replace package body k_type_tool is
 			v_pos2 := instr(subs, ',', v_pos1 + 1);
 			if v_pos1 = 0 then
 				if v_pos2 = 0 then
-					return replace(tpl, '$1', subs);
+					return replace(tpl, ch || '1', subs);
 				else
 					v_rtn := tpl;
 				end if;
 			elsif v_pos2 = 0 then
 				v_str := substr(subs, v_pos1 + 1);
-				return replace(v_rtn, '$' || (v_cnt + 1), v_str);
+				return replace(v_rtn, ch || (v_cnt + 1), v_str);
 			end if;
 			v_cnt  := v_cnt + 1;
 			v_str  := substr(subs, v_pos1 + 1, v_pos2 - v_pos1 - 1);
-			v_rtn  := replace(v_rtn, '$' || v_cnt, v_str);
+			v_rtn  := replace(v_rtn, ch || v_cnt, v_str);
 			v_pos1 := v_pos2;
 		end loop;
 	end;

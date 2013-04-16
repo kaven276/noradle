@@ -1,4 +1,4 @@
-create or replace package k_type_tool is
+﻿create or replace package k_type_tool is
 
 	type str_arr is table of varchar2(1000) index by varchar2(100);
 	type st_arr is table of st index by varchar2(100);
@@ -25,7 +25,8 @@ create or replace package k_type_tool is
 	function ps
 	(
 		tpl  in varchar2 character set any_cs,
-		subs varchar2 character set any_cs
+		subs varchar2 character set any_cs,
+		ch   char := ':'
 	) return varchar2 character set tpl%charset;
 
 	function ps
