@@ -1,4 +1,4 @@
-create or replace package body rs is
+﻿create or replace package body rs is
 
 	procedure print
 	(
@@ -16,8 +16,7 @@ create or replace package body rs is
 		sep     varchar2(2);
 	begin
 	
-		h.line;
-		h.line('[' || name || ']');
+		h.write(chr(10) || '[' || name || ']' || chr(10));
 	
 		-- Switch from native dynamic SQL to DBMS_SQL
 		curid := dbms_sql.to_cursor_number(c);

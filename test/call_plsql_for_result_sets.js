@@ -13,6 +13,10 @@ Noradle.DBCall.init({oracle_port : 1523});
 function UnitTest1(){
   dbc.call('db_src_b.example', function(status, page, headers){
     console.log('status code is %d', status);
+    if (status != 200) {
+      console.error('status is', status);
+      return;
+    }
     console.log('\n\nthe original result page is :');
     console.log(page);
     console.log('\n\n', 'the parsed result sets is :');
