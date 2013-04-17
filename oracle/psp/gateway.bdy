@@ -139,7 +139,12 @@
 				when pv.ex_quit then
 					goto the_end;
 				when others then
-					k_debug.trace(st('page before exection', pv.protocol, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
+					k_debug.trace(st('page before exection',
+													 pv.protocol,
+													 r.url,
+													 sqlcode,
+													 sqlerrm,
+													 dbms_utility.format_error_backtrace));
 					goto the_end;
 			end;
 			pv.firstpg := false;
