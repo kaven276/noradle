@@ -1,4 +1,4 @@
-﻿create or replace package default_b is
+create or replace package default_b is
 
 	procedure d;
 

@@ -1,4 +1,4 @@
-﻿create or replace package ora_good_b is
+create or replace package ora_good_b is
 
 	procedure entry;
 

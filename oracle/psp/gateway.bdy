@@ -1,4 +1,4 @@
-﻿create or replace package body gateway is
+create or replace package body gateway is
 
 	/* main functions
   0. establish connection to nodejs and listen for request

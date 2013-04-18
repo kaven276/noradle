@@ -1,4 +1,4 @@
-ï»¿create or replace package body charset_b is
+create or replace package body charset_b is
 
 	procedure form is
 		v_src varchar2(200) := 'E3818DCEA609D8A6D985D8B9D8AAD8AFD984E184ACE1B4ABE1BC8EE3818EE3839E';
@@ -59,7 +59,7 @@
 		p.prn('p.p(p.span()) using function API: ');
 		p.p(p.span(v_str));
 		p.prn('p.p(p.a()) using function API: ');
-		p.p(p.a(v_str, 'form?a=ç©ºé™ç¿»çœ‹'));
+		p.p(p.a(v_str, 'form?a=¿Õ½µ·­¿´'));
 		p.div_close;
 	
 		p.br;
@@ -91,7 +91,7 @@
 		-- basic_io_b.req_info
 		p.form_open('f', 'form', method => 'post'); -- accept-charset="gbk"
 		p.input_text('url', 'http://www.google.com?q=HELLO');
-		p.input_text('ch', 'ä¸­æ–‡');
+		p.input_text('ch', 'ÖĞÎÄ');
 		p.input_text('en', 'english');
 		p.input_text('utf', v_str);
 		p.input_submit();
@@ -111,7 +111,7 @@
 		p.h;
 		for i in 1 .. 1000 loop
 			for j in 1 .. 20 loop
-				p.p('æå‹‡');
+				p.p('ÀîÓÂ');
 			end loop;
 			h.line('<br/>');
 			-- h.flush;

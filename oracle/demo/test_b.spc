@@ -1,4 +1,4 @@
-﻿create or replace package test_b is
+create or replace package test_b is
 
 	procedure entry;
 

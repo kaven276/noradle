@@ -1,4 +1,4 @@
-﻿create or replace package body profile_s is
+create or replace package body profile_s is
 
 	gc_ctx varchar2(30) := 'DEMO_PROFILE';
 

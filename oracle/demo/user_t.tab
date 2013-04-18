@@ -1,4 +1,4 @@
-﻿create table USER_T
+create table USER_T
 (
   name  VARCHAR2(30) not null,
   pass  VARCHAR2(30) not null,

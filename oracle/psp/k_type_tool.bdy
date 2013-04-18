@@ -1,4 +1,4 @@
-﻿create or replace package body k_type_tool is
+create or replace package body k_type_tool is
 
 	fmt  constant varchar2(100) := 'Dy, DD Mon YYYY HH24:MI:SS "GMT"';
 	lang constant varchar2(100) := 'NLS_DATE_LANGUAGE = American';

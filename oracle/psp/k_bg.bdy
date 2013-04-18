@@ -1,4 +1,4 @@
-﻿create or replace package body k_bg is
+create or replace package body k_bg is
 
 	procedure do(p_prog varchar2) is
 		v_prog  varchar2(99);

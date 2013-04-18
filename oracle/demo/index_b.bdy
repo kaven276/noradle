@@ -1,4 +1,4 @@
-﻿create or replace package body index_b is
+create or replace package body index_b is
 
 	procedure frame is
 	begin

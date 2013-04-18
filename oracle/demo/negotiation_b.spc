@@ -1,4 +1,4 @@
-﻿create or replace package negotiation_b is
+create or replace package negotiation_b is
 
 	procedure greece_text;
 

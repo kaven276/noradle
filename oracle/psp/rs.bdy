@@ -1,4 +1,4 @@
-﻿create or replace package body rs is
+create or replace package body rs is
 
 	procedure print
 	(

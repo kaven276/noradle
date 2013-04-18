@@ -1,4 +1,4 @@
-﻿create or replace package body k_filter is
+create or replace package body k_filter is
 
 	procedure before is
 	begin

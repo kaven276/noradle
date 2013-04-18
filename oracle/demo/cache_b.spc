@@ -1,4 +1,4 @@
-﻿create or replace package cache_b is
+create or replace package cache_b is
 
 	procedure expires;
 

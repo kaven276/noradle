@@ -1,4 +1,4 @@
-﻿create or replace package profile_s is
+create or replace package profile_s is
 
 	procedure set_scheme(name varchar2);
 

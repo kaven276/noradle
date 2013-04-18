@@ -1,4 +1,4 @@
-﻿create or replace package body auth_s is
+create or replace package body auth_s is
 
 	procedure login_simple(p_name varchar2) is
 	begin

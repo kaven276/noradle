@@ -1,4 +1,4 @@
-﻿create or replace package test_c is
+create or replace package test_c is
 
 	procedure do;
 

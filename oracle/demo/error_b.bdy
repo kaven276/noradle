@@ -1,4 +1,4 @@
-﻿create or replace package body error_b is
+create or replace package body error_b is
 
 	procedure execute_with_error is
 		procedure error_root is

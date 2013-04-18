@@ -1,4 +1,4 @@
-﻿create or replace package body html_b is
+create or replace package body html_b is
 
 	procedure d is
 		cursor c_packages is

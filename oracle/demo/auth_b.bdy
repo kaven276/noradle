@@ -1,4 +1,4 @@
-﻿create or replace package body auth_b is
+create or replace package body auth_b is
 
 	procedure basic is
 		v_user varchar2(30) := 'psp.web';

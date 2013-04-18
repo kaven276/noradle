@@ -1,4 +1,4 @@
-ï»¿create or replace package body url_b is
+create or replace package body url_b is
 
 	procedure d is
 	begin
@@ -14,7 +14,7 @@
 		p.p('r.pack=' || r.pack);
 		p.p('r.proc=' || r.proc);
 
-		p.hn(3, 'URL reference test suite includes the following itemsï¼š');
+		p.hn(3, 'URL reference test suite includes the following items£º');
 		p.ol_open;
 		p.li('pack1.proc1->pack1.proc2 : a packaged proc include another proc in the same package (other_proc)');
 		p.li('pack1.procn->pack2.procm : a packaged proc refers another packaged or standalone proc (other_proc_x, other_pack_x.other_proc)');

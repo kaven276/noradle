@@ -1,4 +1,4 @@
-﻿create or replace package body xml_page_b is
+create or replace package body xml_page_b is
 
 	-- private
 	procedure show_begin is

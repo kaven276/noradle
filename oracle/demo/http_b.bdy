@@ -1,4 +1,4 @@
-﻿create or replace package body http_b is
+create or replace package body http_b is
 
 	procedure gzip is
 	begin

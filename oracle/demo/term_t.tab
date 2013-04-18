@@ -1,4 +1,4 @@
-﻿create table TERM_T
+create table TERM_T
 (
   msid    VARCHAR2(30) not null,
   bgcolor VARCHAR2(30),

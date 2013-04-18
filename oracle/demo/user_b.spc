@@ -1,4 +1,4 @@
-﻿create or replace package user_b is
+create or replace package user_b is
 
 	procedure register;
 

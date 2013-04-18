@@ -1,4 +1,4 @@
-﻿create or replace package error_b is
+create or replace package error_b is
 
 	procedure execute_with_error;
 

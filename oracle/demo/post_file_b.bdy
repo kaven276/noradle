@@ -1,4 +1,4 @@
-﻿create or replace package body post_file_b is
+create or replace package body post_file_b is
 
 	procedure upload_form is
 	begin

@@ -1,4 +1,4 @@
-﻿create or replace package auth_b is
+create or replace package auth_b is
 
 	procedure basic;
 

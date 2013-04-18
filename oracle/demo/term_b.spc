@@ -1,4 +1,4 @@
-﻿create or replace package term_b is
+create or replace package term_b is
 
 	procedure setting_form;
 

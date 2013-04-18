@@ -1,4 +1,4 @@
-﻿create or replace package body rc is
+create or replace package body rc is
 
 	not_match exception;
 

@@ -1,4 +1,4 @@
-﻿create or replace package basic_io_b is
+create or replace package basic_io_b is
 
 	procedure req_info;
 

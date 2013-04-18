@@ -1,12 +1,12 @@
-ï»¿create or replace package body ora_good_b is
+create or replace package body ora_good_b is
 
 	procedure entry is
 	begin
 		p.h;
 		p.style_open;
 		p.line('dt{margin:0.5em;}');
-		p.line('dt:before{content:"ã€ "}');
-		p.line('dt:after{content:" ã€‘"}');
+		p.line('dt:before{content:"¡¾ "}');
+		p.line('dt:after{content:" ¡¿"}');
 		p.line('dd{line-height:1.5em;}');
 		p.line('h3,h4{text-align:center;}');
 		p.style_close;
