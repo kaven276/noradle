@@ -41,6 +41,10 @@ drop table SERVER_CONTROL_T cascade constraints;
 drop table EXT_URL_T cascade constraints;
 drop table EXTHUB_CONFIG_T cascade constraints;
 drop table ASYNC_CONTROL_T cascade constraints;
+drop table DBMSHP_RUNS cascade constraints;
+drop table DBMSHP_FUNCTION_INFO cascade constraints;
+drop table DBMSHP_PARENT_CHILD_INFO cascade constraints;
+drop sequence DBMSHP_RUNNUMBER;
 whenever sqlerror exit
 
 set define off
