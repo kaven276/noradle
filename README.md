@@ -26,7 +26,7 @@ please see [Introduction](http://docs.noradle.com/introduction.html) at my site
 
 please see [Deployment](http://docs.noradle.com/deployment.html) at my site
 
-please see [API demo](http://qht-test.noradle.com/demo) at my demo site
+please see [API demo](http://unidialbook.com/demo) at my demo site
 
 please see [SAAS app "dialbook" developed on Noradle](http://qht-test.noradle.com/com) at production
 clone site (you can use 18602247741 to login)
