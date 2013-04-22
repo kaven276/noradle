@@ -9,7 +9,6 @@ create or replace package body k_xhtp is
 
 	gv_wap          boolean := false;
 	gv_html_type    varchar2(100);
-	gv_doc_type_str varchar2(200);
 	gv_compatible   varchar2(100);
 	gv_vml          boolean := false;
 
@@ -749,38 +748,41 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	end;
 
 	procedure doc_type(name varchar2) is
+		v_doc_type_str varchar2(200);
 	begin
 		http_header_close;
 		gv_xhtp := true;
 	
 		case lower(nvl(name, gv_html_type))
 			when '5' then
-				gv_doc_type_str := '<!DOCTYPE html>';
+				v_doc_type_str := '<!DOCTYPE html>';
 			when 'RDFa' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">';
 			when '1.1' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
 			when 'basic' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">';
 			when 'transitional' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 			when 'strict' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 			when 'frameset' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
 			when 'wap1.1' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">';
 				gv_wap          := true;
 			when 'mobile' then
-				gv_doc_type_str := '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">';
+				v_doc_type_str := '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">';
 			else
-				gv_doc_type_str := name;
+				v_doc_type_str := null;
 		end case;
 	
 		gv_head_over := false;
 		-- '<?xml version="1.0"?>' || nl;
-		output.line(gv_doc_type_str, nl);
+		if v_doc_type_str is not null then
+			output.line(v_doc_type_str, nl);
+		end if;
 	
 		if pv.cs_char = pv.charset_ora then
 			gv_nc := false;
