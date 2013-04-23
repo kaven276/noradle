@@ -28,8 +28,10 @@ please see [Deployment](http://docs.noradle.com/deployment.html) at my site
 
 please see [API demo](http://unidialbook.com/demo) at my demo site
 
-please see [SAAS app "dialbook" developed on Noradle](http://qht-test.noradle.com/com) at production
-clone site (you can use 18602247741 to login)
+please see [Basic Coding Guide of Noradle](http://docs.noradle.com/coding_guide.html)
+
+please see [SAAS app "dialbook" developed on Noradle](http://unidialbook.com/com)  (you can use any mobile number
+11digits to login)
 
 please see [License of PSP.WEB](http://docs.noradle.com/license.html) at doc/license.md
 

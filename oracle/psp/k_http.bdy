@@ -270,7 +270,13 @@ create or replace package body k_http is
 
 	procedure etag(etag varchar2) is
 	begin
-		pv.headers('ETag') := '"' || etag || '"';
+		if etag = 'ddd' then
+			h.status_line(304);
+			output."_init"(80526);
+			raise pv.ex_resp_done;
+		else
+			pv.headers('ETag') := '"' || etag || '"';
+		end if;
 	end;
 
 	procedure etag_md5_on is

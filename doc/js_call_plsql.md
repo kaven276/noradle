@@ -1,6 +1,4 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-****************************************
+<script src="header.js"></script>
 
 <div id="title"> Call Oracle PL/SQL stored procedure with javascript in NodeJS  </div>
 
@@ -160,5 +158,4 @@ psp.web,123456,1976-10-26 00:00:00
   rows: [ { NAME: 'psp.web', VAL: '123456', CTIME: '1976-10-26 00:00:00' } ] }
 ```
 
-**********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+<script src="footer.js"></script>

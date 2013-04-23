@@ -1,6 +1,4 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-****************************************
+<script src="header.js"></script>
 
 <div id="title">  Session  </div>
 
@@ -398,5 +396,4 @@ Noradle psp.web
 
   会话状态放到 GAC 中，直接由服务进程读写，保存在能够长期稳定运行不重启的 oracle database 中。
 
-**********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+<script src="footer.js"></script>

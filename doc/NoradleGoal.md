@@ -1,9 +1,8 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-****************************************
+<script src="header.js"></script>
 
-<div id="title">  Noradle Goal  </div>
+<div id="title">  Noradle(psp.web) Goal  </div>
 
+  Full featured PL/SQL servlet architecture, especially for http protocol support and db access driver.
 
 由来，溯源
 ========
@@ -34,5 +33,4 @@
 1. Oracle PL/SQL servlet 需要能够通过 PL/SQL 请求到获取到任意的协议请求数据项，NodeJS 侧必须先做好协议请求的解析，并以 Oracle 侧要求的方便的格式传送给 Oracle 侧，并保存到包变量中。也就是说处理核心是 Oracle，NodeJS 为 Oracle Servlet 服务，并减轻 Oracle 侧的设计负担、开发负担和运行负担。
 2. Oracle 可以通过返回给 NodeJS 响应头来控制 NodeJS 侧如何继续深加工 Oracle 产出的响应体，包括压缩，缓存等等。也就是说 NodeJS 需要提供各种各样的响应后加工服务，但是控制权在 Oracle 侧，servlet 的代码告诉 NodeJS 如何使用它们那非凡和强大的能力。
 
-***********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+<script src="footer.js"></script>

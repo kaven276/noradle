@@ -1,6 +1,4 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-*****************************************
+<script src="header.js"></script>
 
 <div id="title"> Deployment & Configuration & Administration </div>
 
@@ -350,5 +348,5 @@ Noradle as a data source
 - [ ] wait please
 - [x] wait please
 
-**********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+
+<script src="footer.js"></script>

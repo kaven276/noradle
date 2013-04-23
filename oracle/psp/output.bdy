@@ -283,7 +283,7 @@ create or replace package body output is
 			pv.content_md5 := false;
 		end if;
 	
-		if (pv.content_md5 or pv.etag_md5) and pv.pg_nchar then
+		if (pv.content_md5 or pv.etag_md5) and pv.pg_nchar and pv.status_code = 200 then
 			dbms_lob.createtemporary(v_lob, true, dur => dbms_lob.call);
 			for i in 1 .. pv.pg_index loop
 				dbms_lob.writeappend(v_lob, length(pv.pg_parts(i)), pv.pg_parts(i));

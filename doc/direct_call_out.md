@@ -1,6 +1,6 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-****************************************
+<script src="header.js"></script>
+
+<div id="title"> Direct Call Out </div>
 
 DCO 的组成部分
 =========
@@ -600,6 +600,4 @@ TypeError: Cannot call method 'whenHaveFreeTraceBackID' of undefined
 
 
 
-
-**********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+<script src="footer.js"></script>
