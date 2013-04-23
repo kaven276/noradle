@@ -1,6 +1,4 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-****************************************
+<script src="header.js"></script>
 
 <div id="title"> 数据库连接的管理机制  </div>
 
@@ -356,5 +354,4 @@ direct to gateway 减少了 in-hub 中间环节，运行效率可能会更高。
 2. 降低了 oracle 侧服务进程的利用率
 因此 in-hub 依然重要。
 
-***********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+<script src="footer.js"></script>

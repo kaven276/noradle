@@ -1,6 +1,4 @@
-<link type="text/css" rel="stylesheet" href="doc.css" />
-<span class="psp_logo">*PSP*.*WEB*<span>
-****************************************
+<script src="header.js"></script>
 
 <div id="title"> License of Noradle(PSP.WEB)  </div>
 
@@ -23,5 +21,5 @@ if you enterprise buy oracle for $20000 for 8 cores, the you must buy PSP.WEB li
 	
   **ORACLE DATABASE**  : It is a product of ORACLE.
 
-**********************************************
-<span class="psp_logo footer">*PSP*.*WEB*<span>
+
+<script src="footer.js"></script>

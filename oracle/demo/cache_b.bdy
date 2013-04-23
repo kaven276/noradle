@@ -37,10 +37,12 @@ create or replace package body cache_b is
 	end;
 
 	procedure etag_md5 is
+		--v_charset varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
 	begin
 		h.etag_md5_on;
 		p.h;
 		src_b.link_proc;
+		p.p(to_char(nls_charset_id('CHAR_CS')));
 		p.hn(3, 'There are all the schema object name list.');
 		p.hn(4, 'If all of them are not changed, it will return 304 not modified.');
 		p.hn(4,
