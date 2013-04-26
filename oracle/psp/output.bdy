@@ -66,21 +66,25 @@ create or replace package body output is
 	procedure switch_css is
 	begin
 		if pv.pg_nchar then
-			pv.pg_parts(pv.pg_index + 1) := pv.pg_buf;
+			if pv.pg_conv then
+				pv.pg_parts(pv.pg_index + 1) := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
+			else
+				pv.pg_parts(pv.pg_index + 1) := pv.pg_buf;
+			end if;
 			pv.pg_parts(pv.pg_index + 2) := ' ';
-			pv.pg_len := pv.pg_len + lengthb(pv.pg_buf) + 1;
+			pv.pg_len := pv.pg_len + lengthb(pv.pg_parts(pv.pg_index + 1)) + lengthb(n' ');
 			pv.pg_buf := '';
 		else
 			pv.ph_parts(pv.pg_index + 1) := pv.ph_buf;
 			pv.ph_parts(pv.pg_index + 2) := ' ';
-			pv.pg_len := pv.pg_len + lengthb(pv.ph_buf) + 1;
+			pv.pg_len := pv.pg_len + lengthb(pv.ph_buf) + lengthb(' ');
 			pv.ph_buf := '';
 		end if;
 		pv.pg_cssno := pv.pg_index + 2;
 		pv.pg_index := pv.pg_index + 2;
 	end;
 
-	procedure css(str varchar2) is
+	procedure css(str varchar2 character set any_cs) is
 	begin
 		pv.pg_css := pv.pg_css || str;
 	end;
@@ -102,30 +106,16 @@ create or replace package body output is
 		if p_len = 0 then
 			return;
 		end if;
-		if not pv.pg_conv then
-			if pv.pg_nchar then
-				for i in 1 .. pv.pg_index loop
-					pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
-				end loop;
-				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
-			else
-				for i in 1 .. pv.pg_index loop
-					pv.wlen := utl_tcp.write_text(pv.c, pv.ph_parts(i));
-				end loop;
-				pv.wlen := utl_tcp.write_text(pv.c, pv.ph_buf);
-			end if;
+		if pv.pg_nchar then
+			for i in 1 .. pv.pg_index loop
+				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
+			end loop;
+			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
 		else
-			if pv.pg_nchar then
-				for i in 1 .. pv.pg_index loop
-					pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_parts(i), pv.charset_ora, pv.cs_nchar));
-				end loop;
-				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar));
-			else
-				for i in 1 .. pv.pg_index loop
-					pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_parts(i), pv.charset_ora, pv.cs_nchar));
-				end loop;
-				pv.wlen := utl_tcp.write_text(pv.c, convert(pv.ph_buf, pv.charset_ora, pv.cs_nchar));
-			end if;
+			for i in 1 .. pv.pg_index loop
+				pv.wlen := utl_tcp.write_text(pv.c, pv.ph_parts(i));
+			end loop;
+			pv.wlen := utl_tcp.write_text(pv.c, pv.ph_buf);
 		end if;
 		chunk_init;
 	end;
@@ -138,6 +128,9 @@ create or replace package body output is
 		if not pv.header_writen then
 			pv.headers('Transfer-Encoding') := 'chunked';
 			write_head;
+		end if;
+		if pv.pg_conv then
+			pv.pg_buf := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
 		end if;
 		write_buf;
 		pv.flushed := true;
@@ -180,7 +173,7 @@ create or replace package body output is
 	) is
 	begin
 		if pv.pg_nchar then
-			pv.pg_buf := pv.pg_buf || (lpad(' ', indent, ' ') || str || nl);
+			pv.pg_buf := pv.pg_buf || (lpad(n' ', indent, ' ') || str || nl);
 		else
 			pv.ph_buf := pv.ph_buf || (lpad(' ', indent, ' ') || str || nl);
 		end if;
@@ -192,8 +185,12 @@ create or replace package body output is
 			else
 				pv.pg_index := pv.pg_index + 1;
 				if pv.pg_nchar then
-					pv.pg_parts(pv.pg_index) := pv.pg_buf;
-					pv.pg_len := pv.pg_len + lengthb(pv.pg_buf);
+					if pv.pg_conv then
+						pv.pg_parts(pv.pg_index) := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
+					else
+						pv.pg_parts(pv.pg_index) := pv.pg_buf;
+					end if;
+					pv.pg_len := pv.pg_len + lengthb(pv.pg_parts(pv.pg_index));
 				else
 					pv.ph_parts(pv.pg_index) := pv.ph_buf;
 					pv.pg_len := pv.pg_len + lengthb(pv.ph_buf);
@@ -207,7 +204,7 @@ create or replace package body output is
 	end;
 
 	procedure finish is
-		v_len integer := get_len;
+		v_len integer;
 		v_raw raw(32767);
 		v_md5 varchar2(32);
 		v_tmp nvarchar2(32767);
@@ -219,6 +216,11 @@ create or replace package body output is
 			flush;
 			return;
 		end if;
+	
+		if pv.pg_conv then
+			pv.pg_buf := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
+		end if;
+		v_len := get_len;
 	
 		if v_len = 0 then
 			if r.type = 'c' and pv.status_code = 200 then
@@ -260,20 +262,27 @@ create or replace package body output is
 			-- so if pv.pg_css is not null,
 			case pv.csslink
 				when true then
+					if pv.charset_ora != pv.cs_nchar then
+						pv.pg_css := convert(pv.pg_css, pv.charset_ora, pv.cs_nchar);
+					end if;
 					v_md5 := rawtohex(dbms_crypto.hash(utl_raw.cast_to_raw(pv.pg_css), dbms_crypto.hash_md5));
 					pv.headers('x-css-md5') := v_md5;
 					v_tmp := '<link type="text/css" rel="stylesheet" href="css/' || v_md5 || '"/>';
 				when false then
-					v_tmp := '<style>' || pv.pg_css || '</style>';
+					v_tmp := n'<style>' || pv.pg_css || n'</style>';
 				else
 					null;
 			end case;
 			if pv.pg_nchar then
-				pv.pg_parts(pv.pg_cssno) := v_tmp;
-				v_len := v_len + lengthb(v_tmp) - 1;
+				if pv.charset_ora = pv.cs_nchar then
+					pv.pg_parts(pv.pg_cssno) := v_tmp;
+				else
+					pv.pg_parts(pv.pg_cssno) := convert(v_tmp, pv.charset_ora, pv.cs_nchar);
+				end if;
+				v_len := v_len + lengthb(pv.pg_parts(pv.pg_cssno)) - lengthb(n' ');
 			else
 				pv.ph_parts(pv.pg_cssno) := to_char(v_tmp);
-				v_len := v_len + lengthb(pv.ph_parts(pv.pg_cssno)) - 1;
+				v_len := v_len + lengthb(pv.ph_parts(pv.pg_cssno)) - lengthb(' ');
 			end if;
 		
 		end if;
@@ -315,19 +324,13 @@ create or replace package body output is
 		end;
 		$end
 	
-		if not pv.pg_conv then
-			pv.headers('Content-Length') := to_char(v_len);
-			write_head;
-			write_buf(v_len);
-			if pv.etag_md5 then
-				if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
-					return;
-				end if;
+		pv.headers('Content-Length') := to_char(v_len);
+		write_head;
+		write_buf(v_len);
+		if pv.etag_md5 then
+			if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
+				return;
 			end if;
-		else
-			write_head;
-			write_buf(v_len);
-			pv.wlen := utl_tcp.write_text(pv.c, pv.end_marker);
 		end if;
 	
 		if pv.csslink = true and pv.pg_css is not null then

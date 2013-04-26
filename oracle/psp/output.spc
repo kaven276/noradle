@@ -5,7 +5,7 @@ create or replace package output is
 	procedure write_head;
 
 	procedure switch_css;
-	procedure css(str varchar2);
+	procedure css(str varchar2 character set any_cs);
 	procedure do_css_write;
 
 	procedure line

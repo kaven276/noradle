@@ -51,7 +51,7 @@ create or replace package pv is
 	-- all of response entity related
 	type pg_parts_arr is table of nvarchar2(32767) index by binary_integer;
 	type ph_parts_arr is table of varchar2(32767) index by binary_integer;
-	pg_buf   nvarchar2(32767); -- hold current/lastest write buffer
+	pg_buf   nvarchar2(8000); -- hold current/lastest write buffer
 	pg_parts pg_parts_arr; -- hold all written parts
 	pg_index pls_integer; -- written parts index high watermark
 	pg_len   pls_integer; -- written parts's total lengthb
@@ -60,7 +60,7 @@ create or replace package pv is
 	pg_css   nvarchar2(32767); -- hold component css text
 	pg_nchar boolean;
 	pg_conv  boolean;
-	ph_buf   varchar2(32767); -- hold current/lastest write buffer
+	ph_buf   varchar2(8000); -- hold current/lastest write buffer
 	ph_parts pg_parts_arr; -- hold all written parts
 
 	-- all output variation control state
