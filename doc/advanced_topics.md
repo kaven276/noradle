@@ -183,6 +183,12 @@ If p.comp_css_link(false) is called, then css text will be embed in top page, li
 http protocol related
 =====================
 
+
+chunked transfer and buffer flush
+----------------------------------
+
+Whether buffer flush is allow if related with "Transfer-Encoding", "Content-MD5", "ETag", "feedback","component css".
+
 GZIP
 ----------------------------
 
@@ -384,7 +390,25 @@ h.use_bom will output bom(EFBBBF) following the http response headers
 It can be used to provide none-html mime-type download utf-8 files like excel that can be viewed in excel on windows OS.
 Warning: It is just conflict with gzip content-encoding at now.
 
+internal
+-----------
 
+`pv.cs_char nls_charset_name(nls_charset_id('CHAR_CS'))`
+
+`pv.cs_nchar := nls_charset_name(nls_charset_id('NCHAR_CS'))`
+
+If response charset is `nls_charset_name(nls_charset_id('CHAR_CS'))`, Noradle will buffer page in varchar2 index-by
+array, if response charset is `nls_charset_name(nls_charset_id('NCHAR_CS'))`, such as "AL32UTF8" or "AL16UTF16",
+Noradle will buffer page in nvarchar2 index-by array. Ether case, Noradle will known the "content-length" by just sum
+ the `lengthb` of the varchar2 or nvarchar2 array. But when response charset is not in nether 'CHAR_CS' nor
+ 'NCHAR_CS', Noradle will convert charset along with buffer output, so it's until all page is flushed to nodejs from
+ oracle, it cannot tell the "content-length", but at the end of buffer flush, give "content-length" to node is
+ useless because nodejs have already count the bytes, and it's better to use chunked transfer if it can.
+
+ So noradle suggest AL32UTF8 for national charset for oracle database, cause most of http response will choose
+ "UTF-8" http encoding, a AL32UTF8 database will never take burden to have charset conversion overhead.
+
+`pv.pg_nchar boolean` indicate if use national charset buffer.
 
 server cache
 ========================

@@ -3,9 +3,8 @@
 <style>
 div.path{display:inline-block;font-size:smaller;}
 blockquote{background-color:#eeeeee;white-space:pre;}
+p{text-indent:2em;} li>p:first-child{text-indent:0;}
 </style>
-
-<style>p{text-indent:2em;} li>p:first-child{text-indent:0;}</style>
 
 <div id="title"> Outstanding of PSP.WEB  </div>
 
