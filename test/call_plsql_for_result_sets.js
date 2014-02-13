@@ -5,30 +5,41 @@
  * Time: 下午9:01
  */
 
-var Noradle = require('..')
-  , dbc = new Noradle.DBCall('demo', 'theOnlyDB')
-  ;
-Noradle.DBCall.init({oracle_port : 1523});
+function noop(){
+}
 
-function UnitTest1(){
-  dbc.call('db_src_b.example', function(status, page, headers){
-    console.log('status code is %d', status);
+var Noradle = require('..')
+  , dbc = new Noradle.DBCall('demo1', 'theOnlyDB')
+  , log = console.log
+  ;
+
+Noradle.DBCall.init({
+  oracle_port : 1522,
+  FreeConnTimeout : 60000
+});
+
+function UnitTest1(no){
+  var limit = Math.pow(10, i);
+  dbc.call('db_src_b.example', {limit : limit}, function(status, page, headers){
+    console.log("no:", no);
     if (status != 200) {
       console.error('status is', status);
+      console.error(page);
+      console.error(headers);
       return;
     }
-    console.log('\n\nthe original result page is :');
-    console.log(page);
-    console.log('\n\n', 'the parsed result sets is :');
     var rss = Noradle.RSParser.parse(page);
+
+    //log('\n\nthe original result page is :');
+    //log(page);
+    log('\n\n', 'the parsed result sets is :');
     for (var n in rss) {
       var rs = rss[n];
-      console.log('\n\n', 'ResultSet', n, 'is :');
-      console.log(rs);
+      log('\n\n', 'ResultSet:', n, '(' + rs.rows.length + ' rows)', 'is :');
+      // log(rs);
     }
   });
 }
-UnitTest1();
-UnitTest1();
-UnitTest1();
-UnitTest1();
+for (var i = 0; i < 5; i++) {
+  UnitTest1(i);
+}
