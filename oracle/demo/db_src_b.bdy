@@ -1,4 +1,4 @@
-create or replace package body db_src_b is
+﻿create or replace package body db_src_b is
 
 	procedure example is
 		cur sys_refcursor;
@@ -9,6 +9,7 @@ create or replace package body db_src_b is
 		if r.call_type = 'HTTP' then
 			h.content_type(h.mime_text, 'UTF-8');
 		elsif r.call_type = 'DATA' then
+			-- h.header('x-template', 'users');
 			h.line('# You are not required to write " h.content_type(h.mime_text, ''UTF-8'') " if call by NodeJS.');
 		end if;
 	
@@ -19,7 +20,9 @@ create or replace package body db_src_b is
 		h.line('# see PL/SQL source at ' || r.dad_path_full || '/src_b.proc/' || r.prog);
 	
 		open cur for
-			select * from user_objects;
+			select a.object_name, a.subobject_name, a.object_type, a.created
+				from user_objects a
+			 where rownum <= r.getn('limit', 8);
 		rs.print('test', cur);
 	
 		open cur for
