@@ -30,19 +30,17 @@ create or replace package body rs is
 			case descrec.col_type
 				when 1 then
 					dbms_sql.define_column(curid, i, namevar, vsize);
-					h.write(sep || descrec.col_name || ':' || descrec.col_type);
 					sep := ',';
 				when 2 then
 					dbms_sql.define_column(curid, i, numvar);
-					h.write(sep || descrec.col_name || ':' || descrec.col_type);
 					sep := ',';
 				when 12 then
 					dbms_sql.define_column(curid, i, datevar);
-					h.write(sep || descrec.col_name || ':' || descrec.col_type);
 					sep := ',';
 				else
-					dbms_sql.define_column_char(curid, i, namevar, vsize);
+					dbms_sql.define_column(curid, i, namevar, vsize);
 			end case;
+			h.write(sep || descrec.col_name || ':' || descrec.col_type);
 		end loop;
 	
 		-- Fetch Rows
@@ -54,17 +52,19 @@ create or replace package body rs is
 					when 1 then
 						dbms_sql.column_value(curid, i, namevar);
 						h.write(sep || namevar);
-						sep := ',';
 					when 2 then
 						dbms_sql.column_value(curid, i, numvar);
 						h.write(sep || numvar);
-						sep := ',';
 					when 12 then
 						dbms_sql.column_value(curid, i, datevar);
 						h.write(sep || to_char(datevar, 'yyyy-mm-dd hh24:mi:ss'));
-						sep := ',';
+					else
+						dbms_sql.column_value(curid, i, namevar);
+						h.write(sep || namevar);
 				end case;
-			
+				if i = 1 then
+					sep := ',';
+				end if;
 			end loop;
 		end loop;
 		h.line;
