@@ -30,17 +30,17 @@ create or replace package body rs is
 			case descrec.col_type
 				when 1 then
 					dbms_sql.define_column(curid, i, namevar, vsize);
-					sep := ',';
 				when 2 then
 					dbms_sql.define_column(curid, i, numvar);
-					sep := ',';
 				when 12 then
 					dbms_sql.define_column(curid, i, datevar);
-					sep := ',';
 				else
 					dbms_sql.define_column(curid, i, namevar, vsize);
 			end case;
 			h.write(sep || descrec.col_name || ':' || descrec.col_type);
+			if i = 1 then
+				sep := ',';
+			end if;
 		end loop;
 	
 		-- Fetch Rows
