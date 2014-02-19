@@ -44,6 +44,56 @@ create or replace package body r is
 		end loop;
 	end;
 
+	procedure get
+	(
+		name   varchar2,
+		value  in out nocopy varchar2 character set any_cs,
+		defval varchar2 := null
+	) is
+	begin
+		value := ra.params(name) (1);
+	exception
+		when no_data_found then
+			value := defval;
+	end;
+
+	-- Refactored procedure extract_user_pass 
+	procedure extract_user_pass is
+		v_credential varchar2(100);
+		v_parts      st;
+	begin
+		get('h$authorization', v_credential);
+		if v_credential is null then
+			v_user := null;
+			v_pass := null;
+		else
+			t.split(v_parts, v_credential, ' ');
+			case v_parts(1)
+				when 'Basic' then
+					t.split(v_parts, utl_encode.text_decode(v_parts(2), encoding => utl_encode.base64), ':');
+					v_user := v_parts(1);
+					v_pass := v_parts(2);
+				when 'Digest' then
+					null;
+			end case;
+		end if;
+	exception
+		when no_data_found then
+			v_user := null;
+			v_pass := null;
+	end;
+
+	-- Refactored procedure set_get_uamd5 
+	procedure set_get_uamd5(v_uamd5 in out varchar2) is
+	begin
+		if ra.params.exists('h$user-agent') then
+			-- at session creation
+			k_gac.gset('UA_CTX', v_uamd5, nvl(ra.params('h$user-agent') (1), 'NULL'));
+		else
+			ra.params('h$user-agent') := st(nvl(sys_context('UA_CTX', v_uamd5), 'LOST'));
+		end if;
+	end;
+
 	procedure "_init"
 	(
 		c        in out nocopy utl_tcp.connection,
@@ -58,115 +108,7 @@ create or replace package body r is
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
 	
-		-- basic input
-		case pv.protocol
-			when 'HTTP' then
-				v_method := utl_tcp.get_line(c, true);
-				v_url    := utl_tcp.get_line(c, true);
-				v_proto  := utl_tcp.get_line(c, true);
-				v_host   := utl_tcp.get_line(c, true);
-				v_hostp  := utl_tcp.get_line(c, true);
-				v_port   := to_number(utl_tcp.get_line(c, true));
-				v_base   := utl_tcp.get_line(c, true);
-				v_dad    := utl_tcp.get_line(c, true);
-				v_prog   := utl_tcp.get_line(c, true);
-				v_pack   := utl_tcp.get_line(c, true);
-				v_proc   := utl_tcp.get_line(c, true);
-				v_path   := utl_tcp.get_line(c, true);
-				v_qstr   := utl_tcp.get_line(c, true);
-				v_type   := substrb(nvl(v_pack, v_proc), -1);
-				gv_caddr := utl_tcp.get_line(c, true);
-				gv_cport := to_number(utl_tcp.get_line(c, true));
-				pv.bsid  := utl_tcp.get_line(c, true);
-				pv.msid  := utl_tcp.get_line(c, true);
-				v_uamd5  := utl_tcp.get_line(c, true);
-			
-				if v_dad is null then
-					v_dad := lower(k_cfg.server_control().default_dbu);
-				end if;
-			
-				if regexp_like(v_dad, lower(k_cfg.server_control().dbu_filter)) then
-					gv_dbu := v_dad;
-				else
-					gv_dbu := lower(k_cfg.server_control().default_dbu);
-				end if;
-			
-			when 'DATA' then
-				gv_dbu := lower(utl_tcp.get_line(c, true));
-				v_prog := utl_tcp.get_line(c, true);
-				v_proc := utl_tcp.get_line(c, true);
-				v_pack := utl_tcp.get_line(c, true);
-		end case;
-	
-		pv.schema := dbu;
-		pv.prog   := v_prog;
-	
-		ra.headers.delete;
-		ra.cookies.delete;
 		ra.params.delete;
-	
-		rb.charset_http := null;
-		rb.charset_db   := null;
-		rb.blob_entity  := null;
-		rb.clob_entity  := null;
-		rb.nclob_entity := null;
-		-- read headers
-		loop
-			v_name := utl_tcp.get_line(c, true);
-			exit when v_name is null;
-			v_value := utl_tcp.get_line(c, true);
-			ra.headers(v_name) := v_value;
-		end loop;
-	
-		dbms_session.clear_identifier;
-		if false then
-			if ra.headers.exists('user-agent') then
-				-- at session creation
-				k_gac.gset('UA_CTX', v_uamd5, nvl(ra.headers('user-agent'), 'NULL'));
-			else
-				ra.headers('user-agent') := nvl(sys_context('UA_CTX', v_uamd5), 'LOST');
-			end if;
-		end if;
-	
-		-- credentials
-		if pv.protocol = 'HTTP' then
-			declare
-				v_credential varchar2(100);
-				v_parts      st;
-			begin
-				v_credential := ra.headers('authorization');
-				if v_credential is null then
-					v_user := null;
-					v_pass := null;
-				else
-					t.split(v_parts, v_credential, ' ');
-					case v_parts(1)
-						when 'Basic' then
-							t.split(v_parts, utl_encode.text_decode(v_parts(2), encoding => utl_encode.base64), ':');
-							v_user := v_parts(1);
-							v_pass := v_parts(2);
-						when 'Digest' then
-							null;
-					end case;
-				end if;
-			exception
-				when no_data_found then
-					v_user := null;
-					v_pass := null;
-			end;
-		end if;
-	
-		-- read cookies
-		if pv.protocol = 'HTTP' then
-			loop
-				v_name := utl_tcp.get_line(c, true);
-				exit when v_name is null;
-				v_value := utl_tcp.get_line(c, true);
-				ra.cookies(v_name) := v_value;
-			end loop;
-		end if;
-	
-		-- read query string
 		loop
 			v_name := utl_tcp.get_line(c, true);
 			exit when v_name is null;
@@ -174,40 +116,93 @@ create or replace package body r is
 			if v_value is null then
 				v_st := st(null);
 			else
-				t.split(v_st, v_value, ',', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+				t.split(v_st, v_value, ',,', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
 			end if;
 			ra.params(trim(v_name)) := v_st;
 		end loop;
 	
+		get('x$dbu', gv_dbu);
+		get('x$prog', v_prog);
+		get('x$pack', v_pack);
+		get('x$proc', v_proc);
+		gv_dbu := lower(gv_dbu);
+		v_type := substrb(nvl(v_pack, v_proc), -1);
+	
+		-- basic input
+		case pv.protocol
+			when 'HTTP' then
+				get('u$method', v_method);
+				get('u$url', v_url);
+				get('u$proto', v_proto);
+				get('u$host', v_host);
+				get('u$hostp', v_hostp);
+				getn('u$port', v_port, null, null);
+				get('u$base', v_base);
+				get('u$dad', v_dad);
+				get('u$path', v_path);
+				get('u$qstr', v_qstr);
+				get('a$caddr', gv_caddr);
+				getn('a$cport', gv_cport, null, null);
+				get('a$uamd5', v_uamd5);
+				get('i$bsid', pv.bsid);
+				get('i$msid', pv.msid);
+				-- get i$gid
+				-- get i$nid
+			
+				if v_dad is null then
+					v_dad := lower(k_cfg.server_control().default_dbu);
+				end if;
+			
+				if gv_dbu is null then
+					if regexp_like(v_dad, lower(k_cfg.server_control().dbu_filter)) then
+						gv_dbu := v_dad;
+					else
+						gv_dbu := lower(k_cfg.server_control().default_dbu);
+					end if;
+				end if;
+			
+			when 'DATA' then
+				null;
+		end case;
+	
+		pv.schema := dbu;
+		pv.prog   := v_prog;
+	
+		rb.charset_http := null;
+		rb.charset_db   := null;
+		rb.blob_entity  := null;
+		rb.clob_entity  := null;
+		rb.nclob_entity := null;
+	
+		dbms_session.clear_identifier;
+		if false then
+			set_get_uamd5(v_uamd5);
+		end if;
+	
+		-- credentials
+		if pv.protocol = 'HTTP' then
+			extract_user_pass;
+		end if;
+	
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if pv.protocol = 'HTTP' and v_method = 'POST' then
-			if ra.headers('content-type') like 'application/x-www-form-urlencoded%' or
-				 ra.headers('content-type') like 'multipart/form-data%' then
-				loop
-					v_name := utl_tcp.get_line(c, true);
-					exit when v_name is null;
-					v_value := utl_tcp.get_line(c, true);
-					if v_value is null then
-						v_st := st(null);
-					else
-						t.split(v_st, v_value, ',', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
-					end if;
-					ra.params(trim(v_name)) := v_st;
-				end loop;
+			if header('content-type') like 'application/x-www-form-urlencoded%' or
+				 header('content-type') like 'multipart/form-data%' then
+				null; -- form key-value pairs already got
 			else
 				declare
 					v_len number(10);
 					v_pos pls_integer;
 				begin
-					v_len := to_number(ra.headers('content-length'));
+					v_len := to_number(header('content-length'));
 					if v_len is null or v_len = 0 then
 						return;
 					end if;
 					getblob(v_len, rb.blob_entity);
 					-- maybe for security lobs only
 					-- dbms_lob.setcontenttype(rb.blob_entity, gv_headers('content-type'));
-					v_pos           := instrb(ra.headers('content-type'), '=');
-					rb.charset_http := t.tf(v_pos > 0, trim(substr(ra.headers('content-type'), v_pos + 1)), 'UTF-8');
+					v_pos           := instrb(header('content-type'), '=');
+					rb.charset_http := t.tf(v_pos > 0, trim(substr(header('content-type'), v_pos + 1)), 'UTF-8');
 					rb.charset_db   := utl_i18n.map_charset(rb.charset_http, utl_i18n.generic_context, utl_i18n.iana_to_oracle);
 				end;
 			end if;
@@ -594,7 +589,7 @@ create or replace package body r is
 
 	function header(name varchar2) return varchar2 is
 	begin
-		return ra.headers(lower(name));
+		return ra.params('h$' || lower(name))(1);
 	exception
 		when no_data_found then
 			return null;
@@ -612,7 +607,7 @@ create or replace package body r is
 
 	function cookie(name varchar2) return varchar2 is
 	begin
-		return ra.cookies(name);
+		return ra.params('c$' || lower(name))(1);
 	exception
 		when no_data_found then
 			return null;

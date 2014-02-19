@@ -407,12 +407,15 @@ create or replace package body k_xhtp is
 		n varchar2(99);
 		v varchar2(999);
 	begin
-		n := ra.headers.first;
+		n := ra.params.first;
 		loop
 			exit when n is null;
-			v := ra.headers(n);
-			line(n || ' = ' || v);
-			n := ra.headers.next(n);
+			if n not like 'h$%' then
+				continue;
+			end if;
+			v := ra.params(n)(1);
+			line(substr(n, 3) || ' = ' || v);
+			n := ra.params.next(n);
 		end loop;
 	end;
 
