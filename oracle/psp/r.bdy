@@ -116,7 +116,7 @@ create or replace package body r is
 			if v_value is null then
 				v_st := st(null);
 			else
-				t.split(v_st, v_value, ',,', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+				t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
 			end if;
 			ra.params(trim(v_name)) := v_st;
 		end loop;
