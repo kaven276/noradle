@@ -38,32 +38,37 @@ create or replace package body basic_io_b is
 	
 		h.line;
 		h.line('[ This is all original http request headers ]');
-		n := ra.headers.first;
+		n := ra.params.first;
 		loop
 			exit when n is null;
-			v := ra.headers(n);
-			h.line(n || ' : ' || v);
-			n := ra.headers.next(n);
+			if n like 'h$%' then
+				v := ra.params(n) (1);
+				h.line(n || ' : ' || v);
+			end if;
+			n := ra.params.next(n);
 		end loop;
 	
 		h.line;
 		h.line('[ This is all http request cookies ]');
-		n := ra.cookies.first;
+		n := ra.params.first;
 		loop
 			exit when n is null;
-			v := ra.cookies(n);
-			h.line(n || ' : ' || v);
-			n := ra.cookies.next(n);
+			if n like 'c$%' then
+				v := ra.params(n) (1);
+				h.line(n || ' : ' || v);
+			end if;
+			n := ra.params.next(n);
 		end loop;
 	
 		h.line;
 		h.line('[ This is all http request parameter that may be got from the following ways ]');
 		h.line('query string, post with application/x-www-form-urlencoded, post with multipart/form-data');
+		h.line;
 		n := ra.params.first;
 		loop
 			exit when n is null;
 			va := ra.params(n);
-			h.line(n || ' : ' || t.join(va, ','));
+			h.line(n || ' : ' || t.join(va, ', '));
 			n := ra.params.next(n);
 		end loop;
 	
