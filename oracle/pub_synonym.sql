@@ -25,3 +25,9 @@ create or replace public synonym k_gac for k_gac;
 
 create or replace public synonym gac for k_gac;
 create or replace public synonym odb for k_debug;
+
+create or replace public synonym sts for sts;
+create or replace public synonym tag for tag;
+create or replace public synonym x for tag;
+create or replace public synonym multi for multi;
+create or replace public synonym m for multi;
