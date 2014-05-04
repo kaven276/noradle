@@ -1,8 +1,13 @@
-﻿create or replace package body multi is
+create or replace package body multi is
 
 	type pairs_t is ref cursor;
 
-	procedure split(p varchar2, cuts in out nocopy st, sep varchar2 := ',') is
+	procedure split
+	(
+		p    varchar2,
+		cuts in out nocopy st,
+		sep  varchar2 := ','
+	) is
 		v_pos pls_integer;
 		v_old pls_integer := 0;
 		v_cnt pls_integer := 0;
@@ -20,7 +25,11 @@
 		cuts(v_cnt + 1) := trim(substr(p, v_old + 1));
 	end;
 
-	function join(cuts in out nocopy st, sep varchar2 := ',') return varchar2 is
+	function join
+	(
+		cuts in out nocopy st,
+		sep  varchar2 := ','
+	) return varchar2 is
 		s varchar2(4000);
 	begin
 		s := cuts(1);
@@ -30,7 +39,11 @@
 		return s;
 	end;
 
-	procedure split2(pairs varchar2, sep varchar2 := ';:') is
+	procedure split2
+	(
+		pairs varchar2,
+		sep   varchar2 := ';:'
+	) is
 		v_single boolean := length(sep) = 1;
 		v_sep1   char(1) := substrb(sep, 1, 1);
 		v_count  pls_integer;
@@ -66,7 +79,12 @@
 		end loop;
 	end;
 
-	function f(cur pairs_t, n in out nocopy st, v in out nocopy st) return number is
+	function f
+	(
+		cur pairs_t,
+		n   in out nocopy st,
+		v   in out nocopy st
+	) return number is
 		i       pls_integer := 0;
 		v_text  varchar2(1000);
 		v_value varchar2(1000);
@@ -87,13 +105,23 @@
 		return i;
 	end;
 
-	procedure f(cur pairs_t, n in out nocopy st, v in out nocopy st) is
+	procedure f
+	(
+		cur pairs_t,
+		n   in out nocopy st,
+		v   in out nocopy st
+	) is
 		v_dummy number;
 	begin
 		v_dummy := f(cur, n, v);
 	end;
 
-	function w(head varchar2, texts st, tail varchar2) return varchar2 is
+	function w
+	(
+		head  varchar2,
+		texts st,
+		tail  varchar2
+	) return varchar2 is
 		v_rtn varchar2(32000);
 	begin
 		for i in 1 .. texts.count loop
@@ -102,7 +130,13 @@
 		return v_rtn;
 	end;
 
-	procedure w(head varchar2, texts st, tail varchar2, indent boolean := true) is
+	procedure w
+	(
+		head   varchar2,
+		texts  st,
+		tail   varchar2,
+		indent boolean := true
+	) is
 		v_head varchar2(4000);
 	begin
 		if indent then
@@ -116,7 +150,11 @@
 		k_xhtp.line;
 	end;
 
-	function w(tpl varchar2, texts st) return varchar2 is
+	function w
+	(
+		tpl   varchar2,
+		texts st
+	) return varchar2 is
 		v_rtn varchar2(32000);
 	begin
 		for i in 1 .. texts.count loop
@@ -125,7 +163,12 @@
 		return v_rtn;
 	end;
 
-	procedure w(tpl varchar2, texts st, indent boolean := true) is
+	procedure w
+	(
+		tpl    varchar2,
+		texts  st,
+		indent boolean := true
+	) is
 		v_tpl varchar2(4000);
 	begin
 		if indent then
@@ -139,7 +182,11 @@
 		k_xhtp.line;
 	end;
 
-	function w(tpl varchar2, texts varchar2) return varchar2 is
+	function w
+	(
+		tpl   varchar2,
+		texts varchar2
+	) return varchar2 is
 		v_pos  pls_integer := instrb(tpl, '@');
 		v_head varchar2(4000) := substrb(tpl, 1, v_pos - 1);
 		v_tail varchar2(4000) := substrb(tpl, v_pos + 1);
@@ -147,7 +194,12 @@
 		return v_head || replace(texts, ',', v_tail || v_head) || v_tail;
 	end;
 
-	procedure w(tpl varchar2, texts varchar2, indent boolean := true) is
+	procedure w
+	(
+		tpl    varchar2,
+		texts  varchar2,
+		indent boolean := true
+	) is
 		v_pos  pls_integer := instrb(tpl, '@');
 		v_head varchar2(4000) := substrb(tpl, 1, v_pos - 1);
 		v_tail varchar2(4000) := substrb(tpl, v_pos + 1);
@@ -158,7 +210,13 @@
 		k_xhtp.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
 	end;
 
-	procedure w(tpl varchar2, cur sys_refcursor, sv varchar2, indent boolean := true) is
+	procedure w
+	(
+		tpl    varchar2,
+		cur    sys_refcursor,
+		sv     varchar2,
+		indent boolean := true
+	) is
 		v  varchar2(4000);
 		n  varchar2(4000);
 		p1 pls_integer := instrb(tpl, '?');
@@ -187,7 +245,12 @@
 		end loop;
 	end;
 
-	function w(tpl varchar2, cur sys_refcursor, sv varchar2) return varchar2 is
+	function w
+	(
+		tpl varchar2,
+		cur sys_refcursor,
+		sv  varchar2
+	) return varchar2 is
 		v   varchar2(4000);
 		n   varchar2(4000);
 		p1  pls_integer := instrb(tpl, '?');
@@ -216,7 +279,12 @@
 	end;
 
 	-- template parser for flat structure
-	procedure p(tpl varchar2, cuts in out nocopy st, indent boolean := true) is
+	procedure p
+	(
+		tpl    varchar2,
+		cuts   in out nocopy st,
+		indent boolean := true
+	) is
 	begin
 		split(tpl, cuts, '@');
 		if indent then
@@ -225,7 +293,11 @@
 	end;
 
 	-- repeater for flat structure
-	procedure r(cuts in out nocopy st, para st) is
+	procedure r
+	(
+		cuts in out nocopy st,
+		para st
+	) is
 	begin
 		for i in 1 .. para.count loop
 			k_xhtp.prn(cuts(i));
@@ -235,7 +307,13 @@
 	end;
 
 	-- template parser for hierachical structure
-	procedure p(tpl varchar2, list_tag varchar2, cuts in out nocopy st, indent boolean := true) is
+	procedure p
+	(
+		tpl      varchar2,
+		list_tag varchar2,
+		cuts     in out nocopy st,
+		indent   boolean := true
+	) is
 		pos  pls_integer;
 		head varchar2(4000);
 		tail varchar2(30);
@@ -262,7 +340,12 @@
 	end;
 
 	-- repeater for gen hierachical structure
-	procedure r(cuts in out nocopy st, level pls_integer, para st) is
+	procedure r
+	(
+		cuts  in out nocopy st,
+		level pls_integer,
+		para  st
+	) is
 	begin
 		if sts.olevel is not null then
 			if level = sts.olevel + 1 then
@@ -306,7 +389,12 @@
 		k_xhtp.line;
 	end;
 
-	procedure c(tpl varchar2, cur in out nocopy sys_refcursor, fmt_date varchar2 := null) is
+	procedure c
+	(
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null
+	) is
 		curid      number;
 		desctab    dbms_sql.desc_tab;
 		colcnt     number;

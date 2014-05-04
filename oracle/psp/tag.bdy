@@ -1,16 +1,28 @@
-﻿create or replace package body tag is
+create or replace package body tag is
 
-	function w(text varchar2, tag varchar2 := 'b') return varchar2 is
+	function w
+	(
+		text varchar2,
+		tag  varchar2 := 'b'
+	) return varchar2 is
 	begin
 		return regexp_replace(text, '(.)', replace('<*>\1</*>', '*', tag));
 	end;
 
-	function r(text varchar2, dyna varchar2) return varchar2 is
+	function r
+	(
+		text varchar2,
+		dyna varchar2
+	) return varchar2 is
 	begin
 		return replace(text, '@', dyna);
 	end;
 
-	function b2c(value boolean, attr varchar2) return varchar2 is
+	function b2c
+	(
+		value boolean,
+		attr  varchar2
+	) return varchar2 is
 	begin
 		if value then
 			return attr || '';
@@ -49,7 +61,13 @@
 		return b2c(value, 'async');
 	end;
 
-	function base(tag varchar2, para st := null, text varchar2, extra varchar2 := '') return varchar2 is
+	function base
+	(
+		tag   varchar2,
+		para  st := null,
+		text  varchar2,
+		extra varchar2 := ''
+	) return varchar2 is
 		p1      pls_integer; -- <
 		p2      pls_integer; -- #
 		p3      pls_integer; -- .
@@ -102,7 +120,11 @@
 	
 	end;
 
-	procedure o(tag varchar2, para st := st()) is
+	procedure o
+	(
+		tag  varchar2,
+		para st := st()
+	) is
 	begin
 		k_xhtp.line(base(tag, para, '<>'));
 	end;
@@ -122,7 +144,13 @@
 		k_xhtp.line(v_tag);
 	end;
 
-	function p(tag varchar2, inner varchar2 character set any_cs, para st := null, cut boolean := false) return varchar2 is
+	function p
+	(
+		tag   varchar2,
+		inner varchar2 character set any_cs,
+		para  st := null,
+		cut   boolean := false
+	) return varchar2 is
 	begin
 		if cut then
 			return '';
@@ -130,7 +158,13 @@
 		return base(tag, para, inner);
 	end;
 
-	procedure p(tag varchar2, inner varchar2 character set any_cs, para st := null, cut boolean := false) is
+	procedure p
+	(
+		tag   varchar2,
+		inner varchar2 character set any_cs,
+		para  st := null,
+		cut   boolean := false
+	) is
 	begin
 		if cut then
 			return;
@@ -138,7 +172,12 @@
 		k_xhtp.line(base(tag, para, inner));
 	end;
 
-	function s(tag varchar2, para st := null, cut boolean := false) return varchar2 is
+	function s
+	(
+		tag  varchar2,
+		para st := null,
+		cut  boolean := false
+	) return varchar2 is
 	begin
 		if cut then
 			return '';
@@ -146,7 +185,12 @@
 		return base(tag, para, chr(0));
 	end;
 
-	procedure s(tag varchar2, para st := null, cut boolean := false) is
+	procedure s
+	(
+		tag  varchar2,
+		para st := null,
+		cut  boolean := false
+	) is
 	begin
 		if cut then
 			return;
@@ -154,37 +198,75 @@
 		k_xhtp.line(base(tag, para, chr(0)));
 	end;
 
-	function a(tg varchar2, text varchar2, href varchar2, para st := null) return varchar2 is
+	function a
+	(
+		tg   varchar2,
+		text varchar2,
+		href varchar2,
+		para st := null
+	) return varchar2 is
 	begin
 		return tag.base(tg, para, text, ' href="' || url(href) || '"');
 	end;
 
-	procedure a(tg varchar2, text varchar2, href varchar2, para st := null) is
+	procedure a
+	(
+		tg   varchar2,
+		text varchar2,
+		href varchar2,
+		para st := null
+	) is
 	begin
 		k_xhtp.line(base(tg, para, text, ' href="' || url(href) || '"'));
 	end;
 
-	function v(tg varchar2, value varchar2, para st := null) return varchar2 is
+	function v
+	(
+		tg    varchar2,
+		value varchar2,
+		para  st := null
+	) return varchar2 is
 	begin
 		return tag.base(tg, para, chr(0), ' value="' || value || '"');
 	end;
 
-	procedure v(tg varchar2, value varchar2, para st := null) is
+	procedure v
+	(
+		tg    varchar2,
+		value varchar2,
+		para  st := null
+	) is
 	begin
 		k_xhtp.line(base(tg, para, chr(0), ' value="' || value || '"'));
 	end;
 
-	function i(tg varchar2, src varchar2, para st := null) return varchar2 is
+	function i
+	(
+		tg   varchar2,
+		src  varchar2,
+		para st := null
+	) return varchar2 is
 	begin
 		return tag.base(tg, para, chr(0), ' src="' || url(src) || '"');
 	end;
 
-	procedure i(tg varchar2, src varchar2, para st := null) is
+	procedure i
+	(
+		tg   varchar2,
+		src  varchar2,
+		para st := null
+	) is
 	begin
 		k_xhtp.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
 	end;
 
-	procedure t(text varchar2 character set any_cs, para st := null, indent boolean := true, cut boolean := false) is
+	procedure t
+	(
+		text   varchar2 character set any_cs,
+		para   st := null,
+		indent boolean := true,
+		cut    boolean := false
+	) is
 	begin
 		if cut then
 			return;

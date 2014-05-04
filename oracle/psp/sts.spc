@@ -1,4 +1,4 @@
-﻿create or replace package sts is
+create or replace package sts is
 
 	attr  varchar2(4000);
 	stack varchar2(4000);
