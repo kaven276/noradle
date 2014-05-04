@@ -26,6 +26,8 @@
 	procedure a(tg varchar2, text varchar2, href varchar2, para st := null);
 	function v(tg varchar2, value varchar2, para st := null) return varchar2;
 	procedure v(tg varchar2, value varchar2, para st := null);
+	function i(tg varchar2, src varchar2, para st := null) return varchar2;
+	procedure i(tg varchar2, src varchar2, para st := null);
 
 	function e(text varchar2 character set any_cs) return varchar2;
 	procedure j(src varchar2);

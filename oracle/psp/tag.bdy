@@ -156,12 +156,12 @@
 
 	function a(tg varchar2, text varchar2, href varchar2, para st := null) return varchar2 is
 	begin
-		return tag.base(tg, para, text, ' href="' || href || '"');
+		return tag.base(tg, para, text, ' href="' || url(href) || '"');
 	end;
 
 	procedure a(tg varchar2, text varchar2, href varchar2, para st := null) is
 	begin
-		k_xhtp.line(base(tg, para, text, ' href="' || href || '"'));
+		k_xhtp.line(base(tg, para, text, ' href="' || url(href) || '"'));
 	end;
 
 	function v(tg varchar2, value varchar2, para st := null) return varchar2 is
@@ -172,6 +172,16 @@
 	procedure v(tg varchar2, value varchar2, para st := null) is
 	begin
 		k_xhtp.line(base(tg, para, chr(0), ' value="' || value || '"'));
+	end;
+
+	function i(tg varchar2, src varchar2, para st := null) return varchar2 is
+	begin
+		return tag.base(tg, para, chr(0), ' src="' || url(src) || '"');
+	end;
+
+	procedure i(tg varchar2, src varchar2, para st := null) is
+	begin
+		k_xhtp.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
 	end;
 
 	procedure t(text varchar2 character set any_cs, para st := null, indent boolean := true, cut boolean := false) is
@@ -201,12 +211,12 @@
 
 	procedure j(src varchar2) is
 	begin
-		k_xhtp.line('<script src="' || src || '"></script>');
+		k_xhtp.line('<script src="' || url(src) || '"></script>');
 	end;
 
 	procedure l(href varchar2) is
 	begin
-		k_xhtp.line('<link href="' || href || '" rel="stylesheet"/>');
+		k_xhtp.line('<link href="' || url(href) || '" rel="stylesheet"/>');
 	end;
 
 end tag;

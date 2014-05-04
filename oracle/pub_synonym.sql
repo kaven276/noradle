@@ -31,3 +31,5 @@ create or replace public synonym tag for tag;
 create or replace public synonym x for tag;
 create or replace public synonym multi for multi;
 create or replace public synonym m for multi;
+-- create or replace public synonym url for url;
+create or replace public synonym l for url;
