@@ -111,9 +111,9 @@
 			v_head := head;
 		end if;
 		for i in 1 .. texts.count loop
-			p.prn(v_head || texts(i) || tail);
+			k_xhtp.prn(v_head || texts(i) || tail);
 		end loop;
-		p.line;
+		k_xhtp.line;
 	end;
 
 	function w(tpl varchar2, texts st) return varchar2 is
@@ -134,9 +134,9 @@
 			v_tpl := tpl;
 		end if;
 		for i in 1 .. texts.count loop
-			p.prn(replace(v_tpl, '@', texts(i)));
+			k_xhtp.prn(replace(v_tpl, '@', texts(i)));
 		end loop;
-		p.line;
+		k_xhtp.line;
 	end;
 
 	function w(tpl varchar2, texts varchar2) return varchar2 is
@@ -155,7 +155,7 @@
 		if indent then
 			v_head := ltrim(v_head);
 		end if;
-		p.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
+		k_xhtp.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
 	end;
 
 	procedure w(tpl varchar2, cur sys_refcursor, sv varchar2, indent boolean := true) is
@@ -180,9 +180,9 @@
 				into v, n;
 			exit when cur%notfound;
 			if instr(sw, ',' || v || ',') = 0 then
-				p.line(t1 || t2 || v || t3 || n || t4);
+				k_xhtp.line(t1 || t2 || v || t3 || n || t4);
 			else
-				p.line(t1 || b || t2 || v || t3 || n || t4);
+				k_xhtp.line(t1 || b || t2 || v || t3 || n || t4);
 			end if;
 		end loop;
 	end;
@@ -215,7 +215,8 @@
 		return rtn;
 	end;
 
-	procedure t(tpl varchar2, cuts in out nocopy st, indent boolean := true) is
+	-- template parser for flat structure
+	procedure p(tpl varchar2, cuts in out nocopy st, indent boolean := true) is
 	begin
 		split(tpl, cuts, '@');
 		if indent then
@@ -223,13 +224,86 @@
 		end if;
 	end;
 
+	-- repeater for flat structure
 	procedure r(cuts in out nocopy st, para st) is
 	begin
 		for i in 1 .. para.count loop
-			p.prn(cuts(i));
-			p.prn(para(i));
+			k_xhtp.prn(cuts(i));
+			k_xhtp.prn(para(i));
 		end loop;
-		p.line(cuts(para.count + 1));
+		k_xhtp.line(cuts(para.count + 1));
+	end;
+
+	-- template parser for hierachical structure
+	procedure p(tpl varchar2, list_tag varchar2, cuts in out nocopy st, indent boolean := true) is
+		pos  pls_integer;
+		head varchar2(4000);
+		tail varchar2(30);
+	begin
+		pos  := instrb(tpl, '|');
+		head := substrb(tpl, 1, pos - 1);
+		tail := substrb(tpl, pos + 1);
+		split(head, cuts, '@');
+		if indent then
+			cuts(1) := ltrim(cuts(1));
+		end if;
+		cuts.extend;
+		cuts(cuts.count) := tail;
+		cuts.extend;
+		cuts(cuts.count) := list_tag;
+		cuts.extend;
+		cuts(cuts.count) := '</' || substrb(list_tag, 2);
+	end;
+
+	procedure ro(pretty boolean := null) is
+	begin
+		sts.olevel := null;
+		sts.pretty := pretty;
+	end;
+
+	-- repeater for gen hierachical structure
+	procedure r(cuts in out nocopy st, level pls_integer, para st) is
+	begin
+		if sts.olevel is not null then
+			if level = sts.olevel + 1 then
+				-- enter deeper level
+				k_xhtp.prn(cuts(cuts.count - 1));
+				sts.olevel := level;
+			else
+				-- same level or level up
+				k_xhtp.prn(cuts(cuts.count - 2));
+				-- escape one or more level up
+				for j in 1 .. sts.olevel - level loop
+					-- return level
+					k_xhtp.prn(cuts(cuts.count - 0));
+					k_xhtp.prn(cuts(cuts.count - 2));
+				end loop;
+				sts.olevel := level;
+			end if;
+			if sts.pretty is null then
+				k_xhtp.prn(chr(10));
+			elsif sts.pretty then
+				k_xhtp.prn(rpad(chr(10), level, ' '));
+			end if;
+		else
+			sts.olevel := 1;
+		end if;
+	
+		for i in 1 .. para.count loop
+			k_xhtp.prn(cuts(i));
+			k_xhtp.prn(para(i));
+		end loop;
+		k_xhtp.prn(cuts(para.count + 1));
+	end;
+
+	procedure rc(cuts in out nocopy st) is
+	begin
+		k_xhtp.prn(cuts(cuts.count - 2));
+		for j in 1 .. sts.olevel - 1 loop
+			k_xhtp.prn(cuts(cuts.count - 0));
+			k_xhtp.prn(cuts(cuts.count - 2));
+		end loop;
+		k_xhtp.line;
 	end;
 
 	procedure c(tpl varchar2, cur in out nocopy sys_refcursor, fmt_date varchar2 := null) is
@@ -266,23 +340,23 @@
 			v_count := v_count + 1;
 		
 			for i in 1 .. colcnt loop
-				p.prn(v_cuts(i));
+				k_xhtp.prn(v_cuts(i));
 				case desctab(i).col_type
 					when 1 then
 						dbms_sql.column_value(curid, i, v_varchar2);
-						p.prn(v_varchar2);
+						k_xhtp.prn(v_varchar2);
 					when 2 then
 						dbms_sql.column_value(curid, i, v_number);
-						p.prn(to_char(v_number));
+						k_xhtp.prn(to_char(v_number));
 					when 12 then
 						dbms_sql.column_value(curid, i, v_date);
-						p.prn(to_char(v_date, coalesce(fmt_date, 'yyyy-mm-dd')));
+						k_xhtp.prn(to_char(v_date, coalesce(fmt_date, 'yyyy-mm-dd')));
 					else
 						dbms_sql.column_value(curid, i, v_other);
-						p.prn(v_other);
+						k_xhtp.prn(v_other);
 				end case;
 			end loop;
-			p.line(v_cuts(colcnt + 1));
+			k_xhtp.line(v_cuts(colcnt + 1));
 		end loop;
 		dbms_sql.close_cursor(curid);
 	exception

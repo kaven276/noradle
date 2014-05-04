@@ -14,8 +14,13 @@
 
 	procedure c(tpl varchar2, cur in out nocopy sys_refcursor, fmt_date varchar2 := null);
 
-	procedure t(tpl varchar2, cuts in out nocopy st, indent boolean := true);
+	procedure p(tpl varchar2, cuts in out nocopy st, indent boolean := true);
 	procedure r(cuts in out nocopy st, para st);
+
+	procedure p(tpl varchar2, list_tag varchar2, cuts in out nocopy st, indent boolean := true);
+	procedure r(cuts in out nocopy st, level pls_integer, para st);
+	procedure ro(pretty boolean := null);
+	procedure rc(cuts in out nocopy st);
 
 end multi;
 /

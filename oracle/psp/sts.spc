@@ -7,5 +7,8 @@
 	gv_texts  st;
 	gv_values st;
 
+	olevel pls_integer;
+	pretty boolean;
+
 end sts;
 /
