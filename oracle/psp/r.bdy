@@ -413,6 +413,7 @@ create or replace package body r is
 		v varchar2(4000);
 	begin
 		v := ra.params(name) (1);
+		return false;
 	exception
 		when no_data_found then
 			return true;
