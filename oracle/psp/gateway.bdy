@@ -170,9 +170,6 @@ create or replace package body gateway is
 						using sqlcode, sqlerrm;
 			end;
 		
-			if p.gv_xhtp then
-				p.ensure_close;
-			end if;
 			output.finish;
 		
 			if v_hprof is not null then

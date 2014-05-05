@@ -112,7 +112,7 @@ create or replace package body tag is
 		if text = chr(0) then
 			return '<' || v_head || extra || '/>';
 		elsif text = '<>' then
-			sts.stack := sts.stack || '</' || v_tag || '>';
+			sts.stack := '</' || v_tag || '>' || sts.stack;
 			return '<' || v_head || extra || '>';
 		else
 			return '<' || v_head || extra || '>' || text || '</' || v_tag || '>';
@@ -134,11 +134,11 @@ create or replace package body tag is
 		v_err varchar2(4000);
 	begin
 	
-		if substrb(sts.stack, -lengthb(v_tag)) != v_tag then
+		if substrb(sts.stack, 1, lengthb(v_tag)) != v_tag then
 			v_err := 'tag open/close mismatch for ' || sts.stack || ',' || v_tag;
 			raise_application_error(-20000, v_err);
 		else
-			sts.stack := substrb(sts.stack, 1, lengthb(sts.stack) - lengthb(v_tag));
+			sts.stack := substrb(sts.stack, lengthb(v_tag) + 1);
 		end if;
 	
 		k_xhtp.line(v_tag);

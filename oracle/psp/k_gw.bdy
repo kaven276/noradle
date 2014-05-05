@@ -130,6 +130,14 @@ create or replace package body k_gw is
 				return;
 		end;
 	
+		if sts.stack is not null then
+			output.line(sts.stack, '');
+		end if;
+	
+		if p.gv_xhtp then
+			p.ensure_close;
+		end if;
+	
 	end;
 
 end k_gw;

@@ -21,6 +21,7 @@ create or replace package body output is
 		pv.pg_cssno := null;
 		pv.flushed  := false;
 		p.gv_xhtp   := false;
+		sts.stack   := '';
 	end;
 
 	-- private
