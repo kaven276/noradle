@@ -115,5 +115,11 @@ create or replace package tag is
 	procedure j(src varchar2);
 	procedure l(href varchar2);
 
+	procedure d
+	(
+		tag  varchar2,
+		comp varchar2 := null
+	);
+
 end tag;
 /

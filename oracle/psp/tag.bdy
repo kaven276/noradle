@@ -301,5 +301,14 @@ create or replace package body tag is
 		k_xhtp.line('<link href="' || url(href) || '" rel="stylesheet"/>');
 	end;
 
+	procedure d
+	(
+		tag  varchar2,
+		comp varchar2 := null
+	) is
+	begin
+		null;
+	end;
+
 end tag;
 /
