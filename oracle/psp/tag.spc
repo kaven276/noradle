@@ -77,14 +77,16 @@ create or replace package tag is
 		tg   varchar2,
 		text varchar2,
 		href varchar2,
-		para st := null
+		para st := null,
+		cut  boolean := false
 	) return varchar2;
 	procedure a
 	(
 		tg   varchar2,
 		text varchar2,
 		href varchar2,
-		para st := null
+		para st := null,
+		cut  boolean := false
 	);
 	function v
 	(

@@ -203,9 +203,13 @@ create or replace package body tag is
 		tg   varchar2,
 		text varchar2,
 		href varchar2,
-		para st := null
+		para st := null,
+		cut  boolean := false
 	) return varchar2 is
 	begin
+		if cut then
+			return '';
+		end if;
 		return tag.base(tg, para, text, ' href="' || url(href) || '"');
 	end;
 
@@ -214,9 +218,13 @@ create or replace package body tag is
 		tg   varchar2,
 		text varchar2,
 		href varchar2,
-		para st := null
+		para st := null,
+		cut  boolean := false
 	) is
 	begin
+		if cut then
+			return;
+		end if;
 		k_xhtp.line(base(tg, para, text, ' href="' || url(href) || '"'));
 	end;
 
@@ -298,7 +306,7 @@ create or replace package body tag is
 
 	procedure l(href varchar2) is
 	begin
-		k_xhtp.line('<link href="' || url(href) || '" rel="stylesheet"/>');
+		k_xhtp.line('<link href="' || url(href) || '" rel="stylesheet" type="text/css"/>');
 	end;
 
 	procedure d
