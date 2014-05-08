@@ -86,6 +86,18 @@ create or replace package k_http is
 		status number := null
 	);
 
+	procedure gol
+	(
+		url    varchar2,
+		status number := null
+	);
+
+	procedure redirect
+	(
+		url    varchar2,
+		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
+	);
+
 	procedure retry_after(delta number);
 	procedure retry_after(future date);
 

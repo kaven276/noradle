@@ -327,6 +327,19 @@ create or replace package body k_http is
 		check_if_not_modified_since;
 	end;
 
+	procedure redirect
+	(
+		url    varchar2,
+		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
+	) is
+	begin
+		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
+		location(url);
+		pv.headers.delete('Content-Type');
+		pv.headers('Content-Length') := '0';
+		output."_init"(80526);
+	end;
+
 	procedure go
 	(
 		url    varchar2,
@@ -335,6 +348,19 @@ create or replace package body k_http is
 	begin
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(u(url));
+		pv.headers.delete('Content-Type');
+		pv.headers('Content-Length') := '0';
+		output."_init"(80526);
+	end;
+
+	procedure gol
+	(
+		url    varchar2,
+		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
+	) is
+	begin
+		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
+		location(l(url));
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
 		output."_init"(80526);
