@@ -299,14 +299,24 @@ create or replace package body tag is
 		return replace(replace(text, '<', '&lt'), '>', '&gt');
 	end;
 
-	procedure j(src varchar2) is
+	procedure j
+	(
+		tg   varchar2,
+		src  varchar2,
+		para st := null
+	) is
 	begin
-		k_xhtp.line('<script src="' || url(src) || '"></script>');
+		k_xhtp.line(base(tg, para, '', ' src="' || url(src) || '"'));
 	end;
 
-	procedure l(href varchar2) is
+	procedure l
+	(
+		tg   varchar2,
+		href varchar2,
+		para st := null
+	) is
 	begin
-		k_xhtp.line('<link href="' || url(href) || '" rel="stylesheet" type="text/css"/>');
+		k_xhtp.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="stylesheet" type="text/css"'));
 	end;
 
 	procedure d

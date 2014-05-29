@@ -114,8 +114,18 @@ create or replace package tag is
 	);
 
 	function e(text varchar2 character set any_cs) return varchar2;
-	procedure j(src varchar2);
-	procedure l(href varchar2);
+	procedure j
+	(
+		tg   varchar2,
+		src  varchar2,
+		para st := null
+	);
+	procedure l
+	(
+		tg   varchar2,
+		href varchar2,
+		para st := null
+	);
 
 	procedure d
 	(
