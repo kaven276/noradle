@@ -140,8 +140,8 @@ create or replace package body r is
 				get('u$dir', v_dir);
 				get('u$qstr', v_qstr);
 			
-				get('i$bsid', pv.bsid);
-				get('i$msid', pv.msid);
+				get('c$BSID', pv.bsid);
+				get('c$MSID', pv.msid);
 				get('i$gid', v_gid);
 				-- get i$nid
 			
