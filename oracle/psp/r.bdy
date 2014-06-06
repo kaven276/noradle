@@ -315,10 +315,14 @@ create or replace package body r is
 
 	function host return varchar2 is
 	begin
-		if port = 80 then
-			return v_hostn;
+		if is_null('h$host') then
+			if port = 80 then
+				return v_hostn;
+			else
+				return v_hostn || ':' || to_number(v_port);
+			end if;
 		else
-			return v_hostn || ':' || to_number(v_port);
+			return getc('h$host');
 		end if;
 	end;
 
