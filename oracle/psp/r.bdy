@@ -4,16 +4,17 @@ create or replace package body r is
 
 	v_url    varchar2(1000);
 	v_proto  varchar2(10);
-	v_host   varchar2(99);
-	v_hostp  varchar2(30);
+	v_hostn  varchar2(99);
 	v_port   positive;
+	v_host   varchar2(99);
+	v_sdns   varchar2(99);
+	v_pdns   varchar2(99);
 	v_method varchar2(10);
-	v_base   varchar2(99);
-	v_dad    varchar2(30);
+	v_gid    varchar2(99);
 	v_prog   varchar2(61);
 	v_pack   varchar2(30);
 	v_proc   varchar2(30);
-	v_path   varchar2(500);
+	v_dir    varchar2(250);
 	v_qstr   varchar2(4000);
 	v_type   char(1);
 	v_user   varchar2(30);
@@ -125,41 +126,28 @@ create or replace package body r is
 		get('x$prog', v_prog);
 		get('x$pack', v_pack);
 		get('x$proc', v_proc);
-		gv_dbu := lower(gv_dbu);
+		-- get before,after,static
 		v_type := substrb(nvl(v_pack, v_proc), -1);
 	
 		-- basic input
 		case pv.protocol
 			when 'HTTP' then
 				get('u$method', v_method);
-				get('u$url', v_url);
 				get('u$proto', v_proto);
-				get('u$host', v_host);
-				get('u$hostp', v_hostp);
-				getn('u$port', v_port, null, null);
-				get('u$base', v_base);
-				get('u$dad', v_dad);
-				get('u$path', v_path);
+				get('u$hostname', v_hostn);
+				getn('u$port', v_port, 80, null);
+				get('u$url', v_url);
+				get('u$dir', v_dir);
 				get('u$qstr', v_qstr);
+			
+				get('i$bsid', pv.bsid);
+				get('i$msid', pv.msid);
+				get('i$gid', v_gid);
+				-- get i$nid
+			
 				get('a$caddr', gv_caddr);
 				getn('a$cport', gv_cport, null, null);
 				get('a$uamd5', v_uamd5);
-				get('i$bsid', pv.bsid);
-				get('i$msid', pv.msid);
-				-- get i$gid
-				-- get i$nid
-			
-				if v_dad is null then
-					v_dad := lower(k_cfg.server_control().default_dbu);
-				end if;
-			
-				if gv_dbu is null then
-					if regexp_like(v_dad, lower(k_cfg.server_control().dbu_filter)) then
-						gv_dbu := v_dad;
-					else
-						gv_dbu := lower(k_cfg.server_control().default_dbu);
-					end if;
-				end if;
 			
 			when 'DATA' then
 				null;
@@ -295,19 +283,29 @@ create or replace package body r is
 		return pv.rl_end;
 	end;
 
+	function method return varchar2 is
+	begin
+		return v_method;
+	end;
+
 	function protocol return varchar2 is
 	begin
 		return v_proto;
 	end;
 
-	function host return varchar2 is
+	function pdns return varchar2 is
 	begin
-		return v_host;
+		return r.getc('u$pdns');
 	end;
 
-	function host_prefix return varchar2 is
+	function sdns return varchar2 is
 	begin
-		return v_hostp;
+		return r.getc('u$sdns');
+	end;
+
+	function hostname return varchar2 is
+	begin
+		return v_hostn;
 	end;
 
 	function port return pls_integer is
@@ -315,19 +313,13 @@ create or replace package body r is
 		return v_port;
 	end;
 
-	function method return varchar2 is
+	function host return varchar2 is
 	begin
-		return v_method;
-	end;
-
-	function base return varchar2 is
-	begin
-		return v_base;
-	end;
-
-	function dad return varchar2 is
-	begin
-		return v_dad;
+		if port = 80 then
+			return v_hostn;
+		else
+			return v_hostn || ':' || to_number(v_port);
+		end if;
 	end;
 
 	function prog return varchar2 is
@@ -345,9 +337,19 @@ create or replace package body r is
 		return v_proc;
 	end;
 
-	function path return varchar2 is
+	function site return varchar2 is
 	begin
-		return v_path;
+		return v_proto || '://' || host;
+	end;
+
+	function dir return varchar2 is
+	begin
+		return v_dir;
+	end;
+
+	function dir_full return varchar2 is
+	begin
+		return site || v_dir;
 	end;
 
 	function qstr return varchar2 is
@@ -355,10 +357,38 @@ create or replace package body r is
 		return v_qstr;
 	end;
 
+	function url return varchar2 is
+	begin
+		return v_url;
+	end;
+
+	function url_full return varchar2 is
+	begin
+		return site || url;
+	end;
+
 	function type return varchar2 is
 	begin
 		return v_type;
 	end;
+
+	/*
+  
+  function from_prog return varchar2 is
+    v  varchar2(1000);
+    v1 pls_integer;
+    v2 pls_integer;
+  begin
+    v  := header('http_referer');
+    v1 := instr(v, '?');
+    if v1 > 0 then
+      v := substr(v, 1, v1 - 1);
+    end if;
+    v2 := instr(v, '/', -1);
+    return substr(v, v2 + 1);
+  end;
+  
+  */
 
 	function error_str(name varchar2) return varchar2 is
 	begin
@@ -615,6 +645,11 @@ create or replace package body r is
 		return v_pass;
 	end;
 
+	function gid return varchar2 is
+	begin
+		return getc('i$gid', '');
+	end;
+
 	function cookie(name varchar2) return varchar2 is
 	begin
 		return ra.params('c$' || lower(name))(1);
@@ -641,50 +676,6 @@ create or replace package body r is
 	function file return varchar2 is
 	begin
 		return gv_file;
-	end;
-
-	function url return varchar2 is
-	begin
-		return v_url;
-	end;
-
-	function url_full return varchar2 is
-	begin
-		if instr(v_url, '://') <= 0 then
-			return v_proto || '://' || header('host') || v_url;
-		else
-			return v_url;
-		end if;
-	end;
-
-	function dad_path return varchar2 is
-	begin
-		return t.nvl2(v_base, '/' || v_base) || '/' || v_dad;
-	end;
-
-	function dad_path_full return varchar2 is
-	begin
-		return v_proto || '://' || v_host || t.tf(v_port != 80, ':' || v_port) || dad_path;
-	end;
-
-	-- for internal url catacation
-	function gu_full_base return varchar2 is
-	begin
-		return dad_path_full || '/';
-	end;
-
-	function from_prog return varchar2 is
-		v  varchar2(1000);
-		v1 pls_integer;
-		v2 pls_integer;
-	begin
-		v  := header('http_referer');
-		v1 := instr(v, '?');
-		if v1 > 0 then
-			v := substr(v, 1, v1 - 1);
-		end if;
-		v2 := instr(v, '/', -1);
-		return substr(v, v2 + 1);
 	end;
 
 	function etag return varchar2 is

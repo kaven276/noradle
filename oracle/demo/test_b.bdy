@@ -36,7 +36,7 @@ create or replace package body test_b is
 		h.sts_200_ok;
 		h.content_type('text/html', charset => 'utf-8');
 		h.content_language('zh-cn');
-		h.set_cookie('bsid', 'myself', path => '/' || r.dad || '/test_b.d');
+		h.set_cookie('bsid', 'myself', path => r.dir || 'test_b.d');
 	
 		h.header('a', 1);
 		h.header_close;
@@ -46,15 +46,12 @@ create or replace package body test_b is
 		p.line('p{line-height:1.1em;margin:0px;}');
 		p.style_close;
 		p.p('test case that none ascii charset following http header');
-		p.p(r.host_prefix);
+		p.p(r.hostname);
 		p.p(r.port);
 		p.p(r.method);
-		p.p(r.base);
-		p.p(r.dad);
 		p.p(r.prog);
 		p.p(r.pack);
 		p.p(r.proc);
-		p.p(r.path);
 		p.p(r.qstr);
 	
 		p.line('<br/>');

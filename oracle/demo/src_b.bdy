@@ -1,7 +1,7 @@
 create or replace package body src_b is
 
 	procedure pack is
-		n varchar2(30) := upper(r.path);
+		n varchar2(30) := upper(r.getc('p'));
 	begin
 		h.content_type('text/plain');
 		h.set_line_break('');
@@ -20,7 +20,7 @@ create or replace package body src_b is
 		v_proc varchar2(99);
 		v_sts  boolean := false;
 	begin
-		t.split(v_prog, r.path, '.');
+		t.split(v_prog, r.getc('p'), '.');
 		v_pack := upper(v_prog(1));
 		-- v_proc := chr(9) || 'procedure ' || v_prog(2) || ' is' || chr(10);
 		v_proc := chr(9) || 'procedure ' || v_prog(2) || '%' || chr(10);
@@ -47,13 +47,13 @@ create or replace package body src_b is
 
 	procedure link_pack(pack varchar2 := null) is
 	begin
-		h.line(t.ps('<a href="src_b.pack/:1" target=":1">view pl/sql source pack ":1" in new window</a></br>',
+		h.line(t.ps('<a href="src_b.pack?p=:1" target=":1">view pl/sql source pack ":1" in new window</a></br>',
 								st(nvl(pack, r.pack))));
 	end;
 
 	procedure link_proc(proc varchar2 := null) is
 	begin
-		h.line(p.ps('<a href="src_b.proc/:1" target=":1">view pl/sql source proc ":1" in new window</a></br>',
+		h.line(p.ps('<a href="src_b.proc?p=:1" target=":1">view pl/sql source proc ":1" in new window</a></br>',
 								st(nvl(proc, r.prog))));
 	end;
 

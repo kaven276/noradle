@@ -28,20 +28,26 @@ create or replace package r is
 	function read_line_no_more return boolean;
 
 	function call_type return varchar2;
-	function protocol return varchar2;
-	function host return varchar2;
-	function host_prefix return varchar2;
-	function port return pls_integer;
 	function method return varchar2;
+	function protocol return varchar2;
+	function sdns return varchar2;
+	function pdns return varchar2;
+	function hostname return varchar2;
+	function port return pls_integer;
+	function host return varchar2;
 
-	function base return varchar2;
-	function dad return varchar2;
 	function prog return varchar2;
 	function pack return varchar2;
 	function proc return varchar2;
-	function path return varchar2;
-	function qstr return varchar2;
 	function type return varchar2;
+
+	function gid return varchar2;
+	function site return varchar2;
+	function url return varchar2;
+	function dir return varchar2;
+	function qstr return varchar2;
+	function url_full return varchar2;
+	function dir_full return varchar2;
 
 	function nc return varchar2;
 	function nd return date;
@@ -156,14 +162,6 @@ create or replace package r is
 
 	function dbu return varchar2;
 	function file return varchar2;
-
-	function from_prog return varchar2;
-	function url return varchar2;
-	function url_full return varchar2;
-
-	function dad_path_full return varchar2;
-	-- function gu_full_base return varchar2;
-	function dad_path return varchar2;
 
 	function etag return varchar2;
 	function lmt return date;
