@@ -11,10 +11,11 @@ create or replace package body k_url is
 		url  varchar2,
 		proc boolean := true
 	) return varchar2 is
-		c1  char(1) := substrb(url, 1, 1);
-		c2  char(1) := substrb(url, 2, 1);
-		pos pls_integer;
-		dad varchar2(100);
+		c1   char(1) := substrb(url, 1, 1);
+		c2   char(1) := substrb(url, 2, 1);
+		pos  pls_integer;
+		dad  varchar2(100);
+		rdad varchar2(100) := substrb(r.dir, 2, lengthb(r.dir));
 	
 		function pri_file(file varchar2) return varchar2 is
 			ext varchar2(1000) := k_cfg.get_ext_fs;
@@ -42,7 +43,7 @@ create or replace package body k_url is
 				end if;
 				if ext is not null then
 					return ext || '/' || nvl(dad, r.dbu) || '/' || pack || s;
-				elsif dad is not null or r.dad != r.dbu then
+				elsif dad is not null or rdad != r.dbu then
 					return '../' || nvl(dad, r.dbu) || '/' || pack || s;
 				else
 					return pack || s;
@@ -68,7 +69,7 @@ create or replace package body k_url is
 						-- for other dad's ref, ../dad/xxx
 						pos := instrb(url, '/', 4);
 						if pos <= 0 then
-							return '../' || r.dad; -- .. only3
+							return '../' || rdad; -- .. only3
 						end if;
 						dad := substrb(url, 4, pos - 4);
 						return normal(substrb(url, pos + 1));
@@ -111,7 +112,7 @@ create or replace package body k_url is
 				elsif instr(url, '.') > 0 then
 					-- for file.ext or pack.proc
 					if regexp_like(url, '\w+\_\w\.\w+') then
-						return t.tf(url = 'default_b.d', '../' || r.dad, t.tf(r.prog = 'default_b.d', r.dad || '/') || url);
+						return t.tf(url = 'default_b.d', '../' || rdad, t.tf(r.prog = 'default_b.d', rdad || '/') || url);
 					else
 						return pri_file(url);
 					end if;
