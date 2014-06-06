@@ -46,13 +46,17 @@ create or replace package body k_gw is
 	end;
 
 	procedure do is
-		v_sql   varchar2(100);
-		v_tried boolean;
+		v_sql    varchar2(100);
+		v_tried  boolean;
+		v_before varchar2(60) := r.getc('y$before', '');
+		v_after  varchar2(60) := r.getc('y$after', '');
 	begin
 		v_tried := false;
 		<<retry_filter>>
 		begin
-			execute immediate 'call k_filter.before()';
+			if v_before is not null then
+				execute immediate 'call ' || v_before || '()';
+			end if;
 		exception
 			when pv.ex_package_state_invalid then
 				if v_tried then
@@ -116,7 +120,9 @@ create or replace package body k_gw is
 		end;
 	
 		begin
-			execute immediate 'call k_filter.after()';
+			if v_after is not null then
+				execute immediate 'call ' || v_after || '()';
+			end if;
 		exception
 			when pv.ex_no_filter or pv.ex_invalid_proc then
 				null;
