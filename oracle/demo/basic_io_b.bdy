@@ -17,6 +17,8 @@ create or replace package body basic_io_b is
 		h.line('r.site : ' || r.site);
 		h.line('r.host : ' || r.host);
 		h.line('r.hostname : ' || r.hostname);
+		h.line('r.sdns : ' || r.sdns);
+		h.line('r.pdns : ' || r.pdns);
 		h.line('r.port : ' || r.port);
 		h.line('r.url : ' || r.url);
 		h.line('r.dir : ' || r.dir);
