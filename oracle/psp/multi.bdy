@@ -376,11 +376,14 @@ create or replace package body multi is
 			k_xhtp.prn(cuts(i));
 			k_xhtp.prn(para(i));
 		end loop;
-		k_xhtp.prn(cuts(para.count + 1));
+		k_xhtp.prn(cuts(cuts.count - 3));
 	end;
 
 	procedure rc(cuts in out nocopy st) is
 	begin
+		if sts.olevel is null then
+			return;
+		end if;
 		k_xhtp.prn(cuts(cuts.count - 2));
 		for j in 1 .. sts.olevel - 1 loop
 			k_xhtp.prn(cuts(cuts.count - 0));
