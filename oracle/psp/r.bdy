@@ -295,12 +295,12 @@ create or replace package body r is
 
 	function pdns return varchar2 is
 	begin
-		return r.getc('u$pdns');
+		return r.getc('u$pdns', '');
 	end;
 
 	function sdns return varchar2 is
 	begin
-		return r.getc('u$sdns');
+		return r.getc('u$sdns', '');
 	end;
 
 	function hostname return varchar2 is
