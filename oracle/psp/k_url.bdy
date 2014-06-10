@@ -112,7 +112,7 @@ create or replace package body k_url is
 				elsif instr(url, '.') > 0 then
 					-- for file.ext or pack.proc
 					if regexp_like(url, '\w+\_\w\.\w+') then
-						return t.tf(url = 'default_b.d', '../' || rdad, t.tf(r.prog = 'default_b.d', rdad || '/') || url);
+						return t.tf(url = 'default_b.d', '../' || rdad, url);
 					else
 						return pri_file(url);
 					end if;

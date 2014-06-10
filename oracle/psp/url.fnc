@@ -13,7 +13,7 @@ create or replace function url(str varchar2) return varchar2 is
 
 	function base return varchar2 is
 	begin
-		return k_cfg.get_ext_fs || '/' || nvl(dad, r.dbu) || '/';
+		return r.getc('y$static');
 	end;
 
 begin
@@ -21,7 +21,7 @@ begin
 		when '=' then
 			return substrb(str, 2);
 		when '@' then
-			-- for @c @b end case;
+			-- for @c @b
 			main := nvl(r.pack, r.proc);
 			main := substrb(main, 1, lengthb(main) - 1);
 			c2   := substrb(str, 3, 1);
@@ -46,8 +46,6 @@ begin
 			end if;
 		when '^' then
 			return base || substrb(str, 2);
-		when '\' then
-			return k_cfg.get_ext_fs || '/' || substrb(str, 2);
 		else
 			return str;
 	end case;
