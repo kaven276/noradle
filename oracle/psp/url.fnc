@@ -46,6 +46,8 @@ begin
 			end if;
 		when '^' then
 			return base || substrb(str, 2);
+		when '\' then
+			return base || '../' || substrb(str, 2);
 		else
 			return str;
 	end case;
