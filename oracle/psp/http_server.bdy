@@ -50,7 +50,6 @@ create or replace package body http_server is
 	end;
 
 	procedure serv is
-		v_dbuf server_control_t.dbu_filter%type;
 	begin
 		k_init.by_request;
 		r."_init"(pv.c, 80526);

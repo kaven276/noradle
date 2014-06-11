@@ -52,6 +52,8 @@ create or replace package body k_cfg is
 				return nvl(v.prefix, v.prefix_https);
 			when 'https' then
 				return nvl(v.prefix_https, v.prefix);
+			else
+			  return v.prefix;
 		end case;
 	end;
 
@@ -66,7 +68,7 @@ create or replace package body k_cfg is
 
 	function get_ext_fs return varchar2 is
 	begin
-		return server_control().static_url;
+		return r.getc('y$static') || '../';
 	end;
 
 end k_cfg;

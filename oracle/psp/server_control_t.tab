@@ -7,9 +7,6 @@ create table SERVER_CONTROL_T
   max_servers  NUMBER(4),
   max_requests NUMBER(9),
   max_lifetime INTERVAL DAY(4) TO SECOND(0),
-  static_url   VARCHAR2(100),
-  default_dbu  VARCHAR2(30),
-  dbu_filter   VARCHAR2(1000),
   hprof        CHAR(1)
 )
 ;
@@ -27,12 +24,6 @@ comment on column SERVER_CONTROL_T.max_requests
   is 'when the number of request a server process reach this limit, the server should/will quit';
 comment on column SERVER_CONTROL_T.max_lifetime
   is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
-comment on column SERVER_CONTROL_T.static_url
-  is 'the common static file root url prefix';
-comment on column SERVER_CONTROL_T.default_dbu
-  is 'if dad do not match any db_user, then map to this dbu';
-comment on column SERVER_CONTROL_T.dbu_filter
-  is 'only filter passed dbu can access, use regexp';
 comment on column SERVER_CONTROL_T.hprof
   is 'if oracle hprof is open for tuning';
 alter table SERVER_CONTROL_T
