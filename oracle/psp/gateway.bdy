@@ -104,7 +104,7 @@ create or replace package body gateway is
 					goto make_connection;
 			end;
 		
-			v_hprof := k_cfg.server_control().hprof;
+			v_hprof := utl_tcp.get_line(pv.c, true);
 			if v_hprof is not null then
 				dbms_hprof.start_profiling('PLSHPROF_DIR', v_trc);
 				pv.hp_label := '';

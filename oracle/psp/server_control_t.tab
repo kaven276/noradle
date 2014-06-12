@@ -6,8 +6,7 @@ create table SERVER_CONTROL_T
   min_servers  NUMBER(4),
   max_servers  NUMBER(4),
   max_requests NUMBER(9),
-  max_lifetime INTERVAL DAY(4) TO SECOND(0),
-  hprof        CHAR(1)
+  max_lifetime INTERVAL DAY(4) TO SECOND(0)
 )
 ;
 comment on column SERVER_CONTROL_T.cfg_id
@@ -24,7 +23,5 @@ comment on column SERVER_CONTROL_T.max_requests
   is 'when the number of request a server process reach this limit, the server should/will quit';
 comment on column SERVER_CONTROL_T.max_lifetime
   is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
-comment on column SERVER_CONTROL_T.hprof
-  is 'if oracle hprof is open for tuning';
 alter table SERVER_CONTROL_T
   add constraint PK_SVR_CFG primary key (CFG_ID);
