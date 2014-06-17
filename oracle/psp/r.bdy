@@ -346,6 +346,16 @@ create or replace package body r is
 		return v_proto || '://' || host;
 	end;
 
+	function pathname return varchar2 is
+	begin
+		return getc('u$pathname', '');
+	end;
+
+	function subpath return varchar2 is
+	begin
+		return getc('u$spath', '');
+	end;
+
 	function dir return varchar2 is
 	begin
 		return v_dir;

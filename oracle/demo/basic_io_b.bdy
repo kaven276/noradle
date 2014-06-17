@@ -21,10 +21,12 @@ create or replace package body basic_io_b is
 		h.line('r.pdns : ' || r.pdns);
 		h.line('r.port : ' || r.port);
 		h.line('r.url : ' || r.url);
+		h.line('r.pathname : ' || r.pathname);
 		h.line('r.dir : ' || r.dir);
 		h.line('r.prog : ' || r.prog);
 		h.line('r.pack : ' || r.pack);
 		h.line('r.proc : ' || r.proc);
+		h.line('r.subpath : ' || r.subpath);
 		h.line('r.qstr : ' || r.qstr);
 	
 		h.line;

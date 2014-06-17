@@ -45,6 +45,8 @@ create or replace package r is
 	function site return varchar2;
 	function url return varchar2;
 	function dir return varchar2;
+	function pathname return varchar2;
+	function subpath return varchar2;
 	function qstr return varchar2;
 	function url_full return varchar2;
 	function dir_full return varchar2;
