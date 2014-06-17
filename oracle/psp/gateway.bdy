@@ -52,6 +52,7 @@ create or replace package body gateway is
 		pragma exception_init(no_dad_auth_entry2, -6576);
 		no_dad_auth_entry_right exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry_right, -01031);
+		v_schema    varchar2(30);
 		v_done      boolean := false;
 		v_req_ender varchar2(30);
 		v_trc       varchar2(99);
@@ -149,18 +150,20 @@ create or replace package body gateway is
 			end;
 			pv.firstpg := false;
 			-- do all pv init beforehand, next call to page init will not be first page
+			k_mapping.set;
 		
 			-- this is for become user
-			v_done := false;
+			v_done   := false;
+			v_schema := r.getc('x$dbu');
 			<<redo>>
 			begin
-				execute immediate 'call ' || pv.schema || '.dad_auth_entry()';
+				execute immediate 'call ' || v_schema || '.dad_auth_entry()';
 			exception
 				when no_dad_auth_entry1 or no_dad_auth_entry2 or no_dad_auth_entry_right then
 					if v_done then
 						raise;
 					end if;
-					sys.pw.add_dad_auth_entry(pv.schema);
+					sys.pw.add_dad_auth_entry(v_schema);
 					v_done := true;
 					goto redo;
 				when others then
@@ -190,7 +193,7 @@ create or replace package body gateway is
 					k_debug.trace(st('gateway find wrong fin marker request',
 													 v_req_ender,
 													 pv.cfg_id,
-													 pv.schema || '.' || pv.prog));
+													 v_schema || '.' || r.getc('x$prog')));
 					if pv.protocol = 'HTTP' then
 						k_debug.trace(st(r.client_addr, r.ua));
 					end if;
@@ -199,7 +202,9 @@ create or replace package body gateway is
 				end if;
 			exception
 				when others then
-					k_debug.trace(st('gateway find fin marker error, maybe timeout', pv.cfg_id, pv.schema || '.' || pv.prog));
+					k_debug.trace(st('gateway find fin marker error, maybe timeout',
+													 pv.cfg_id,
+													 v_schema || '.' || r.getc('x$prog')));
 					utl_tcp.close_connection(pv.c);
 					make_conn(pv.c, 1);
 			end;

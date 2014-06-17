@@ -153,9 +153,6 @@ create or replace package body r is
 				null;
 		end case;
 	
-		pv.schema := dbu;
-		pv.prog   := v_prog;
-	
 		rb.charset_http := null;
 		rb.charset_db   := null;
 		rb.blob_entity  := null;

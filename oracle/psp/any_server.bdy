@@ -1,10 +1,7 @@
 create or replace package body any_server is
 
 	procedure serv is
-	begin
-		pv.schema := utl_tcp.get_line(pv.c, true);
-		pv.prog   := utl_tcp.get_line(pv.c, true);
-	
+	begin	
 		if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 			raise pv.ex_continue;
 		end if;
