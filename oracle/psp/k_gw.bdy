@@ -89,10 +89,8 @@ create or replace package body k_gw is
 	
 		v_tried := false;
 		<<retry_prog>>
-		declare
-			v_prog varchar2(61) := r.getc('x$prog', 'default_b.d');
 		begin
-			execute immediate 'call ' || v_prog || '()';
+			execute immediate 'call ' || r.prog || '()';
 			commit;
 		exception
 			when pv.ex_package_state_invalid then

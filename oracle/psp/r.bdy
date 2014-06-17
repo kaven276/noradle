@@ -95,6 +95,16 @@ create or replace package body r is
 		end if;
 	end;
 
+	procedure after_map is
+	begin
+		get('x$dbu', gv_dbu);
+		get('x$prog', v_prog);
+		get('x$pack', v_pack);
+		get('x$proc', v_proc);
+		-- get before,after,static
+		v_type := substrb(nvl(v_pack, v_proc), -1);
+	end;
+
 	procedure "_init"
 	(
 		c        in out nocopy utl_tcp.connection,
@@ -121,13 +131,6 @@ create or replace package body r is
 			end if;
 			ra.params(trim(v_name)) := v_st;
 		end loop;
-	
-		get('x$dbu', gv_dbu);
-		get('x$prog', v_prog);
-		get('x$pack', v_pack);
-		get('x$proc', v_proc);
-		-- get before,after,static
-		v_type := substrb(nvl(v_pack, v_proc), -1);
 	
 		-- basic input
 		case pv.protocol

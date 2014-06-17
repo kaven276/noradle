@@ -11,6 +11,8 @@ create or replace package r is
 		c        in out nocopy utl_tcp.connection,
 		passport pls_integer
 	);
+	
+	procedure after_map;
 
 	procedure getblob
 	(
