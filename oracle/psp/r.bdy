@@ -728,6 +728,21 @@ create or replace package body r is
 		return gv_cport;
 	end;
 
+	function server_family return varchar2 is
+	begin
+		return getc('a$sfami', '');
+	end;
+
+	function server_addr return varchar2 is
+	begin
+		return getc('a$saddr', '');
+	end;
+
+	function server_port return pls_integer is
+	begin
+		return getn('a$sport', nn);
+	end;
+
 	function call_type return varchar2 is
 	begin
 		return pv.protocol;

@@ -173,6 +173,9 @@ create or replace package r is
 
 	function client_addr return varchar2;
 	function client_port return pls_integer;
+	function server_family return varchar2;
+	function server_addr return varchar2;
+	function server_port return pls_integer;
 
 end r;
 /

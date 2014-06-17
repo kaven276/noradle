@@ -37,9 +37,12 @@ create or replace package body basic_io_b is
 		h.line('r.msid : ' || r.msid);
 	
 		h.line;
-		h.line('[ This is about client address]');
+		h.line('[ This is about client/server address]');
 		h.line('r.client_addr : ' || r.client_addr);
 		h.line('r.client_port : ' || r.client_port);
+		h.line('r.server_family : ' || r.server_family);
+		h.line('r.server_addr : ' || r.server_addr);
+		h.line('r.server_port : ' || r.server_port);
 	
 		h.line;
 		h.line('[ This is all original http request headers ]');
