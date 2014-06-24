@@ -8,14 +8,25 @@ create or replace package body gateway is
   4. collect hprof statistics
   */
 
+	-- private 
+	procedure close_conn is
+	begin
+		utl_tcp.close_connection(pv.c);
+	exception
+		when utl_tcp.network_error then
+			null;
+	end;
+
 	-- private
 	procedure make_conn
 	(
 		c    in out nocopy utl_tcp.connection,
 		flag pls_integer
 	) is
-		v_sid pls_integer;
-		v_seq pls_integer;
+		v_sid  pls_integer;
+		v_seq  pls_integer;
+		v_inst pls_integer;
+		v_all  varchar2(200);
 		function pi2r(i binary_integer) return raw is
 		begin
 			return utl_raw.cast_from_binary_integer(i);
@@ -28,7 +39,17 @@ create or replace package body gateway is
 																 out_buffer_size => 0,
 																 tx_timeout      => 3);
 		select a.sid, a.serial# into v_sid, v_seq from v$session a where a.sid = sys_context('userenv', 'sid');
-		pv.wlen := utl_tcp.write_raw(c, utl_raw.concat(pi2r(197610261), pi2r(v_sid), pi2r(v_seq), pi2r(pv.in_seq * flag)));
+		v_inst  := nvl(sys_context('USER_ENV', 'INSTANCE'), -1);
+		v_all   := sys_context('USERENV', 'DB_NAME') || '/' || sys_context('USERENV', 'DB_DOMAIN') || '/' ||
+							 sys_context('USERENV', 'DB_UNIQUE_NAME') || '/' || sys_context('USERENV', 'DATABASE_ROLE');
+		pv.wlen := utl_tcp.write_raw(c,
+																 utl_raw.concat(pi2r(197610261),
+																								pi2r(v_sid),
+																								pi2r(v_seq),
+																								pi2r(pv.in_seq * flag),
+																								pi2r(v_inst),
+																								pi2r(lengthb(v_all))));
+		pv.wlen := utl_tcp.write_text(pv.c, v_all);
 	end;
 
 	-- Refactored procedure quit
@@ -56,6 +77,8 @@ create or replace package body gateway is
 		v_req_ender varchar2(30);
 		v_trc       varchar2(99);
 		v_hprof     char(1);
+		v_last_time date;
+		v_dummy     pls_integer;
 	begin
 		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
 			into pv.cfg_id, pv.in_seq
@@ -70,6 +93,7 @@ create or replace package body gateway is
 		<<make_connection>>
 		begin
 			make_conn(pv.c, 1);
+			v_last_time := sysdate;
 		exception
 			when utl_tcp.network_error then
 				if get_alert_quit then
@@ -95,9 +119,19 @@ create or replace package body gateway is
 			-- accept arrival of new request
 			begin
 				pv.protocol := utl_tcp.get_line(pv.c, true);
+				v_last_time := sysdate;
 			exception
 				when utl_tcp.transfer_timeout then
-					goto read_request;
+					-- if too many time, too long timeout
+					-- then close connection
+					-- and goto make_connection
+					-- so not sily waiting broken connection forever
+					if (sysdate - v_last_time) * 24 * 60 * 60 > k_cfg.server_control().idle_timeout then
+						close_conn;
+						goto make_connection;
+					else
+						goto read_request;
+					end if;
 				when utl_tcp.end_of_input then
 					goto make_connection;
 				when utl_tcp.network_error then
@@ -152,7 +186,7 @@ create or replace package body gateway is
 			k_mapping.set;
 		
 			-- this is for become user
-			v_done   := false;
+			v_done := false;
 			r.after_map;
 			<<redo>>
 			begin
@@ -162,7 +196,7 @@ create or replace package body gateway is
 					if v_done then
 						raise;
 					end if;
-					sys.pw.add_dad_auth_entry( r.dbu);
+					sys.pw.add_dad_auth_entry(r.dbu);
 					v_done := true;
 					goto redo;
 				when others then
@@ -180,19 +214,15 @@ create or replace package body gateway is
 				tmp.n := dbms_hprof.analyze('PLSHPROF_DIR', v_trc, run_comment => tmp.s);
 			end if;
 		
-			pv.svr_req_cnt := pv.svr_req_cnt + 1;
-			if pv.svr_req_cnt >= k_cfg.server_control().max_requests then
-				goto the_end;
-			end if;
-		
 			-- keep sync with nodejs
+			<<check_end_of_req>>
 			begin
 				v_req_ender := utl_tcp.get_text(pv.c, 16, false);
 				if v_req_ender != '-- end of req --' then
 					k_debug.trace(st('gateway find wrong fin marker request',
 													 v_req_ender,
 													 pv.cfg_id,
-													  r.dbu || '.' || r.getc('x$prog')));
+													 r.dbu || '.' || r.getc('x$prog')));
 					if pv.protocol = 'HTTP' then
 						k_debug.trace(st(r.client_addr, r.ua));
 					end if;
@@ -200,14 +230,32 @@ create or replace package body gateway is
 					make_conn(pv.c, 1);
 				end if;
 			exception
-				when others then
-					k_debug.trace(st('gateway find fin marker error, maybe timeout',
+				when utl_tcp.transfer_timeout then
+					k_debug.trace(st('gateway find fin marker error, transfer_timeout',
 													 pv.cfg_id,
-													  r.dbu || '.' || r.getc('x$prog')));
+													 r.dbu || '.' || r.getc('x$prog')));
 					utl_tcp.close_connection(pv.c);
-					make_conn(pv.c, 1);
+					goto make_connection;
+				when utl_tcp.end_of_input then
+					k_debug.trace(st('gateway find fin marker error, end_of_input', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
+					goto check_end_of_req;
+				when utl_tcp.network_error then
+					k_debug.trace(st('gateway find fin marker error, network_error', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
+					utl_tcp.close_connection(pv.c);
+					goto make_connection;
+				when others then
+					k_debug.trace(st('gateway find fin marker error, other', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
+					utl_tcp.close_connection(pv.c);
+					goto make_connection;
 			end;
+			v_dummy := utl_tcp.write_text(pv.c, '-- end of req --', 16);
+			utl_tcp.flush(pv.c);
 		
+			pv.svr_req_cnt := pv.svr_req_cnt + 1;
+			if pv.svr_req_cnt >= k_cfg.server_control().max_requests then
+				goto the_end;
+			end if;
+			
 		end loop;
 	
 		<<the_end>>
