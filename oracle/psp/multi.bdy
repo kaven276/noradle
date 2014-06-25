@@ -278,6 +278,40 @@ create or replace package body multi is
 		return rtn;
 	end;
 
+  -- private, experimental
+	procedure w
+	(
+		tpl    varchar2,
+		ns     st,
+		vs     st,
+		sv     varchar2,
+		indent boolean := true
+	) is
+		v  varchar2(4000);
+		n  varchar2(4000);
+		p1 pls_integer := instrb(tpl, '?');
+		b  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
+		p2 pls_integer := p1 + lengthb(b);
+		p3 pls_integer := instrb(tpl, '@', p2 + 1);
+		p4 pls_integer := instrb(tpl, '@', p3 + 1);
+		t1 varchar2(4000) := substrb(tpl, 1, p1 - 1);
+		t2 varchar2(4000) := substrb(tpl, p2 + 1, p3 - p2 - 1);
+		t3 varchar2(4000) := substrb(tpl, p3 + 1, p4 - p3 - 1);
+		t4 varchar2(4000) := substrb(tpl, p4 + 1);
+		sw varchar2(4000) := ',' || sv || ',';
+	begin
+		if indent then
+			t1 := ltrim(t1);
+		end if;
+		for i in 1 .. ns.count loop
+			if instr(sw, ',' || v || ',') = 0 then
+				k_xhtp.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
+			else
+				k_xhtp.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
+			end if;
+		end loop;
+	end;
+
 	-- template parser for flat structure
 	procedure p
 	(
