@@ -214,6 +214,11 @@ create or replace package body gateway is
 				tmp.n := dbms_hprof.analyze('PLSHPROF_DIR', v_trc, run_comment => tmp.s);
 			end if;
 		
+			pv.svr_req_cnt := pv.svr_req_cnt + 1;
+			if pv.svr_req_cnt >= k_cfg.server_control().max_requests then
+				goto the_end;
+			end if;
+		
 			-- keep sync with nodejs
 			<<check_end_of_req>>
 			begin
@@ -251,11 +256,6 @@ create or replace package body gateway is
 			v_dummy := utl_tcp.write_text(pv.c, '-- end of req --', 16);
 			utl_tcp.flush(pv.c);
 		
-			pv.svr_req_cnt := pv.svr_req_cnt + 1;
-			if pv.svr_req_cnt >= k_cfg.server_control().max_requests then
-				goto the_end;
-			end if;
-			
 		end loop;
 	
 		<<the_end>>
