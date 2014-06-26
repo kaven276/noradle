@@ -80,10 +80,12 @@ create or replace package body gateway is
 		v_done      boolean := false;
 		v_req_ender varchar2(30);
 		v_trc       varchar2(99);
+		v_module    varchar2(48);
 		v_hprof     char(1);
 		v_last_time date;
 		v_dummy     pls_integer;
 		v_time      date;
+		v_count     pls_integer;
 	begin
 		if cfg_id is null then
 			select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
@@ -98,7 +100,13 @@ create or replace package body gateway is
 		pv.svr_stime   := sysdate;
 	
 		dbms_alert.register('PW_STOP_SERVER');
-		v_trc := pv.cfg_id || '-' || pv.in_seq || '.trc';
+		v_trc    := pv.cfg_id || '-' || pv.in_seq || '.trc';
+		v_module := 'Noradle-' || pv.cfg_id || '#' || pv.in_seq;
+		select count(*) into v_count from v$session a where a.module = v_module;
+		if v_count > 0 then
+			return;
+		end if;
+		dbms_application_info.set_module(v_module, 'server started');
 	
 		<<make_connection>>
 		begin

@@ -60,7 +60,7 @@ create or replace package body http_server is
 			raise pv.ex_continue;
 		end if;
 	
-		dbms_application_info.set_module(r.prog, null);
+		dbms_application_info.set_action(r.prog);
 	
 		if r.type = 'c' then
 			if output.prevent_flush('_c in http_server') then
