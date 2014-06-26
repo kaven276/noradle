@@ -52,20 +52,6 @@ create or replace package body gateway is
 		pv.wlen := utl_tcp.write_text(pv.c, v_all);
 	end;
 
-	-- Refactored procedure quit
-	function get_alert_quit return boolean is
-		v_msg varchar2(1);
-		v_sts number;
-	begin
-		dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_sts, 0);
-		if v_sts = 0 then
-			dbms_alert.remove('PW_STOP_SERVER');
-			return true;
-		else
-			return false;
-		end if;
-	end;
-
 	procedure listen
 	(
 		cfg_id  varchar2 := null,
@@ -86,6 +72,16 @@ create or replace package body gateway is
 		v_dummy     pls_integer;
 		v_time      date;
 		v_count     pls_integer;
+		-- Refactored procedure quit
+	
+		function get_alert_quit return boolean is
+			v_msg varchar2(1);
+			v_sts number;
+		begin
+			v_sts := dbms_pipe.receive_message(v_module, 0);
+			return v_sts = 0;
+		end;
+	
 	begin
 		if cfg_id is null then
 			select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
@@ -99,7 +95,7 @@ create or replace package body gateway is
 		pv.svr_req_cnt := 0;
 		pv.svr_stime   := sysdate;
 	
-		dbms_alert.register('PW_STOP_SERVER');
+		---dbms_alert.register('PW_STOP_SERVER');
 		v_trc    := pv.cfg_id || '-' || pv.in_seq || '.trc';
 		v_module := 'Noradle-' || pv.cfg_id || '#' || pv.in_seq;
 		select count(*) into v_count from v$session a where a.module = v_module;
@@ -107,6 +103,7 @@ create or replace package body gateway is
 			return;
 		end if;
 		dbms_application_info.set_module(v_module, 'server started');
+		dbms_pipe.purge(v_module);
 	
 		<<make_connection>>
 		begin
