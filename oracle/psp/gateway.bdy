@@ -101,6 +101,7 @@ create or replace package body gateway is
 	
 		<<make_connection>>
 		begin
+			close_conn;
 			make_conn(pv.c, 1);
 			v_last_time := sysdate;
 		exception
@@ -136,7 +137,6 @@ create or replace package body gateway is
 					-- and goto make_connection
 					-- so not sily waiting broken connection forever
 					if (sysdate - v_last_time) * 24 * 60 * 60 > k_cfg.server_control().idle_timeout then
-						close_conn;
 						goto make_connection;
 					else
 						goto read_request;
@@ -240,26 +240,20 @@ create or replace package body gateway is
 					if pv.protocol = 'HTTP' then
 						k_debug.trace(st(r.client_addr, r.ua));
 					end if;
-					utl_tcp.close_connection(pv.c);
-					make_conn(pv.c, 1);
+					goto make_connection;
 				end if;
 			exception
 				when utl_tcp.transfer_timeout then
 					k_debug.trace(st('gateway find fin marker error, transfer_timeout',
 													 pv.cfg_id,
 													 r.dbu || '.' || r.getc('x$prog')));
-					utl_tcp.close_connection(pv.c);
-					goto make_connection;
 				when utl_tcp.end_of_input then
 					k_debug.trace(st('gateway find fin marker error, end_of_input', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
-					goto check_end_of_req;
 				when utl_tcp.network_error then
 					k_debug.trace(st('gateway find fin marker error, network_error', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
-					utl_tcp.close_connection(pv.c);
 					goto make_connection;
 				when others then
 					k_debug.trace(st('gateway find fin marker error, other', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
-					utl_tcp.close_connection(pv.c);
 					goto make_connection;
 			end;
 			v_dummy := utl_tcp.write_text(pv.c, '-- end of req --', 16);
