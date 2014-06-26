@@ -66,7 +66,11 @@ create or replace package body gateway is
 		end if;
 	end;
 
-	procedure listen is
+	procedure listen
+	(
+		cfg_id  varchar2 := null,
+		slot_id pls_integer := 1
+	) is
 		no_dad_auth_entry1 exception; -- table or view does not exist
 		pragma exception_init(no_dad_auth_entry1, -942);
 		no_dad_auth_entry2 exception;
@@ -80,10 +84,15 @@ create or replace package body gateway is
 		v_last_time date;
 		v_dummy     pls_integer;
 	begin
-		select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
-			into pv.cfg_id, pv.in_seq
-			from user_scheduler_running_jobs a
-		 where a.session_id = sys_context('userenv', 'sid');
+		if cfg_id is null then
+			select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
+				into pv.cfg_id, pv.in_seq
+				from user_scheduler_running_jobs a
+			 where a.session_id = sys_context('userenv', 'sid');
+		else
+			pv.cfg_id := cfg_id;
+			pv.in_seq := slot_id;
+		end if;
 		pv.svr_req_cnt := 0;
 		pv.svr_stime   := sysdate;
 	
