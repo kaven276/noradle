@@ -83,6 +83,7 @@ create or replace package body gateway is
 		v_hprof     char(1);
 		v_last_time date;
 		v_dummy     pls_integer;
+		v_time      date;
 	begin
 		if cfg_id is null then
 			select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
@@ -229,6 +230,7 @@ create or replace package body gateway is
 			end if;
 		
 			-- keep sync with nodejs
+			v_time := sysdate;
 			<<check_end_of_req>>
 			begin
 				v_req_ender := utl_tcp.get_text(pv.c, 16, false);
@@ -246,9 +248,25 @@ create or replace package body gateway is
 				when utl_tcp.transfer_timeout then
 					k_debug.trace(st('gateway find fin marker error, transfer_timeout',
 													 pv.cfg_id,
-													 r.dbu || '.' || r.getc('x$prog')));
+													 r.dbu || '.' || r.getc('x$prog'),
+													 v_time,
+													 sysdate));
+					if (sysdate - v_time) * 24 * 60 * 60 < 9 then
+						goto check_end_of_req;
+					else
+						goto make_connection;
+					end if;
 				when utl_tcp.end_of_input then
-					k_debug.trace(st('gateway find fin marker error, end_of_input', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
+					k_debug.trace(st('gateway find fin marker error, end_of_input',
+													 pv.cfg_id,
+													 r.dbu || '.' || r.getc('x$prog'),
+													 v_time,
+													 sysdate));
+					if (sysdate - v_time) * 24 * 60 * 60 < 9 then
+						goto check_end_of_req;
+					else
+						goto make_connection;
+					end if;
 				when utl_tcp.network_error then
 					k_debug.trace(st('gateway find fin marker error, network_error', pv.cfg_id, r.dbu || '.' || r.getc('x$prog')));
 					goto make_connection;
