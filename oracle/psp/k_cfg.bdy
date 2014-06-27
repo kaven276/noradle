@@ -1,22 +1,18 @@
 create or replace package body k_cfg is
 
-	type svr_ctl_map is table of server_control_t%rowtype index by varchar2(15);
-
-	function server_controls return svr_ctl_map result_cache relies_on(server_control_t) is
-		v svr_ctl_map;
+	function server_control(p_cfg_id varchar2) return server_control_t%rowtype result_cache relies_on(server_control_t) is
+		v server_control_t%rowtype;
 	begin
-		for i in (select a.* from server_control_t a) loop
-			v(upper(i.cfg_id)) := i;
-		end loop;
+		select a.* into v from server_control_t a where a.cfg_id = p_cfg_id;
 		return v;
-	end;
-
-	function server_control return server_control_t%rowtype is
-	begin
-		return server_controls()(nvl(pv.cfg_id, 'default'));
 	exception
 		when no_data_found then
-			e.chk(true, -20015, 'No configuation data in PSP.WEB''s server_control_t table');
+			e.chk(true, -20015, 'No configuation data in PSP.WEB''s server_control_t table for ' || pv.cfg_id);
+	end;
+
+	procedure server_control(p_cfg in out nocopy server_control_t%rowtype) is
+	begin
+		p_cfg := server_control(nvl(pv.cfg_id, 'default'));
 	end;
 
 	function find_prefix
@@ -53,7 +49,7 @@ create or replace package body k_cfg is
 			when 'https' then
 				return nvl(v.prefix_https, v.prefix);
 			else
-			  return v.prefix;
+				return v.prefix;
 		end case;
 	end;
 

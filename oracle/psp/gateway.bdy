@@ -8,6 +8,8 @@ create or replace package body gateway is
   4. collect hprof statistics
   */
 
+	v_cfg server_control_t%rowtype;
+
 	-- private 
 	procedure close_conn is
 	begin
@@ -32,8 +34,8 @@ create or replace package body gateway is
 			return utl_raw.cast_from_binary_integer(i);
 		end;
 	begin
-		c := utl_tcp.open_connection(remote_host     => k_cfg.server_control().gw_host,
-																 remote_port     => k_cfg.server_control().gw_port,
+		c := utl_tcp.open_connection(remote_host     => v_cfg.gw_host,
+																 remote_port     => v_cfg.gw_port,
 																 charset         => null,
 																 in_buffer_size  => 32767,
 																 out_buffer_size => 0,
@@ -72,11 +74,10 @@ create or replace package body gateway is
 		v_dummy     pls_integer;
 		v_time      date;
 		v_count     pls_integer;
+		v_sts       number;
 		-- Refactored procedure quit
 	
 		function get_alert_quit return boolean is
-			v_msg varchar2(1);
-			v_sts number;
 		begin
 			v_sts := dbms_pipe.receive_message(v_module, 0);
 			return v_sts = 0;
@@ -104,6 +105,7 @@ create or replace package body gateway is
 		end if;
 		dbms_application_info.set_module(v_module, 'server started');
 		dbms_pipe.purge(v_module);
+		k_cfg.server_control(v_cfg);
 	
 		<<make_connection>>
 		begin
@@ -123,7 +125,7 @@ create or replace package body gateway is
 			<<read_request>>
 		
 			-- check if max lifetime reach
-			if sysdate > pv.svr_stime + k_cfg.server_control().max_lifetime then
+			if sysdate > pv.svr_stime + v_cfg.max_lifetime then
 				goto the_end;
 			end if;
 		
@@ -142,7 +144,8 @@ create or replace package body gateway is
 					-- then close connection
 					-- and goto make_connection
 					-- so not sily waiting broken connection forever
-					if (sysdate - v_last_time) * 24 * 60 * 60 > k_cfg.server_control().idle_timeout then
+					k_cfg.server_control(v_cfg);
+					if (sysdate - v_last_time) * 24 * 60 * 60 > v_cfg.idle_timeout then
 						goto make_connection;
 					else
 						goto read_request;
@@ -230,7 +233,7 @@ create or replace package body gateway is
 			end if;
 		
 			pv.svr_req_cnt := pv.svr_req_cnt + 1;
-			if pv.svr_req_cnt >= k_cfg.server_control().max_requests then
+			if pv.svr_req_cnt >= v_cfg.max_requests then
 				goto the_end;
 			end if;
 		
@@ -285,11 +288,20 @@ create or replace package body gateway is
 		end loop;
 	
 		<<the_end>>
-		utl_tcp.close_all_connections;
+		raise_application_error(-20526, '');
+	
 	exception
 		when others then
-			k_debug.trace(st('gateway listen exception', pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
+			dbms_application_info.set_module('killed', 'server quit');
 			utl_tcp.close_all_connections;
+			if v_sts = 0 then
+				dbms_output.put_line('Noradle Server Status:kill.');
+			else
+				dbms_output.put_line('Noradle Server Status:restart.');
+			end if;
+			if sqlcode != -20526 then
+				k_debug.trace(st('gateway listen exception', pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
+			end if;
 	end;
 
 end gateway;

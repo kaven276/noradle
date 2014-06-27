@@ -1,6 +1,6 @@
 create or replace package k_cfg is
 
-	function server_control return server_control_t%rowtype;
+	procedure server_control(p_cfg in out nocopy server_control_t%rowtype);
 
 	function find_prefix
 	(
