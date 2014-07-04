@@ -423,4 +423,63 @@ prompt Creating package body TESTS
 prompt ===========================
 prompt
 @@tests.bdy
+prompt
+
+prompt Creating package STS
+prompt ========================
+prompt
+@@sts.spc
+
+prompt Creating package K_MAPPING
+prompt ========================
+prompt
+@@k_mapping.spc
+@@k_mapping.bdy
+
+prompt Creating procedure kill
+prompt ========================
+prompt
+@@kill.prc
+
+prompt Creating function url
+prompt ========================
+prompt
+@@url.func
+
+prompt Creating package TAG
+prompt ========================
+prompt
+@@tag.spc
+@@tag.bdy
+
+prompt Creating package multi
+prompt ========================
+prompt
+@@multi.spc
+@@multi.bdy
+
+prompt Creating package ATTR
+prompt ========================
+prompt
+@@attr.spc
+@@attr.bdy
+
+prompt Creating package TAGP
+prompt ========================
+prompt
+@@tagp.spc
+@@tagp.bdy
+
+prompt Creating package STYLE
+prompt ========================
+prompt
+@@style.spc
+@@style.bdy
+
+prompt Creating package list
+prompt ========================
+prompt
+@@list.spc
+@@list.bdy
+
 
