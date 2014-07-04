@@ -52,6 +52,9 @@ create or replace package body index_b is
 		p.dd(p.a('tree', 'pg_test_b.tree'));
 		p.dd(p.a('form', 'pg_test_b.form'));
 	
+		p.dt('progressive HTML API');
+		p.dd(p.a('alink demo', 'attr_tagp_demo_b.alink'));
+	
 		p.dt('css in HTML API(embeded or linked)');
 		p.dd(p.a('basic', 'style_b.d'));
 	
@@ -62,12 +65,17 @@ create or replace package body index_b is
 		p.dt('user_b(show processing)');
 		p.dd(p.a('register', 'user_b.register'));
 	
-		p.dt('url_b');
+		p.dt('url_b(old)');
 		p.dd(p.a('d', 'url_b.d'));
 		p.dd(p.a('proc1', 'url_b.proc1'));
 		p.dd(p.a('proc2', 'url_b.proc2'));
 		p.dd(p.a('./url_test1_b', './url_test1_b'));
 		p.dd(p.a('./url_test2_b', './url_test2_b'));
+	
+		p.dt('easy_url_b');
+		p.dd(p.a('d', 'easy_url_b.d'));
+		p.dd(p.a('proc1', 'easy_url_b.proc1'));
+		p.dd(p.a('proc2', 'easy_url_b.proc2'));
 	
 		p.dt('charset_b');
 		p.dd(p.a('form', 'charset_b.form'));
