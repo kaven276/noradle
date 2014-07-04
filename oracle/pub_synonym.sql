@@ -37,3 +37,5 @@ create or replace public synonym style for style;
 create or replace public synonym sty for style;
 create or replace public synonym c for style;
 create or replace public synonym y for style;
+create or replace public synonym list for list;
+create or replace public synonym tl for list;
