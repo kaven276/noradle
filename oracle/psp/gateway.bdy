@@ -101,6 +101,7 @@ create or replace package body gateway is
 		v_module := 'Noradle-' || pv.cfg_id || '#' || pv.in_seq;
 		select count(*) into v_count from v$session a where a.module = v_module;
 		if v_count > 0 then
+			dbms_output.put_line('Noradle Server Status:inuse.');
 			return;
 		end if;
 		dbms_application_info.set_module(v_module, 'server started');

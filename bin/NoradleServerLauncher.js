@@ -19,7 +19,9 @@ function startServer(connStr, cfg, slot){
     ;
 
   sqlplus.stdin.write('SET SERVEROUTPUT ON\n');
-  sqlplus.stdin.write(sql + '\nexit\n');
+  sqlplus.stdin.write("alter session set NLS_DATE_FORMAT='yyyy-mm-dd hh24:mi:ss';\n");
+  sqlplus.stdin.write(sql + '\n');
+  sqlplus.stdin.write('exit\n');
   console.log(sql);
 
   sqlplus.stdout.on('data', function(data){
@@ -31,6 +33,10 @@ function startServer(connStr, cfg, slot){
 
   sqlplus.stderr.on('data', function(data){
     // console.error('ps stderr: ' + data.toString());
+  });
+
+  sqlplus.on('error', function(e){
+    console.error(connstr, cfg, slot, e);
   });
 
   sqlplus.on('close', function(code){
