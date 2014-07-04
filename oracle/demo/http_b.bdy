@@ -172,7 +172,7 @@ create or replace package body http_b is
 
 	procedure refresh is
 	begin
-		h.refresh(r.getn('interval', 3), r.getc('to', ''));
+		h.refresh(r.getn('interval', 3, '9'), r.getc('to', ''));
 		src_b.link_proc;
 		h.line('<pre>');
 		h.line(t.dt2s(sysdate));
