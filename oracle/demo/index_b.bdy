@@ -45,6 +45,20 @@ create or replace package body index_b is
 		p.dd(p.a('print_cgi_env', 'html_b.print_cgi_env'));
 		p.dd(p.a('complex', 'html_b.complex'));
 	
+		p.dt('concise HTML API');
+		p.dd(p.a('use tag', 'pg_test_b.use_tag'));
+		p.dd(p.a('odd_even_switch', 'pg_test_b.odd_even_switch'));
+		p.dd(p.a('multi', 'pg_test_b.multi'));
+		p.dd(p.a('tree', 'pg_test_b.tree'));
+		p.dd(p.a('form', 'pg_test_b.form'));
+	
+		p.dt('css in HTML API(embeded or linked)');
+		p.dd(p.a('basic', 'style_b.d'));
+	
+		p.dt('table list formating/printing');
+		p.dd(p.a('for loop print', 'list_b.user_objects'));
+		p.dd(p.a('sys_refcursor print', 'list_b.user_procedures'));
+	
 		p.dt('user_b(show processing)');
 		p.dd(p.a('register', 'user_b.register'));
 	
