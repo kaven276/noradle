@@ -334,3 +334,44 @@ prompt Creating trigger T_USER
 prompt =======================
 prompt
 @@t_user.trg
+
+prompt
+prompt Creating table EMP_T
+prompt =====================
+prompt
+@@emp_t.tab
+
+prompt
+prompt Creating package PG_TEST_B
+prompt ==========================
+prompt
+@@pg_test_b.spc
+@@pg_test_b.bdy
+
+prompt
+prompt Creating package ATTR_TAGX_DEMO_B
+prompt ==========================
+prompt
+@@attr_tagx_demo.spc
+@@attr_tagx_demo.bdy
+
+prompt
+prompt Creating package EASY_URL_B
+prompt ==========================
+prompt
+@@easy_url_b.spc
+@@easy_url_b.bdy
+
+prompt
+prompt Creating package STYLE_B
+prompt ==========================
+prompt
+@@style_b.spc
+@@style_b.bdy
+
+prompt
+prompt Creating package LIST_B
+prompt ==========================
+prompt
+@@list.spc
+@@list.bdy
