@@ -1,0 +1,8 @@
+/* showing from pack's css reference to common static file's css */
+@import url(../../css/ref_by_pack.css); 
+body {
+	font-size:24px;
+	line-height:30px;
+	/* showing ref to another dad's static file */
+	background:url(/demo/img/icon_2.gif) repeat-x;  
+}
