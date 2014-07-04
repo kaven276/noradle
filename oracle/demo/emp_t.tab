@@ -1,0 +1,22 @@
+﻿-- Create table
+create table EMP_T
+(
+  pid  NUMBER(4) not null,
+  name VARCHAR2(30),
+  ppid NUMBER(4)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255;
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table EMP_T
+  add constraint PK_EMP primary key (PID)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255;
+alter table EMP_T
+  add constraint FK_EMP_PPID foreign key (PPID)
+  references EMP_T (PID) on delete set null;
