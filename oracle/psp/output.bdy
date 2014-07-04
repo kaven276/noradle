@@ -258,7 +258,7 @@ create or replace package body output is
 			-- after above, write feedback page
 		end if;
 	
-		if pv.pg_css is not null and p.gv_xhtp and pv.csslink is not null then
+		if pv.pg_css is not null and pv.csslink is not null then
 			-- use pv.csslink will set pv.pg_css to '', and allow css write
 			-- so if pv.pg_css is not null,
 			case pv.csslink

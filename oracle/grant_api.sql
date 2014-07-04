@@ -26,3 +26,4 @@ grant execute on sts to public;
 grant execute on tag to public -- x;
 grant execute on multi to public -- m;
 grant execute on url to public -- l;
+grant execute on style to public; -- sty

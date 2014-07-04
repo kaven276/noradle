@@ -53,6 +53,7 @@ create or replace package body http_server is
 	begin
 		k_init.by_request;
 		r."_init"(pv.c, 80526);
+		style.init_by_request;
 		k_gc.touch(r.bsid);
 	
 		if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then

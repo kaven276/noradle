@@ -33,3 +33,7 @@ create or replace public synonym multi for multi;
 create or replace public synonym m for multi;
 -- create or replace public synonym url for url;
 create or replace public synonym l for url;
+create or replace public synonym style for style;
+create or replace public synonym sty for style;
+create or replace public synonym c for style;
+create or replace public synonym y for style;
