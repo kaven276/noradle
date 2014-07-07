@@ -375,3 +375,10 @@ prompt ==========================
 prompt
 @@list.spc
 @@list.bdy
+
+prompt
+prompt Creating package LAYOUT_B
+prompt ==========================
+prompt
+@@layout_b.spc
+@@layout_b.bdy

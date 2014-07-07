@@ -62,6 +62,9 @@ create or replace package body index_b is
 		p.dd(p.a('for loop print', 'list_b.user_objects'));
 		p.dd(p.a('sys_refcursor print', 'list_b.user_procedures'));
 	
+		p.dt('HTML page layout');
+		p.dd(p.a('form V/H layouts', 'layout_b.form'));
+	
 		p.dt('user_b(show processing)');
 		p.dd(p.a('register', 'user_b.register'));
 	
