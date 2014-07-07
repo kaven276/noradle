@@ -100,7 +100,8 @@ create or replace package body tag is
 			v_cls := ' class="' || replace(substrb(tag, p3 + 1, coalesce(p4, p5) - p3 - 1), '.', ' ') || '"';
 		end if;
 		if p4 is not null then
-			v_attrs := ' ' || replace(replace(substrb(tag, p4 + 1, p5 - p4 - 1), '=', '="'), ',', '" ') || '"';
+			v_attrs := ' ' ||
+								 replace(replace(replace(substrb(tag, p4 + 1, p5 - p4 - 1), '=', '="'), ',', '" '), '`', 'data-') || '"';
 		end if;
 	
 		if para is null then
