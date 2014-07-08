@@ -11,7 +11,7 @@ create or replace package r is
 		c        in out nocopy utl_tcp.connection,
 		passport pls_integer
 	);
-	
+
 	procedure after_map;
 
 	procedure getblob
@@ -153,6 +153,7 @@ create or replace package r is
 		value in out nocopy st
 	);
 	function gets(name varchar2) return st;
+	function unescape(value varchar2) return varchar2;
 
 	function header(name varchar2) return varchar2;
 

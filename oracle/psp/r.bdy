@@ -121,7 +121,7 @@ create or replace package body r is
 	
 		ra.params.delete;
 		loop
-			v_name := utl_tcp.get_line(c, true);
+			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
 			exit when v_name is null;
 			if v_value is null then
@@ -636,9 +636,9 @@ create or replace package body r is
 			return st();
 	end;
 
-	procedure unescape_parameters is
+	function unescape(value varchar2) return varchar2 is
 	begin
-		null;
+		return utl_url.unescape(value, pv.cs_req);
 	end;
 
 	function header(name varchar2) return varchar2 is
