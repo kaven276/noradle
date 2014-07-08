@@ -45,7 +45,7 @@ create or replace package body basic_io_b is
 		h.line('r.server_port : ' || r.server_port);
 	
 		h.line;
-		h.line('[ This is all original http request headers ]');
+		h.line('[ This is all original http request headers exclude cookies]');
 		n := ra.params.first;
 		loop
 			exit when n is null;
@@ -75,12 +75,25 @@ create or replace package body basic_io_b is
 		n := ra.params.first;
 		loop
 			exit when n is null;
+			if substrb(n, 2, 1) != '$' then
+				va := ra.params(n);
+				h.line(n || ' : ' || t.join(va, ', '));
+			end if;
+			n := ra.params.next(n);
+		end loop;
+	
+		h.line;
+		h.line('[ This is all request name-value pairs ]');
+		h.line;
+		n := ra.params.first;
+		loop
+			exit when n is null;
 			va := ra.params(n);
 			h.line(n || ' : ' || t.join(va, ', '));
 			n := ra.params.next(n);
 		end loop;
 	
-		p.line('</pre>');
+		h.line('</pre>');
 	end;
 
 	procedure output is
@@ -121,23 +134,21 @@ create or replace package body basic_io_b is
 	begin
 		p.h;
 		src_b.link_proc;
-		p.br;
-	
-		p.form_open('f', 'req_info?qstr1=A&qstr1=B&p1=0', method => 'get');
-		p.select_open('mtd');
-		p.select_option('get');
-		p.select_option('post');
-		p.select_close;
-		p.script_text('document.f.mtd.onchange=function(){document.f.method = this.value;};');
-		p.input_text('p1', '1');
-		p.input_text('p1', '2');
-		p.input_submit;
-		p.form_close;
-	
-		p.br;
-		p.p('Method get will erase the query string in form.action.');
-		p.p('Method post will keep the query string in form.action but replace the parameter in qstr if there are same named form items.');
-	
+		x.t('<br/>');
+		x.o('<form name=f,method=get,action=:1>', st(l('@b.req_info?qstr1=A&qstr1=B&p1=0')));
+		x.o(' <select name=mtd>');
+		x.p('  <option>', 'get');
+		x.p('  <option>', 'post');
+		x.c(' </select>');
+		x.p(' <script>', 'document.f.mtd.onchange=function(){document.f.method = this.value;};');
+		x.s(' <input type=text,name=p1,value=1>');
+		x.s(' <input type=text,name=p1,value=2>');
+		x.s(' <input type=submit>');
+		x.c('</form>');
+		x.t('<br/>');
+		x.p('<p>', 'Method get will erase the query string in form.action.');
+		x.p('<p>',
+				'Method post will keep the query string in form.action but replace the parameter in qstr if there are same named form items.');
 	end;
 
 	procedure any_size is
