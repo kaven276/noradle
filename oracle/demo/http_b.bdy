@@ -190,11 +190,10 @@ create or replace package body http_b is
 			-- md5 is computed in NodeJS;
 			null;
 		end if;
-		p.h;
 		src_b.link_proc;
-		p.p('Use http content-md5 header to ensure response body integrity.');
-		p.p('Call h.conent_md5_on to let PSP.WEB to automatically compute md5 of response body and set content-md5 header.');
-		p.p('Content MD5 for the same page is diffrent for diffrent Content-Encoding');
+		x.p('<p>', 'Use http content-md5 header to ensure response body integrity.');
+		x.p('<p>', 'Call h.conent_md5_on to automatically compute md5 of response body and set content-md5 header.');
+		x.p('<p>', 'Content MD5 for the same page is diffrent for diffrent Content-Encoding');
 	end;
 
 end http_b;
