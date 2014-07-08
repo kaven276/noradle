@@ -140,17 +140,6 @@ create or replace package body html_b is
 		p.p('Use direct http access to component is good for reuse and testing.');
 	end;
 
-	procedure print_cgi_env is
-	begin
-		p.format_src;
-		p.h;
-		src_b.link_proc('html_b.print_cgi_env');
-		p.br;
-		p.pre_open;
-		p.print_cgi_env;
-		p.pre_close;
-	end;
-
 	procedure complex is
 	begin
 		p.format_src;
@@ -159,7 +148,6 @@ create or replace package body html_b is
 		p.p('I''m a page composed of components');
 		component;
 		p.br;
-		print_cgi_env;
 	end;
 
 end html_b;

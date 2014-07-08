@@ -42,7 +42,6 @@ create or replace package body index_b is
 		p.dd(p.a('component_css?link=N', 'html_b.component_css?link=N'));
 		p.dd(p.a('regen_page', 'html_b.regen_page'));
 		p.dd(p.a('component', 'html_b.component'));
-		p.dd(p.a('print_cgi_env', 'html_b.print_cgi_env'));
 		p.dd(p.a('complex', 'html_b.complex'));
 	
 		p.dt('concise HTML API');
