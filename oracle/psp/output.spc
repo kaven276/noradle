@@ -19,6 +19,8 @@ create or replace package output is
 	procedure flush;
 
 	procedure finish;
+	
+	function get_len return pls_integer;
 
 end output;
 /

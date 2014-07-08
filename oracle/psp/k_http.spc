@@ -9,6 +9,7 @@ create or replace package k_http is
 
 	procedure force_stream;
 	procedure flush;
+	function written return pls_integer;
 	function inc_buf_cnt return pls_integer;
 	procedure use_bom(value varchar2);
 	procedure write_raw(data in out nocopy raw);

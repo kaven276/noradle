@@ -125,12 +125,12 @@ create or replace package body html_b is
 	end;
 
 	procedure component is
-		v_dhc boolean := p.is_dhc;
+		v_dhc boolean := h.written = 0;
 	begin
 		p.h;
 		if v_dhc then
 			src_b.link_proc;
-			p.p('I''m in dhc(direct http access) mode.');
+			p.p('I''m in direct http access mode.');
 		else
 			p.br;
 			src_b.link_proc('html_b.component');

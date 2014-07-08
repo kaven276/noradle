@@ -16,6 +16,11 @@ create or replace package body k_http is
 		output.flush;
 	end;
 
+	function written return pls_integer is
+	begin
+		return output.get_len;
+	end;
+
 	function inc_buf_cnt return pls_integer is
 	begin
 		pv.accum_cnt := pv.accum_cnt + 1;
