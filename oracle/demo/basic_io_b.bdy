@@ -78,6 +78,9 @@ create or replace package body basic_io_b is
 			if substrb(n, 2, 1) != '$' then
 				va := ra.params(n);
 				h.line(n || ' : ' || t.join(va, ', '));
+				for i in 1 .. va.count loop
+					h.line(r.unescape(va(i)));
+				end loop;
 			end if;
 			n := ra.params.next(n);
 		end loop;
