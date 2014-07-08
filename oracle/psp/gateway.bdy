@@ -84,6 +84,7 @@ create or replace package body gateway is
 		end;
 	
 	begin
+		execute immediate 'alter session set nls_date_format="yyyy-mm-dd hh24:mi:ss"';
 		if cfg_id is null then
 			select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
 				into pv.cfg_id, pv.in_seq
