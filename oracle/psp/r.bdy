@@ -666,7 +666,7 @@ create or replace package body r is
 
 	function cookie(name varchar2) return varchar2 is
 	begin
-		return ra.params('c$' || lower(name))(1);
+		return ra.params('c$' || name)(1);
 	exception
 		when no_data_found then
 			return null;
