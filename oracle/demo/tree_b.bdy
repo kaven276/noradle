@@ -6,6 +6,8 @@ create or replace package body tree_b is
 		x.o('<html>');
 		x.o('<body>');
 		src_b.link_proc;
+		x.p('<h2>', 'use m.p, m.ro, tree.content(sys_refcursor), m.rc to print tree');
+		
 		x.o('<ul>');
 		m.p(' <li class="xing-@"><a href="see?pid=@">@</a>|</li>', '<ul>', tmp.stv);
 		m.ro(true);

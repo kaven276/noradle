@@ -59,9 +59,11 @@ create or replace package body index_b is
 	
 		p.dt('table list formating/printing');
 		p.dd(p.a('for loop print', 'list_b.user_objects'));
+		p.dd(p.a('multi.c print', 'list_b.user_objects_cur'));
 		p.dd(p.a('sys_refcursor print', 'list_b.user_procedures'));
 	
 		p.dt('ul/li tree printing');
+		p.dd(p.a('for loop print', 'pg_test_b.tree'));
 		p.dd(p.a('sys_refcursor tree', 'tree_b.emp_hier'));
 	
 		p.dt('HTML page layout');

@@ -194,6 +194,8 @@ create or replace package body pg_test_b is
 	begin
 		p.h;
 		src_b.link_proc;
+		x.p('<h2>', 'use m.p, m.ro, m.r(in for SQL loop), m.rc to print tree');
+	
 		x.o('<ul>');
 		m.p(' <li class="xing-@"><a href="see?pid=@">@</a>|</li>', '<ul>', tmp.stv);
 		m.ro(true);
