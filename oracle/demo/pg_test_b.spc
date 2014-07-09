@@ -1,4 +1,4 @@
-﻿create or replace package pg_test_b is
+create or replace package pg_test_b is
 
 	procedure use_tag;
 

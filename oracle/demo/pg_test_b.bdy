@@ -1,4 +1,4 @@
-﻿create or replace package body pg_test_b is
+create or replace package body pg_test_b is
 
 	procedure use_tag is
 	begin
@@ -79,7 +79,7 @@
 			end loop;
 			x.c('</tr>');
 		end loop;
-		x.c('</table>');	
+		x.c('</table>');
 	end;
 
 	procedure odd_even_switch is
@@ -87,9 +87,9 @@
 	begin
 		p.h;
 		src_b.link_proc;
-		
-		x.p('<style>','.one{color:red}.two{color:blue}.three{color:green}');
-		x.p('<style>','.c0,.even{color:red}.c1,.odd{color:green}');
+	
+		x.p('<style>', '.one{color:red}.two{color:blue}.three{color:green}');
+		x.p('<style>', '.c0,.even{color:red}.c1,.odd{color:green}');
 	
 		tmp.i := 0;
 		x.o('<ul>');
