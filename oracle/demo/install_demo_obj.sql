@@ -377,6 +377,13 @@ prompt
 @@list.bdy
 
 prompt
+prompt Creating package TREE_B
+prompt ==========================
+prompt
+@@tree.spc
+@@tree.bdy
+
+prompt
 prompt Creating package LAYOUT_B
 prompt ==========================
 prompt
