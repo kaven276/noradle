@@ -202,5 +202,16 @@ create or replace package body list is
 			dbms_sql.close_cursor(curid);
 	end;
 
+	procedure cfg_cur
+	(
+		cur        in out nocopy sys_refcursor,
+		fmt_date   varchar2 := null,
+		group_size pls_integer := null,
+		flush      pls_integer := null
+	) is
+	begin
+		cfg_content(cur, fmt_date, group_size, flush);
+	end;
+
 end list;
 /

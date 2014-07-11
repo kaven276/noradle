@@ -20,6 +20,13 @@ create or replace package list is
 		group_size pls_integer := null,
 		flush      pls_integer := null
 	);
+	procedure cfg_cur
+	(
+		cur        in out nocopy sys_refcursor,
+		fmt_date   varchar2 := null,
+		group_size pls_integer := null,
+		flush      pls_integer := null
+	);
 
 end list;
 /

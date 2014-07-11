@@ -510,5 +510,16 @@ create or replace package body multi is
 			dbms_sql.close_cursor(curid);
 	end;
 
+	procedure tpl_cur
+	(
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
+	) is
+	begin
+		c(tpl, cur, fmt_date, flush);
+	end;
+
 end multi;
 /

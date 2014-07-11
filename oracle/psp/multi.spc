@@ -60,6 +60,14 @@ create or replace package multi is
 		flush    pls_integer := null
 	);
 
+	procedure tpl_cur
+	(
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
+	);
+
 	procedure p
 	(
 		tpl    varchar2,
@@ -70,7 +78,7 @@ create or replace package multi is
 	(
 		cuts in out nocopy st,
 		para st
-	);	
+	);
 	function r
 	(
 		cuts in out nocopy st,
