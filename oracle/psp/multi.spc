@@ -70,7 +70,12 @@ create or replace package multi is
 	(
 		cuts in out nocopy st,
 		para st
-	);
+	);	
+	function r
+	(
+		cuts in out nocopy st,
+		para st
+	) return varchar2;
 
 	procedure p
 	(

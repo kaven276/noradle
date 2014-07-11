@@ -1,6 +1,6 @@
 create or replace package body tree is
 
-	procedure content
+	procedure cur
 	(
 		cuts     in out nocopy st,
 		cur      in out nocopy sys_refcursor,
@@ -65,6 +65,78 @@ create or replace package body tree is
 	
 		dbms_sql.close_cursor(curid);
 		tmp.rows := v_row_cnt;
+	end;
+
+	procedure o
+	(
+		pretty boolean,
+		tags   varchar2 := 'ul,li'
+	) is
+	begin
+		sts.olevel := null;
+		sts.pretty := pretty;
+	end;
+
+	procedure c is
+	begin
+		if sts.olevel is null then
+			return;
+		end if;
+		k_xhtp.prn('</li>');
+		for j in 1 .. sts.olevel - 1 loop
+			k_xhtp.prn('</ul>');
+			k_xhtp.prn('</li>');
+		end loop;
+		k_xhtp.line;
+	end;
+
+	procedure n
+	(
+		level pls_integer,
+		str   varchar2
+	) is
+	begin
+		if sts.olevel is not null then
+			if level = sts.olevel + 1 then
+				-- enter deeper level
+				k_xhtp.prn('<ul>');
+				sts.olevel := level;
+			else
+				-- same level or level up
+				k_xhtp.prn('</li>');
+				-- escape one or more level up
+				for j in 1 .. sts.olevel - level loop
+					-- return level
+					k_xhtp.prn('</ul>');
+					k_xhtp.prn('</li>');
+				end loop;
+				sts.olevel := level;
+			end if;
+			if sts.pretty is null then
+				k_xhtp.prn(chr(10));
+			elsif sts.pretty then
+				k_xhtp.prn(rpad(chr(10), level, ' '));
+			end if;
+		else
+			sts.olevel := 1;
+		end if;
+	
+		k_xhtp.prn(str);
+	end;
+
+	procedure n
+	(
+		level varchar2,
+		str   varchar2
+	) is
+		v varchar2(4000) := ltrim(level);
+	begin
+		n(lengthb(level) - nvl(length(v), 0), v || str);
+	end;
+
+	procedure n(str varchar2) is
+	begin
+		n(lengthb(str) - length(ltrim(str)), str);
 	end;
 
 end tree;

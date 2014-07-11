@@ -206,7 +206,7 @@ create or replace package body pg_test_b is
 	
 		m.p(' <li class="xing-@"><b>@</b>|</li>', '<ul>', tmp.stv);
 		m.ro(pretty => true);
-		for i in (select level, a.* from emp_t a start with a.name = 'Li Yong' connect by a.ppid = prior a.pid) loop
+		for i in (select level, a.* from emp_t a start with a.name = 'Li Xinyan' connect by a.ppid = prior a.pid) loop
 			m.r(tmp.stv, i.level, st(substr(i.name, 1, 1), i.name));
 		end loop;
 		m.rc(tmp.stv);

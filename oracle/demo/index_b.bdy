@@ -64,7 +64,9 @@ create or replace package body index_b is
 	
 		p.dt('ul/li tree printing');
 		p.dd(p.a('for loop print', 'pg_test_b.tree'));
-		p.dd(p.a('sys_refcursor tree', 'tree_b.emp_hier'));
+		p.dd(p.a('sys_refcursor tree', 'tree_b.emp_hier_cur'));
+		p.dd(p.a('add nodes tree', 'tree_b.emp_hier_nodes'));
+		p.dd(p.a('add nodes by indent', 'tree_b.menu'));
 	
 		p.dt('HTML page layout');
 		p.dd(p.a('form V/H layouts', 'layout_b.form'));

@@ -278,7 +278,7 @@ create or replace package body multi is
 		return rtn;
 	end;
 
-  -- private, experimental
+	-- private, experimental
 	procedure w
 	(
 		tpl    varchar2,
@@ -338,6 +338,19 @@ create or replace package body multi is
 			k_xhtp.prn(para(i));
 		end loop;
 		k_xhtp.line(cuts(para.count + 1));
+	end;
+
+	function r
+	(
+		cuts in out nocopy st,
+		para st
+	) return varchar2 is
+		v varchar2(4000);
+	begin
+		for i in 1 .. para.count loop
+			v := v || cuts(i) || para(i);
+		end loop;
+		return v || cuts(para.count + 1);
 	end;
 
 	-- template parser for hierachical structure
@@ -484,7 +497,7 @@ create or replace package body multi is
 			end loop;
 			k_xhtp.line(v_cuts(colcnt + 1));
 			if flush is not null then
-				if mod(v_count,flush)=0 then
+				if mod(v_count, flush) = 0 then
 					h.flush;
 				end if;
 			end if;
