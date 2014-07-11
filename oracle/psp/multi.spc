@@ -56,7 +56,8 @@ create or replace package multi is
 	(
 		tpl      varchar2,
 		cur      in out nocopy sys_refcursor,
-		fmt_date varchar2 := null
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
 	);
 
 	procedure p

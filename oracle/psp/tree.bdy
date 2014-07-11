@@ -64,6 +64,7 @@ create or replace package body tree is
 		end loop;
 	
 		dbms_sql.close_cursor(curid);
+		tmp.rows := v_row_cnt;
 	end;
 
 end tree;

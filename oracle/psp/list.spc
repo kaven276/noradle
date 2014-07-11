@@ -17,7 +17,8 @@ create or replace package list is
 	(
 		cur        in out nocopy sys_refcursor,
 		fmt_date   varchar2 := null,
-		group_size pls_integer := null
+		group_size pls_integer := null,
+		flush      pls_integer := null
 	);
 
 end list;

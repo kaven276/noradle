@@ -430,7 +430,8 @@ create or replace package body multi is
 	(
 		tpl      varchar2,
 		cur      in out nocopy sys_refcursor,
-		fmt_date varchar2 := null
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
 	) is
 		curid      number;
 		desctab    dbms_sql.desc_tab;
@@ -482,10 +483,17 @@ create or replace package body multi is
 				end case;
 			end loop;
 			k_xhtp.line(v_cuts(colcnt + 1));
+			if flush is not null then
+				if mod(v_count,flush)=0 then
+					h.flush;
+				end if;
+			end if;
 		end loop;
 		dbms_sql.close_cursor(curid);
+		tmp.rows := v_count;
 	exception
 		when no_data_found then
+			tmp.rows := v_count;
 			dbms_sql.close_cursor(curid);
 	end;
 

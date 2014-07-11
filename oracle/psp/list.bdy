@@ -94,7 +94,8 @@ create or replace package body list is
 	(
 		cur        in out nocopy sys_refcursor,
 		fmt_date   varchar2 := null,
-		group_size pls_integer := null
+		group_size pls_integer := null,
+		flush      pls_integer := null
 	) is
 		curid      number;
 		desctab    dbms_sql.desc_tab;
@@ -187,13 +188,17 @@ create or replace package body list is
 					x.t('</tbody><tbody>');
 				end if;
 			end if;
+			if flush is not null and mod(v_row_cnt, flush) = 0 then
+				h.flush;
+			end if;
 		end loop;
 		x.c('</tbody>');
-	
+		tmp.rows := v_row_cnt;
 		dbms_sql.close_cursor(curid);
 	exception
 		when no_data_found then
 			x.c('<tbody>');
+			tmp.rows := v_row_cnt;
 			dbms_sql.close_cursor(curid);
 	end;
 

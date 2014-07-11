@@ -17,5 +17,7 @@ create or replace package tmp is
 	stv st;
 	ntv nt;
 
+	rows pls_integer;
+
 end tmp;
 /
