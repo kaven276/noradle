@@ -19,6 +19,8 @@ create or replace package k_debug is
 	);
 
 	procedure set_run_comment(value varchar2);
+	
+	procedure req_info;
 
 end k_debug;
 /
