@@ -56,7 +56,7 @@ create or replace package body http_server is
 		style.init_by_request;
 		k_gc.touch(r.bsid);
 	
-		if substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
+		if false and substrb(nvl(r.pack, r.proc), -2) not in ('_c', '_b', '_h') then
 			error_not_bch;
 			raise pv.ex_continue;
 		end if;
