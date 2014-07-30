@@ -2,6 +2,11 @@ create or replace package body k_filter is
 
 	procedure before is
 	begin
+		if substrb(r.dir, -1) != '/' then
+			h.go(r.dir || '/');
+			g.cancel;
+		end if;
+	
 		p.format_src;
 		-- h.set_line_break(null);
 		pv.id  := 'liyong';
