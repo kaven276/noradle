@@ -28,6 +28,7 @@ create or replace package body gateway is
 		v_sid  pls_integer;
 		v_seq  pls_integer;
 		v_inst pls_integer;
+		v_spid pls_integer;
 		v_all  varchar2(200);
 		function pi2r(i binary_integer) return raw is
 		begin
@@ -40,14 +41,20 @@ create or replace package body gateway is
 																 in_buffer_size  => 32767,
 																 out_buffer_size => 0,
 																 tx_timeout      => 3);
-		select a.sid, a.serial# into v_sid, v_seq from v$session a where a.sid = sys_context('userenv', 'sid');
-		v_inst  := nvl(sys_context('USER_ENV', 'INSTANCE'), -1);
-		v_all   := sys_context('USERENV', 'DB_NAME') || '/' || sys_context('USERENV', 'DB_DOMAIN') || '/' ||
-							 sys_context('USERENV', 'DB_UNIQUE_NAME') || '/' || sys_context('USERENV', 'DATABASE_ROLE');
+		select s.sid, s.serial#, p.spid
+			into v_sid, v_seq, v_spid
+			from v$session s, v$process p
+		 where s.paddr = p.addr
+			 and s.sid = sys_context('userenv', 'sid');
+		v_inst := nvl(sys_context('USER_ENV', 'INSTANCE'), -1);
+		v_all  := sys_context('USERENV', 'DB_NAME') || '/' || sys_context('USERENV', 'DB_DOMAIN') || '/' ||
+							sys_context('USERENV', 'DB_UNIQUE_NAME') || '/' || sys_context('USERENV', 'DATABASE_ROLE');
+	
 		pv.wlen := utl_tcp.write_raw(c,
 																 utl_raw.concat(pi2r(197610261),
 																								pi2r(v_sid),
 																								pi2r(v_seq),
+																								pi2r(v_spid),
 																								pi2r(pv.in_seq * flag),
 																								pi2r(v_inst),
 																								pi2r(lengthb(v_all))));
