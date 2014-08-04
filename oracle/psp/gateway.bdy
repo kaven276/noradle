@@ -56,6 +56,8 @@ create or replace package body gateway is
 																								pi2r(v_seq),
 																								pi2r(v_spid),
 																								pi2r(pv.in_seq * flag),
+																								pi2r(floor((sysdate - pv.svr_stime) * 24 * 60)),
+																								pi2r(pv.svr_req_cnt),
 																								pi2r(v_inst),
 																								pi2r(lengthb(v_all))));
 		pv.wlen := utl_tcp.write_text(pv.c, v_all);
