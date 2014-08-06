@@ -47,7 +47,6 @@ create or replace package body output is
 		if pv.bom is not null then
 			pv.headers('x-pw-bom-hex') := pv.bom;
 		end if;
-		pv.headers('x-pw-ori-len') := to_char(get_len);
 	
 		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 		n := pv.headers.first;
@@ -60,7 +59,8 @@ create or replace package body output is
 			v := v || pv.cookies(n) || nl;
 			n := pv.cookies.next(n);
 		end loop;
-		pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
+		pv.wlen := utl_tcp.write_text(pv.c, v);
 		pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
 	end;
 
@@ -101,11 +101,14 @@ create or replace package body output is
 		end if;
 	end;
 
-	-- private
+	-- private, called by .flush or .finish
 	procedure write_buf(p_len pls_integer := get_len) is
 	begin
 		if p_len = 0 then
 			return;
+		end if;
+		if pv.flushed then
+			pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(p_len));
 		end if;
 		if pv.pg_nchar then
 			for i in 1 .. pv.pg_index loop
@@ -126,15 +129,17 @@ create or replace package body output is
 		if not pv.use_stream then
 			return;
 		end if;
-		if not pv.header_writen then
+		if pv.flushed = false then
+			pv.flushed := true;
 			pv.headers('Transfer-Encoding') := 'chunked';
+		end if;
+		if not pv.header_writen then
 			write_head;
 		end if;
 		if pv.pg_conv then
 			pv.pg_buf := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
 		end if;
 		write_buf;
-		pv.flushed := true;
 	end;
 
 	procedure do_css_write is
@@ -147,7 +152,8 @@ create or replace package body output is
 		v := v || 'Content-Type: text/css' || nl;
 		v := v || 'ETag: "' || pv.headers('x-css-md5') || '"' || nl;
 	
-		pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
+		pv.wlen := utl_tcp.write_text(pv.c, v);
 		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
 	end;
 
@@ -213,8 +219,8 @@ create or replace package body output is
 	begin
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
-			line(pv.end_marker, '');
 			flush;
+			pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(0));
 			return;
 		end if;
 	
@@ -253,7 +259,8 @@ create or replace package body output is
 					n := pv.cookies.next(n);
 				end loop;
 				pv.cookies.delete;
-				pv.wlen := utl_tcp.write_text(pv.c, to_char(lengthb(v), '0000') || v);
+				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
+				pv.wlen := utl_tcp.write_text(pv.c, v);
 			end;
 			-- after above, write feedback page
 		end if;

@@ -5,8 +5,6 @@ create or replace package pv is
 	-- process level
 	cfg_id      varchar2(30); -- filled with current server_control_t id
 	in_seq      pls_integer; -- slot in in the current configuration
-	svr_req_cnt number(9);
-	svr_stime   date;
 	production  boolean;
 	c           utl_tcp.connection; -- TCP/IP connection to the Web server
 

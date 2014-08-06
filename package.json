@@ -1,39 +1,39 @@
 {
-	"author" : "Li Yong <kaven276@vip.sina.com>",
-	"name" : "noradle",
-	"description" : "A NodeJS and Oracle DB integration, NodeJS act as http gateway for plsql server pages",
-	"version" : "0.6.11",
-	"homepage" : "https://github.com/kaven276/noradle",
-	"repository" : {
-		"type" : "git",
-		"url" : "git@github.com:kaven276/noradle.git"
-	},
-	"main" : "server.js",
-	"bin" : {
-		"noradleCombined" : "./bin/noradleCombined"
-	},
-	"scripts" : {
-		"start" : "node test/runCombined.js",
-		"runCombined" : "node test/runCombined.js",
-		"runPSP4WEB" : "node test/runPSP4WEB.js",
-		"runStatic" : "node test/runStatic.js",
-		"runStaticAdv" : "node test/runStaticAdv.js",
-		"testDBCall" : "node test/call_plsql_for_result_sets.js"
-	},
-	"config" : {
-	},
-	"engines" : {
-		"node" : ">=0.8"
-	},
-	"dependencies" : {},
-	"devDependencies" : {},
-	"optionalDependencies" : {
-		"connect" : ">=1.0",
-		"marked" : "~0.2.8",
-		"formidable" : ">1.0.11"
-	},
-	"bugs" : {
-		"url" : "https://github.com/kaven276/noradle/issues",
-		"email" : "kaven276@vip.sina.com"
-	}
+  "author" : "Li Yong <kaven276@vip.sina.com>",
+  "name" : "noradle",
+  "description" : "A NodeJS and Oracle DB integration, NodeJS act as http gateway for plsql server pages",
+  "version" : "0.8.0",
+  "homepage" : "https://github.com/kaven276/noradle",
+  "repository" : {
+    "type" : "git",
+    "url" : "git@github.com:kaven276/noradle.git"
+  },
+  "main" : "server.js",
+  "bin" : {
+    "noradleCombined" : "./bin/noradleCombined"
+  },
+  "scripts" : {
+    "start" : "node test/runCombined.js",
+    "runCombined" : "node test/runCombined.js",
+    "runPSP4WEB" : "node test/runPSP4WEB.js",
+    "runStatic" : "node test/runStatic.js",
+    "runStaticAdv" : "node test/runStaticAdv.js",
+    "testDBCall" : "node test/call_plsql_for_result_sets.js"
+  },
+  "config" : {
+  },
+  "engines" : {
+    "node" : ">=0.8"
+  },
+  "dependencies" : {},
+  "devDependencies" : {},
+  "optionalDependencies" : {
+    "connect" : "2.x",
+    "marked" : "~0.2.8",
+    "formidable" : ">1.0.11"
+  },
+  "bugs" : {
+    "url" : "https://github.com/kaven276/noradle/issues",
+    "email" : "kaven276@vip.sina.com"
+  }
 }
