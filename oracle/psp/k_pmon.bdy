@@ -2,7 +2,7 @@ create or replace package body k_pmon is
 
 	function job_prefix(cfg varchar2) return varchar2 deterministic is
 	begin
-		return 'PSP.WEB_' || (cfg) || ':';
+		return 'PSP.WEB_' ||(cfg) || ':';
 	end;
 
 	procedure start_one_server_process
@@ -53,8 +53,9 @@ create or replace package body k_pmon is
 			dbms_alert.remove('PW_STOP_SERVER');
 			exit;
 		end loop;
-  exception when others then
-		k_debug.trace(sqlerrm);
+	exception
+		when others then
+			k_debug.trace(sqlerrm);
 	end;
 
 	procedure run_job is
@@ -74,6 +75,13 @@ create or replace package body k_pmon is
 		dbms_alert.signal('PW_STOP_SERVER', null);
 		commit;
 		kill;
+	end;
+
+	procedure rerun_job is
+	begin
+		k_pmon.stop;
+		dbms_lock.sleep(3);
+		k_pmon.run_job;
 	end;
 
 	procedure create_deamon_job_unstable is
