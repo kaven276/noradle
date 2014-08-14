@@ -177,9 +177,12 @@ create or replace package body gateway is
 					end if;
 					goto read_request;
 				when utl_tcp.end_of_input then
+					k_debug.trace(st('utl_tcp.end_of_input', v_trc), 'keep_conn');
+					-- not sleep will cause reconnect raise ORA-29260 TNS no listener
 					dbms_lock.sleep(1);
 					goto make_connection;
 				when utl_tcp.network_error then
+					k_debug.trace(st('utl_tcp.network_error', v_trc), 'keep_conn');
 					goto make_connection;
 			end;
 		
