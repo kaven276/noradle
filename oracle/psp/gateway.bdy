@@ -75,8 +75,7 @@ create or replace package body gateway is
 				 and s.sid = sys_context('userenv', 'sid');
 			v_inst := nvl(sys_context('USER_ENV', 'INSTANCE'), -1);
 			v_all  := sys_context('USERENV', 'DB_NAME') || '/' || sys_context('USERENV', 'DB_DOMAIN') || '/' ||
-								sys_context('USERENV', 'DB_UNIQUE_NAME') || '/' || sys_context('USERENV', 'DATABASE_ROLE') || '/' ||
-								chr(0);
+								sys_context('USERENV', 'DB_UNIQUE_NAME') || '/' || sys_context('USERENV', 'DATABASE_ROLE') || '/080526';
 		
 			pv.wlen := utl_tcp.write_raw(c,
 																	 utl_raw.concat(pi2r(197610261),
