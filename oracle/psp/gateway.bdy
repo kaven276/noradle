@@ -29,6 +29,7 @@ create or replace package body gateway is
 		v_sts       number;
 	
 		v_quitting    boolean := false;
+		v_reconnect   boolean := false;
 		v_svr_stime   date := sysdate;
 		v_svr_req_cnt pls_integer := 0;
 	
@@ -164,6 +165,7 @@ create or replace package body gateway is
 			begin
 				pv.protocol := utl_tcp.get_line(pv.c, true);
 				v_last_time := sysdate;
+				v_reconnect := false;
 			exception
 				when utl_tcp.transfer_timeout then
 					k_cfg.server_control(v_cfg);
@@ -173,7 +175,12 @@ create or replace package body gateway is
 					-- so timeout and reconnect design is needed
 					if (sysdate - v_last_time) * 24 * 60 * 60 > v_cfg.idle_timeout then
 						k_debug.trace(st('utl_tcp.transfer_timeout', v_trc, 'reconnect'), 'keep_conn');
-						goto make_connection;
+						if v_reconnect then
+							goto make_connection;
+						end if;
+						pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(-1));
+						utl_tcp.flush(pv.c);
+						v_reconnect := true;
 					end if;
 					goto read_request;
 				when utl_tcp.end_of_input then
