@@ -156,7 +156,6 @@ create or replace package body gateway is
 				quit;
 			elsif sysdate > v_svr_stime + v_cfg.max_lifetime or v_svr_req_cnt >= v_cfg.max_requests or get_alert_quit then
 				-- signal quit, but allow this loop of read request
-				dbms_lock.sleep(1); -- avoid nodejs to receive extra after the end of response
 				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(-1));
 				utl_tcp.flush(pv.c);
 				v_quitting := true;
