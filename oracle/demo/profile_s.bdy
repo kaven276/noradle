@@ -22,9 +22,9 @@ create or replace package body profile_s is
 		return k_gac.getn(gc_ctx, 'rows');
 	end;
 
-	procedure clear is
+	procedure clear(ns varchar2) is
 	begin
-		k_gac.grm(gc_ctx);
+		k_gac.grm(ns);
 	end;
 
 end profile_s;

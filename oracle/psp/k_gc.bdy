@@ -28,15 +28,20 @@ create or replace package body k_gc is
 	
 		dbms_session.set_identifier(bsid);
 		pv.ctx := null;
+		-- r.setc('y$inst', regexp_substr(r.getc('x$dbu'), '(\d+$)'));
 	
 		-- session timeout for system threshold
 		if v_idle then
-			for j in (select distinct a.namespace from global_context a where a.client_identifier is not null) loop
-				for ns in (select a.namespace, a.schema || '.' || a.package as proc
-										 from dba_context a
-										where a.namespace = j.namespace) loop
-					execute immediate 'call ' || ns.proc || '.clear()';
-				end loop;
+			for ns in (select a.namespace, a.schema || '.' || a.package proc
+									 from dba_context a
+									where a.type = 'ACCESSED GLOBALLY'
+										and a.schema != user
+										and exists (select *
+													 from dba_procedures b
+													where a.schema = b.owner
+														and a.package = b.object_name
+														and b.procedure_name = 'CLEAR')) loop
+				execute immediate 'call ' || ns.proc || '.clear(''' || ns.namespace || ''')';
 			end loop;
 		end if;
 	end;

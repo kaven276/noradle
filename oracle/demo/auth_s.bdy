@@ -24,9 +24,9 @@ create or replace package body auth_s is
 		s.touch;
 	end;
 
-	procedure clear is
+	procedure clear(ns varchar2) is
 	begin
-		k_gac.grm('A#DEMO');
+		k_gac.grm(ns);
 	end;
 
 end auth_s;
