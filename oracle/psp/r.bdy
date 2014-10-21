@@ -120,6 +120,7 @@ create or replace package body r is
 		end if;
 	
 		ra.params.delete;
+		rc.params.delete;
 		loop
 			v_name  := utl_tcp.get_line(c, true);
 			v_value := utl_tcp.get_line(c, true);
@@ -634,6 +635,24 @@ create or replace package body r is
 	exception
 		when no_data_found then
 			return st();
+	end;
+
+	function session(name varchar2) return varchar2 is
+	begin
+		return ra.params('s$' || name)(1);
+	exception
+		when no_data_found then
+			return null;
+	end;
+
+	procedure session
+	(
+		name  varchar2,
+		value varchar2
+	) is
+	begin
+		ra.params('s$' || name) := st(value);
+		rc.params('s$' || name) := st(value);
 	end;
 
 	function unescape(value varchar2) return varchar2 is

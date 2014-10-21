@@ -59,6 +59,11 @@ create or replace package body output is
 			v := v || pv.cookies(n) || nl;
 			n := pv.cookies.next(n);
 		end loop;
+		n := rc.params.first;
+		while n is not null loop
+			v := v || n || ': ' || t.join(rc.params(n), '~') || nl;
+			n := rc.params.next(n);
+		end loop;
 		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
 		pv.wlen := utl_tcp.write_text(pv.c, v);
 		pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));

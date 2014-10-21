@@ -154,6 +154,12 @@ create or replace package r is
 	);
 	function gets(name varchar2) return st;
 	function unescape(value varchar2) return varchar2;
+	function session(name varchar2) return varchar2;
+	procedure session
+	(
+		name  varchar2,
+		value varchar2
+	);
 
 	function header(name varchar2) return varchar2;
 

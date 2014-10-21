@@ -103,6 +103,9 @@ create or replace package body index_b is
 		p.dd(p.a('filter source', '=src_b.pack?p=k_filter'));
 		p.dd(p.a('see_filter', 'filter_b.see_filter'));
 	
+		p.dt('session_b');
+		p.dd(p.a('session login', 'session_b.login_form'));
+	
 		p.dt('auth_b');
 		p.dd(p.a('basic', 'auth_b.basic'));
 		p.dd(p.a('digest', 'auth_b.digest'));
