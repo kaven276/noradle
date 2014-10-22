@@ -57,13 +57,14 @@ create or replace package body k_type_tool is
 		v_time        char(6);
 		v_token       varchar2(100);
 		v_ip_str      varchar2(200);
-		v_ip_arry     st;
+		v_ip_arry     st := st();
 		v_start_place number;
 		v_end_place   number;
 	begin
 		v_ip_str      := r.client_addr;
 		v_start_place := 0;
 		v_end_place   := instr(v_ip_str, '.');
+		v_ip_arry.extend(4);
 		for i in 1 .. 3 loop
 			v_ip_arry(i) := substr(v_ip_str, v_start_place + 1, v_end_place - v_start_place - 1);
 			v_start_place := v_end_place;
