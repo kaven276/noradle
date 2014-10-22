@@ -655,6 +655,11 @@ create or replace package body r is
 		rc.params('s$' || name) := st(value);
 	end;
 
+	function lat return date is
+	begin
+		return sysdate - getn('s$IDLE') / 1000 / 24 / 60 / 60;
+	end;
+
 	function unescape(value varchar2) return varchar2 is
 	begin
 		return utl_url.unescape(value, pv.cs_req);

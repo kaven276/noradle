@@ -46,6 +46,8 @@ create or replace package body session_b is
 	begin
 		x.t('<!doctype HTML>');
 		x.p('<p>', 'logged user is ' || r.session('user'));
+		x.p('<p>', 'your have been idle for ' || ceil(r.getn('s$IDLE', 0) / 1000) || ' seconds');
+		x.p('<p>', 'last access time is ' || r.lat);
 		x.a('<a>', 'click to login using different user name', '@b.login_form');
 	end;
 
