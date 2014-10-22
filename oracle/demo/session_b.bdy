@@ -2,7 +2,20 @@ create or replace package body session_b is
 
 	procedure login_form is
 		s_user varchar2(30) := r.session('user');
+		v_sid  varchar2(100);
 	begin
+		-- create session store with right sid in node
+		-- if session store is not been created
+		-- cookie name mimic PHP's session cookie name
+		if r.session('IDLE') is null then
+			if r.bsid is null then
+				v_sid := nvl(r.bsid, t.gen_token);
+				h.set_cookie('PHPSESSID', v_sid, path => r.dir);
+			else
+				v_sid := r.bsid;
+			end if;
+			r.session('BSID', v_sid);
+		end if;
 		x.t('<!doctype HTML>');
 		x.p('<p>', 'logged user is ' || s_user);
 		x.o('<form action=:1,method=post>', st(l('@b.login_check')));
