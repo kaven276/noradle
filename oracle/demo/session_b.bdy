@@ -49,6 +49,15 @@ create or replace package body session_b is
 		x.p('<p>', 'your have been idle for ' || ceil(r.getn('s$IDLE', 0) / 1000) || ' seconds');
 		x.p('<p>', 'last access time is ' || r.lat);
 		x.a('<a>', 'click to login using different user name', '@b.login_form');
+		x.a('<a>', 'logout', '@b.logout');
+	end;
+
+	procedure logout is
+	begin
+		if r.session('IDLE') is not null then
+			r.session('BSID', '');
+		end if;
+		h.redirect(l('@b.logout_info'), 303);
 	end;
 
 end session_b;
