@@ -75,8 +75,8 @@ create or replace package pv is
 	msg_stream boolean;
 	accum_cnt  pls_integer;
 
-	bsid varchar2(30); -- client session browser sid
-	msid varchar2(30); -- client session machine(terminal) sid
+	bsid varchar2(100); -- client session browser sid
+	msid varchar2(100); -- client session machine(terminal) sid
 	ctx  varchar2(30); -- current ctx for k_sess to access
 
 	-- constants
