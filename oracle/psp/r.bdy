@@ -637,7 +637,7 @@ create or replace package body r is
 			return st();
 	end;
 
-	function session(name varchar2) return varchar2 is
+	function s(name varchar2) return varchar2 is
 	begin
 		return ra.params('s$' || name)(1);
 	exception
@@ -645,7 +645,7 @@ create or replace package body r is
 			return null;
 	end;
 
-	procedure session
+	procedure s
 	(
 		name  varchar2,
 		value varchar2
@@ -658,6 +658,20 @@ create or replace package body r is
 	function lat return date is
 	begin
 		return sysdate - getn('s$IDLE') / 1000 / 24 / 60 / 60;
+	end;
+
+	function session(name varchar2) return varchar2 is
+	begin
+		return s(name);
+	end;
+
+	procedure session
+	(
+		name  varchar2,
+		value varchar2
+	) is
+	begin
+		s(name, value);
 	end;
 
 	function unescape(value varchar2) return varchar2 is
