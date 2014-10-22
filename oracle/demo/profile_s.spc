@@ -8,7 +8,5 @@ create or replace package profile_s is
 
 	function get_rows_per_page return number;
 
-	procedure clear(ns varchar2);
-
 end profile_s;
 /

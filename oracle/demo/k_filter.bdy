@@ -12,7 +12,7 @@ create or replace package body k_filter is
 		pv.id  := 'liyong';
 		pv.now := sysdate;
 	
-		if s.logged then
+		if auth_s.user_name is not null then
 			auth_b.check_update;
 		end if;
 	

@@ -9,7 +9,7 @@ create or replace package body session_b is
 		-- cookie name mimic PHP's session cookie name
 		if r.session('IDLE') is null then
 			if r.bsid is null then
-				v_sid := nvl(r.bsid, t.gen_token);
+				v_sid := t.gen_token;
 				h.set_cookie('PHPSESSID', v_sid, path => r.dir);
 			else
 				v_sid := r.bsid;
