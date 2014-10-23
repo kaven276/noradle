@@ -172,7 +172,7 @@ prompt
 prompt Creating package K_SESS
 prompt =======================
 prompt
-@@k_sess.spc
+@@k_auth.spc
 prompt
 prompt Creating type NT
 prompt ================
@@ -377,7 +377,7 @@ prompt
 prompt Creating package body K_SESS
 prompt ============================
 prompt
-@@k_sess.bdy
+@@k_auth.bdy
 prompt
 prompt Creating package body K_TYPE_TOOL
 prompt =================================

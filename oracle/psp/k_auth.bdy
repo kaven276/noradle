@@ -1,12 +1,6 @@
-create or replace package body k_sess is
+create or replace package body k_auth is
 
 	gc_dfmt constant varchar2(16) := 'YYYYMMDDHH24MISS';
-
-	-- private
-	function ctx return varchar2 is
-	begin
-		return nvl(pv.ctx, 'A#' || upper(r.dbu));
-	end;
 
 	procedure attr
 	(
@@ -15,12 +9,12 @@ create or replace package body k_sess is
 	) is
 	begin
 		e.chk(user_id is null, -20022, 'session attr must be set in logged-in status');
-		k_gac.gset(ctx, name, value);
+		r.s(name, value);
 	end;
 
 	function attr(name varchar2) return varchar2 is
 	begin
-		return sys_context(ctx, name);
+		return r.s(name);
 	end;
 
 	procedure login
@@ -30,45 +24,40 @@ create or replace package body k_sess is
 		method varchar2 := null
 	) is
 	begin
-		k_gac.gset(ctx, 'UID', uid);
-		k_gac.gset(ctx, 'LTIME', to_char(sysdate, gc_dfmt));
-		k_gac.gset(ctx, 'LAT', to_char(sysdate, gc_dfmt));
+		r.s('UID', uid);
+		r.s('LTIME', to_char(sysdate, gc_dfmt));
+		r.s('LAT', to_char(sysdate, gc_dfmt));
 		if gid is not null then
-			k_gac.gset(ctx, 'GID', gid);
+			r.s('GID', gid);
 		end if;
 		if method is not null then
-			k_gac.gset(ctx, 'METHOD', method);
+			r.s('METHOD', method);
 		end if;
 	end;
 
 	procedure logout is
 	begin
-		k_gac.grm(ctx);
-	end;
-
-	procedure touch is
-	begin
-		k_gac.gset(ctx, 'LAT', to_char(sysdate, gc_dfmt));
+		r.s('BSID', '');
 	end;
 
 	function user_id return varchar2 is
 	begin
-		return sys_context(ctx, 'UID');
+		return r.s('UID');
 	end;
 
 	function group_id return varchar2 is
 	begin
-		return sys_context(ctx, 'GID');
+		return r.s('GID');
 	end;
 
 	function uid return varchar2 is
 	begin
-		return sys_context(ctx, 'UID');
+		return r.s('UID');
 	end;
 
 	function gid return varchar2 is
 	begin
-		return sys_context(ctx, 'GID');
+		return r.s('GID');
 	end;
 
 	function logged return boolean is
@@ -78,28 +67,18 @@ create or replace package body k_sess is
 
 	function login_time return date is
 	begin
-		return to_date(sys_context(ctx, 'LTIME'), gc_dfmt);
+		return to_date(r.s('LTIME'), gc_dfmt);
 	end;
 
 	function last_access_time return date is
 	begin
-		return to_date(sys_context(ctx, 'LAT'), gc_dfmt);
+		return to_date(r.s('LAT'), gc_dfmt);
 	end;
 
 	function lat return date is
 	begin
-		return to_date(sys_context(ctx, 'LAT'), gc_dfmt);
+		return to_date(r.s('LAT'), gc_dfmt);
 	end;
 
-	procedure rm is
-	begin
-		k_gac.grm(ctx);
-	end;
-
-	procedure use_ctx(ctx varchar2) is
-	begin
-		pv.ctx := ctx;
-	end;
-
-end k_sess;
+end k_auth;
 /

@@ -1,4 +1,4 @@
-create or replace package k_sess authid current_user is
+create or replace package k_auth is
 
 	no_session_gac_found exception;
 	pragma exception_init(no_session_gac_found, -20021);
@@ -23,7 +23,6 @@ create or replace package k_sess authid current_user is
 		method varchar2 := null
 	);
 	procedure logout;
-	procedure touch;
 
 	function logged return boolean;
 	function user_id return varchar2;
@@ -34,9 +33,5 @@ create or replace package k_sess authid current_user is
 	function last_access_time return date;
 	function lat return date;
 
-	procedure use_ctx(ctx varchar2);
-
-	procedure rm;
-
-end k_sess;
+end k_auth;
 /
