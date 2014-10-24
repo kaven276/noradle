@@ -9,12 +9,12 @@ create or replace package body k_auth is
 	) is
 	begin
 		e.chk(user_id is null, -20022, 'session attr must be set in logged-in status');
-		r.s(name, value);
+		r.setc('s$' || name, value);
 	end;
 
 	function attr(name varchar2) return varchar2 is
 	begin
-		return r.s(name);
+		return r.getc('s$' || name);
 	end;
 
 	procedure login
@@ -24,40 +24,36 @@ create or replace package body k_auth is
 		method varchar2 := null
 	) is
 	begin
-		r.s('UID', uid);
-		r.s('LTIME', to_char(sysdate, gc_dfmt));
-		r.s('LAT', to_char(sysdate, gc_dfmt));
-		if gid is not null then
-			r.s('GID', gid);
-		end if;
-		if method is not null then
-			r.s('METHOD', method);
-		end if;
+		r.setc('s$UID', uid);
+		r.setd('s$LTIME', sysdate);
+		r.setd('s$LAT', sysdate);
+		r.setc('s$GID', gid);
+		r.setc('s$METHOD', method);
 	end;
 
 	procedure logout is
 	begin
-		r.s('BSID', '');
+		r.setc('s$BSID', '');
 	end;
 
 	function user_id return varchar2 is
 	begin
-		return r.s('UID');
+		return r.getc('s$UID');
 	end;
 
 	function group_id return varchar2 is
 	begin
-		return r.s('GID');
+		return r.getc('s$GID');
 	end;
 
 	function uid return varchar2 is
 	begin
-		return r.s('UID');
+		return r.getc('s$UID');
 	end;
 
 	function gid return varchar2 is
 	begin
-		return r.s('GID');
+		return r.getc('s$GID');
 	end;
 
 	function logged return boolean is
@@ -67,17 +63,17 @@ create or replace package body k_auth is
 
 	function login_time return date is
 	begin
-		return to_date(r.s('LTIME'), gc_dfmt);
+		return r.getd('LTIME');
 	end;
 
 	function last_access_time return date is
 	begin
-		return to_date(r.s('LAT'), gc_dfmt);
+		return sysdate - r.getn('s$IDLE') / 1000 / 24 / 60 / 60;
 	end;
 
 	function lat return date is
 	begin
-		return to_date(r.s('LAT'), gc_dfmt);
+		return sysdate - r.getn('s$IDLE') / 1000 / 24 / 60 / 60;
 	end;
 
 end k_auth;

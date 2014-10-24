@@ -1,20 +1,20 @@
 create or replace package body session_b is
 
 	procedure login_form is
-		s_user varchar2(30) := r.session('user');
+		s_user varchar2(30) := r.getc('s$user', '');
 		v_sid  varchar2(100);
 	begin
 		-- create session store with right sid in node
 		-- if session store is not been created
 		-- cookie name mimic PHP's session cookie name
-		if r.session('IDLE') is null then
+		if r.is_null('s$IDLE') then
 			if r.bsid is null then
 				v_sid := t.gen_token;
 				h.set_cookie('PHPSESSID', v_sid, path => r.dir);
 			else
 				v_sid := r.bsid;
 			end if;
-			r.session('BSID', v_sid);
+			r.setc('s$BSID', v_sid);
 		end if;
 		x.t('<!doctype HTML>');
 		x.p('<p>', 'logged user is ' || s_user);
@@ -27,7 +27,7 @@ create or replace package body session_b is
 	procedure login_check is
 		p_user varchar2(30) := r.getc('user');
 	begin
-		r.session('user', p_user);
+		r.setc('s$user', p_user);
 		if p_user is not null then
 			h.redirect(l('@b.user_page'), 303);
 		else
@@ -45,7 +45,7 @@ create or replace package body session_b is
 	procedure user_page is
 	begin
 		x.t('<!doctype HTML>');
-		x.p('<p>', 'logged user is ' || r.session('user'));
+		x.p('<p>', 'logged user is ' || r.getc('s$user', 'nobody'));
 		x.p('<p>', 'your have been idle for ' || ceil(r.getn('s$IDLE', 0) / 1000) || ' seconds');
 		x.p('<p>', 'last access time is ' || r.lat);
 		x.a('<a>', 'click to login using different user name', '@b.login_form');
@@ -54,8 +54,8 @@ create or replace package body session_b is
 
 	procedure logout is
 	begin
-		if r.session('IDLE') is not null then
-			r.session('BSID', '');
+		if not r.is_null('s$IDLE') then
+			r.setc('s$BSID', '');
 		end if;
 		h.redirect(l('@b.logout_info'), 303);
 	end;

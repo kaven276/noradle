@@ -80,19 +80,10 @@ create or replace package r is
 		value in out nocopy varchar2 character set any_cs
 	);
 
-	procedure getn
+	procedure setd
 	(
-		name   varchar2,
-		value  in out nocopy number,
-		defval number,
-		format varchar2 := null
-	);
-
-	procedure getn
-	(
-		name   varchar2,
-		value  in out nocopy number,
-		format varchar2 := null
+		name  varchar2,
+		value date
 	);
 
 	procedure getd
@@ -121,26 +112,14 @@ create or replace package r is
 	function getn
 	(
 		name   varchar2,
-		defval number,
-		format varchar2 := null
-	) return number;
-
-	function getn
-	(
-		name   varchar2,
-		format varchar2 := null
+		defval number := null,
+		format    varchar2 := null
 	) return number;
 
 	function getd
 	(
 		name   varchar2,
-		defval date,
-		format varchar2 := null
-	) return date;
-
-	function getd
-	(
-		name   varchar2,
+		defval date := null,
 		format varchar2 := null
 	) return date;
 

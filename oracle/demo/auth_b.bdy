@@ -28,14 +28,14 @@ create or replace package body auth_b is
 	procedure cookie_gac is
 		v_sid varchar2(100);
 	begin
-		if r.session('IDLE') is null then
+		if r.is_null('s$IDLE') then
 			if r.bsid is null then
 				v_sid := t.gen_token;
 				h.set_cookie('PHPSESSID', v_sid, path => r.dir);
 			else
 				v_sid := r.bsid;
 			end if;
-			r.session('BSID', v_sid);
+			r.setc('s$BSID', v_sid);
 		end if;
 	
 		p.h;
@@ -110,12 +110,12 @@ create or replace package body auth_b is
 
 	procedure check_maxidle is
 	begin
-		if r.getn('s$IDLE') > to_number(r.s('maxidle')) * 1000 then
+		if r.getn('s$IDLE') > to_number(r.getn('s$maxidle')) * 1000 then
 			p.h;
 			p.p('You logged in session is timeout for idle more than 15s, session is removed.');
 			p.p('last access time : ' || to_char(r.lat, 'hh:mm:ss'));
 			p.p('current time : ' || to_char(sysdate, 'hh:mm:ss'));
-			p.p('max idle threshold : ' || r.s('maxidle'));
+			p.p('max idle threshold : ' || r.getn('s$maxidle') || ' seconds');
 			auth_s.logout;
 			g.cancel;
 		end if;
@@ -123,12 +123,12 @@ create or replace package body auth_b is
 
 	procedure check_maxlive is
 	begin
-		if auth_s.login_time + to_number(r.s('maxlive')) / 24 / 60 / 60 < sysdate then
+		if auth_s.login_time + r.getn('s$maxlive') / 24 / 60 / 60 < sysdate then
 			p.h;
 			p.p('You logged in session lived for too long, that is more than 1 minute, session is removed.');
 			p.p('login time : ' || to_char(auth_s.login_time, 'hh:mm:ss'));
 			p.p('current time : ' || to_char(sysdate, 'hh:mm:ss'));
-			p.p('max live threshold : ' || r.s('maxlive'));
+			p.p('max live threshold : ' || r.getn('s$maxlive') || ' seconds');
 			auth_s.logout;
 			g.cancel;
 		end if;
@@ -154,11 +154,11 @@ create or replace package body auth_b is
 		p.br;
 		p.p('This page show how to deal with login/logout fair, instead of using k_filter.before.');
 		p.p(t.ps('You are :1 at :4, You have are logged in at :2 with method(:3).',
-						 st(auth_s.user_name, t.dt2s(auth_s.login_time), r.s('method'), r.s('company'))));
+						 st(auth_s.user_name, t.dt2s(auth_s.login_time), r.getc('s$method'), r.getc('s$company'))));
 		p.p('some example session attribute include');
-		p.p('attr1 = ' || r.s('attr1'));
-		p.p('attr2 = ' || r.s('attr2'));
-		p.p('session in GAC demo_profile');
+		p.p('attr1 = ' || r.getc('s$attr1'));
+		p.p('attr2 = ' || r.getc('s$attr2'));
+		p.p('session in demo_profile');
 		p.p('scheme = ' || profile_s.get_scheme);
 		p.p('rows per page = ' || profile_s.get_rows_per_page);
 		p.a('relogin', 'cookie_gac');
@@ -172,12 +172,14 @@ create or replace package body auth_b is
 		p.p('password=' || rcpv.user_row.pass);
 		p.p('crt_time=' || t.dt2s(rcpv.user_row.ctime));
 	exception
-		when s.over_max_idle then
+		when no_data_found /*s.over_max_idle*/
+		 then
 			h.sts_403_forbidden;
 			p.p(t.ps('You are :1, You last access time is ( at :2 ) in.', st(auth_s.user_name, t.dt2s(r.lat))));
 			p.p('But this system allow only 60 seconds of idle time, then it will timeout the session.');
 			p.a('relogin now', 'cookie_gac');
-		when s.over_max_keep then
+		when others /*s.over_max_keep*/
+		 then
 			h.sts_403_forbidden;
 			p.p(t.ps('You are :1, You have already logged ( at :2 ) in.', st(auth_s.user_name, t.dt2s(auth_s.login_time))));
 			p.p('But this system allow only 10 minute use after successful login.');
