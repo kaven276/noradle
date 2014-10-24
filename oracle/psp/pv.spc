@@ -77,7 +77,6 @@ create or replace package pv is
 
 	bsid varchar2(100); -- client session browser sid
 	msid varchar2(100); -- client session machine(terminal) sid
-	ctx  varchar2(30); -- current ctx for k_sess to access
 
 	-- constants
 	tz_offset     constant number(2) := to_number(substrb(standard.tz_offset(sessiontimezone), 2, 2));

@@ -27,7 +27,6 @@ create or replace package body k_gc is
 		end if;
 	
 		dbms_session.set_identifier(bsid);
-		pv.ctx := null;
 		-- r.setc('y$inst', regexp_substr(r.getc('x$dbu'), '(\d+$)'));
 	
 		-- session timeout for system threshold
