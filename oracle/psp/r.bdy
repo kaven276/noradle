@@ -139,7 +139,7 @@ create or replace package body r is
 				get('u$method', v_method);
 				get('u$proto', v_proto);
 				get('u$hostname', v_hostn);
-				getn('u$port', v_port, 80, null);
+				v_port := getn('u$port', 80);
 				get('u$url', v_url);
 				get('u$dir', v_dir);
 				get('u$qstr', v_qstr);
@@ -150,7 +150,7 @@ create or replace package body r is
 				-- get i$nid
 			
 				get('a$caddr', gv_caddr);
-				getn('a$cport', gv_cport, null, null);
+				gv_cport := getn('a$cport');
 				get('a$uamd5', v_uamd5);
 			
 			when 'DATA' then
@@ -296,12 +296,12 @@ create or replace package body r is
 
 	function pdns return varchar2 is
 	begin
-		return r.getc('u$pdns', '');
+		return r.getc('u$pdns');
 	end;
 
 	function sdns return varchar2 is
 	begin
-		return r.getc('u$sdns', '');
+		return r.getc('u$sdns');
 	end;
 
 	function hostname return varchar2 is
@@ -649,7 +649,7 @@ create or replace package body r is
 
 	function gid return varchar2 is
 	begin
-		return getc('i$gid', '');
+		return getc('i$gid');
 	end;
 
 	function cookie(name varchar2) return varchar2 is
@@ -718,17 +718,17 @@ create or replace package body r is
 
 	function server_family return varchar2 is
 	begin
-		return getc('a$sfami', '');
+		return getc('a$sfami');
 	end;
 
 	function server_addr return varchar2 is
 	begin
-		return getc('a$saddr', '');
+		return getc('a$saddr');
 	end;
 
 	function server_port return pls_integer is
 	begin
-		return getn('a$sport', nn);
+		return getn('a$sport');
 	end;
 
 	function call_type return varchar2 is
