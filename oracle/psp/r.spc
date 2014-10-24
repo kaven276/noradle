@@ -53,10 +53,6 @@ create or replace package r is
 	function url_full return varchar2;
 	function dir_full return varchar2;
 
-	function nc return varchar2;
-	function nd return date;
-	function nn return number;
-
 	procedure req_charset(cs varchar2);
 	procedure req_charset_db;
 	procedure req_charset_ndb;

@@ -419,19 +419,12 @@ create or replace package body r is
 		ra.params(name) := st(value);
 	end;
 
-	function nc return varchar2 is
-	begin
-		return null;
 	end;
 
-	function nn return number is
 	begin
-		return null;
 	end;
 
-	function nd return date is
 	begin
-		return null;
 	end;
 
 	procedure req_charset(cs varchar2) is
