@@ -61,23 +61,29 @@ create or replace package r is
 	function is_lack(name varchar2) return boolean;
 	function is_null(name varchar2) return boolean;
 
-	procedure setc
+	function get
+	(
+		name   varchar2,
+		defval varchar2 := null
+	) return varchar2;
+	procedure set
 	(
 		name  varchar2,
 		value varchar2
 	);
+	procedure del(name varchar2);
+	procedure del(names st);
 
-	procedure getc
-	(
-		name   varchar2,
-		value  in out nocopy varchar2 character set any_cs,
-		defval varchar2
-	);
-
-	procedure getc
+	procedure setc
 	(
 		name  varchar2,
-		value in out nocopy varchar2 character set any_cs
+		value varchar2 character set any_cs
+	);
+
+	procedure setn
+	(
+		name  varchar2,
+		value number
 	);
 
 	procedure setd
@@ -86,34 +92,23 @@ create or replace package r is
 		value date
 	);
 
-	procedure getd
-	(
-		name   varchar2,
-		value  in out nocopy date,
-		defval date,
-		format varchar2 := null
-	);
-
-	procedure getd
-	(
-		name   varchar2,
-		value  in out nocopy date,
-		format varchar2 := null
-	);
-
 	function getc
 	(
 		name   varchar2,
-		defval nvarchar2
-	) return nvarchar2;
+		defval varchar2 := null
+	) return varchar2;
 
-	function getc(name varchar2) return nvarchar2;
+	function getnc
+	(
+		name   varchar2,
+		defval nvarchar2 := null
+	) return nvarchar2;
 
 	function getn
 	(
 		name   varchar2,
 		defval number := null,
-		format    varchar2 := null
+		format varchar2 := null
 	) return number;
 
 	function getd

@@ -413,18 +413,41 @@ create or replace package body r is
 	procedure setc
 	(
 		name  varchar2,
-		value varchar2
+		value varchar2 character set any_cs
 	) is
 	begin
-		ra.params(name) := st(value);
+		if name not like '_$%' then
+			ra.params(name) := st(utl_url.escape(value, false, pv.cs_req));
+		elsif substrb(name, 1, 1) = 's' then
+			ra.params(name) := st(utl_url.escape(value, false, 'AL32UTF8'));
+			rc.params(name) := st(utl_url.escape(value, false, 'AL32UTF8'));
+		else
+			ra.params(name) := st(value);
+		end if;
 	end;
 
-	end;
-
+	procedure setn
+	(
+		name  varchar2,
+		value number
+	) is
 	begin
+		if name like 's$%' then
+			rc.params(name) := st(to_char(value));
+		end if;
+		ra.params(name) := st(to_char(value));
 	end;
 
+	procedure setd
+	(
+		name  varchar2,
+		value date
+	) is
 	begin
+		if name like 's$%' then
+			rc.params(name) := st(to_char(value, gc_date_fmt));
+		end if;
+		ra.params(name) := st(to_char(value, gc_date_fmt));
 	end;
 
 	procedure req_charset(cs varchar2) is
@@ -467,157 +490,74 @@ create or replace package body r is
 			return true;
 	end;
 
-	procedure getc
-	(
-		name   varchar2,
-		value  in out nocopy varchar2 character set any_cs,
-		defval varchar2
-	) is
-	begin
-		value := utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
-	exception
-		when no_data_found then
-			value := defval;
-	end;
-
-	procedure getc
-	(
-		name  varchar2,
-		value in out nocopy varchar2 character set any_cs
-	) is
-	begin
-		value := utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
-	exception
-		when no_data_found then
-			raise_application_error(-20000, error_str(name));
-	end;
-
-	procedure getn
-	(
-		name   varchar2,
-		value  in out nocopy number,
-		defval number,
-		format varchar2 := null
-	) is
-	begin
-		if format is not null then
-			value := to_number(ra.params(name) (1), format);
-		else
-			value := to_number(ra.params(name) (1));
-		end if;
-	exception
-		when no_data_found then
-			value := defval;
-	end;
-
-	procedure getn
-	(
-		name   varchar2,
-		value  in out nocopy number,
-		format varchar2 := null
-	) is
-	begin
-		if format is not null then
-			value := to_number(ra.params(name) (1), format);
-		else
-			value := to_number(ra.params(name) (1));
-		end if;
-	exception
-		when no_data_found then
-			raise_application_error(-20000, error_str(name));
-	end;
-
-	procedure getd
-	(
-		name   varchar2,
-		value  in out nocopy date,
-		defval date,
-		format varchar2 := null
-	) is
-	begin
-		value := to_date(ra.params(name) (1), nvl(format, gc_date_fmt));
-	exception
-		when no_data_found then
-			value := defval;
-	end;
-
-	procedure getd
-	(
-		name   varchar2,
-		value  in out nocopy date,
-		format varchar2 := null
-	) is
-	begin
-		value := to_date(ra.params(name) (1), nvl(format, gc_date_fmt));
-	exception
-		when no_data_found then
-			raise_application_error(-20000, error_str(name));
-	end;
-
 	function getc
 	(
 		name   varchar2,
-		defval nvarchar2
-	) return nvarchar2 is
+		defval varchar2 := null
+	) return varchar2 is
 	begin
-		return utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
+		if name not like '_$%' then
+			return utl_url.unescape(ra.params(name) (1), pv.cs_req);
+		elsif substrb(name, 1, 1) = 's' then
+			return utl_url.unescape(ra.params(name) (1), 'AL32UTF8');
+		else
+			return ra.params(name)(1);
+		end if;
 	exception
 		when no_data_found then
 			return defval;
 	end;
 
-	function getc(name varchar2) return nvarchar2 is
+	function getnc
+	(
+		name   varchar2,
+		defval nvarchar2 := null
+	) return nvarchar2 is
 	begin
-		return utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
+		if name not like '_$%' then
+			return utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
+		elsif substrb(name, 1, 1) = 's' then
+			return utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
+		else
+			return ra.params(name)(1);
+		end if;
 	exception
 		when no_data_found then
-			raise_application_error(-20000, error_str(name));
+			return defval;
 	end;
 
 	function getn
 	(
 		name   varchar2,
-		defval number,
-		format varchar2
+		defval number := null,
+		format varchar2 := null
 	) return number is
-		v number;
 	begin
-		getn(name, v, defval, format);
-		return v;
-	end;
-
-	function getn
-	(
-		name   varchar2,
-		format varchar2
-	) return number is
-		v number;
-	begin
-		getn(name, v, format);
-		return v;
+		if format is null then
+			return to_number(ra.params(name) (1));
+		else
+			return to_number(ra.params(name) (1), format);
+		end if;
+	exception
+		when no_data_found then
+			return defval;
 	end;
 
 	function getd
 	(
 		name   varchar2,
-		defval date,
-		format varchar2
+		defval date := null,
+		format varchar2 := null
 	) return date is
-		v date;
 	begin
-		getd(name, v, defval, format);
-		return v;
-	end;
-
-	function getd
-	(
-		name   varchar2,
-		format varchar2
-	) return date is
-		v date;
-	begin
-		getd(name, v, format);
-		return v;
+		if format is null then
+			return to_date(ra.params(name) (1), gc_date_fmt);
+		else
+			return to_date(ra.params(name) (1), format);
+		end if;
+	exception
+		when no_data_found then
+			return defval;
 	end;
 
 	procedure gets
@@ -640,28 +580,48 @@ create or replace package body r is
 			return st();
 	end;
 
+	function get
+	(
+		name   varchar2,
+		defval varchar2 := null
+	) return varchar2 is
 	begin
+		return ra.params(name)(1);
 	exception
 		when no_data_found then
 			return null;
 	end;
 
+	procedure set
 	(
 		name  varchar2,
 		value varchar2
 	) is
 	begin
+		ra.params(name) := st(value);
+		if name like 's$%' then
+			rc.params(name) := st(value);
+		end if;
+	end;
+
+	procedure del(name varchar2) is
+	begin
+		ra.params.delete(name);
+		if name like 's$%' then
+			rc.params.delete(name);
+		end if;
+	end;
+
+	procedure del(names st) is
+	begin
+		for i in 1 .. names.count loop
+			del(names(i));
+		end loop;
 	end;
 
 	function lat return date is
 	begin
 		return sysdate - getn('s$IDLE') / 1000 / 24 / 60 / 60;
-	end;
-
-	begin
-	end;
-
-	begin
 	end;
 
 	function unescape(value varchar2) return varchar2 is
