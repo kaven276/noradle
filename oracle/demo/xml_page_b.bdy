@@ -147,7 +147,7 @@ create or replace package body xml_page_b is
 		v_xml := dbms_xmlgen.getxmltype(v);
 		close c;
 	
-		p.s     := r.dad || '/static/packs/xml_page_b/users.xsl';
+		p.s     := '/demo/packs/xml_page_b/users.xsl';
 		v_bfile := bfilename('PSPDADS', p.s);
 		if dbms_lob.fileexists(v_bfile) = 0 then
 			raise_application_error(-20001, 'xslt file not exists');
