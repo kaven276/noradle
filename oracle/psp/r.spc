@@ -130,20 +130,7 @@ create or replace package r is
 	);
 	function gets(name varchar2) return st;
 	function unescape(value varchar2) return varchar2;
-
-	function s(name varchar2) return varchar2;
-	procedure s
-	(
-		name  varchar2,
-		value varchar2
-	);
 	function lat return date;
-	function session(name varchar2) return varchar2;
-	procedure session
-	(
-		name  varchar2,
-		value varchar2
-	);
 
 	function header(name varchar2) return varchar2;
 

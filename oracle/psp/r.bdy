@@ -640,22 +640,17 @@ create or replace package body r is
 			return st();
 	end;
 
-	function s(name varchar2) return varchar2 is
 	begin
-		return ra.params('s$' || name)(1);
 	exception
 		when no_data_found then
 			return null;
 	end;
 
-	procedure s
 	(
 		name  varchar2,
 		value varchar2
 	) is
 	begin
-		ra.params('s$' || name) := st(value);
-		rc.params('s$' || name) := st(value);
 	end;
 
 	function lat return date is
@@ -663,18 +658,10 @@ create or replace package body r is
 		return sysdate - getn('s$IDLE') / 1000 / 24 / 60 / 60;
 	end;
 
-	function session(name varchar2) return varchar2 is
 	begin
-		return s(name);
 	end;
 
-	procedure session
-	(
-		name  varchar2,
-		value varchar2
-	) is
 	begin
-		s(name, value);
 	end;
 
 	function unescape(value varchar2) return varchar2 is
