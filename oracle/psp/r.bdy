@@ -447,11 +447,21 @@ create or replace package body r is
 		pv.cs_req := 'AL32UTF8';
 	end;
 
-	function is_null(name varchar2) return boolean is
+	function is_lack(name varchar2) return boolean is
 		v varchar2(4000);
 	begin
 		v := ra.params(name) (1);
 		return false;
+	exception
+		when no_data_found then
+			return true;
+	end;
+
+	function is_null(name varchar2) return boolean is
+		v varchar2(4000);
+	begin
+		v := ra.params(name) (1);
+		return v is null;
 	exception
 		when no_data_found then
 			return true;

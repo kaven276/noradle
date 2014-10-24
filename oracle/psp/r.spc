@@ -58,6 +58,7 @@ create or replace package r is
 	procedure req_charset_ndb;
 	procedure req_charset_utf8;
 
+	function is_lack(name varchar2) return boolean;
 	function is_null(name varchar2) return boolean;
 
 	procedure setc
