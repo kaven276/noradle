@@ -15,7 +15,7 @@ create or replace package body user_c is
 
 		insert into user_t a values v;
 
-		case r.getc('fb', null)
+		case r.getc('fb')
 			when 'N' then
 				h.go('@b.register');
 			when 'Y' then
