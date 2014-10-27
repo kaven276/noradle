@@ -73,9 +73,9 @@ create or replace package body charset_b is
 		p.p(n'ch = ' || r.getc('ch', 'null'));
 		p.p(n'en = ' || r.getc('en', 'null'));
 		p.p(n'utf r.getc() func = ' || r.getc('utf', 'null'));
-		r.getc('utf', vc, 'null');
+		vc := r.getc('utf', 'null');
 		p.p(n'utf r.getc() procedure varchar2 = ' || vc);
-		r.getc('utf', nvc, 'null');
+		nvc := r.getnc('utf', 'null');
 		p.p(n'utf r.getc() procedure nvarchar2 = ' || nvc);
 		p.div_close;
 	
