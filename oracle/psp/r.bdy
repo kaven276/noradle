@@ -608,7 +608,7 @@ create or replace package body r is
 	begin
 		ra.params.delete(name);
 		if name like 's$%' then
-			rc.params.delete(name);
+			rc.params(name) := st('');
 		end if;
 	end;
 
