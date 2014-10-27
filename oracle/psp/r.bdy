@@ -410,6 +410,26 @@ create or replace package body r is
 		return 'parameter [' || name || '] not exists and no default provided';
 	end;
 
+	procedure req_charset(cs varchar2) is
+	begin
+		pv.cs_req := utl_i18n.map_charset(cs, 0, 1);
+	end;
+
+	procedure req_charset_db is
+	begin
+		pv.cs_req := pv.cs_char;
+	end;
+
+	procedure req_charset_ndb is
+	begin
+		pv.cs_req := pv.cs_nchar;
+	end;
+
+	procedure req_charset_utf8 is
+	begin
+		pv.cs_req := 'AL32UTF8';
+	end;
+
 	procedure setc
 	(
 		name  varchar2,
@@ -448,26 +468,6 @@ create or replace package body r is
 			rc.params(name) := st(to_char(value, gc_date_fmt));
 		end if;
 		ra.params(name) := st(to_char(value, gc_date_fmt));
-	end;
-
-	procedure req_charset(cs varchar2) is
-	begin
-		pv.cs_req := utl_i18n.map_charset(cs, 0, 1);
-	end;
-
-	procedure req_charset_db is
-	begin
-		pv.cs_req := pv.cs_char;
-	end;
-
-	procedure req_charset_ndb is
-	begin
-		pv.cs_req := pv.cs_nchar;
-	end;
-
-	procedure req_charset_utf8 is
-	begin
-		pv.cs_req := 'AL32UTF8';
 	end;
 
 	function is_lack(name varchar2) return boolean is
