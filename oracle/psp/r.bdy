@@ -618,6 +618,12 @@ create or replace package body r is
 			del(names(i));
 		end loop;
 	end;
+	
+	function idle return number
+  is
+	begin
+		return getn('s$IDLE');
+	end;
 
 	function lat return date is
 	begin

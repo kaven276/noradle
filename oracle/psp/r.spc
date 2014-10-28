@@ -125,6 +125,7 @@ create or replace package r is
 	);
 	function gets(name varchar2) return st;
 	function unescape(value varchar2) return varchar2;
+	function idle return number;
 	function lat return date;
 
 	function header(name varchar2) return varchar2;
