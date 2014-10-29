@@ -117,6 +117,18 @@ create or replace package body k_debug is
 			end if;
 			n := ra.params.next(n);
 		end loop;
+		
+	  h.line;
+		h.line('[ This is all browser session data ]');
+		n := ra.params.first;
+		loop
+			exit when n is null;
+			if n like 's$%' then
+				v := ra.params(n) (1);
+				h.line(n || ' : ' || v);
+			end if;
+			n := ra.params.next(n);
+		end loop;
 	
 		h.line;
 		h.line('[ This is all http request parameter that may be got from the following ways ]');
