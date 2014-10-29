@@ -10,9 +10,7 @@ create or replace package body kv is
 	begin
 		v_cid := sys_context('user', 'client_identifier', 64);
 		dbms_session.clear_identifier;
-		k_gac.gset('KEY_VER_CTX',
-							 hash(sys_context('userenv', 'current_schema'), type, key),
-							 to_char(sysdate, pv.gac_dtfmt) || ver);
+		k_gac.gset('KEY_VER_CTX', hash(type, key), to_char(sysdate, pv.gac_dtfmt) || ver);
 		dbms_session.set_identifier(v_cid);
 	end;
 
@@ -25,7 +23,7 @@ create or replace package body kv is
 	begin
 		v_cid := sys_context('user', 'client_identifier', 64);
 		dbms_session.clear_identifier;
-		k_gac.grm('KEY_VER_CTX', hash(sys_context('userenv', 'current_schema'), type, key));
+		k_gac.grm('KEY_VER_CTX', hash(type, key));
 		dbms_session.set_identifier(v_cid);
 	end;
 
@@ -34,7 +32,7 @@ create or replace package body kv is
 		type varchar2,
 		key  varchar2
 	) return varchar2 is
-		v_hash varchar2(30) := hash(sys_context('userenv', 'current_schema'), type, key);
+		v_hash varchar2(30) := hash(type, key);
 		v_cid  varchar2(64);
 		v_lat  date;
 		v_val  varchar2(99);
