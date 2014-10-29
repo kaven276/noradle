@@ -39,11 +39,7 @@ create or replace package body kv is
 		v_ver  varchar2(99);
 	begin
 		v_val := sys_context('KEY_VER_CTX', v_hash);
-		v_lat := to_date(substrb(v_val, 1, 12), pv.gac_dtfmt);
 		v_ver := substrb(v_val, 13);
-		if v_lat + 10 / 24 / 60 < sysdate then
-			k_gac.gset('KEY_VER_CTX', v_hash, to_char(sysdate, pv.gac_dtfmt) || v_ver);
-		end if;
 		return v_ver;
 	end;
 
