@@ -291,5 +291,15 @@ create or replace package body k_type_tool is
 		return tmp.cnt = 0;
 	end;
 
+	function low_time_second(seconds number) return date is
+	begin
+		return sysdate - mod((sysdate - trunc(sysdate)) * 24 * 60 * 60, seconds) / 24 / 60 / 60;
+	end;
+
+	function low_time_minute(minutes number) return date is
+	begin
+		return sysdate - mod((sysdate - trunc(sysdate)) * 24 * 60, minutes) / 24 / 60;
+	end;
+
 end k_type_tool;
 /

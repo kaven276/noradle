@@ -95,5 +95,8 @@ create or replace package k_type_tool is
 	function loop_count return pls_integer;
 	function loop_empty return boolean;
 
+	function low_time_second(seconds number) return date;
+	function low_time_minute(minutes number) return date;
+
 end k_type_tool;
 /
