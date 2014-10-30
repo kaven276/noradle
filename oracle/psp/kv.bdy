@@ -48,5 +48,16 @@ create or replace package body kv is
 		dbms_session.clear_all_context('KEY_VER_CTX');
 	end;
 
+	procedure clear_timeout is
+		v_thres date := sysdate - 15 / 24 / 60;
+	begin
+		dbms_session.clear_identifier;
+		for i in (select * from global_context a where a.namespace = 'KEY_VER_CTX') loop
+			if to_date(substrb(i.value, 1, 12), pv.gac_dtfmt) < v_thres then
+				k_gac.grm('KEY_VER_CTX', i.attribute);
+			end if;
+		end loop;
+	end;
+
 end kv;
 /
