@@ -22,7 +22,7 @@ create or replace package body gateway is
 	
 		v_done      boolean := false;
 		v_trc       varchar2(99);
-		v_module    varchar2(48);
+		v_clinfo    varchar2(64);
 		v_hprof     char(1);
 		v_last_time date;
 		v_count     pls_integer;
@@ -93,7 +93,7 @@ create or replace package body gateway is
 	
 		function get_alert_quit return boolean is
 		begin
-			v_sts := dbms_pipe.receive_message(v_module, 0);
+			v_sts := dbms_pipe.receive_message(v_clinfo, 0);
 			return v_sts = 0;
 		end;
 	
@@ -116,14 +116,15 @@ create or replace package body gateway is
 	
 		---dbms_alert.register('PW_STOP_SERVER');
 		v_trc    := pv.cfg_id || '-' || pv.in_seq || '.trc';
-		v_module := 'Noradle-' || pv.cfg_id || '#' || pv.in_seq;
-		select count(*) into v_count from v$session a where a.module = v_module;
+		v_clinfo := 'Noradle-' || pv.cfg_id || '#' || pv.in_seq;
+		select count(*) into v_count from v$session a where a.client_info = v_clinfo;
 		if v_count > 0 then
 			dbms_output.put_line('Noradle Server Status:inuse.');
 			return;
 		end if;
-		dbms_application_info.set_module(v_module, 'server started');
-		dbms_pipe.purge(v_module);
+		dbms_application_info.set_client_info(v_clinfo);
+		dbms_application_info.set_module('free', null);
+		dbms_pipe.purge(v_clinfo);
 		k_cfg.server_control(v_cfg);
 	
 		<<make_connection>>
@@ -246,6 +247,8 @@ create or replace package body gateway is
 			-- this is for become user
 			v_done := false;
 			r.after_map;
+			dbms_application_info.set_module(r.dbu || '.' || nvl(r.pack, r.proc), t.tf(r.pack is null, 'standalone', r.proc));
+		
 			<<redo>>
 			begin
 				execute immediate 'call ' || r.dbu || '.dad_auth_entry()';
@@ -266,6 +269,7 @@ create or replace package body gateway is
 		
 			output.finish;
 			utl_tcp.flush(pv.c);
+			dbms_application_info.set_module('free', null);
 		
 			if v_hprof is not null then
 				dbms_hprof.stop_profiling;
