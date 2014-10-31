@@ -248,6 +248,8 @@ create or replace package body gateway is
 			v_done := false;
 			r.after_map;
 			dbms_application_info.set_module(r.dbu || '.' || nvl(r.pack, r.proc), t.tf(r.pack is null, 'standalone', r.proc));
+			--dbms_session.set_identifier(v_clinfo);
+			--dbms_session.set_context('SERVER_PROCESS', 'url_full', r.url_full, null, v_clinfo);
 		
 			<<redo>>
 			begin
@@ -270,6 +272,8 @@ create or replace package body gateway is
 			output.finish;
 			utl_tcp.flush(pv.c);
 			dbms_application_info.set_module('free', null);
+			--dbms_session.set_identifier(v_clinfo);
+			--dbms_session.clear_context('SERVER_PROCESS', v_clinfo);
 		
 			if v_hprof is not null then
 				dbms_hprof.stop_profiling;
