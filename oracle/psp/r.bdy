@@ -493,15 +493,16 @@ create or replace package body r is
 	function getc
 	(
 		name   varchar2,
-		defval varchar2 := null
+		defval varchar2 := null,
+		idx    pls_integer := 1
 	) return varchar2 is
 	begin
 		if name not like '_$%' then
-			return utl_url.unescape(ra.params(name) (1), pv.cs_req);
+			return utl_url.unescape(ra.params(name) (idx), pv.cs_req);
 		elsif substrb(name, 1, 1) = 's' then
-			return utl_url.unescape(ra.params(name) (1), 'AL32UTF8');
+			return utl_url.unescape(ra.params(name) (idx), 'AL32UTF8');
 		else
-			return ra.params(name)(1);
+			return ra.params(name)(idx);
 		end if;
 	exception
 		when no_data_found then
@@ -511,15 +512,16 @@ create or replace package body r is
 	function getnc
 	(
 		name   varchar2,
-		defval nvarchar2 := null
+		defval nvarchar2 := null,
+		idx    pls_integer := 1
 	) return nvarchar2 is
 	begin
 		if name not like '_$%' then
-			return utl_url.unescape(to_nchar(ra.params(name) (1)), pv.cs_req);
+			return utl_url.unescape(to_nchar(ra.params(name) (idx)), pv.cs_req);
 		elsif substrb(name, 1, 1) = 's' then
-			return utl_url.unescape(to_nchar(ra.params(name) (1)), 'AL32UTF8');
+			return utl_url.unescape(to_nchar(ra.params(name) (idx)), 'AL32UTF8');
 		else
-			return ra.params(name)(1);
+			return ra.params(name)(idx);
 		end if;
 	exception
 		when no_data_found then
@@ -530,13 +532,14 @@ create or replace package body r is
 	(
 		name   varchar2,
 		defval number := null,
-		format varchar2 := null
+		format varchar2 := null,
+		idx    pls_integer := 1
 	) return number is
 	begin
 		if format is null then
-			return to_number(ra.params(name) (1));
+			return to_number(ra.params(name) (idx));
 		else
-			return to_number(ra.params(name) (1), format);
+			return to_number(ra.params(name) (idx), format);
 		end if;
 	exception
 		when no_data_found then
@@ -547,13 +550,14 @@ create or replace package body r is
 	(
 		name   varchar2,
 		defval date := null,
-		format varchar2 := null
+		format varchar2 := null,
+		idx    pls_integer := 1
 	) return date is
 	begin
 		if format is null then
-			return to_date(ra.params(name) (1), gc_date_fmt);
+			return to_date(ra.params(name) (idx), gc_date_fmt);
 		else
-			return to_date(ra.params(name) (1), format);
+			return to_date(ra.params(name) (idx), format);
 		end if;
 	exception
 		when no_data_found then
@@ -618,9 +622,8 @@ create or replace package body r is
 			del(names(i));
 		end loop;
 	end;
-	
-	function idle return number
-  is
+
+	function idle return number is
 	begin
 		return getn('s$IDLE');
 	end;

@@ -95,27 +95,31 @@ create or replace package r is
 	function getc
 	(
 		name   varchar2,
-		defval varchar2 := null
+		defval varchar2 := null,
+		idx    pls_integer := 1
 	) return varchar2;
 
 	function getnc
 	(
 		name   varchar2,
-		defval nvarchar2 := null
+		defval nvarchar2 := null,
+		idx    pls_integer := 1
 	) return nvarchar2;
 
 	function getn
 	(
 		name   varchar2,
 		defval number := null,
-		format varchar2 := null
+		format varchar2 := null,
+		idx    pls_integer := 1
 	) return number;
 
 	function getd
 	(
 		name   varchar2,
 		defval date := null,
-		format varchar2 := null
+		format varchar2 := null,
+		idx    pls_integer := 1
 	) return date;
 
 	procedure gets
