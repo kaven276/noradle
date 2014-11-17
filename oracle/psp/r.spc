@@ -127,6 +127,7 @@ create or replace package r is
 		name  varchar2,
 		value in out nocopy st
 	);
+	function cnt(name varchar2) return pls_integer;
 	function gets(name varchar2) return st;
 	function unescape(value varchar2) return varchar2;
 	function idle return number;

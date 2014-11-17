@@ -584,6 +584,14 @@ create or replace package body r is
 			return st();
 	end;
 
+	function cnt(name varchar2) return pls_integer is
+	begin
+		return ra.params(name).count;
+	exception
+		when no_data_found then
+			return null;
+	end;
+
 	function get
 	(
 		name   varchar2,
