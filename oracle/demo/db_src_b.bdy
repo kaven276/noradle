@@ -18,6 +18,7 @@ create or replace package body db_src_b is
 		h.line('# You can use some standard parser or write your own ' ||
 					 'parsers to convert the raw resultsets to javascript data object');
 		h.line('# see PL/SQL source at ' || r.dir_full || '/src_b.proc/' || r.prog);
+		h.write(chr(30) || chr(10));
 	
 		open cur for
 			select a.object_name, a.subobject_name, a.object_type, a.created

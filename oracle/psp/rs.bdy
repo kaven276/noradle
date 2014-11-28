@@ -14,9 +14,11 @@ create or replace package body rs is
 		datevar date;
 		vsize   number := 50;
 		sep     varchar2(2);
+		lsep    varchar2(2) := chr(30) || chr(10);
+		csep    varchar2(2) := chr(31) || ',';
 	begin
 	
-		h.write(chr(10) || '[' || name || ']' || chr(10));
+		h.write(lsep || '[' || name || ']' || lsep);
 	
 		-- Switch from native dynamic SQL to DBMS_SQL
 		curid := dbms_sql.to_cursor_number(c);
@@ -39,13 +41,13 @@ create or replace package body rs is
 			end case;
 			h.write(sep || descrec.col_name || ':' || descrec.col_type);
 			if i = 1 then
-				sep := ',';
+				sep := csep;
 			end if;
 		end loop;
 	
 		-- Fetch Rows
 		while dbms_sql.fetch_rows(curid) > 0 loop
-			sep := chr(10);
+			sep := lsep;
 			for i in 1 .. colcnt loop
 				descrec := desctab(i);
 				case descrec.col_type
@@ -63,11 +65,11 @@ create or replace package body rs is
 						h.write(sep || namevar);
 				end case;
 				if i = 1 then
-					sep := ',';
+					sep := csep;
 				end if;
 			end loop;
 		end loop;
-		h.line;
+		h.write(lsep);
 	
 		dbms_sql.close_cursor(curid);
 	end;
