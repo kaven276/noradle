@@ -555,9 +555,9 @@ create or replace package body r is
 	) return date is
 	begin
 		if format is null then
-			return to_date(ra.params(name) (idx), gc_date_fmt);
+			return to_date(utl_url.unescape(ra.params(name) (idx)), gc_date_fmt);
 		else
-			return to_date(ra.params(name) (idx), format);
+			return to_date(utl_url.unescape(ra.params(name) (idx)), format);
 		end if;
 	exception
 		when no_data_found then
