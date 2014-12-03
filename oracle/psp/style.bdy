@@ -151,7 +151,7 @@ create or replace package body style is
 			gv_1st_lcss := false;
 		end if;
 		v_pos := instr(text, '{');
-		css(v_pad || gv_ctx || ' ' || regexp_replace(substr(text, 1, v_pos), ',\s*', ', ' || gv_ctx) ||
+		css(v_pad || gv_ctx || ' ' || regexp_replace(substr(text, 1, v_pos), ',\s*', ', ' || gv_ctx || ' ') ||
 				regexp_replace(substr(text, v_pos + 1), chr(10) || '\s+', chr(10) || '  '),
 				cv);
 	end;
