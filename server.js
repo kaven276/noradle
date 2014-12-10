@@ -13,6 +13,29 @@ var DBCall
 Object.defineProperties(exports, {
   // http handler for PSP(PLSQL Stored Procedure) servlet
   // todo: need include configuration support
+
+  createHTTPServer2PLSQLServlet : {
+    get : function(){
+      return require('./lib/server.js');
+    }
+  },
+  createOracleClient2PLSQLServlet : {
+    get : function(){
+      return require('./lib/client.js');
+    }
+  },
+  DBPool : {
+    get : function(){
+      console.log('DBPool');
+      return require('./lib/db3.js').DBPool;
+    }
+  },
+  poolMonitor : {
+    get : function(){
+      return require('./lib/poolMonitor.js');
+    }
+  },
+
   PSP4WEB : {
     get : function(){
       return PSP4WEB || (PSP4WEB = require('./lib/psp.web.js'));
@@ -20,22 +43,22 @@ Object.defineProperties(exports, {
   },
   runPSP4WEB : {
     get : function(){
-      return  require('./lib/plsql.js');
+      return require('./lib/plsql.js');
     }
   },
   runCombined : {
     get : function(){
-      return  require('./lib/combined.js');
+      return require('./lib/combined.js');
     }
   },
   runStatic : {
     get : function(){
-      return  require('./lib/static.js');
+      return require('./lib/static.js');
     }
   },
   runStaticAdv : {
     get : function(){
-      return  require('./lib/static_adv.js');
+      return require('./lib/static_adv.js');
     }
   },
   DBCall : {
@@ -50,7 +73,7 @@ Object.defineProperties(exports, {
   },
   ExtHub : {
     get : function(){
-      return  require('./lib/ext_hub.js');
+      return require('./lib/ext_hub.js');
     }
   },
   DCOWorkerProxy : {
@@ -60,7 +83,7 @@ Object.defineProperties(exports, {
   },
   gracefulExit : {
     get : function(){
-      return  require('./lib/util.js').gracefulExit;
+      return require('./lib/util.js').gracefulExit;
     }
   }
 });
