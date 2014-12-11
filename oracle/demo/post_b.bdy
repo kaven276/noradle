@@ -12,5 +12,11 @@ create or replace package body post_b is
 		-- if err, it will show error msg directly
 	end;
 
+	procedure echo_body is
+	begin
+		r.body2clob;
+		h.write(dbms_lob.substr(rb.clob_entity, 1000));
+	end;
+
 end post_b;
 /
