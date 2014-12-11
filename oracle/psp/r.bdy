@@ -179,6 +179,9 @@ create or replace package body r is
 				 header('content-type') like 'multipart/form-data%' then
 				null; -- form key-value pairs already got
 			else
+				if not is_null('y$instream') then
+					return;
+				end if;
 				declare
 					v_len number(10);
 					v_pos pls_integer;
