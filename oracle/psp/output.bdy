@@ -162,21 +162,6 @@ create or replace package body output is
 		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
 	end;
 
-	procedure write(content varchar2 character set any_cs) is
-	begin
-		null;
-	end;
-
-	procedure write(content in out nocopy blob) is
-	begin
-		null;
-	end;
-
-	procedure write(content in out nocopy clob character set any_cs) is
-	begin
-		null;
-	end;
-
 	procedure line
 	(
 		str    varchar2 character set any_cs,

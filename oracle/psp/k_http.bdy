@@ -32,6 +32,39 @@ create or replace package body k_http is
 		pv.bom := replace(value, ' ', '');
 	end;
 
+	procedure download(content in out nocopy blob) is
+		v_len pls_integer;
+	begin
+		v_len := dbms_lob.getlength(content);
+		pv.headers('Content-Length') := to_char(v_len);
+		output.write_head;
+		pv.wlen := utl_tcp.write_raw(pv.c, content);
+		k_debug.trace(st('download blob len', dbms_lob.getlength(content), pv.wlen));
+	end;
+
+	procedure download(content in out nocopy clob character set any_cs) is
+		v_len    pls_integer;
+		v_csize  pls_integer := 10000;
+		v_offset pls_integer := 0;
+		v_buffer varchar2(10000);
+	begin
+		-- todo: only all single-byte(like ASCII) clob is supported
+		if true then
+			v_len := dbms_lob.getlength(content);
+			pv.headers('Content-Length') := to_char(v_len);
+			output.write_head;
+			pv.wlen := utl_tcp.write_text(pv.c, content);
+		else
+			loop
+				v_buffer := dbms_lob.substr(content, v_csize, v_offset);
+				output.line(v_buffer, '');
+				exit when length(v_buffer) < v_csize;
+				v_offset := v_offset + v_csize;
+			end loop;
+		end if;
+		k_debug.trace(st('download clob len', dbms_lob.getlength(content), pv.wlen));
+	end;
+
 	-- public
 	procedure write_raw(data in out nocopy raw) is
 		v_len pls_integer;

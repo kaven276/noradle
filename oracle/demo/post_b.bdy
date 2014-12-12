@@ -14,8 +14,13 @@ create or replace package body post_b is
 
 	procedure echo_body is
 	begin
-		r.body2clob;
-		h.write(dbms_lob.substr(rb.clob_entity, 1000));
+		if r.is_lack('clob') then
+			h.download(rb.blob_entity);
+		else
+			k_debug.trace(st('echo body for clob'));
+			r.body2clob;
+			h.download(rb.clob_entity);
+		end if;
 	end;
 
 end post_b;
