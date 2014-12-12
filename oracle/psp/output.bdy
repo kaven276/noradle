@@ -266,6 +266,7 @@ create or replace package body output is
 				pv.cookies.delete;
 				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
 				pv.wlen := utl_tcp.write_text(pv.c, v);
+				pv.headers.delete('Content-Encoding');
 			end;
 			-- after above, write feedback page
 		end if;
