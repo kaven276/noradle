@@ -7,7 +7,9 @@ create or replace package body db_src_b is
 		v3  date := date '1976-10-26';
 	begin
 		if r.call_type = 'HTTP' then
-			h.content_type(h.mime_text, 'UTF-8');
+			h.content_type('text/resultsets', 'UTF-8');
+			--h.content_type(h.rss, 'UTF-8');
+			h.header('_convert', 'JSON');
 		elsif r.call_type = 'DATA' then
 			-- h.header('x-template', 'users');
 			h.line('# You are not required to write " h.content_type(h.mime_text, ''UTF-8'') " if call by NodeJS.');
@@ -27,7 +29,8 @@ create or replace package body db_src_b is
 		rs.print('test', cur);
 	
 		open cur for
-			select v1 as name, v2 as val, v3 as ctime from dual;
+			select v1 as name, v2 as val, v3 as ctime, r.getc('param1') p1, r.getc('param2') p2, r.getc('__parse') pnull
+				from dual;
 		rs.print('namevals', cur);
 	end;
 

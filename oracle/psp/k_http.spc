@@ -6,6 +6,7 @@ create or replace package k_http is
 	mime_css   constant varchar2(30) := 'text/css';
 	mime_word  constant varchar2(30) := 'application/msword';
 	mime_excel constant varchar2(30) := 'application/vnd.ms-excel';
+	mime_rss   constant varchar2(30) := 'text/resultsets';
 
 	procedure force_stream;
 	procedure flush;
