@@ -75,7 +75,7 @@ create or replace package body basic_io_b is
 		n := ra.params.first;
 		loop
 			exit when n is null;
-			if substrb(n, 2, 1) != '$' then
+			if lengthb(n) < 2 or substrb(n, 2, 1) != '$' then
 				va := ra.params(n);
 				h.line(n || ' : ' || t.join(va, ', '));
 				for i in 1 .. va.count loop
@@ -152,6 +152,25 @@ create or replace package body basic_io_b is
 		x.p('<p>', 'Method get will erase the query string in form.action.');
 		x.p('<p>',
 				'Method post will keep the query string in form.action but replace the parameter in qstr if there are same named form items.');
+	end;
+
+	procedure keep_urlencoded is
+	begin
+		p.h;
+		src_b.link_proc;
+		x.t('<br/>');
+		x.o('<form name=f,method=get,action=:1>', st(l('@b.req_info')));
+		x.o(' <select name=mtd>');
+		x.p('  <option>', 'get');
+		x.p('  <option>', 'post');
+		x.c(' </select>');
+		x.p(' <script>', 'document.f.mtd.onchange=function(){document.f.method = this.value;};');
+		x.v(' <input type=text,name=_qstr1>', nvl(r.qstr, 'a=1&b=2'));
+		x.v(' <input type=text,name=_qstr2>', nvl(r.qstr, 'a=3&b=4'));
+		x.s(' <input type=text,name=p1,value=1>');
+		x.s(' <input type=text,name=p1,value=2>');
+		x.s(' <input type=submit>');
+		x.c('</form>');
 	end;
 
 	procedure any_size is

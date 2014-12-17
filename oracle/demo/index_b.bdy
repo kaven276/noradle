@@ -26,6 +26,7 @@ create or replace package body index_b is
 		p.dd(p.a('req_info', 'basic_io_b.req_info'));
 		p.dd(p.a('output', 'basic_io_b.output'));
 		p.dd(p.a('parameters', 'basic_io_b.parameters'));
+		p.dd(p.a('keep_urlencoded', 'basic_io_b.keep_urlencoded'));
 	
 		p.dt('http_b');
 		p.dd(p.a('gzip', 'http_b.gzip'));
