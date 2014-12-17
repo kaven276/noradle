@@ -75,7 +75,8 @@ create or replace package body easy_url_b is
 		x.p('<p>', 'this is img/nations/''s img (img/nations/JPN.gif)' || x.i('<img>', '^img/nations/JPN.gif'));
 		x.p('<p>', 'this is app/dad''s root/''s img (./GER.gif)' || x.i('<img>', '^GER.gif'));
 		x.p('<p>',
-				'this is other dad''s img using  \ (\demo/packs/url_b/CHN.gif)' || x.i('<img>', '\demo/packs/url_b/CHN.gif'));
+				'this is other dad''s img using  \ (\demo/packs/url_b/CHN.gif)' ||
+				x.i('<img>', '\' || r.dbu || '/packs/url_b/CHN.gif'));
 	
 		x.t('<br/>');
 		x.p('<p>', '>>> Links to other site''s resources');

@@ -4,5 +4,5 @@ body {
 	font-size:24px;
 	line-height:30px;
 	/* showing ref to another dad's static file */
-	background:url(/demo/img/icon_2.gif) repeat-x;  
+	background:url(../../img/icon_2.gif) repeat-x;
 }
