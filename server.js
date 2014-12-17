@@ -14,14 +14,14 @@ Object.defineProperties(exports, {
   // http handler for PSP(PLSQL Stored Procedure) servlet
   // todo: need include configuration support
 
-  createHTTPServer2PLSQLServlet : {
+  servlet : {
     get : function(){
       return require('./lib/server.js');
     }
   },
-  createOracleClient2PLSQLServlet : {
+  jdbc : {
     get : function(){
-      return require('./lib/client.js');
+      return require('./lib/client.js').Class;
     }
   },
   DBPool : {
