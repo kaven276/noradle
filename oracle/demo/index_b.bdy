@@ -138,6 +138,13 @@ create or replace package body index_b is
 		p.dd(p.a('xml_users_css', 'xml_page_b.xml_users_css'));
 		p.dd(p.a('xml_users_xsl_cli', 'xml_page_b.xml_users_xsl_cli'));
 	
+		x.p('<dt', 'app modes');
+		x.p('<dd>', x.a('<a target=_blank>', 'view packages', 'po_content_b.packages'));
+		x.p('<dd>', x.a('<a target=_blank>', 'bootstrap', 'bootstrap_b.packages'));
+		x.p('<dd>', x.a('<a target=_blank>', 'frameset container', 'po_frameset_b.main'));
+		x.p('<dd>', x.a('<a target=_blank>', 'iframe container', 'po_iframe_b.main'));
+		x.p('<dd>', x.a('<a target=_blank>', 'ajaxload containver', 'po_ajaxload_b.main'));
+	
 		p.dt('db_src_b');
 		p.dd(p.a('example', 'db_src_b.example'));
 	

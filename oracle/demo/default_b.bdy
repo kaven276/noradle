@@ -2,6 +2,8 @@ create or replace package body default_b is
 
 	procedure d is
 	begin
+		h.redirect('index_b.frame');
+		return;
 		x.t('<!DOCTYPE html>');
 		x.o('<html>');
 		x.o(' <head>');
@@ -20,7 +22,11 @@ create or replace package body default_b is
 	procedure list is
 	begin
 		x.p('<p>', x.a('<a>', 'view packages', 'po_content_b.packages'));
-		x.p('<p>', x.a('<a target=_blank>', 'index_b.frame', 'index_b.frame'));
+		x.p('<p>', x.a('<a target=_blank>', 'explorer', 'index_b.frame'));
+		x.p('<p>', x.a('<a target=_blank>', 'bootstrap', 'bootstrap_b.packages'));
+		x.p('<p>', x.a('<a target=_blank>', 'frameset container', 'po_frameset_b.main'));
+		x.p('<p>', x.a('<a target=_blank>', 'iframe container', 'po_iframe_b.main'));
+		x.p('<p>', x.a('<a target=_blank>', 'ajaxload containver', 'po_ajaxload_b.main'));
 	end;
 
 end default_b;
