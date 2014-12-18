@@ -15,16 +15,16 @@ var Noradle = require('..')
   , inspect = require('util').inspect
   ;
 
-//parse = require('/Users/cuccpkfs/dev/pspapps/question/static/pub/js/rs_parser.js').rsParse;
-servlet = 'question.test_b.ds_post_tree';
+// servlet = 'question.test_b.ds_post_tree';
 
 var dbPool = new Noradle.DBPool(1522, {
   oracle_port : 1522,
   FreeConnTimeout : 60000
 });
-var dbc = new Noradle.createOracleClient(dbPool, {
+var dbc = new Noradle.jdbc(dbPool, {
   param1 : 'value1',
-  param2 : 'value2'
+  param2 : 'value2',
+  __parse : true
 });
 
 function UnitTest1(no){
@@ -38,7 +38,12 @@ function UnitTest1(no){
       return;
     }
     log(page);
-    console.log(inspect(parse(page), {depth : 8}));
+    if (page instanceof String) {
+      console.log(inspect(parse(page), {depth : 8}));
+    } else {
+      console.log(inspect(page, {depth : 8}));
+    }
+
   });
 }
 
