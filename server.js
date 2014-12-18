@@ -26,7 +26,6 @@ Object.defineProperties(exports, {
   },
   DBPool : {
     get : function(){
-      console.log('DBPool');
       return require('./lib/db3.js').DBPool;
     }
   },
