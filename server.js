@@ -40,12 +40,12 @@ Object.defineProperties(exports, {
   },
   ExtHub : {
     get : function(){
-      return require('./lib/ext_hub.js');
+      return require('./lib/DCO/ext_hub.js');
     }
   },
   DCOWorkerProxy : {
     get : function(){
-      return require('./lib/dco_proxy.js');
+      return require('./lib/DCO/dco_proxy.js');
     }
   },
   gracefulExit : {
