@@ -1,4 +1,4 @@
-require('../lib/dco_proxy.js').createServer(FakeServer).listen(parseInt(process.argv[2]) || 1528);
+require('noradle').DCOWorkerProxy.createServer(FakeServer).listen(parseInt(process.argv[2]) || 1528);
 
 // parse the request PDU into SMS structure
 function SimpleSmsSubmit(req){

@@ -13,7 +13,8 @@ var SGIP = require('../../sms/node_sms')
   , SP = SGIP.nodeSP.Class
   , Submit = SGIP.msgSubmit.Class
   , Attrs = SGIP.AttrCfg
-  , DCOWorkerProxy = require('../lib/dco_proxy.js')
+  , noradle = require('noradle')
+  , DCOWorkerProxy = noradle.DCOWorkerProxy
   , logger = console.log
   , sp = require('./sms_common_sp.js').sp
   , SPNumbers = require('./sms_common_sp.js').SPNumbers
@@ -40,7 +41,6 @@ function SimpleSmsSubmit(req){
   this.content = lines.join('\n');
   console.log(this);
 }
-
 
 function sendOneSimple(dcoReq, dcoRes){
   var req = new SimpleSmsSubmit(dcoReq);
