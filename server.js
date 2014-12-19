@@ -19,9 +19,9 @@ Object.defineProperties(exports, {
       return require('./lib/server.js');
     }
   },
-  jdbc : {
+  NDBC : {
     get : function(){
-      return require('./lib/client.js').Class;
+      return require('./lib/NDBC.js').Class;
     }
   },
   DBPool : {

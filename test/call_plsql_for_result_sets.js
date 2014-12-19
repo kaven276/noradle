@@ -21,7 +21,7 @@ var dbPool = new Noradle.DBPool(1522, {
   oracle_port : 1522,
   FreeConnTimeout : 60000
 });
-var dbc = new Noradle.jdbc(dbPool, {
+var dbc = new Noradle.NDBC(dbPool, {
   param1 : 'value1',
   param2 : 'value2',
   __parse : true
