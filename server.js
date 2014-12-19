@@ -50,7 +50,7 @@ Object.defineProperties(exports, {
   },
   gracefulExit : {
     get : function(){
-      return require('./lib/util.js').gracefulExit;
+      return require('./lib/util/util.js').gracefulExit;
     }
   }
 });
