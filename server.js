@@ -5,9 +5,7 @@
  * Time: 下午5:25
  */
 
-var DBCall
-  , RSParser
-  , PSP4WEB
+var RSParser
   ;
 
 Object.defineProperties(exports, {
@@ -35,31 +33,6 @@ Object.defineProperties(exports, {
     }
   },
 
-  PSP4WEB : {
-    get : function(){
-      return PSP4WEB || (PSP4WEB = require('./lib/psp.web.js'));
-    }
-  },
-  runPSP4WEB : {
-    get : function(){
-      return require('./lib/plsql.js');
-    }
-  },
-  runCombined : {
-    get : function(){
-      return require('./lib/combined.js');
-    }
-  },
-  runStatic : {
-    get : function(){
-      return require('./lib/static.js');
-    }
-  },
-  runStaticAdv : {
-    get : function(){
-      return require('./lib/static_adv.js');
-    }
-  },
   RSParser : {
     get : function(){
       return RSParser || (RSParser = require('./lib/RSParser.js'));
