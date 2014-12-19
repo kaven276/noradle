@@ -28,8 +28,6 @@
   "dependencies" : {},
   "devDependencies" : {},
   "optionalDependencies" : {
-    "connect" : "2.x",
-    "marked" : "~0.2.8",
     "formidable" : ">1.0.11"
   },
   "bugs" : {
