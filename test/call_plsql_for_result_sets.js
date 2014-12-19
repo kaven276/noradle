@@ -18,7 +18,6 @@ var Noradle = require('..')
 // servlet = 'question.test_b.ds_post_tree';
 
 var dbPool = new Noradle.DBPool(1522, {
-  oracle_port : 1522,
   FreeConnTimeout : 60000
 });
 var dbc = new Noradle.NDBC(dbPool, {

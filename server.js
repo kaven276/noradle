@@ -60,11 +60,6 @@ Object.defineProperties(exports, {
       return require('./lib/static_adv.js');
     }
   },
-  DBCall : {
-    get : function(){
-      return DBCall || (DBCall = require('./lib/DBCall.js').Class);
-    }
-  },
   RSParser : {
     get : function(){
       return RSParser || (RSParser = require('./lib/RSParser.js'));

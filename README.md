@@ -52,25 +52,39 @@ Part 2 : call in db driver
 ======
 
 ```javascript
-  dbc.call('db_src_b.example', function(status, page, headers){
-    console.log("no:", no);
-    if (status != 200) {
-      console.error('status is', status);
-      console.error(page);
-      console.error(headers);
-      return;
-    }
-    // got some result sets
-    var rss = Noradle.RSParser.parse(page);
 
-    log(page);
-    log('\n\n', 'the parsed result sets is :');
-    for (var n in rss) {
-      var rs = rss[n];
-      log('\n\n', 'ResultSet:', n, '(' + rs.rows.length + ' rows)', 'is :');
-      log(rs);
-    }
-  });
+var Noradle = require('..')
+  , parse = Noradle.RSParser.rsParse
+  , inspect = require('util').inspect
+  ;
+
+var dbPool = new Noradle.DBPool(1522, {
+  FreeConnTimeout : 60000
+});
+
+var dbc = new Noradle.NDBC(dbPool, {
+  x$dbu : 'demo',
+  __parse : true
+});
+
+dbc.call('db_src_b.example', {limit : 10}, function(status, headers, page){
+  console.log("no:", no);
+  if (status != 200) {
+    console.error('status is', status);
+    console.error(page);
+    console.error(headers);
+    return;
+  }
+  log(page);
+  if (page instanceof String) {
+    console.log(inspect(parse(page), {depth : 8}));
+  } else {
+    console.log(inspect(page, {depth : 8}));
+  }
+
+});
+
+
 ```
 
 ```plsql
