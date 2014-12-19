@@ -1,1 +1,0 @@
-  Put your https server key/cert files here, name them as server.key and server.cert.
