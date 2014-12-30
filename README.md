@@ -48,7 +48,7 @@ please see [SAAS app "dialbook" developed on Noradle](http://unidialbook.com/com
 please see [License of PSP.WEB](http://docs.noradle.com/license.html) at doc/license.md
 
 
-Part 2 : call in db driver
+Part 2 : NDBC (node database connectivity)
 ======
 
 ```javascript
@@ -127,8 +127,141 @@ end db_src_b;
 please see [Call oracle plsql stored procedure with javascript](http://docs.noradle.com/js_call_plsql.html) at
 doc/js_call_plsql.md
 
+### use repeated NDBC call to pull message from oracle:
+
+```javascript
+
+var Noradle = require('noradle')
+  , log = console.log
+  , inspect = require('util').inspect
+  ;
+
+var dbPool = new Noradle.DBPool(1522, {
+    FreeConnTimeout : 60000
+  })
+  , callout = new Noradle.NDBC(dbPool, {
+    __parse : true,
+    __repeat : true,
+    __parallel : 1,
+    __ignore_error : true,
+    x$dbu : 'public',
+    timeout : 1
+  })
+  , callin = new Noradle.NDBC(dbPool, {
+    x$dbu : 'public'
+  })
+  ;
+
+callout.call('mp_h.pipe2node', {pipename : 'pipe_only'}, function(status, headers, p){
+  var pipename = p.pop()
+    , oper = p[0]
+    , p1 = parseInt(p[1])
+    , p2 = parseInt(p[2])
+    , result
+    ;
+  console.log('callout input params', p);
+  if (pipename) {
+    switch (oper) {
+      case 'add':
+        result = p1 + p2;
+        break;
+      case 'minus':
+        result = p1 - p2;
+        break;
+      case 'multiply':
+        result = p1 * p2;
+        break;
+      default:
+        result = 0;
+    }
+    // need call back with response to oracle
+    callin.call('mp_h.node2pipe', {
+      h$pipename : pipename,
+      oper : oper,
+      result : result
+    });
+  }
+});
+```
+
+```plsql
+
+﻿procedure multiple_callout_easy_resp is
+  v_result    number;
+  v_rpipename varchar2(100) := r.cfg || '.' || r.slot;
+  p1          number := r.getn('p1', 5);
+  p2          number := r.getn('p2', 3);
+  v_oper      varchar2(30);
+  v_opers     varchar2(100);
+  v_add       number;
+  v_minus     number;
+  v_multiply  number;
+begin
+  -- clear receive reponse pipe first
+  dbms_pipe.purge(v_rpipename);
+
+  -- callout 1
+  dbms_pipe.pack_message('add');
+  dbms_pipe.pack_message(p1);
+  dbms_pipe.pack_message(p2);
+  dbms_pipe.pack_message(v_rpipename);
+  tmp.n := dbms_pipe.send_message('pipe_only');
+
+  -- callout 2
+  dbms_pipe.pack_message('minus');
+  dbms_pipe.pack_message(p1);
+  dbms_pipe.pack_message(p2);
+  dbms_pipe.pack_message(v_rpipename);
+  tmp.n := dbms_pipe.send_message('pipe_only');
+
+  -- callout 3
+  dbms_pipe.pack_message('multiply');
+  dbms_pipe.pack_message(p1);
+  dbms_pipe.pack_message(p2);
+  dbms_pipe.pack_message(v_rpipename);
+  tmp.n := dbms_pipe.send_message('pipe_only');
+
+  -- receive all the callout response, with any order
+  for i in 1 .. 3 loop
+    if not mp.pipe2param(v_rpipename, 15) then
+      -- callout timeout
+      h.status_line(400);
+      x.t('callout timeout!');
+      return;
+    end if;
+    v_oper   := r.getc('oper');
+    v_result := r.getn('result');
+
+    v_opers := v_opers || v_oper || ',';
+    case v_oper
+      when 'add' then
+        v_add := v_result;
+      when 'minus' then
+        v_minus := v_result;
+      when 'multiply' then
+        v_multiply := v_result;
+      else
+        null;
+    end case;
+  end loop;
+
+  x.p('<p>', 'p1:' || p1);
+  x.p('<p>', 'p2:' || p2);
+  x.p('<p>', 'response receive order:' || v_opers);
+  x.p('<p>', 'add:' || v_add);
+  x.p('<p>', 'minus:' || v_minus);
+  x.p('<p>', 'multiply:' || v_multiply);
+end;
+
+```
+
 Part 3 : call out net proxy
 ======
+
+  The "call out proxy facility" is still usable, but it's depleted,
+use repeated NDBC call to monitor call-out messages,
+use normal NDBC call to write back call-out response to oracle.
+
 
 ```plsql
 
