@@ -8,7 +8,7 @@
 function noop(){
 }
 
-var Noradle = require('..')
+var Noradle = require('noradle')
   , log = console.log
   , parse = Noradle.RSParser.rsParse
   , servlet = 'demo1.db_src_b.example'
