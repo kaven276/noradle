@@ -759,5 +759,15 @@ create or replace package body r is
 		return pv.protocol;
 	end;
 
+	function cfg return varchar2 is
+	begin
+		return pv.cfg_id;
+	end;
+
+	function slot return varchar2 is
+	begin
+		return pv.in_seq;
+	end;
+
 end r;
 /
