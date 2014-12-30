@@ -98,6 +98,9 @@ create or replace package body r is
 	procedure after_map is
 	begin
 		get('x$dbu', gv_dbu);
+		if gv_dbu = 'public' then
+			gv_dbu := lower(sys_context('userenv', 'CURRENT_USER'));
+		end if;
 		get('x$prog', v_prog);
 		get('x$pack', v_pack);
 		get('x$proc', v_proc);
@@ -692,7 +695,7 @@ create or replace package body r is
 
 	function dbu return varchar2 is
 	begin
-		return gv_dbu;
+		return nvl(gv_dbu, user);
 	end;
 
 	function file return varchar2 is
