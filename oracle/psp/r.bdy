@@ -595,7 +595,7 @@ create or replace package body r is
 		return ra.params(name).count;
 	exception
 		when no_data_found then
-			return null;
+			return 0;
 	end;
 
 	function get
