@@ -45,3 +45,6 @@ create or replace public synonym list for list;
 create or replace public synonym tl for list;
 create or replace public synonym tree for tree;
 create or replace public synonym tr for tree;
+create or replace public synonym msg_pipe for msg_pipe;
+create or replace public synonym mp for msg_pipe;
+create or replace public synonym mp_h for msg_pipe;

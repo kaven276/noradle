@@ -31,3 +31,4 @@ grant execute on url to public -- l;
 grant execute on style to public; -- sty
 grant execute on list to public;
 grant execute on tree to public;
+grant execute on msg_pipe to public;

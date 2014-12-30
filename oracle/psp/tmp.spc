@@ -12,7 +12,8 @@ create or replace package tmp is
 	b   boolean;
 	cnt number;
 	rid rowid;
-	s   varchar2(32000);
+	rw  raw(32767);
+	s   varchar2(32767);
 	url varchar2(4000);
 	stv st;
 	ntv nt;

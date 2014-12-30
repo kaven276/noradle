@@ -488,3 +488,8 @@ prompt
 @@tree.spc
 @@tree.bdy
 
+prompt Creating package MSG_PIPE
+prompt ========================
+prompt
+@@msg_pipe.spc
+@@msg_pipe.bdy
