@@ -202,7 +202,7 @@ create or replace package body k_http is
 		value varchar2
 	) is
 	begin
-		e.chk(lower(name) in ('content-type', 'content-encoding', 'content-length', 'transfer-encoding'),
+		e.chk(false and lower(name) in ('content-type', 'content-encoding', 'content-length', 'transfer-encoding'),
 					-20004,
 					'You must use the specific API instead of the general h.header API to set the http header field');
 		pv.headers(name) := value;
