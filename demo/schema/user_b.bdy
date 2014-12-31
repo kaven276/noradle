@@ -18,7 +18,7 @@ create or replace package body user_b is
 		end loop;
 		p.table_close;
 		p.br;
-
+	
 		p.form_open('f', '@c.register', method => 'post');
 		-- p.form_open('f', 'basic_io_b.req_info', method => 'post');
 		p.input_text('name', '', 'username: ');
@@ -31,11 +31,20 @@ create or replace package body user_b is
 		p.input_reset('', 'reset form');
 		p.input_submit('', 'create new user');
 		p.form_close;
-
+	
 		p.p('When post form info, _c will check error and report 403 error message page directly, ' ||
 				'If all is ok, _c can call h.go to redirect to a page such as go back, ' ||
 				'If nothing is output and status=200(default) PSP.WEB will automatically redirect back, ' ||
 				'If _c show some feedback info itself, PSP.WEB will redirect to the feedback url to prevent repeating valid post.');
+	end;
+
+	procedure data_src is
+		cur sys_refcursor;
+	begin
+		h.content_type('text/resultsets');
+		open cur for
+			select * from user_t where rownum <= 3;
+		rs.print('users', cur);
 	end;
 
 end user_b;
