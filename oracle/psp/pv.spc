@@ -57,7 +57,7 @@ create or replace package pv is
 	pg_nchar boolean;
 	pg_conv  boolean;
 	ph_buf   varchar2(8000); -- hold current/lastest write buffer
-	ph_parts pg_parts_arr; -- hold all written parts
+	ph_parts ph_parts_arr; -- hold all written parts
 
 	-- all output variation control state
 	firstpg boolean; -- if clear and rewrite page, following PVs keep when re-init
