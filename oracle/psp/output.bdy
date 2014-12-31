@@ -162,6 +162,22 @@ create or replace package body output is
 		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
 	end;
 
+	procedure switch is
+	begin
+		pv.pg_index := pv.pg_index + 1;
+		if pv.pg_nchar then
+			if pv.pg_conv then
+				pv.pg_parts(pv.pg_index) := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
+			else
+				pv.pg_parts(pv.pg_index) := pv.pg_buf;
+			end if;
+			pv.pg_len := pv.pg_len + lengthb(pv.pg_parts(pv.pg_index));
+		else
+			pv.ph_parts(pv.pg_index) := pv.ph_buf;
+			pv.pg_len := pv.pg_len + lengthb(pv.ph_buf);
+		end if;
+	end;
+
 	procedure line
 	(
 		str    varchar2 character set any_cs,
@@ -180,18 +196,7 @@ create or replace package body output is
 			if pv.use_stream then
 				flush;
 			else
-				pv.pg_index := pv.pg_index + 1;
-				if pv.pg_nchar then
-					if pv.pg_conv then
-						pv.pg_parts(pv.pg_index) := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
-					else
-						pv.pg_parts(pv.pg_index) := pv.pg_buf;
-					end if;
-					pv.pg_len := pv.pg_len + lengthb(pv.pg_parts(pv.pg_index));
-				else
-					pv.ph_parts(pv.pg_index) := pv.ph_buf;
-					pv.pg_len := pv.pg_len + lengthb(pv.ph_buf);
-				end if;
+				switch;
 			end if;
 			if pv.pg_nchar then
 				pv.pg_buf := lpad(' ', indent, ' ') || str || nl;

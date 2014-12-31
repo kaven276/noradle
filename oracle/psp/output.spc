@@ -8,6 +8,7 @@ create or replace package output is
 	procedure css(str varchar2 character set any_cs);
 	procedure do_css_write;
 
+	procedure switch;
 	procedure line
 	(
 		str    varchar2 character set any_cs,
@@ -19,7 +20,7 @@ create or replace package output is
 	procedure flush;
 
 	procedure finish;
-	
+
 	function get_len return pls_integer;
 
 end output;
