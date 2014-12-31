@@ -95,5 +95,111 @@ create or replace package body msg_pipe is
 		return true;
 	end;
 
+	procedure begin_msg is
+	begin
+		dbms_pipe.reset_buffer;
+		output.switch;
+		if pv.pg_nchar then
+			pv.pg_buf := '';
+		else
+			pv.ph_buf := '';
+		end if;
+		pv.pg_idxsp := pv.pg_index;
+		pv.pg_lensp := pv.pg_len;
+	end;
+
+	procedure set_header
+	(
+		name  varchar2,
+		value varchar2
+	) is
+	begin
+		dbms_pipe.pack_message(name);
+		dbms_pipe.pack_message(value);
+	end;
+
+	procedure send_msg(pipe varchar2) is
+		v_rtn integer;
+	begin
+		-- write end of header
+		dbms_pipe.pack_message('');
+		dbms_pipe.pack_message(t.tf(pv.pg_nchar, 'Y', 'N'));
+	
+		-- write buffered output for message
+		if pv.pg_nchar then
+			for i in pv.pg_idxsp + 1 .. pv.pg_index loop
+				dbms_pipe.pack_message(pv.pg_parts(i));
+			end loop;
+			-- warning: avoid double convert at message print out
+			if false and pv.pg_conv then
+				pv.pg_buf := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
+			end if;
+			dbms_pipe.pack_message(pv.pg_buf);
+		else
+			for i in pv.pg_idxsp + 1 .. pv.pg_index loop
+				dbms_pipe.pack_message(pv.ph_parts(i));
+			end loop;
+			dbms_pipe.pack_message(pv.ph_buf);
+		end if;
+	
+		-- send out
+		v_rtn := dbms_pipe.send_message(pipe, 1);
+		if v_rtn != 0 then
+			raise_application_error(-20999, 'send callout pipe message error ' || v_rtn);
+		end if;
+	
+		-- restore
+		pv.pg_index := pv.pg_idxsp;
+		pv.pg_len   := pv.pg_lensp;
+		if pv.pg_nchar then
+			pv.pg_buf := '';
+		else
+			pv.ph_buf := '';
+		end if;
+	
+	end;
+
+	procedure fetch_msg is
+		v_pipename varchar2(100) := r.getc('h$pipename');
+		v_timeout  number := r.getn('timeout', 2);
+		v_headover boolean := false;
+		n          varchar2(100);
+		v          varchar2(4000);
+		v_nchar    char(1);
+		v_chunk    varchar2(32767);
+		v_nchunk   nvarchar2(32767);
+	begin
+		tmp.n := dbms_pipe.receive_message(v_pipename, v_timeout);
+		if tmp.n = 1 then
+			h.status_line(400);
+			h.content_type('text/plain');
+			x.t('listen callout message timeout!');
+			return;
+		end if;
+	
+		h.content_type('text/plain');
+		loop
+			exit when dbms_pipe.next_item_type = 0;
+			if v_headover then
+				if v_nchar = 'Y' then
+					dbms_pipe.unpack_message(v_nchunk);
+					output.line(v_nchunk, '', null);
+				else
+					dbms_pipe.unpack_message(v_chunk);
+					output.line(v_chunk, '', null);
+				end if;
+			else
+				dbms_pipe.unpack_message(n);
+				if n is null then
+					v_headover := true;
+					dbms_pipe.unpack_message(v_nchar);
+					continue;
+				end if;
+				dbms_pipe.unpack_message(v);
+				h.header(n, v);
+			end if;
+		end loop;
+	end;
+
 end msg_pipe;
 /

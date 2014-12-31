@@ -50,7 +50,9 @@ create or replace package pv is
 	pg_buf   nvarchar2(8000); -- hold current/lastest write buffer
 	pg_parts pg_parts_arr; -- hold all written parts
 	pg_index pls_integer; -- written parts index high watermark
+	pg_idxsp pls_integer; -- index save point
 	pg_len   pls_integer; -- written parts's total lengthb
+	pg_lensp pls_integer; -- pg_len save point
 	pg_cssno pls_integer; -- where css should insert into pg_parts
 	pg_svptr pls_integer; -- output savepoint, used for h.save_pointer,h.appended
 	pg_css   nvarchar2(32767); -- hold component css text
