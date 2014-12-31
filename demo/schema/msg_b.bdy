@@ -289,7 +289,12 @@ create or replace package body msg_b is
 
 	procedure sync_sendout is
 	begin
-		null;
+		x.p('<p>', 'a call-out message is send as this page is produced!');
+		mp.begin_msg;
+		x.p('<message>', 'I am sent with servlet to nodejs.');
+		mp.set_header('Content-Type', 'text/xml');
+		mp.send_msg('sync_sendout');
+		x.p('<p>', 'printed after message sent.');
 	end;
 
 end msg_b;
