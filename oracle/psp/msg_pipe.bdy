@@ -7,7 +7,7 @@ create or replace package body msg_pipe is
 	begin
 		tmp.n := dbms_pipe.receive_message(v_pipename, v_timeout);
 		if tmp.n = 1 then
-			h.status_line(400);
+			h.status_line(504);
 			h.content_type('text/plain');
 			x.t('listen callout message timeout!');
 			return;
@@ -179,7 +179,7 @@ create or replace package body msg_pipe is
 	begin
 		tmp.n := dbms_pipe.receive_message(v_pipename, v_timeout);
 		if tmp.n = 1 then
-			h.status_line(400);
+			h.status_line(504);
 			h.content_type('text/plain');
 			x.t('listen callout message timeout!');
 			return;
