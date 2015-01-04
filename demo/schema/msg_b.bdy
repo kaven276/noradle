@@ -23,7 +23,7 @@ create or replace package body msg_b is
 	begin
 		tmp.n := dbms_pipe.receive_message('bbs', r.getn('timeout', 3));
 		if tmp.n = 1 then
-			h.status_line(400);
+			h.status_line(504);
 			return;
 		end if;
 	
@@ -45,7 +45,7 @@ create or replace package body msg_b is
 			tmp.n     := dbms_pipe.receive_message('bbs', v_timeout);
 			v_timeout := 0;
 			if tmp.n = 1 then
-				h.status_line(400);
+				h.status_line(504);
 				return;
 			end if;
 		
@@ -75,7 +75,7 @@ create or replace package body msg_b is
 	begin
 		tmp.n := dbms_pipe.receive_message('compute', v_timeout);
 		if tmp.n = 1 then
-			h.status_line(400);
+			h.status_line(504);
 			x.t('listen callout message timeout!');
 			return;
 		end if;
@@ -104,7 +104,7 @@ create or replace package body msg_b is
 		tmp.n := dbms_pipe.receive_message('cb', 15);
 		if tmp.n = 1 then
 			-- callout timeout
-			h.status_line(400);
+			h.status_line(504);
 			x.t('callout timeout!');
 			return;
 		end if;
@@ -139,7 +139,7 @@ create or replace package body msg_b is
 		tmp.n := dbms_pipe.receive_message(v_rpipename, 15);
 		if tmp.n = 1 then
 			-- callout timeout
-			h.status_line(400);
+			h.status_line(504);
 			x.t('callout timeout!');
 			return;
 		end if;
@@ -190,7 +190,7 @@ create or replace package body msg_b is
 			tmp.n := dbms_pipe.receive_message(v_rpipename, 15);
 			if tmp.n = 1 then
 				-- callout timeout
-				h.status_line(400);
+				h.status_line(504);
 				x.t('callout timeout!');
 				return;
 			end if;
@@ -259,7 +259,7 @@ create or replace package body msg_b is
 		for i in 1 .. 3 loop
 			if not mp.pipe2param(v_rpipename, 15) then
 				-- callout timeout
-				h.status_line(400);
+				h.status_line(504);
 				x.t('callout timeout!');
 				return;
 			end if;
@@ -336,7 +336,7 @@ create or replace package body msg_b is
 		mp.send_msg;
 	
 		if not mp.pipe2param then
-			h.status_line(400);
+			h.status_line(504);
 			x.t('callout(get termperature) timeout!');
 			return;
 		end if;

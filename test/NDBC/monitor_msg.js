@@ -21,7 +21,7 @@ function getMsg(no){
       process.nextTick(listen);
       if (status !== 200) {
         console.log(no, 'status is', status);
-        if (status === 400) {
+        if (status === 504) {
           // console.log('monitor new message timeout.');
         }
         return;
