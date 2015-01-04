@@ -69,15 +69,15 @@ create or replace package body msg_pipe is
 
 	function pipe2param
 	(
-		pipe    varchar2,
-		timeout number
+		pipe    varchar2 := null,
+		timeout number := null
 	) return boolean is
 		v_sep varchar2(2) := ',' || chr(30);
 		n     varchar2(100);
 		v     varchar2(999);
 		v_st  st;
 	begin
-		tmp.n := dbms_pipe.receive_message(pipe, timeout);
+		tmp.n := dbms_pipe.receive_message(nvl(pipe, r.cfg || '.' || r.slot), nvl(timeout, 3));
 		if tmp.n = 1 then
 			return false;
 		end if;
@@ -120,7 +120,7 @@ create or replace package body msg_pipe is
 		dbms_pipe.pack_message(value);
 	end;
 
-	procedure send_msg(pipe varchar2) is
+	procedure send_msg(pipe varchar2 := null) is
 		v_rtn integer;
 	begin
 		-- write end of header
@@ -145,7 +145,7 @@ create or replace package body msg_pipe is
 		end if;
 	
 		-- send out
-		v_rtn := dbms_pipe.send_message(pipe, 1);
+		v_rtn := dbms_pipe.send_message(nvl(pipe, 'nd$' || r.dbu), 1);
 		if v_rtn != 0 then
 			raise_application_error(-20999, 'send callout pipe message error ' || v_rtn);
 		end if;
@@ -163,7 +163,7 @@ create or replace package body msg_pipe is
 	end;
 
 	procedure fetch_msg is
-		v_pipename varchar2(100) := r.getc('h$pipename');
+		v_pipename varchar2(100) := nvl(r.getc('h$pipename'), 'nd$' || r.dbu);
 		v_timeout  number := r.getn('timeout', 2);
 		v_headover boolean := false;
 		n          varchar2(100);

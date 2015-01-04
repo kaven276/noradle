@@ -5,8 +5,8 @@ create or replace package msg_pipe is
 
 	function pipe2param
 	(
-		pipe    varchar2,
-		timeout number
+		pipe    varchar2 := null,
+		timeout number := null
 	) return boolean;
 
 	procedure begin_msg(nlbr varchar2 := null);
@@ -15,7 +15,7 @@ create or replace package msg_pipe is
 		name  varchar2,
 		value varchar2
 	);
-	procedure send_msg(pipe varchar2);
+	procedure send_msg(pipe varchar2 := null);
 	procedure fetch_msg;
 
 end msg_pipe;
