@@ -95,7 +95,7 @@ create or replace package body msg_pipe is
 		return true;
 	end;
 
-	procedure begin_msg is
+	procedure begin_msg(nlbr varchar2 := null) is
 	begin
 		dbms_pipe.reset_buffer;
 		output.switch;
@@ -106,6 +106,8 @@ create or replace package body msg_pipe is
 		end if;
 		pv.pg_idxsp := pv.pg_index;
 		pv.pg_lensp := pv.pg_len;
+		pv.nlbr0    := pv.nlbr;
+		pv.nlbr     := nvl(nlbr, chr(30) || chr(10));
 	end;
 
 	procedure set_header
@@ -156,6 +158,7 @@ create or replace package body msg_pipe is
 		else
 			pv.ph_buf := '';
 		end if;
+		pv.nlbr := pv.nlbr0;
 	
 	end;
 

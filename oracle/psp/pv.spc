@@ -3,10 +3,10 @@ create or replace package pv is
 	/* all private process/call level state should be here */
 
 	-- process level
-	cfg_id      varchar2(30); -- filled with current server_control_t id
-	in_seq      pls_integer; -- slot in in the current configuration
-	production  boolean;
-	c           utl_tcp.connection; -- TCP/IP connection to the Web server
+	cfg_id     varchar2(30); -- filled with current server_control_t id
+	in_seq     pls_integer; -- slot in in the current configuration
+	production boolean;
+	c          utl_tcp.connection; -- TCP/IP connection to the Web server
 
 	-- call level
 	protocol varchar2(30); -- call protocol (gateway.listen to branch req read and init)
@@ -65,6 +65,7 @@ create or replace package pv is
 	firstpg boolean; -- if clear and rewrite page, following PVs keep when re-init
 	csslink boolean; -- say to use component css; true:link, false:embed
 	nlbr    varchar2(2); -- set by h.set_line_break, used by output.line after all
+	nlbr0   varchar2(2);
 
 	-- stream/flush output flow control related
 	-- use_stream will inited to true

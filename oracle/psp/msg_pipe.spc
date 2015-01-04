@@ -9,7 +9,7 @@ create or replace package msg_pipe is
 		timeout number
 	) return boolean;
 
-	procedure begin_msg;
+	procedure begin_msg(nlbr varchar2 := null);
 	procedure set_header
 	(
 		name  varchar2,
