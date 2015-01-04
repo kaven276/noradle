@@ -120,6 +120,11 @@ create or replace package body msg_pipe is
 		dbms_pipe.pack_message(value);
 	end;
 
+	procedure set_callback_pipename(pipename varchar2 := null) is
+	begin
+		set_header('Callback-Pipename', nvl(pipename, r.cfg || '.' || r.slot));
+	end;
+
 	procedure send_msg(pipe varchar2 := null) is
 		v_rtn integer;
 	begin

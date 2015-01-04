@@ -15,6 +15,7 @@ create or replace package msg_pipe is
 		name  varchar2,
 		value varchar2
 	);
+	procedure set_callback_pipename(pipename varchar2 := null);
 	procedure send_msg(pipe varchar2 := null);
 	procedure fetch_msg;
 
