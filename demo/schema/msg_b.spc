@@ -17,6 +17,9 @@ create or replace package msg_b is
 	procedure multiple_callout_easy_resp;
 
 	procedure sync_sendout;
+	procedure sync_sendout2;
+	procedure sync_sendout3;
+	procedure sync_sendout4;
 
 end msg_b;
 /

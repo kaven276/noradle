@@ -14,14 +14,38 @@ var callout = new Noradle.NDBC(dbPool, {
   __repeat : true,
   __parallel : 1,
   __ignore_error : false,
+  __parse : true,
   timeout : 1,
   x$dbu : 'public'
 });
 
 var callin = new Noradle.NDBC(dbPool, {});
 
-callout.call('mp_h.fetch_msg', {'h$pipename' : 'sync_sendout'}, function(status, headers, message){
+/**
+ * you can fetch multiple types of call-out messages from one named pipe
+ * use header to differentiate them
+ */
+callout.call('mp_h.fetch_msg', {'h$pipename' : 'nd$demo1'}, function(status, headers, message){
+  var msgType = headers['Msg-Type'];
+  switch (msgType) {
+    case 'type1':
+      console.log('type 1 message received.');
+      break;
+    case 'type2':
+      console.log('type 2 message received.');
+      break;
+    case 'type3':
+      console.log('type 3 message received.');
+      break;
+    case 'type4':
+      console.log('type 4 message received.');
+      // mimic call external service to get result and send it back to oracle as synchronized call return value
+      setTimeout(function(){
+        callin.call('demo1.mp_h.node2pipe', {h$pipename : headers['Callback-Pipename'], temperature : -3});
+      }, 1000);
+
+      break;
+  }
   console.log(headers);
   console.log(message);
-  // callin.call('demo1.msg_c.compute_callback', {h$pipename : 'cb', result : p1 + p2});
 });
