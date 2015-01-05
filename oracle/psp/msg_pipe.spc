@@ -1,4 +1,4 @@
-create or replace package msg_pipe is
+create or replace package msg_pipe authid current_user is
 
 	procedure pipe2node;
 	procedure node2pipe;
