@@ -15,8 +15,7 @@ var callout = new Noradle.NDBC(dbPool, {
   __parallel : 1,
   __ignore_error : false,
   __parse : true,
-  timeout : 1,
-  x$dbu : 'public'
+  timeout : 1
 });
 
 var callin = new Noradle.NDBC(dbPool, {});
@@ -25,7 +24,7 @@ var callin = new Noradle.NDBC(dbPool, {});
  * you can fetch multiple types of call-out messages from one named pipe
  * use header to differentiate them
  */
-callout.call('mp_h.fetch_msg', {'h$pipename' : 'nd$demo1'}, function(status, headers, message){
+callout.call('demo1.mp_h.fetch_msg', function(status, headers, message){
   var msgType = headers['Msg-Type'];
   switch (msgType) {
     case 'type1':

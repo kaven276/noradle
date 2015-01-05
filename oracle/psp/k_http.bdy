@@ -65,6 +65,13 @@ create or replace package body k_http is
 		k_debug.trace(st('download clob len', dbms_lob.getlength(content), pv.wlen));
 	end;
 
+	procedure print_init(force boolean := false) is
+	begin
+		if force or pv.pg_len is null then
+			output."_init"(80526);
+		end if;
+	end;
+
 	-- public
 	procedure write_raw(data in out nocopy raw) is
 		v_len pls_integer;

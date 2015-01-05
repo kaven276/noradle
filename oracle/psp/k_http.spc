@@ -15,6 +15,7 @@ create or replace package k_http is
 	procedure use_bom(value varchar2);
 	procedure download(content in out nocopy blob);
 	procedure download(content in out nocopy clob character set any_cs);
+	procedure print_init(force boolean := false);
 	procedure write_raw(data in out nocopy raw);
 	procedure write(text varchar2 character set any_cs);
 	procedure writeln(text varchar2 character set any_cs := '');
