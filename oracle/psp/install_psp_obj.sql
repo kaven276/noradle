@@ -84,11 +84,6 @@ prompt ===================
 prompt
 @@kv.spc
 prompt
-prompt Creating package K_BG
-prompt =====================
-prompt
-@@k_bg.spc
-prompt
 prompt Creating package K_CCFLAG
 prompt =========================
 prompt
@@ -273,11 +268,6 @@ prompt Creating package body KV
 prompt ========================
 prompt
 @@kv.bdy
-prompt
-prompt Creating package body K_BG
-prompt ==========================
-prompt
-@@k_bg.bdy
 prompt
 prompt Creating package body K_CFG
 prompt ===========================
