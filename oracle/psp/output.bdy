@@ -246,7 +246,7 @@ create or replace package body output is
 				-- write fixed head
 				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 				v := v || 'Content-Length: 0' || nl;
-				v := v || 'Location: feedback?id=' || nl;
+				v := v || 'Location: feedback_b?id=' || nl;
 				v := v || 'Cache-Control: no-cache' || nl;
 				n := pv.cookies.first;
 				while n is not null loop
@@ -271,7 +271,7 @@ create or replace package body output is
 					end if;
 					v_md5 := rawtohex(dbms_crypto.hash(utl_raw.cast_to_raw(pv.pg_css), dbms_crypto.hash_md5));
 					pv.headers('x-css-md5') := v_md5;
-					v_tmp := '<link type="text/css" rel="stylesheet" href="css/' || v_md5 || '"/>';
+					v_tmp := '<link type="text/css" rel="stylesheet" href="css_b/' || v_md5 || '"/>';
 				when false then
 					v_tmp := n'<style>' || pv.pg_css || n'</style>';
 				else
