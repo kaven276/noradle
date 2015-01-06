@@ -4,11 +4,6 @@
 -----------------------------------------------------
 
 prompt
-prompt Creating table ASYNC_CONTROL_T
-prompt ==============================
-prompt
-@@async_control_t.tab
-prompt
 prompt Creating table DBMSHP_RUNS
 prompt ==========================
 prompt
@@ -53,11 +48,6 @@ prompt Creating package ANY_SERVER
 prompt ===========================
 prompt
 @@any_server.spc
-prompt
-prompt Creating package ASYNC
-prompt ======================
-prompt
-@@async.spc
 prompt
 prompt Creating package CACHE
 prompt ======================
@@ -248,11 +238,6 @@ prompt Creating package body ANY_SERVER
 prompt ================================
 prompt
 @@any_server.bdy
-prompt
-prompt Creating package body ASYNC
-prompt ===========================
-prompt
-@@async.bdy
 prompt
 prompt Creating package body CACHE
 prompt ===========================
