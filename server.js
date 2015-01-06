@@ -38,16 +38,6 @@ Object.defineProperties(exports, {
       return RSParser || (RSParser = require('./lib/RSParser.js'));
     }
   },
-  ExtHub : {
-    get : function(){
-      return require('./lib/DCO/ext_hub.js');
-    }
-  },
-  DCOWorkerProxy : {
-    get : function(){
-      return require('./lib/DCO/dco_proxy.js');
-    }
-  },
   gracefulExit : {
     get : function(){
       return require('./lib/util/util.js').gracefulExit;

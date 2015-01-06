@@ -69,11 +69,6 @@ prompt ============================
 prompt
 @@data_server.spc
 prompt
-prompt Creating package DCOPV
-prompt ======================
-prompt
-@@dcopv.spc
-prompt
 prompt Creating package E
 prompt ==================
 prompt
@@ -114,11 +109,6 @@ prompt ======================
 prompt
 @@k_cfg.spc
 prompt
-prompt Creating package K_DCO_ADM
-prompt ==========================
-prompt
-@@k_dco_adm.spc
-prompt
 prompt Creating type ST
 prompt ================
 prompt
@@ -128,11 +118,6 @@ prompt Creating package K_DEBUG
 prompt ========================
 prompt
 @@k_debug.spc
-prompt
-prompt Creating package K_EXT_CALL
-prompt ===========================
-prompt
-@@k_ext_call.spc
 prompt
 prompt Creating package K_FILTER
 prompt =========================
@@ -203,11 +188,6 @@ prompt Creating package OUTPUT
 prompt =======================
 prompt
 @@output.spc
-prompt
-prompt Creating package PDU
-prompt ====================
-prompt
-@@pdu.spc
 prompt
 prompt Creating package PV
 prompt ===================
@@ -284,11 +264,6 @@ prompt =================================
 prompt
 @@data_server.bdy
 prompt
-prompt Creating package body DCOPV
-prompt ===========================
-prompt
-@@dcopv.bdy
-prompt
 prompt Creating package body E
 prompt =======================
 prompt
@@ -324,20 +299,10 @@ prompt ===========================
 prompt
 @@k_cfg.bdy
 prompt
-prompt Creating package body K_DCO_ADM
-prompt ===============================
-prompt
-@@k_dco_adm.bdy
-prompt
 prompt Creating package body K_DEBUG
 prompt =============================
 prompt
 @@k_debug.bdy
-prompt
-prompt Creating package body K_EXT_CALL
-prompt ================================
-prompt
-@@k_ext_call.bdy
 prompt
 prompt Creating package body K_FILTER
 prompt ==============================
@@ -403,11 +368,6 @@ prompt Creating package body OUTPUT
 prompt ============================
 prompt
 @@output.bdy
-prompt
-prompt Creating package body PDU
-prompt =========================
-prompt
-@@pdu.bdy
 prompt
 prompt Creating package body R
 prompt =======================

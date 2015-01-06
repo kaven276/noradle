@@ -19,8 +19,6 @@ create or replace public synonym k_debug for k_debug;
 create or replace public synonym s for k_sess;
 create or replace public synonym kv for kv;
 create or replace public synonym rs for rs;
-create or replace public synonym dco for k_ext_call;
-create or replace public synonym pdu for pdu;
 create or replace public synonym k_gac for k_gac;
 
 create or replace public synonym gac for k_gac;
