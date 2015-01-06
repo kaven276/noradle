@@ -18,7 +18,4 @@ create or replace synonym k_debug for k_debug;
 create or replace synonym s for k_sess;
 create or replace synonym kv for kv;
 create or replace synonym rs for rs;
-create or replace synonym bkr for k_broker;
-create or replace synonym mv2bg for mv2bg;
-create or replace synonym auto_stream_h for auto_stream_h;
 create or replace public synonym k_gac for k_gac;
