@@ -98,11 +98,13 @@ create or replace package body msg_pipe is
 	procedure begin_msg(nlbr varchar2 := null) is
 	begin
 		dbms_pipe.reset_buffer;
-		output.switch;
-		if pv.pg_nchar then
-			pv.pg_buf := '';
-		else
-			pv.ph_buf := '';
+		if pv.pg_buf is not null or pv.ph_buf is not null then
+			output.switch;
+			if pv.pg_nchar then
+				pv.pg_buf := '';
+			else
+				pv.ph_buf := '';
+			end if;
 		end if;
 		pv.pg_idxsp := pv.pg_index;
 		pv.pg_lensp := pv.pg_len;
