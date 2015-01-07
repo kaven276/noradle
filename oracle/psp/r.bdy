@@ -84,17 +84,6 @@ create or replace package body r is
 			v_pass := null;
 	end;
 
-	-- Refactored procedure set_get_uamd5 
-	procedure set_get_uamd5(v_uamd5 in out varchar2) is
-	begin
-		if ra.params.exists('h$user-agent') then
-			-- at session creation
-			k_gac.gset('UA_CTX', v_uamd5, nvl(ra.params('h$user-agent') (1), 'NULL'));
-		else
-			ra.params('h$user-agent') := st(nvl(sys_context('UA_CTX', v_uamd5), 'LOST'));
-		end if;
-	end;
-
 	procedure after_map is
 	begin
 		get('x$dbu', gv_dbu);
@@ -167,9 +156,6 @@ create or replace package body r is
 		rb.nclob_entity := null;
 	
 		dbms_session.clear_identifier;
-		if false then
-			set_get_uamd5(v_uamd5);
-		end if;
 	
 		-- credentials
 		if pv.protocol = 'HTTP' then
