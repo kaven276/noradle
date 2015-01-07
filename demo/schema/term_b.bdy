@@ -13,8 +13,11 @@ create or replace package body term_b is
 		src_b.link_proc('term_b.setting_save');
 		src_b.link_proc('rc.set_term_info');
 		p.br;
+		p.p('please login first to get a session');
 		p.p('result cache ' || t.tf(rcpv.term_hit, 'hit', 'miss'));
 		p.p('rcpv.term_row.msid=' || rcpv.term_row.msid);
+		p.p('rcpv.term_row.ora_rowscn=' || rcpv.term_ver);
+		p.p('r.getc(''s$term_ver'')=' || r.getc('s$term_ver'));
 		p.p('rcpv.term_row.bgcolor=' || rcpv.term_row.bgcolor);
 		p.p('rcpv.term_row.fgcolor=' || rcpv.term_row.fgcolor);
 		p.a('refresh', 'setting_form');
@@ -36,10 +39,6 @@ create or replace package body term_b is
 		p.gv_values := p.gv_texts;
 		p.select_single('fgcolor', rcpv.term_row.fgcolor, 'foreground-color');
 		p.br;
-		t.split(p.gv_texts, 'Y,N', ',');
-		p.gv_values := p.gv_texts;
-		p.select_single('kv-del', rcpv.term_row.fgcolor, 'use kv-del to signal row version change');
-		p.br;
 		p.input_submit;
 		p.form_close;
 	end;
@@ -55,15 +54,10 @@ create or replace package body term_b is
 		if sql%rowcount = 0 then
 			insert into term_t values v;
 		end if;
-		if r.getc('kv-del', 'Y') = 'Y' then
-			-- You can del key-ver GAC mapping, so you will set them according from table row data
-			kv.del('term', v.msid);
-		else
-			-- or You can commit and
-			commit;
-			select ora_rowscn into rcpv.term_ver from term_t a where a.msid = v.msid;
-			kv.set('term', v.msid, rcpv.term_ver);
-		end if;
+		-- the commit is fatal required, so ora_rowscn can refrect new version value
+		commit;
+		select ora_rowscn into rcpv.term_ver from term_t a where a.msid = v.msid;
+		r.setc('s$term_ver', rcpv.term_ver);
 		h.go('setting_form');
 	end;
 

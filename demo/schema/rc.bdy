@@ -34,21 +34,23 @@ create or replace package body rc is
 			ver varchar2
 		) return term_t%rowtype result_cache is
 		begin
-			if rcpv.term_ver is not null then
+			if rcpv.term_hit then
+				raise not_match;
+			else
 				return rcpv.term_row;
 			end if;
-			raise not_match;
 		end;
 	begin
-		rcpv.term_ver := null;
-		rcpv.term_row := rc2row(p_msid, kv.get('term', p_msid));
 		rcpv.term_hit := true;
+		rcpv.term_ver := r.getc('s$term_ver');
+		k_debug.trace(st(p_msid, rcpv.term_ver));
+		rcpv.term_row := rc2row(p_msid, rcpv.term_ver);
 	exception
 		when not_match then
 			rcpv.term_hit := false;
 			select ora_rowscn into rcpv.term_ver from term_t a where a.msid = p_msid;
 			select a.* into rcpv.term_row from term_t a where a.msid = p_msid;
-			kv.set('term', p_msid, rcpv.term_ver);
+			r.setc('s$term_ver', rcpv.term_ver);
 			rcpv.term_row := rc2row(p_msid, rcpv.term_ver);
 	end;
 
