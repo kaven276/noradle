@@ -3,28 +3,33 @@ create or replace package body rc is
 	not_match exception;
 
 	procedure set_user_info(p_username varchar2) is
+		v_time date;
 		function rc2row
 		(
 			key varchar2,
-			ver varchar2
+			ver date
 		) return user_t%rowtype result_cache is
 		begin
-			if rcpv.user_ver is not null then
+			if rcpv.user_hit then
+				raise not_match;
+			else
 				return rcpv.user_row;
 			end if;
-			raise not_match;
 		end;
 	begin
-		rcpv.user_ver := null;
-		rcpv.user_row := rc2row(p_username, kv.get('user', p_username));
+		v_time := r.getd('s$user_rctime');
+		if v_time is null or (sysdate - v_time) * 24 * 60 > 3 then
+			-- if more than n minutes, use new version result cache
+			v_time := sysdate;
+		end if;
 		rcpv.user_hit := true;
+		rcpv.user_row := rc2row(p_username, v_time);
 	exception
 		when not_match then
 			rcpv.user_hit := false;
 			select a.* into rcpv.user_row from user_t a where a.name = p_username;
-			select ora_rowscn into rcpv.user_ver from user_t a where a.name = p_username;
-			rcpv.user_row := rc2row(p_username, rcpv.user_ver);
-			kv.set('user', p_username, rcpv.user_ver);
+			rcpv.user_row := rc2row(p_username, v_time);
+			r.setd('s$user_rctime', v_time);
 	end;
 
 	procedure set_term_info(p_msid varchar2) is

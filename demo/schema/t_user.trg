@@ -2,6 +2,6 @@ create or replace trigger t_user
   after update on user_t  
   for each row
 begin
-	kv.del('user', :old.name);
+	r.del('s$user_rctime');
 end t_user;
 /
