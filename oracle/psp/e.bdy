@@ -31,11 +31,19 @@ create or replace package body e is
 			return;
 		end if;
 		h.status_line(403);
-		h.content_type('text/html');
-		p.init;
-		p.h;
-		p.p(msg);
-		p.a('Back', r.header('referer'));
+		h.print_init(true);
+		if pv.protocol = 'HTTP' then
+			h.content_type('text/html');
+			x.o('<html>');
+			x.o('<body>');
+			x.p(' <p>', msg);
+			x.a(' <a>', 'Back', r.header('referer'));
+			x.c('</body>');
+			x.c('</html>');
+		elsif pv.protocol = 'DATA' then
+			h.content_type('text/plain');
+			x.t(msg);
+		end if;
 		g.finish;
 	end;
 
