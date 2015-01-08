@@ -291,8 +291,8 @@ create or replace package body msg_b is
 	begin
 		x.p('<p>', 'a call-out message is send as this page is produced!');
 		mp.begin_msg;
-		mp.set_header('Content-Type', 'text/xml');
-		mp.set_header('Msg-Type', 'type1');
+		h.header('Content-Type', 'text/xml');
+		h.header('Msg-Type', 'type1');
 		x.p('<message>', 'I am sent with servlet to nodejs.');
 		mp.send_msg;
 		x.p('<p>', 'printed after message sent.');
@@ -303,8 +303,8 @@ create or replace package body msg_b is
 	begin
 		x.p('<p>', 'a call-out message is send as this page is produced!');
 		mp.begin_msg;
-		mp.set_header('Content-Type', 'text/resultsets');
-		mp.set_header('Msg-Type', 'type2');
+		h.header('Content-Type', 'text/resultsets');
+		h.header('Msg-Type', 'type2');
 		open cur for
 			select * from user_t where rownum <= 3;
 		rs.print('users', cur);
@@ -316,8 +316,8 @@ create or replace package body msg_b is
 	begin
 		x.p('<p>', 'a call-out message is send as this page is produced!');
 		mp.begin_msg;
-		mp.set_header('Content-Type', 'text/items');
-		mp.set_header('Msg-Type', 'type3');
+		h.header('Content-Type', 'text/items');
+		h.header('Msg-Type', 'type3');
 		for i in (select * from user_t where rownum <= 3) loop
 			h.line(i.name);
 		end loop;
@@ -329,9 +329,9 @@ create or replace package body msg_b is
 	begin
 		x.p('<p>', 'a call-out message is send as this page is produced!');
 		mp.begin_msg;
-		mp.set_header('Content-Type', 'text/items');
-		mp.set_header('Msg-Type', 'type4');
 		mp.set_callback_pipename;
+		h.header('Content-Type', 'text/items');
+		h.header('Msg-Type', 'type4');
 		h.line('Tianjin');
 		mp.send_msg;
 	

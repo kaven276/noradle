@@ -39,6 +39,8 @@ create or replace package pv is
 	headers str_arr; -- output headers
 	cookies str_arr; -- output cookies
 
+	mp_headers str_arr; -- msg pipe headers
+
 	-- read line from rb.clob_entity(request entity body)
 	rl_pos number(10); -- read line current position
 	rl_end boolean; -- if read line is end
@@ -89,6 +91,8 @@ create or replace package pv is
 	cs_char       constant varchar2(30) := nls_charset_name(nls_charset_id('CHAR_CS'));
 	cs_nchar      constant varchar2(30) := nls_charset_name(nls_charset_id('NCHAR_CS'));
 	pspuser       constant varchar2(30) := sys_context('userenv', 'current_schema');
+
+	cid varchar2(64);
 
 	ex_continue              exception;
 	ex_quit                  exception;

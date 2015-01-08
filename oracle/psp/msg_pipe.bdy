@@ -124,12 +124,25 @@ create or replace package body msg_pipe is
 
 	procedure set_callback_pipename(pipename varchar2 := null) is
 	begin
-		set_header('Callback-Pipename', nvl(pipename, r.cfg || '.' || r.slot));
+		h.header('Callback-Pipename', nvl(pipename, r.cfg || '.' || r.slot));
 	end;
 
 	procedure send_msg(pipe varchar2 := null) is
 		v_rtn integer;
+		n     varchar2(100);
+		v     varchar2(800);
 	begin
+		-- write headers
+		n := pv.mp_headers.first;
+		loop
+			exit when n is null;
+			v := pv.mp_headers(n);
+			dbms_pipe.pack_message(n);
+			dbms_pipe.pack_message(v);
+			n := pv.mp_headers.next(n);
+		end loop;
+		pv.mp_headers.delete;
+	
 		-- write end of header
 		dbms_pipe.pack_message('');
 		dbms_pipe.pack_message(t.tf(pv.pg_nchar, 'Y', 'N'));
@@ -160,6 +173,8 @@ create or replace package body msg_pipe is
 		-- restore
 		pv.pg_index := pv.pg_idxsp;
 		pv.pg_len   := pv.pg_lensp;
+		pv.pg_idxsp := null;
+		pv.pg_lensp := null;
 		if pv.pg_nchar then
 			pv.pg_buf := '';
 		else

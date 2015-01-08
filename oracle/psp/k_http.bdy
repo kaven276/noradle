@@ -212,7 +212,11 @@ create or replace package body k_http is
 		e.chk(false and lower(name) in ('content-type', 'content-encoding', 'content-length', 'transfer-encoding'),
 					-20004,
 					'You must use the specific API instead of the general h.header API to set the http header field');
-		pv.headers(name) := value;
+		if pv.pg_idxsp is null then
+			pv.headers(name) := value;
+		else
+			pv.mp_headers(name) := value;
+		end if;
 	end;
 
 	procedure content_type
