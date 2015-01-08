@@ -7,6 +7,13 @@ create or replace package kv authid current_user is
 		ver  varchar2
 	);
 
+	procedure upd
+	(
+		type varchar2,
+		key  varchar2,
+		ver  varchar2
+	);
+
 	function get
 	(
 		type varchar2,

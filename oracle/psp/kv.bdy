@@ -1,17 +1,65 @@
 create or replace package body kv is
 
+	procedure save_clear_cid is
+	begin
+		pv.cid := sys_context('user', 'client_identifier', 64);
+		dbms_session.clear_identifier;
+	end;
+
+	procedure restore_cid is
+	begin
+		dbms_session.set_identifier(pv.cid);
+		pv.cid := null;
+	end;
+
 	procedure set
 	(
 		type varchar2,
 		key  varchar2,
 		ver  varchar2
 	) is
-		v_cid varchar2(64);
+		v_hash varchar2(30) := hash(type, key);
 	begin
-		v_cid := sys_context('user', 'client_identifier', 64);
-		dbms_session.clear_identifier;
-		k_gac.gset('KEY_VER_CTX', hash(type, key), to_char(sysdate, pv.gac_dtfmt) || ver);
-		dbms_session.set_identifier(v_cid);
+		dbms_session.set_context('KEY_VER_CTX', v_hash, ver, client_id => null);
+		dbms_pipe.pack_message(v_hash);
+		if dbms_pipe.send_message('KEY_VER_SET_QUEUE', 0) = 1 then
+			-- fetch n pipe items, and clear the key-vel GAC
+			for i in 1 .. 5 loop
+				if dbms_pipe.receive_message('KEY_VER_SET_QUEUE', 0) = 1 then
+					exit;
+				end if;
+				-- fetch key ok, then clear GAC
+				dbms_pipe.unpack_message(v_hash);
+				dbms_session.clear_context('KEY_VER_CTX', null, v_hash);
+			end loop;
+		end if;
+	end;
+
+	procedure upd
+	(
+		type varchar2,
+		key  varchar2,
+		ver  varchar2
+	) is
+		v_hash varchar2(30) := hash(type, key);
+	begin
+		save_clear_cid;
+		if sys_context('KEY_VER_CTX', v_hash) is not null then
+			-- update local key-ver GAC store, normally caused by trigger
+			dbms_session.set_context('KEY_VER_CTX', v_hash, ver, client_id => null);
+		end if;
+		restore_cid;
+	
+		-- signal other instances to update version of the key
+		-- require a repeat NDBC call to fetch pipe
+		-- or the pipe will finally be full filled
+		if true then
+			dbms_pipe.pack_message(v_hash);
+			dbms_pipe.pack_message(ver);
+			if dbms_pipe.send_message('SYNC_KEY_VER') = 0 then
+				null; -- ok
+			end if;
+		end if;
 	end;
 
 	procedure del
@@ -21,10 +69,7 @@ create or replace package body kv is
 	) is
 		v_cid varchar2(64);
 	begin
-		v_cid := sys_context('user', 'client_identifier', 64);
-		dbms_session.clear_identifier;
-		k_gac.grm('KEY_VER_CTX', hash(type, key));
-		dbms_session.set_identifier(v_cid);
+		dbms_session.clear_context('KEY_VER_CTX', null, hash(type, key));
 	end;
 
 	function get
@@ -32,31 +77,13 @@ create or replace package body kv is
 		type varchar2,
 		key  varchar2
 	) return varchar2 is
-		v_hash varchar2(30) := hash(type, key);
-		v_cid  varchar2(64);
-		v_lat  date;
-		v_val  varchar2(99);
-		v_ver  varchar2(99);
 	begin
-		v_val := sys_context('KEY_VER_CTX', v_hash);
-		v_ver := substrb(v_val, 13);
-		return v_ver;
+		return sys_context('KEY_VER_CTX', hash(type, key));
 	end;
 
 	procedure clear is
 	begin
 		dbms_session.clear_all_context('KEY_VER_CTX');
-	end;
-
-	procedure clear_timeout is
-		v_thres date := sysdate - 15 / 24 / 60;
-	begin
-		dbms_session.clear_identifier;
-		for i in (select * from global_context a where a.namespace = 'KEY_VER_CTX') loop
-			if to_date(substrb(i.value, 1, 12), pv.gac_dtfmt) < v_thres then
-				k_gac.grm('KEY_VER_CTX', i.attribute);
-			end if;
-		end loop;
 	end;
 
 end kv;
