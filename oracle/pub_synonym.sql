@@ -14,14 +14,11 @@ create or replace public synonym k_gw for k_gw;
 create or replace public synonym k_filter for k_filter;
 create or replace public synonym ext_url_v for ext_url_v;
 create or replace public synonym k_debug for k_debug;
-create or replace public synonym s for k_sess;
 create or replace public synonym kv for kv;
 create or replace public synonym rs for rs;
 
-create or replace public synonym gac for k_gac;
 create or replace public synonym odb for k_debug;
 
-create or replace public synonym sts for sts;
 create or replace public synonym tag for tag;
 create or replace public synonym x for tag;
 create or replace public synonym multi for multi;

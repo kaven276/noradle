@@ -17,4 +17,3 @@ create or replace synonym k_debug for k_debug;
 create or replace synonym s for k_sess;
 create or replace synonym kv for kv;
 create or replace synonym rs for rs;
-create or replace public synonym k_gac for k_gac;
