@@ -287,8 +287,6 @@ create or replace package body multi is
 		sv     varchar2,
 		indent boolean := true
 	) is
-		v  varchar2(4000);
-		n  varchar2(4000);
 		p1 pls_integer := instrb(tpl, '?');
 		b  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
 		p2 pls_integer := p1 + lengthb(b);
@@ -304,7 +302,7 @@ create or replace package body multi is
 			t1 := ltrim(t1);
 		end if;
 		for i in 1 .. ns.count loop
-			if instr(sw, ',' || v || ',') = 0 then
+			if instr(sw, ',' || vs(i) || ',') = 0 then
 				k_xhtp.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
 			else
 				k_xhtp.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);

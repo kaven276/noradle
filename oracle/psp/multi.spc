@@ -51,6 +51,15 @@ create or replace package multi is
 		cur sys_refcursor,
 		sv  varchar2
 	) return varchar2;
+	
+	procedure w
+	(
+		tpl    varchar2,
+		ns     st,
+		vs     st,
+		sv     varchar2,
+		indent boolean := true
+	);
 
 	procedure c
 	(
