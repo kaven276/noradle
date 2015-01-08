@@ -109,11 +109,6 @@ prompt =========================
 prompt
 @@k_filter.spc
 prompt
-prompt Creating package K_GAC
-prompt ======================
-prompt
-@@k_gac.spc
-prompt
 prompt Creating package K_GC
 prompt =====================
 prompt
@@ -283,11 +278,6 @@ prompt Creating package body K_FILTER
 prompt ==============================
 prompt
 @@k_filter.bdy
-prompt
-prompt Creating package body K_GAC
-prompt ===========================
-prompt
-@@k_gac.bdy
 prompt
 prompt Creating package body K_GC
 prompt ==========================
