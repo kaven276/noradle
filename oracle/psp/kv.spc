@@ -1,4 +1,4 @@
-create or replace package kv authid current_user is
+create or replace package kv is
 
 	procedure set
 	(
