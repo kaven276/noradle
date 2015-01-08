@@ -19,10 +19,10 @@ create or replace package body user_c is
 			when 'N' then
 				h.go('@b.register');
 			when 'Y' then
-				p.h;
+				pc.h;
 				src_b.link_proc;
-				p.p(t.ps('User ":1" is created with password set to ":2".', st(v.name, v.pass)));
-				p.p('Click ' || p.a('here', 'javascript:history.back();') || ' to go back');
+				x.p('<p>', t.ps('User ":1" is created with password set to ":2".', st(v.name, v.pass)));
+				x.p('<p>', 'Click ' || x.a('<a>', 'here', 'javascript:history.back();') || ' to go back');
 			else
 				null; -- PSP.WEB will automatically redirect back if nothing is output and status=200
 		end case;
