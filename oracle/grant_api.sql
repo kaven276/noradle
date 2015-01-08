@@ -1,6 +1,5 @@
 grant execute on st to public;
 grant execute on nt to public;
-grant execute on n to public;
 grant execute on tmp to public;
 grant execute on r to public;
 grant execute on ra to public;

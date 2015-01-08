@@ -13,7 +13,7 @@ create or replace package body charset_b is
 		-- h.content_type(charset => 'GBK');
 		h.allow_get_post;
 		h.header_close;
-		p.h(n, v_str);
+		p.h('', v_str);
 		src_b.link_proc;
 		p.br;
 		-- p.h('http://code.jquery.com/jquery-1.7.1.min.js');

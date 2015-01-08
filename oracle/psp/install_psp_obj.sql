@@ -209,11 +209,6 @@ prompt ======================
 prompt
 @@hash.fnc
 prompt
-prompt Creating function N
-prompt ===================
-prompt
-@@n.fnc
-prompt
 prompt Creating function U
 prompt ===================
 prompt

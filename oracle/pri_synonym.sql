@@ -1,6 +1,5 @@
 create or replace synonym st for st;
 create or replace synonym nt for nt;
-create or replace synonym n for n;
 create or replace synonym tmp for tmp;
 create or replace synonym r for r;
 create or replace synonym ra for ra;

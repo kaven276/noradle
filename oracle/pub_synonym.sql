@@ -1,6 +1,5 @@
 create or replace public synonym st for st;
 create or replace public synonym nt for nt;
-create or replace public synonym n for n;
 create or replace public synonym tmp for tmp;
 create or replace public synonym r for r;
 create or replace public synonym ra for ra;
