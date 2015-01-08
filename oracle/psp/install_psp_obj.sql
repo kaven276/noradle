@@ -204,11 +204,6 @@ prompt ====================
 prompt
 @@tmp.spc
 prompt
-prompt Creating function HASH
-prompt ======================
-prompt
-@@hash.fnc
-prompt
 prompt Creating function U
 prompt ===================
 prompt
