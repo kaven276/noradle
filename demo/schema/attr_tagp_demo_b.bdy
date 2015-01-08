@@ -2,7 +2,7 @@ create or replace package body attr_tagp_demo_b is
 
 	procedure alink is
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
 		atr.id('id1');
 		atr.class('c1 c2');
