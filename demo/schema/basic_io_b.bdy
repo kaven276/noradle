@@ -135,7 +135,7 @@ create or replace package body basic_io_b is
 
 	procedure parameters is
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
 		x.t('<br/>');
 		x.o('<form name=f,method=get,action=:1>', st(l('@b.req_info?qstr1=A&qstr1=B&p1=0')));
@@ -156,7 +156,7 @@ create or replace package body basic_io_b is
 
 	procedure keep_urlencoded is
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
 		x.t('<br/>');
 		x.o('<form name=f,method=get,action=:1>', st(l('@b.req_info')));
