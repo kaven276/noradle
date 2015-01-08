@@ -53,7 +53,7 @@ create or replace package body src_b is
 
 	procedure link_proc(proc varchar2 := null) is
 	begin
-		h.line(p.ps('<a href="src_b.proc?p=:1" target=":1">view pl/sql source proc ":1" in new window</a></br>',
+		h.line(t.ps('<a href="src_b.proc?p=:1" target=":1">view pl/sql source proc ":1" in new window</a></br>',
 								st(nvl(proc, r.prog))));
 	end;
 
