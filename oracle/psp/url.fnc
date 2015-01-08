@@ -32,7 +32,8 @@ begin
 				-- @x/xxx
 				return base || 'packs/' || main || substrb(str, 2);
 			else
-				raise_application_error(-2000, 'url(' || str || ') is invalid');
+				-- @x
+            	return main || substrb(str, 2);
 			end if;
 		when '[' then
 			-- [key]local for external reference
