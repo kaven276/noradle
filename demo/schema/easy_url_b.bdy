@@ -2,7 +2,6 @@ create or replace package body easy_url_b is
 
 	procedure d is
 	begin
-		--p.h('.css,.js');
 		x.o('<html>');
 		x.o('<head>');
 		x.l(' <link>', '*.css');
@@ -21,7 +20,7 @@ create or replace package body easy_url_b is
 		x.p('<p>', 'r.pack=' || r.pack);
 		x.p('<p>', 'r.proc=' || r.proc);
 	
-		x.p('<h3>', 'URL reference test suite includes the following items£º');
+		x.p('<h3>', 'URL reference test suite includes the following items');
 		x.o('<ol>');
 		x.p(' <li>',
 				'pack1.proc1-> pack1.proc2 : (other_proc) <br/>
@@ -100,14 +99,14 @@ create or replace package body easy_url_b is
 		n varchar2(100);
 		v varchar2(999);
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
-		p.form_open('f', 'proc2');
-		p.input_text('p1');
-		p.form_close;
+		x.o('<form name=f,action=proc2>');
+		x.s(' <input type=text,name=p1>');
+		x.c('</form>');
 	
-		p.hn(4, 'http headers');
-		p.pre_open;
+		x.p('<h4>', 'http headers');
+		x.o('<pre>');
 		n := ra.params.first;
 		loop
 			exit when n is null;
@@ -115,12 +114,12 @@ create or replace package body easy_url_b is
 			h.line(n || ' : ' || v);
 			n := ra.params.next(n);
 		end loop;
-		p.pre_close;
+		x.c('</pre>');
 	end;
 
 	procedure proc2 is
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
 		p.css('a{display:block;}');
 		x.p('<p>', r.getc('p1', '[null]'));
