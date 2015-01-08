@@ -112,16 +112,6 @@ create or replace package body msg_pipe is
 		pv.nlbr     := nvl(nlbr, chr(30) || chr(10));
 	end;
 
-	procedure set_header
-	(
-		name  varchar2,
-		value varchar2
-	) is
-	begin
-		dbms_pipe.pack_message(name);
-		dbms_pipe.pack_message(value);
-	end;
-
 	procedure set_callback_pipename(pipename varchar2 := null) is
 	begin
 		h.header('Callback-Pipename', nvl(pipename, r.cfg || '.' || r.slot));

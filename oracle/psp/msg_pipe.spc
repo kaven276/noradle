@@ -10,11 +10,6 @@ create or replace package msg_pipe authid current_user is
 	) return boolean;
 
 	procedure begin_msg(nlbr varchar2 := null);
-	procedure set_header
-	(
-		name  varchar2,
-		value varchar2
-	);
 	procedure set_callback_pipename(pipename varchar2 := null);
 	procedure send_msg(pipe varchar2 := null);
 	procedure fetch_msg;
