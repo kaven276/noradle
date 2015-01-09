@@ -1,6 +1,6 @@
 create or replace package negotiation_b is
 
-	procedure greece_text;
+	procedure languages_by_browser;
 
 end negotiation_b;
 /

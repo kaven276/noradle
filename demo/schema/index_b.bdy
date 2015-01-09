@@ -90,6 +90,9 @@ create or replace package body index_b is
 		x.p('<dt>', 'charset_b');
 		x.p('<dd>', x.a('<a>', 'form', 'charset_b.form'));
 	
+		x.p('<dt>', 'negotiation_b');
+		x.p('<dd>', x.a('<a>', 'lang_versions', 'negotiation_b.languages_by_browser'));
+	
 		x.p('<dt>', 'file_dl_b');
 		x.p('<dd>', x.a('<a>', 'd', 'file_dl_b.d'));
 		x.p('<dd>', x.a('<a>', 'text', 'file_dl_b.text'));
