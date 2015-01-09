@@ -2,6 +2,7 @@ create or replace package body multi is
 
 	type pairs_t is ref cursor;
 
+  -- split p by sep, result cuts(st)
 	procedure split
 	(
 		p    varchar2,
@@ -25,6 +26,7 @@ create or replace package body multi is
 		cuts(v_cnt + 1) := trim(substr(p, v_old + 1));
 	end;
 
+  -- join cust by sep, return varchar2
 	function join
 	(
 		cuts in out nocopy st,
@@ -39,6 +41,7 @@ create or replace package body multi is
 		return s;
 	end;
 
+  -- split pairs ;: to sts.gv_texts, sts.gv_values
 	procedure split2
 	(
 		pairs varchar2,
@@ -79,6 +82,7 @@ create or replace package body multi is
 		end loop;
 	end;
 
+  -- make cur into n(st),v(st)
 	function f
 	(
 		cur pairs_t,
@@ -105,6 +109,7 @@ create or replace package body multi is
 		return i;
 	end;
 
+  -- make cur into n(st),v(st)
 	procedure f
 	(
 		cur pairs_t,
@@ -145,9 +150,9 @@ create or replace package body multi is
 			v_head := head;
 		end if;
 		for i in 1 .. texts.count loop
-			k_xhtp.prn(v_head || texts(i) || tail);
+			h.write(v_head || texts(i) || tail);
 		end loop;
-		k_xhtp.line;
+		h.line;
 	end;
 
 	function w
@@ -177,9 +182,9 @@ create or replace package body multi is
 			v_tpl := tpl;
 		end if;
 		for i in 1 .. texts.count loop
-			k_xhtp.prn(replace(v_tpl, '@', texts(i)));
+			h.write(replace(v_tpl, '@', texts(i)));
 		end loop;
-		k_xhtp.line;
+		h.line;
 	end;
 
 	function w
@@ -207,7 +212,7 @@ create or replace package body multi is
 		if indent then
 			v_head := ltrim(v_head);
 		end if;
-		k_xhtp.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
+		h.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
 	end;
 
 	procedure w
@@ -238,9 +243,9 @@ create or replace package body multi is
 				into v, n;
 			exit when cur%notfound;
 			if instr(sw, ',' || v || ',') = 0 then
-				k_xhtp.line(t1 || t2 || v || t3 || n || t4);
+				h.line(t1 || t2 || v || t3 || n || t4);
 			else
-				k_xhtp.line(t1 || b || t2 || v || t3 || n || t4);
+				h.line(t1 || b || t2 || v || t3 || n || t4);
 			end if;
 		end loop;
 	end;
@@ -303,9 +308,9 @@ create or replace package body multi is
 		end if;
 		for i in 1 .. ns.count loop
 			if instr(sw, ',' || vs(i) || ',') = 0 then
-				k_xhtp.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
+				h.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
 			else
-				k_xhtp.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
+				h.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
 			end if;
 		end loop;
 	end;
@@ -332,10 +337,10 @@ create or replace package body multi is
 	) is
 	begin
 		for i in 1 .. para.count loop
-			k_xhtp.prn(cuts(i));
-			k_xhtp.prn(para(i));
+			h.write(cuts(i));
+			h.write(para(i));
 		end loop;
-		k_xhtp.line(cuts(para.count + 1));
+		h.line(cuts(para.count + 1));
 	end;
 
 	function r
@@ -395,33 +400,33 @@ create or replace package body multi is
 		if sts.olevel is not null then
 			if level = sts.olevel + 1 then
 				-- enter deeper level
-				k_xhtp.prn(cuts(cuts.count - 1));
+				h.write(cuts(cuts.count - 1));
 				sts.olevel := level;
 			else
 				-- same level or level up
-				k_xhtp.prn(cuts(cuts.count - 2));
+				h.write(cuts(cuts.count - 2));
 				-- escape one or more level up
 				for j in 1 .. sts.olevel - level loop
 					-- return level
-					k_xhtp.prn(cuts(cuts.count - 0));
-					k_xhtp.prn(cuts(cuts.count - 2));
+					h.write(cuts(cuts.count - 0));
+					h.write(cuts(cuts.count - 2));
 				end loop;
 				sts.olevel := level;
 			end if;
 			if sts.pretty is null then
-				k_xhtp.prn(chr(10));
+				h.write(chr(10));
 			elsif sts.pretty then
-				k_xhtp.prn(rpad(chr(10), level, ' '));
+				h.write(rpad(chr(10), level, ' '));
 			end if;
 		else
 			sts.olevel := 1;
 		end if;
 	
 		for i in 1 .. para.count loop
-			k_xhtp.prn(cuts(i));
-			k_xhtp.prn(para(i));
+			h.write(cuts(i));
+			h.write(para(i));
 		end loop;
-		k_xhtp.prn(cuts(cuts.count - 3));
+		h.write(cuts(cuts.count - 3));
 	end;
 
 	procedure rc(cuts in out nocopy st) is
@@ -429,12 +434,12 @@ create or replace package body multi is
 		if sts.olevel is null then
 			return;
 		end if;
-		k_xhtp.prn(cuts(cuts.count - 2));
+		h.write(cuts(cuts.count - 2));
 		for j in 1 .. sts.olevel - 1 loop
-			k_xhtp.prn(cuts(cuts.count - 0));
-			k_xhtp.prn(cuts(cuts.count - 2));
+			h.write(cuts(cuts.count - 0));
+			h.write(cuts(cuts.count - 2));
 		end loop;
-		k_xhtp.line;
+		h.line;
 	end;
 
 	procedure c
@@ -477,23 +482,23 @@ create or replace package body multi is
 			v_count := v_count + 1;
 		
 			for i in 1 .. colcnt loop
-				k_xhtp.prn(v_cuts(i));
+				h.write(v_cuts(i));
 				case desctab(i).col_type
 					when 1 then
 						dbms_sql.column_value(curid, i, v_varchar2);
-						k_xhtp.prn(v_varchar2);
+						h.write(v_varchar2);
 					when 2 then
 						dbms_sql.column_value(curid, i, v_number);
-						k_xhtp.prn(to_char(v_number));
+						h.write(to_char(v_number));
 					when 12 then
 						dbms_sql.column_value(curid, i, v_date);
-						k_xhtp.prn(to_char(v_date, coalesce(fmt_date, 'yyyy-mm-dd')));
+						h.write(to_char(v_date, coalesce(fmt_date, 'yyyy-mm-dd')));
 					else
 						dbms_sql.column_value(curid, i, v_other);
-						k_xhtp.prn(v_other);
+						h.write(v_other);
 				end case;
 			end loop;
-			k_xhtp.line(v_cuts(colcnt + 1));
+			h.line(v_cuts(colcnt + 1));
 			if flush is not null then
 				if mod(v_count, flush) = 0 then
 					h.flush;
