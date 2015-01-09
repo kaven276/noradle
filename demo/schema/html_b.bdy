@@ -10,68 +10,73 @@ create or replace package body html_b is
 		-- h.content_encoding_identity;
 		h.header_close;
 	
-		p.comp_css_link(false);
-		p.h;
+		x.t('<!DOCTYPE html>');
+		x.o('<html>');
+		x.o('<head>');
+		y.embed(r.getc('tag', '<style>'));
+		x.c('</head>');
+		x.o('<body>');
 		src_b.link_proc;
-		p.div_open(id => 'wrapper');
-		p.lcss('{margin:0px;background-color:#EEE;}');
+		x.o('<div#wrapper>');
+		y.lcss_ctx('div#wrapper');
+		y.lcss('{margin:0px;background-color:#EEE;}');
 	
-		p.div_open(id => 'text', ac => st('#border:1px solid silver;width:80%;padding:8px 20px;'));
+		x.o('<div#text style=border:1px solid silver;width:80%;padding:8px 20px;>');
 		for i in 1 .. 6 loop
-			p.hn(i, 'header ' || i);
-			p.p('a paragraph');
+			x.p('<h' || i || '>', 'header ' || i);
+			x.p('<p>', 'a paragraph');
 		end loop;
-		p.div_close;
+		x.c('</div>');
 	
-		p.ul_open(id => 'ul');
+		x.o('<ul#ul>');
 		for i in c_packages loop
-			p.li(i.object_name);
+			x.p('<li>', i.object_name);
 		end loop;
-		p.ul_close;
+		x.c('</ul>');
 	
-		p.ol_open(id => 'ul');
+		x.o('<ol#ol>');
 		for i in c_packages loop
-			p.li(i.object_name);
+			x.p('<li>', i.object_name);
 		end loop;
-		p.ol_close;
+		x.c('</ol>');
 	
-		p.dl_open;
+		x.o('<dl>');
 		for i in c_packages loop
-			p.dt(i.object_name);
-			p.dd(t.d2s(i.created));
+			x.p('<dt>', i.object_name);
+			x.p('<dd>', t.d2s(i.created));
 		end loop;
-		p.dl_close;
+		x.c('</dl>');
 	
-		p.hr;
+		x.t('<hr/>');
 	
-		p.table_open(rules => 'all', cellspacing => 0, cellpadding => 5, ac => st('#border:1px solid silver;'));
-		p.caption('table example');
-		p.thead_open;
-		p.tr(p.ths(st('package name', 'created')));
-		p.thead_close;
-		p.tbody_open;
+		x.o('<table rules=all,cellspacing=0,cellpadding=5,style=border:1px solid silver;>');
+		x.p('<caption>', 'table example');
+		x.o(' <thead>');
+		x.p('  <tr>', m.w('<th>@</th>', st('package name', 'created')));
+		x.c(' </thead>');
+		x.o(' <tbody>');
 		for i in c_packages loop
-			p.tr_open;
-			p.td(i.object_name);
-			p.td(t.d2s(i.created));
-			p.tr_close;
+			x.o('<tr>');
+			x.p(' <td>', i.object_name);
+			x.p(' <td>', t.d2s(i.created));
+			x.c('</tr>');
 		end loop;
-		p.tbody_close;
-		p.table_close;
+		x.c(' </tbody>');
+		x.c('</table>');
 	
-		p.fieldset_open;
-		p.legend('form example');
-		p.form_open('f', 'action', '_blank', method => 'get');
-		p.input_text('name', label_ex => 'your name');
-		p.input_password('pass', label_ex => 'your password');
-		p.input_submit;
-		p.form_close;
-		p.fieldset_close;
+		x.o('<field>');
+		x.p(' <legend>', 'form example');
+		x.o(' <form name=f,action=html_b.action,target=_blank,method=get>');
+		x.p('  <label>', 'your name' || x.s('<input type=text,name=name>'));
+		x.p('  <label>', 'your password' || x.s('<input type=password,name=pass>'));
+		x.s('  <input type=submit>');
+		x.c(' </form>');
+		x.c('</field>');
 	
-		p.div_close;
+		x.c('</div>');
 	
 		for i in 1 .. r.getn('count', 0) loop
-			p.p(i);
+			x.p('<p>', i);
 		end loop;
 	end;
 
@@ -80,34 +85,42 @@ create or replace package body html_b is
 	
 		procedure component1 is
 		begin
-			p.div_open(id => 'id1');
-			p.lcss('p{line-height:1.5em;margin:0px 2em;color:gray;}');
-			p.p('This is div component with some p in it, This div component can control it''s css within itself,' ||
+			x.o('<div#id1>');
+			y.lcss_ctx('#id1');
+			y.lcss('p{line-height:1.5em;margin:0px 2em;color:gray;}');
+			x.p('<p>',
+					'This is div component with some p in it, This div component can control it''s css within itself,' ||
 					'no matter which page include the div, the css assosiated with the div is there.');
-			p.div_close;
+			x.c('</div>');
 		end;
 	
 		procedure component2 is
 		begin
-			p.form_open(id => 'id2');
-			p.lcss('{border:3px solid blue;border-radius:12px;}');
-			p.lcss('input {border:1px solid silver;}');
-			p.input_text('n', 'text', 'label');
-			p.form_close;
+			x.o('<form#id2>');
+			y.lcss_ctx('#id2');
+			y.lcss('{border:3px solid blue;border-radius:12px;}');
+			y.lcss('input {border:1px solid silver;}');
+			x.p('  <label>', 'label' || x.s('<input type=text,name=n,value=text>'));
+			x.c('</form>');
 		end;
 	
 	begin
+		h.content_encoding_try_zip;
+		x.t('<!DOCTYPE html>');
+		x.o('<html>');
+		x.o('<head>');
+		x.p(' <title>', 'component css');
 		case r.getc('link', '')
 			when 'Y' then
-				v_link := true;
+				y.embed(r.getc('tag', '<link>'));
 			when 'N' then
-				v_link := false;
+				y.embed(r.getc('tag', '<style>'));
 			else
-				v_link := null;
+				null;
 		end case;
-		h.content_encoding_try_zip;
-		p.comp_css_link(v_link);
-		p.h('', 'component css');
+		x.c('</head>');
+		x.o('<body>');
+	
 		src_b.link_proc;
 		component1;
 		component2;
@@ -115,39 +128,38 @@ create or replace package body html_b is
 
 	procedure regen_page is
 	begin
-		p.h;
-		p.p('This is the first generated page.');
+		pc.h;
+		x.p('<p>', 'This is the first generated page.');
 	
-		p.init; -- this line will reset page output
-		p.h;
+		h.print_init(true); -- this line will reset page output
+		pc.h;
 		src_b.link_proc;
-		p.p('This is the second generated page that replace the first generated page.');
+		x.p('<p>', 'This is the second generated page that replace the first generated page.');
 	end;
 
 	procedure component is
 		v_dhc boolean := h.written = 0;
 	begin
-		p.h;
 		if v_dhc then
+			pc.h;
 			src_b.link_proc;
-			p.p('I''m in direct http access mode.');
+			x.p('<p>', 'I''m in direct http access mode.');
 		else
-			p.br;
+			x.t('<br/>');
 			src_b.link_proc('html_b.component');
-			p.p('I''m included in ' || r.prog || ' as a component.');
+			x.p('<p>', 'I''m included in ' || r.prog || ' as a component.');
 		end if;
-		p.p('My proc name is html_b.component.');
-		p.p('Use direct http access to component is good for reuse and testing.');
+		x.p('<p>', 'My proc name is html_b.component.');
+		x.p('<p>', 'Use direct http access to component is good for reuse and testing.');
 	end;
 
 	procedure complex is
 	begin
-		p.format_src;
-		p.h;
+		pc.h;
 		src_b.link_proc;
-		p.p('I''m a page composed of components');
+		x.p('<p>', 'I''m a page composed of components');
 		component;
-		p.br;
+		x.t('<br/>');
 	end;
 
 end html_b;
