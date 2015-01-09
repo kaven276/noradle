@@ -1,26 +1,25 @@
 create or replace procedure url_test2_b is
 begin
-  p.h;
-  p.p('I''m a standalone procedure 2');
-  p.css('a{display:block;}');
-  p.css('p{margin:0.2em;}');
+	pc.h;
+	x.p('<p>', 'I''m a standalone procedure 2');
+	x.p('<style>', 'a{display:block;} p{margin:0.2em;}');
 
-  p.p('r.prog=' || r.prog);
-  p.p('r.pack=' || r.pack);
-  p.p('r.proc=' || r.proc);
+	x.p('<p>', 'r.prog=' || r.prog);
+	x.p('<p>', 'r.pack=' || r.pack);
+	x.p('<p>', 'r.proc=' || r.proc);
 
-  p.hr;
+	x.t('<hr/>');
 
-  p.a('d in pack.proc form', 'url_b.d');
-  p.a('to another standalone proc', 'url_test1_b');
+	x.a('<a>', 'd in pack.proc form', 'url_b.d');
+	x.a('<a>', 'to another standalone proc 1', 'url_test1_b');
 
-  p.hr;
+	x.t('<hr/>');
 
-  p.p('this is myself''s img ' || p.img('RUS.gif'));
-  p.p('this is url_b''s img ' || p.img('url_b/CHN.gif'));
-  p.p('this is url_test1_b''s img ' || p.img('url_test1_b/USA.gif'));
-  p.p('this is url_test2_b''s img ' || p.img('url_test2_b/RUS.gif'));
-  p.p('this is img/nations/''s img ' || p.img('img/nations/JPN.gif'));
-  p.p('this is root/''s img ' || p.img('./GER.gif'));
+	x.p('<p>', 'this is myself''s img ' || x.i('<img>', '@b/RUS.gif'));
+	x.p('<p>', 'this is url_b''s img ' || x.i('<img>', '^packs/url_b/CHN.gif'));
+	x.p('<p>', 'this is url_test1_b''s img ' || x.i('<img>', '^packs/url_test1_b/USA.gif'));
+	x.p('<p>', 'this is url_test2_b''s img ' || x.i('<img>', '^packs/url_test2_b/RUS.gif'));
+	x.p('<p>', 'this is img/nations/''s img ' || x.i('<img>', '^img/nations/JPN.gif'));
+	x.p('<p>', 'this is root/''s img ' || x.i('<img>', '^GER.gif'));
 end url_test2_b;
 /
