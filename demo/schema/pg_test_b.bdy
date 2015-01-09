@@ -85,7 +85,8 @@ create or replace package body pg_test_b is
 	procedure odd_even_switch is
 		v_classes st := st('one', 'two', 'three');
 	begin
-		p.h;
+		x.o('<html>');
+		x.o('<body>');
 		src_b.link_proc;
 	
 		x.p('<style>', '.one{color:red}.two{color:blue}.three{color:green}');
@@ -123,7 +124,8 @@ create or replace package body pg_test_b is
 	procedure multi is
 		v sys_refcursor;
 	begin
-		p.h;
+		x.o('<html>');
+		x.o('<body>');
 		src_b.link_proc;
 		x.p('<style>', 'fieldset{margin 3em 2em;padding:0.5ex;margin-bottom:3em;}');
 		x.p('<style>', 'legend{margin-top: 3em;padding:0.5ex;}');
@@ -192,7 +194,8 @@ create or replace package body pg_test_b is
 
 	procedure tree is
 	begin
-		p.h;
+		x.o('<html>');
+		x.o('<body>');
 		src_b.link_proc;
 		x.p('<h2>', 'use m.p, m.ro, m.r(in for SQL loop), m.rc to print tree');
 	
@@ -217,7 +220,8 @@ create or replace package body pg_test_b is
 		cur sys_refcursor;
 		sv  varchar2(4000) := r.getc('sv', '');
 	begin
-		p.h;
+		x.o('<html>');
+		x.o('<body>');
 		src_b.link_proc;
 	
 		open cur for
