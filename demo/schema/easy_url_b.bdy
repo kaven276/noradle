@@ -121,7 +121,7 @@ create or replace package body easy_url_b is
 	begin
 		pc.h;
 		src_b.link_proc;
-		p.css('a{display:block;}');
+		x.p('<style>', 'a{display:block;}');
 		x.p('<p>', r.getc('p1', '[null]'));
 		x.a('<a>', 'back', 'javascript:history.back();');
 		x.a('<a>', 'home', 'd');
