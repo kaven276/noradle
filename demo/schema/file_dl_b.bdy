@@ -26,7 +26,7 @@ create or replace package body file_dl_b is
 		h.content_disposition_attachment('test.xls');
 		pc.h;
 	
-		x.o('<table rules=all,cellspacing=0,cellpadding=5,style=#border:1px solid silver;>');
+		x.o('<table rules=all,cellspacing=0,cellpadding=5,style=border:1px solid silver;>');
 		x.p('<caption>', 'table example');
 		x.p(' <thead>', x.p('<tr>', m.w('<th>@</th>', 'package name,created')));
 		x.o(' <tbody>');
@@ -42,7 +42,7 @@ create or replace package body file_dl_b is
 		h.content_disposition_attachment('test.doc');
 		pc.h;
 	
-		x.o('<div#text style=#border:1px solid silver;width:80%;padding:8px 20px;>');
+		x.o('<div#text style=border:1px solid silver;width:80%;padding:8px 20px;>');
 		for i in 1 .. 6 loop
 			x.p('<h' || i || '>', 'header ' || i);
 			x.p('<p>', 'a paragraph');
