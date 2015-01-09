@@ -82,12 +82,12 @@ create or replace package body tree is
 		if sts.olevel is null then
 			return;
 		end if;
-		k_xhtp.prn('</li>');
+		h.write('</li>');
 		for j in 1 .. sts.olevel - 1 loop
-			k_xhtp.prn('</ul>');
-			k_xhtp.prn('</li>');
+			h.write('</ul>');
+			h.write('</li>');
 		end loop;
-		k_xhtp.line;
+		h.line;
 	end;
 
 	procedure n
@@ -99,29 +99,29 @@ create or replace package body tree is
 		if sts.olevel is not null then
 			if level = sts.olevel + 1 then
 				-- enter deeper level
-				k_xhtp.prn('<ul>');
+				h.write('<ul>');
 				sts.olevel := level;
 			else
 				-- same level or level up
-				k_xhtp.prn('</li>');
+				h.write('</li>');
 				-- escape one or more level up
 				for j in 1 .. sts.olevel - level loop
 					-- return level
-					k_xhtp.prn('</ul>');
-					k_xhtp.prn('</li>');
+					h.write('</ul>');
+					h.write('</li>');
 				end loop;
 				sts.olevel := level;
 			end if;
 			if sts.pretty is null then
-				k_xhtp.prn(chr(10));
+				h.write(chr(10));
 			elsif sts.pretty then
-				k_xhtp.prn(rpad(chr(10), level, ' '));
+				h.write(rpad(chr(10), level, ' '));
 			end if;
 		else
 			sts.olevel := 1;
 		end if;
 	
-		k_xhtp.prn(str);
+		h.write(str);
 	end;
 
 	procedure n
