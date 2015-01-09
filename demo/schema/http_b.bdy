@@ -63,7 +63,7 @@ create or replace package body http_b is
 		h.line('</form>');
 		h.line('When this page is print out at this point, it will wait a while for big data processing.<br/>');
 		h.line('So it should use "h.flush" API to send the already generated part to client/browser.<br/>');
-		h.line('You call h.flush after p.h,p.script(s),p.link(s) to load referenced files early.<br/>');
+		h.line('You call h.flush after <head><script><link> to load referenced files early, before body is generated.<br/>');
 		h.line('Call h.flush will use chunked transfer-encode mode instead of the default Content-Length mode<br/>');
 	
 		if r.getc('use', 'on') = 'on' then
@@ -79,7 +79,6 @@ create or replace package body http_b is
 
 	procedure long_job is
 	begin
-		p.format_src;
 		h.set_line_break(chr(10));
 		h.header_close;
 		-- h.auto_chunk_max_idle(0.5, 10);
@@ -92,7 +91,7 @@ create or replace package body http_b is
 		for i in 1 .. 9 loop
 			h.line('LiNE, NO.' || i);
 			h.line('<script>cnt.innerText=' || i || ';</script>');
-			-- p.line(rpad(i, 300, i));
+			-- h.line(rpad(i, 300, i));
 			h.flush;
 			-- you may not force flush when h.auto_chunk_max_idle is set.
 			-- but you can close auto flush by call h.auto_chunk_max_idle(null);
