@@ -7,13 +7,11 @@ create or replace package body test_c is
 		h.content_type;
 		h.header_close;
 	
-		p.doc_type('5');
-		p.h;
-		p.ul_open;
-		-- p.css_link;
-		p.li('abc');
-		p.li('123');
-		p.ul_close;
+		pc.h;
+		x.o('<ul>');
+		x.p(' <li>', 'abc');
+		x.p(' <li>', '123');
+		x.c('</ul>');
 	end;
 
 	-- 201 tip for the newly created file's URL
@@ -57,8 +55,8 @@ create or replace package body test_c is
 	begin
 		h.status_line(412);
 		h.header_close;
-		p.h;
-		p.hn(2, 'status 412 Precondition Failed');
+		pc.h;
+		x.p('<h2>', 'status 412 Precondition Failed');
 	end;
 
 	procedure do_303 is
