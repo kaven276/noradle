@@ -27,9 +27,9 @@ create or replace package tag is
 	(
 		tag   varchar2,
 		para  st := null,
-		text  varchar2,
+		text  varchar2 character set any_cs,
 		extra varchar2 := ''
-	) return varchar2;
+	) return nvarchar2;
 
 	procedure o
 	(
@@ -51,7 +51,7 @@ create or replace package tag is
 		inner varchar2 character set any_cs,
 		para  st := null,
 		cut   boolean := false
-	) return varchar2;
+	) return nvarchar2;
 	procedure p
 	(
 		tag   varchar2,
@@ -75,15 +75,15 @@ create or replace package tag is
 	function a
 	(
 		tg   varchar2,
-		text varchar2,
+		text varchar2 character set any_cs,
 		href varchar2,
 		para st := null,
 		cut  boolean := false
-	) return varchar2;
+	) return nvarchar2;
 	procedure a
 	(
 		tg   varchar2,
-		text varchar2,
+		text varchar2 character set any_cs,
 		href varchar2,
 		para st := null,
 		cut  boolean := false

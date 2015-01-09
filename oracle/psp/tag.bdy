@@ -65,9 +65,9 @@ create or replace package body tag is
 	(
 		tag   varchar2,
 		para  st := null,
-		text  varchar2,
+		text  varchar2 character set any_cs,
 		extra varchar2 := ''
-	) return varchar2 is
+	) return nvarchar2 is
 		p1      pls_integer; -- <
 		p2      pls_integer; -- #
 		p3      pls_integer; -- .
@@ -116,7 +116,7 @@ create or replace package body tag is
 			sts.stack := '</' || v_tag || '>' || sts.stack;
 			return '<' || v_head || extra || '>';
 		else
-			return '<' || v_head || extra || '>' || text || '</' || v_tag || '>';
+			return n'<' || v_head || extra || '>' || text || '</' || v_tag || '>';
 		end if;
 	
 	end;
@@ -127,7 +127,7 @@ create or replace package body tag is
 		para st := st()
 	) is
 	begin
-		k_xhtp.line(base(tag, para, '<>'));
+		h.line(base(tag, para, '<>'));
 	end;
 
 	procedure c(tag varchar2) is
@@ -142,7 +142,7 @@ create or replace package body tag is
 			sts.stack := substrb(sts.stack, lengthb(v_tag) + 1);
 		end if;
 	
-		k_xhtp.line(v_tag);
+		h.line(v_tag);
 	end;
 
 	function p
@@ -151,7 +151,7 @@ create or replace package body tag is
 		inner varchar2 character set any_cs,
 		para  st := null,
 		cut   boolean := false
-	) return varchar2 is
+	) return nvarchar2 is
 	begin
 		if cut then
 			return '';
@@ -170,7 +170,7 @@ create or replace package body tag is
 		if cut then
 			return;
 		end if;
-		k_xhtp.line(base(tag, para, inner));
+		h.line(base(tag, para, inner));
 	end;
 
 	function s
@@ -196,28 +196,28 @@ create or replace package body tag is
 		if cut then
 			return;
 		end if;
-		k_xhtp.line(base(tag, para, chr(0)));
+		h.line(base(tag, para, chr(0)));
 	end;
 
 	function a
 	(
 		tg   varchar2,
-		text varchar2,
+		text varchar2 character set any_cs,
 		href varchar2,
 		para st := null,
 		cut  boolean := false
-	) return varchar2 is
+	) return nvarchar2 is
 	begin
 		if cut then
 			return '';
 		end if;
-		return tag.base(tg, para, text, ' href="' || url(href) || '"');
+		return base(tg, para, text, ' href="' || url(href) || '"');
 	end;
 
 	procedure a
 	(
 		tg   varchar2,
-		text varchar2,
+		text varchar2 character set any_cs,
 		href varchar2,
 		para st := null,
 		cut  boolean := false
@@ -226,7 +226,7 @@ create or replace package body tag is
 		if cut then
 			return;
 		end if;
-		k_xhtp.line(base(tg, para, text, ' href="' || url(href) || '"'));
+		h.line(base(tg, para, text, ' href="' || url(href) || '"'));
 	end;
 
 	function v
@@ -246,7 +246,7 @@ create or replace package body tag is
 		para  st := null
 	) is
 	begin
-		k_xhtp.line(base(tg, para, chr(0), ' value="' || value || '"'));
+		h.line(base(tg, para, chr(0), ' value="' || value || '"'));
 	end;
 
 	function i
@@ -266,7 +266,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		k_xhtp.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
+		h.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
 	end;
 
 	procedure t
@@ -282,15 +282,15 @@ create or replace package body tag is
 		end if;
 		if para is null then
 			if not indent then
-				k_xhtp.line(text);
+				h.line(text);
 			else
-				k_xhtp.line(ltrim(text));
+				h.line(ltrim(text));
 			end if;
 		else
 			if not indent then
-				k_xhtp.line(k_type_tool.ps(text, para, ':'));
+				h.line(k_type_tool.ps(text, para, ':'));
 			else
-				k_xhtp.line(k_type_tool.ps(ltrim(text), para, ':'));
+				h.line(k_type_tool.ps(ltrim(text), para, ':'));
 			end if;
 		end if;
 	end;
@@ -307,7 +307,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		k_xhtp.line(base(tg, para, '', ' src="' || url(src) || '"'));
+		h.line(base(tg, para, '', ' src="' || url(src) || '"'));
 	end;
 
 	procedure l
@@ -317,7 +317,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		k_xhtp.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="stylesheet" type="text/css"'));
+		h.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="stylesheet" type="text/css"'));
 	end;
 
 	procedure d
