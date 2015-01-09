@@ -3,29 +3,29 @@ create or replace package body xml_page_b is
 	-- private
 	procedure show_begin is
 	begin
-		p.line('<textarea cols="100" rows="20" style="#overflow:visible;">');
+		h.line('<textarea cols="100" rows="20" style="#overflow:visible;">');
 	end;
 
 	-- private
 	procedure show_end is
 	begin
-		p.line('</textarea>');
+		h.line('</textarea>');
 	end;
 
 	procedure xmlgen_str is
 		v      dbms_xmlgen.ctxhandle;
 		v_clob clob;
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
-		p.br;
+		x.t('<br/>');
 	
 		v := dbms_xmlgen.newcontext('select t.name as "td",t.pass as "td" from user_t t');
 		dbms_xmlgen.setrowsettag(v, 'table');
 		dbms_xmlgen.setrowtag(v, 'tr');
 	
 		show_begin;
-		p.d(dbms_xmlgen.getxmltype(v).getclobval());
+		h.write(dbms_xmlgen.getxmltype(v).getclobval());
 		show_end;
 	end;
 
@@ -33,9 +33,9 @@ create or replace package body xml_page_b is
 		c sys_refcursor;
 		v dbms_xmlgen.ctxhandle;
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
-		p.br;
+		x.t('<br/>');
 	
 		open c for
 			select * from user_t;
@@ -44,7 +44,7 @@ create or replace package body xml_page_b is
 		dbms_xmlgen.setrowtag(v, 'user');
 	
 		show_begin;
-		p.d(dbms_xmlgen.getxmltype(v).getclobval());
+		h.write(dbms_xmlgen.getxmltype(v).getclobval());
 		show_end;
 		close c;
 	end;
@@ -53,9 +53,9 @@ create or replace package body xml_page_b is
 		c sys_refcursor;
 		v dbms_xmlgen.ctxhandle;
 	begin
-		p.h;
+		pc.h;
 		src_b.link_proc;
-		p.br;
+		x.t('<br/>');
 		open c for
 			select o.object_name as "name",
 						 cursor (select p.procedure_name as "name" from user_procedures p where p.object_name = o.object_name)        "procedures"
@@ -66,7 +66,7 @@ create or replace package body xml_page_b is
 		dbms_xmlgen.setrowtag(v, 'package');
 		-- dbms_xmlgen.setmaxrows(v, 1);
 		show_begin;
-		p.d(dbms_xmlgen.getxmltype(v).getclobval());
+		h.write(dbms_xmlgen.getxmltype(v).getclobval());
 		show_end;
 		close c;
 	end;
@@ -74,9 +74,13 @@ create or replace package body xml_page_b is
 	procedure sql_users is
 		v_table xmltype;
 	begin
-		p.h('user_table.css');
+		x.o('<html>');
+		x.o('<head>');
+		x.l(' <link>', 'user_table.css');
+		x.c('</head>');
+		x.o('<body>');
 		src_b.link_proc;
-		p.br;
+		x.t('<br/>');
 	
 		select xmlelement("table",
 											xmlattributes('all' as "rules"),
@@ -89,7 +93,7 @@ create or replace package body xml_page_b is
 			into v_table
 			from user_t t
 		 order by t.ctime asc;
-		p.d(v_table.getclobval);
+		h.write(v_table.getclobval);
 	end;
 
 	procedure xml_users_css is
@@ -103,8 +107,8 @@ create or replace package body xml_page_b is
 		v := dbms_xmlgen.newcontext(c);
 		dbms_xmlgen.setrowsettag(v, 'users');
 		dbms_xmlgen.setrowtag(v, 'user');
-		p.ps('<?xml-stylesheet type="text/css" href=":1" media="screen"?>', st(u('users_ol.css')));
-		p.d(dbms_xmlgen.getxmltype(v).getclobval);
+		x.t('<?xml-stylesheet type="text/css" href=":1" media="screen"?>', st(l('@b/users_ol.css')));
+		h.write(dbms_xmlgen.getxmltype(v).getclobval);
 		close c;
 	end;
 
@@ -120,9 +124,9 @@ create or replace package body xml_page_b is
 		v := dbms_xmlgen.newcontext(c);
 		dbms_xmlgen.setrowsettag(v, 'users');
 		dbms_xmlgen.setrowtag(v, 'user');
-		p.line('<?xml version="1.0" encoding="UTF-8"?>');
-		p.ps('<?xml-stylesheet type="text/xsl" href=":1" media="screen"?>', st(u('users.xsl')));
-		p.d(dbms_xmlgen.getxmltype(v).getclobval());
+		h.line('<?xml version="1.0" encoding="UTF-8"?>');
+		x.t('<?xml-stylesheet type="text/xsl" href=":1" media="screen"?>', st(l('@b/users.xsl')));
+		h.write(dbms_xmlgen.getxmltype(v).getclobval());
 		close c;
 	end;
 
@@ -137,7 +141,7 @@ create or replace package body xml_page_b is
 		v_xhtml xmltype;
 	begin
 		src_b.link_proc;
-		p.br;
+		x.t('<br/>');
 	
 		open c for
 			select * from user_t;
@@ -147,16 +151,16 @@ create or replace package body xml_page_b is
 		v_xml := dbms_xmlgen.getxmltype(v);
 		close c;
 	
-		p.s     := '/demo/packs/xml_page_b/users.xsl';
-		v_bfile := bfilename('PSPDADS', p.s);
+		tmp.s   := '/demo/packs/xml_page_b/users.xsl';
+		v_bfile := bfilename('PSPDADS', tmp.s);
 		if dbms_lob.fileexists(v_bfile) = 0 then
 			raise_application_error(-20001, 'xslt file not exists');
 		end if;
 		v_xsl := xmltype(v_bfile, 0);
 	
-		p.http_header_close;
+		h.header_close;
 		v_xhtml := v_xml.transform(v_xsl);
-		p.d(v_xhtml.getclobval());
+		h.write(v_xhtml.getclobval());
 	end;
 
 end xml_page_b;
