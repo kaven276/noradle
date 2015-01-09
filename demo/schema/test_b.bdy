@@ -41,37 +41,36 @@ create or replace package body test_b is
 		h.header('a', 1);
 		h.header_close;
 	
-		p.h;
-		p.style_open;
-		p.line('p{line-height:1.1em;margin:0px;}');
-		p.style_close;
-		p.p('test case that none ascii charset following http header');
-		p.p(r.hostname);
-		p.p(r.port);
-		p.p(r.method);
-		p.p(r.prog);
-		p.p(r.pack);
-		p.p(r.proc);
-		p.p(r.qstr);
+		pc.h;
+		x.o('<style>');
+		h.line('p{line-height:1.1em;margin:0px;}');
+		x.c('</style>');
+		x.p('<p>', 'test case that none ascii charset following http header');
+		x.p('<p>', r.hostname);
+		x.p('<p>', r.port);
+		x.p('<p>', r.method);
+		x.p('<p>', r.prog);
+		x.p('<p>', r.pack);
+		x.p('<p>', r.proc);
+		x.p('<p>', r.qstr);
 	
-		p.line('<br/>');
-		p.line(r.header('accept-encoding'));
-		p.line('<br/>');
-		-- p.line(to_char(r.lmt, 'yyyy-mm-dd hh24:mi:ss'));
-		p.line('<br/>');
-		-- p.line(r.etag);
-		p.br;
-		p.a('self', r.prog || r.qstr);
+		h.line('<br/>');
+		h.line(r.header('accept-encoding'));
+		h.line('<br/>');
+		-- h.line(to_char(r.lmt, 'yyyy-mm-dd hh24:mi:ss'));
+		h.line('<br/>');
+		-- h.line(r.etag);
+		x.t('<br/>');
+		x.a('<a>', 'self', r.prog || r.qstr);
 	
 		for i in 1 .. r.getn('count', 10) loop
-			p.p(i);
+			x.p('<p>', i);
 		end loop;
 	end;
 
 	procedure form is
 	begin
 		h.content_type(charset => 'gbk');
-		-- p.content_type(charset => 'GBK');
 		h.header_close;
 	
 		h.line('<a href="test_b.redirect">Link to test_b.redirect</a>');
@@ -100,31 +99,31 @@ create or replace package body test_b is
 				h.content_type(mime_type => 'text/plain', charset => 'gbk');
 				h.header_close;
 			
-				p.line(r.getc('text_input'));
-				p.line(r.getc('checkbox_input'));
+				h.line(r.getc('text_input'));
+				h.line(r.getc('checkbox_input'));
 				r.gets('checkbox_input', v_st);
 				for i in 1 .. v_st.count loop
-					p.line(v_st(i));
+					h.line(v_st(i));
 				end loop;
-				p.line(r.getc('password_input'));
-				p.line(r.getc('button1'));
-				p.line(r.getc('type'));
-				p.line(r.gets('type') (2));
+				h.line(r.getc('password_input'));
+				h.line(r.getc('button1'));
+				h.line(r.getc('type'));
+				h.line(r.gets('type') (2));
 			
-				p.line('');
-				p.line('http headers');
-				p.line(r.header('accept'));
-				p.line(r.header('accept-charset'));
-				p.line(r.header('accept-encoding'));
-				p.line(r.header('accept-language'));
-				p.line(r.header('connection'));
+				h.line('');
+				h.line('http headers');
+				h.line(r.header('accept'));
+				h.line(r.header('accept-charset'));
+				h.line(r.header('accept-encoding'));
+				h.line(r.header('accept-language'));
+				h.line(r.header('connection'));
 			
-				p.line('');
-				p.line('cookies');
-				p.line(r.cookie('ck1'));
-				p.line(r.cookie('ck2'));
-				p.line(r.cookie('ck3'));
-				p.line(r.cookie('ck4'));
+				h.line('');
+				h.line('cookies');
+				h.line(r.cookie('ck1'));
+				h.line(r.cookie('ck2'));
+				h.line(r.cookie('ck3'));
+				h.line(r.cookie('ck4'));
 			when 'GET' then
 				h.status_line(303);
 				h.location('test_b.entry');
@@ -133,7 +132,7 @@ create or replace package body test_b is
 				h.status_line(200);
 				h.content_type;
 				h.header_close;
-				p.line('Method (' || r.method || ') is not supported');
+				h.line('Method (' || r.method || ') is not supported');
 		end case;
 	end;
 
