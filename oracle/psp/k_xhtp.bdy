@@ -717,15 +717,15 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		null;
 	end;
 
-	procedure init is
+	procedure init(first boolean := false) is
 	begin
 		--scn         := null;
 		gv_xhtp    := false; -- after p.doc_type, become true
 		gv_in_body := false; -- reset is_dhc to true for not using k_gw
 		meta_init;
-		if pv.firstpg then
 			gv_check            := not pv.production;
 			pv.csslink          := null;
+		if first then
 			gv_auto_input_class := false;
 			gv_force_css_cv     := false;
 			gv_css_prefix       := '';
