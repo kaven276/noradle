@@ -229,6 +229,18 @@ create or replace package body k_http is
 		end if;
 	end;
 
+	function charset return varchar2
+	is
+	begin
+		return pv.charset;
+	end;
+
+	function mime_type return varchar2
+	is
+	begin
+		return pv.mime_type;
+	end;
+
 	procedure content_type
 	(
 		mime_type varchar2 := 'text/html',

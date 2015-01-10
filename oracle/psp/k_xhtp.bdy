@@ -604,7 +604,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		v_tag varchar2(30) := name;
 	begin
 		-- head part tag api will not use me, body,frameset(include itself) will call me
-		if gv_check and pv.mime_type != 'text/plain' then
+		if gv_check and k_http.mime_type != 'text/plain' then
 			assert(instrb(',html,head,body,frameset,frame,hta:application,title,base,meta,link,script,style,',
 										',' || v_tag || ',') > 0 or gv_tags(2) = 'body',
 						 ' this tag ' || v_tag || 'must used in body tag');
@@ -846,7 +846,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		line('<head>');
 		tag_push('head');
 		line('<meta name="generator" content="PSP.WEB"/>');
-		meta_http_equiv('Content-Type', 'text/html;charset=' || pv.charset);
+		meta_http_equiv('Content-Type', 'text/html;charset=' || k_http.charset);
 	end;
 
 	procedure head_close is

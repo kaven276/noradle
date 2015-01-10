@@ -56,6 +56,8 @@ create or replace package k_http is
 
 	procedure location(url varchar2);
 
+	function charset return varchar2;
+	function mime_type return varchar2;
 	procedure content_type
 	(
 		mime_type varchar2 := 'text/html',
