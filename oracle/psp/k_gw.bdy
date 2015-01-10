@@ -30,14 +30,13 @@ create or replace package body k_gw is
 			h.status_line(500);
 			h.content_type('text/html');
 			h.header_close;
-			p.init;
-			p.h('', emsg);
-			p.hn(3, '[WARNING] execute with error');
-			p.pre_open;
-			p.d(estack);
-			p.d(ebacktrace);
-			p.pre_close;
-			-- p.a('refresh', 'javascript:window.location.reload();');
+			x.p('<title>', emsg);
+			x.p('<h3>', '[WARNING] execute with error');
+			x.o('<pre>');
+			h.line(estack);
+			h.line(ebacktrace);
+			x.c('</pre>');
+			-- x.a('<a>', 'refresh', 'javascript:window.location.reload();');
 		else
 			h.line('[WARNING] execute with error');
 			h.line(estack);
@@ -139,11 +138,7 @@ create or replace package body k_gw is
 		if sts.stack is not null then
 			output.line(sts.stack, '');
 		end if;
-	
-		if p.gv_xhtp then
-			p.ensure_close;
-		end if;
-	
+
 	end;
 
 end k_gw;

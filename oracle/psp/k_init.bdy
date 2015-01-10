@@ -34,7 +34,6 @@ create or replace package body k_init is
 		pv.bom        := null;
 	
 		header_init;
-		p.init;
 		pv.elpl := dbms_utility.get_time;
 	end;
 
