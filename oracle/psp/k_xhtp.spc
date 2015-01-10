@@ -77,6 +77,7 @@ create or replace package k_xhtp is
 	function is_dhc return boolean;
 	procedure ensure_close;
 	procedure http_header_close;
+	procedure set_check(tf boolean := true);
 	procedure init(first boolean := false);
 
 	-----------------------

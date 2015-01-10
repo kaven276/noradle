@@ -716,6 +716,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 	begin
 		null;
 	end;
+	
+	procedure set_check(tf boolean := true)
+	is
+	begin
+		gv_check := tf;
+	end;
 
 	procedure init(first boolean := false) is
 	begin
@@ -723,9 +729,9 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_xhtp    := false; -- after p.doc_type, become true
 		gv_in_body := false; -- reset is_dhc to true for not using k_gw
 		meta_init;
-			gv_check            := not pv.production;
 			pv.csslink          := null;
 		if first then
+			gv_check            := false;
 			gv_auto_input_class := false;
 			gv_force_css_cv     := false;
 			gv_css_prefix       := '';
