@@ -70,8 +70,6 @@ create or replace package body k_xhtp is
 	gv_force_css_cv boolean := false;
 	gv_css_prefix   varchar2(10);
 
-	gv_nc boolean;
-
 	function next_seq return varchar2 is
 	begin
 		gv_cur_seq := gv_cur_seq + 1;
@@ -199,7 +197,7 @@ create or replace package body k_xhtp is
 
 	-- private
 	function l(p varchar2, to_proc boolean := false) return varchar2 is
-		r varchar2(32000) := p; -- utl_url.escape(p, false, pv.charset_ora);
+		r varchar2(32000) := p;
 	begin
 		if r like 'u:%' then
 			return u(trim(substr(r, 3)), to_proc);
@@ -785,12 +783,6 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		-- '<?xml version="1.0"?>' || nl;
 		if v_doc_type_str is not null then
 			k_http.iline(v_doc_type_str, nl);
-		end if;
-	
-		if pv.cs_char = pv.charset_ora then
-			gv_nc := false;
-		else
-			gv_nc := null;
 		end if;
 	end;
 
