@@ -1,6 +1,6 @@
 create or replace package body k_xhtp is
 
-	pragma serially_reusable;
+	--pragma serially_reusable;
 
 	cs constant char(1) := '~';
 	gv_tag_indent pls_integer;

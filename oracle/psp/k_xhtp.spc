@@ -1,6 +1,6 @@
 create or replace package k_xhtp is
 
-	pragma serially_reusable;
+	--pragma serially_reusable;
 
 	nl constant varchar2(1) := chr(10);
 
