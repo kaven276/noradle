@@ -108,6 +108,16 @@ create or replace package body k_http is
 		output.line(text, pv.nlbr);
 	end;
 
+	procedure iline
+	(
+		str    varchar2 character set any_cs,
+		nl     varchar2 := chr(10),
+		indent pls_integer := null
+	) is
+	begin
+		output.line(str, nl, indent);
+	end;
+
 	procedure set_line_break(nlbr varchar2) is
 	begin
 		pv.nlbr := nlbr;
