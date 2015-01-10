@@ -214,28 +214,28 @@ create or replace package body k_xhtp is
 
 	procedure prn(text varchar2 character set any_cs) is
 	begin
-		output.line(text, '');
+		k_http.iline(text, '');
 	end;
 
 	procedure prn(text in out nocopy clob character set any_cs) is
 	begin
-		output.line(text, '');
+		k_http.iline(text, '');
 	end;
 
 	procedure d(text varchar2 character set any_cs) is
 	begin
-		output.line(text, '', (gv_tag_len - 2) * gv_tag_indent);
+		k_http.iline(text, '', (gv_tag_len - 2) * gv_tag_indent);
 	end;
 
 	-- private: nocopy version for line, ref only by tpl
 	procedure line2(text in out nocopy varchar2 character set any_cs) is
 	begin
-		output.line(text, gv_tagnl, (gv_tag_len - 2) * gv_tag_indent);
+		k_http.iline(text, gv_tagnl, (gv_tag_len - 2) * gv_tag_indent);
 	end;
 
 	procedure line(text varchar2 character set any_cs := '') is
 	begin
-		output.line(text, gv_tagnl, (gv_tag_len - 2) * gv_tag_indent);
+		k_http.iline(text, gv_tagnl, (gv_tag_len - 2) * gv_tag_indent);
 	end;
 
 	procedure l(txt varchar2, var st := null) is
@@ -386,7 +386,7 @@ create or replace package body k_xhtp is
 		if gv_scale then
 			px(v_text);
 		end if;
-		output.css(v_text || gv_tagnl);
+		style.css(v_text || gv_tagnl);
 	end;
 
 	procedure css(text varchar2, vals st, cv boolean) is
@@ -736,7 +736,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		elsif pv.flushed then
 			raise_application_error(-20991, 'flushed page can not be regenerated!');
 		end if;
-		output."_init"(80526);
+		k_http.print_init(true);
 	end;
 
 	procedure http_header_close is
@@ -784,7 +784,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		gv_head_over := false;
 		-- '<?xml version="1.0"?>' || nl;
 		if v_doc_type_str is not null then
-			output.line(v_doc_type_str, nl);
+			k_http.iline(v_doc_type_str, nl);
 		end if;
 	
 		if pv.cs_char = pv.charset_ora then
