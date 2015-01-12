@@ -32,6 +32,7 @@ create or replace package body user_c is
 	begin
 		h.allow_get;
 		delete from user_t a where a.name = r.getc('name');
+		h.redirect(r.referer);
 	end;
 
 end user_c;
