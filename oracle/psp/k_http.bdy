@@ -15,6 +15,12 @@ create or replace package body k_http is
 		pv.accum_cnt := 0;
 		output.flush;
 	end;
+	
+	function flushed return boolean
+	is
+	begin
+		return pv.flushed;
+	end;
 
 	function written return pls_integer is
 	begin
