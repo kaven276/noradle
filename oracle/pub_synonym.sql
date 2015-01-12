@@ -20,12 +20,11 @@ create or replace public synonym rb for rb;
 
 prompt for output/response
 create or replace public synonym ext_url_v for ext_url_v;
-create or replace public synonym u for u; -- tobe removed
 create or replace public synonym l for url;
 create or replace public synonym e for e; -- tobe removed
 create or replace public synonym g for g;
+create or replace public synonym k_http for k_http;
 create or replace public synonym h for k_http;
-create or replace public synonym p for k_xhtp; -- tobe removed
 create or replace public synonym rs for rs;
 
 prompt for advance output/response (tag print)

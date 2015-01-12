@@ -149,16 +149,6 @@ prompt ============================
 prompt
 @@k_type_tool.spc
 prompt
-prompt Creating package K_URL
-prompt ======================
-prompt
-@@k_url.spc
-prompt
-prompt Creating package K_XHTP
-prompt =======================
-prompt
-@@k_xhtp.spc
-prompt
 prompt Creating package LOB_TEST
 prompt =========================
 prompt
@@ -203,11 +193,6 @@ prompt Creating package TMP
 prompt ====================
 prompt
 @@tmp.spc
-prompt
-prompt Creating function U
-prompt ===================
-prompt
-@@u.fnc
 prompt
 prompt Creating procedure DAD_AUTH_ENTRY
 prompt =================================
@@ -303,16 +288,6 @@ prompt Creating package body K_TYPE_TOOL
 prompt =================================
 prompt
 @@k_type_tool.bdy
-prompt
-prompt Creating package body K_URL
-prompt ===========================
-prompt
-@@k_url.bdy
-prompt
-prompt Creating package body K_XHTP
-prompt ============================
-prompt
-@@k_xhtp.bdy
 prompt
 prompt Creating package body LOB_TEST
 prompt ==============================
