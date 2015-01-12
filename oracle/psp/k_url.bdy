@@ -2,8 +2,10 @@ create or replace package body k_url is
 
 	-- private
 	function outside(key varchar2) return varchar2 is
+		v_prefix ext_url_v.prefix%type;
 	begin
-		return k_cfg.find_prefix(sys_context('user', 'current_schema'), key);
+		select a.prefix into v_prefix from ext_url_v a where a.key = key;
+		return v_prefix;
 	end;
 
 	function normalize
@@ -18,7 +20,7 @@ create or replace package body k_url is
 		rdad varchar2(100) := substrb(r.dir, 2, lengthb(r.dir));
 	
 		function pri_file(file varchar2) return varchar2 is
-			ext varchar2(1000) := k_cfg.get_ext_fs;
+			ext varchar2(1000) := r.getc('y$static') || '../';
 		begin
 			if ext is not null then
 				return ext || '/' || nvl(dad, r.dbu) || '/packs/' || nvl(r.pack, r.proc) || '/' || file;
@@ -29,7 +31,7 @@ create or replace package body k_url is
 	
 		function normal(s varchar2) return varchar2 is
 			pack varchar2(10);
-			ext  varchar2(1000) := k_cfg.get_ext_fs;
+			ext  varchar2(1000) := r.getc('y$static') || '../';
 		begin
 			if regexp_like(s, '^[^./]+_\w(\.[^./]+)?(\?.*)?$') then
 				if s = 'default_b.d' then
@@ -96,12 +98,12 @@ create or replace package body k_url is
 					pos := instrb(url, '/', 4);
 					if pos <= 0 then
 						-- common css,js
-						dad := lower(pv.pspuser);
+						dad := lower(sys_context('userenv', 'SESSION_USER'));
 						-- u:pw/xxx.ext -> /psp/pub/ext/xxx.ext
 						return normal(regexp_replace(url, '^pw/([^.]+)\.([^.]+)$', 'pub/\2/\1.\2'));
 					else
 						-- the same as ../psp/...
-						dad := lower(pv.pspuser);
+						dad := lower(sys_context('userenv', 'SESSION_USER'));
 						return normal(substrb(url, 4));
 					end if;
 				elsif regexp_like(url, '^[a-z]*:') then

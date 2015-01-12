@@ -5,10 +5,13 @@ create or replace function url(str varchar2) return varchar2 is
 	main varchar2(30);
 	pos  pls_integer;
 	dad  varchar2(100);
-
+	
+	-- private
 	function outside(key varchar2) return varchar2 is
+		v_prefix ext_url_v.prefix%type;
 	begin
-		return k_cfg.find_prefix(sys_context('user', 'current_schema'), key);
+		select a.prefix into v_prefix from ext_url_v a where a.key = key;
+		return v_prefix;
 	end;
 
 	function base return varchar2 is
@@ -33,7 +36,7 @@ begin
 				return base || 'packs/' || main || substrb(str, 2);
 			else
 				-- @x
-            	return main || substrb(str, 2);
+				return main || substrb(str, 2);
 			end if;
 		when '[' then
 			-- [key]local for external reference

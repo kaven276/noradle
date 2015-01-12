@@ -53,19 +53,5 @@ create or replace package body k_cfg is
 		end case;
 	end;
 
-	function find_prefix
-	(
-		p_dbu varchar2,
-		p_key varchar2
-	) return varchar2 is
-	begin
-		return find_prefix(p_dbu, p_key, r.protocol);
-	end;
-
-	function get_ext_fs return varchar2 is
-	begin
-		return r.getc('y$static') || '../';
-	end;
-
 end k_cfg;
 /
