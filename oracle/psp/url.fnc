@@ -1,4 +1,4 @@
-create or replace function url(str varchar2) return varchar2 is
+create or replace function url(str varchar2) return varchar2 authid current_user is
 
 	c1   char(1) := substrb(str, 1, 1);
 	c2   char(1);
