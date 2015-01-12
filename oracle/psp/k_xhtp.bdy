@@ -69,6 +69,7 @@ create or replace package body k_xhtp is
 
 	gv_force_css_cv boolean := false;
 	gv_css_prefix   varchar2(10);
+	gv_csslink      boolean;
 
 	function next_seq return varchar2 is
 	begin
@@ -395,9 +396,9 @@ create or replace package body k_xhtp is
 	procedure comp_css_link(setting boolean) is
 	begin
 		if setting is null then
-			pv.csslink := null;
+			gv_csslink := null;
 		elsif output.prevent_flush('p.comp_css_link') then
-			pv.csslink := setting;
+			gv_csslink := setting;
 		end if;
 	end;
 
@@ -728,8 +729,8 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		--scn         := null;
 		gv_xhtp    := false; -- after p.doc_type, become true
 		gv_in_body := false; -- reset is_dhc to true for not using k_gw
-		meta_init;
-			pv.csslink          := null;
+		gv_csslink := null;
+		meta_init; 
 		if first then
 			gv_check            := false;
 			gv_auto_input_class := false;
@@ -737,7 +738,7 @@ for(i=0;i<k_xhtp.errors.length;i++)
 			gv_css_prefix       := '';
 			gv_html_type        := 'transitional';
 			format_src(null);
-		elsif pv.flushed then
+		elsif k_http.flushed then
 			raise_application_error(-20991, 'flushed page can not be regenerated!');
 		end if;
 		k_http.print_init(true);
@@ -867,8 +868,12 @@ for(i=0;i<k_xhtp.errors.length;i++)
 		end if;
 		gv_head_over := true;
 	
-		if pv.csslink is not null then
-			output.switch_css;
+		if gv_csslink is not null then
+			if gv_csslink then
+				style.embed('<link>');
+			else
+				style.embed('<style>');
+			end if;
 		end if;
 	
 		tag_pop('head');
