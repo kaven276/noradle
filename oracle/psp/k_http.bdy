@@ -424,7 +424,7 @@ create or replace package body k_http is
 	) is
 	begin
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
-		location(u(url));
+		location(url);
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
 		print_init(true);
