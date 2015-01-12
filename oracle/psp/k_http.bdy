@@ -349,7 +349,7 @@ create or replace package body k_http is
 	begin
 		if etag = 'ddd' then
 			h.status_line(304);
-			output."_init"(80526);
+			print_init(true);
 			raise pv.ex_resp_done;
 		else
 			pv.headers('ETag') := '"' || etag || '"';
@@ -394,7 +394,7 @@ create or replace package body k_http is
 	begin
 		if r.lmt = pv.max_lmt then
 			h.status_line(304);
-			output."_init"(80526);
+			print_init(true);
 			raise pv.ex_resp_done;
 		end if;
 	end;
@@ -414,7 +414,7 @@ create or replace package body k_http is
 		location(url);
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
-		output."_init"(80526);
+		print_init(true);
 	end;
 
 	procedure go
@@ -427,7 +427,7 @@ create or replace package body k_http is
 		location(u(url));
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
-		output."_init"(80526);
+		print_init(true);
 	end;
 
 	procedure gol
@@ -440,7 +440,7 @@ create or replace package body k_http is
 		location(l(url));
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
-		output."_init"(80526);
+		print_init(true);
 	end;
 
 	procedure retry_after(delta number) is
@@ -468,7 +468,7 @@ create or replace package body k_http is
 	begin
 		h.status_line(405); -- Method Not Allowed
 		pv.headers('Allow') := pv.allow;
-		output."_init"(80526);
+		print_init(true);
 		h.line('http method "' || r.method || '" are not allowed, accept "' || pv.allow || ' "only');
 		raise pv.ex_resp_done;
 	end;
