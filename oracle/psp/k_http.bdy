@@ -324,7 +324,7 @@ create or replace package body k_http is
 		url     varchar2 := null
 	) is
 	begin
-		pv.headers('Refresh') := to_char(seconds) || t.nvl2(url, ';url=' || u(url));
+		pv.headers('Refresh') := to_char(seconds) || t.nvl2(url, ';url=' || l(url));
 	end;
 
 	procedure expires(expt date) is
