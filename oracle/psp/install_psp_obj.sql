@@ -19,11 +19,6 @@ prompt =======================================
 prompt
 @@dbmshp_parent_child_info.tab
 prompt
-prompt Creating table EXTHUB_CONFIG_T
-prompt ==============================
-prompt
-@@exthub_config_t.tab
-prompt
 prompt Creating table EXT_URL_T
 prompt ========================
 prompt
@@ -109,11 +104,6 @@ prompt =========================
 prompt
 @@k_filter.spc
 prompt
-prompt Creating package K_GC
-prompt =====================
-prompt
-@@k_gc.spc
-prompt
 prompt Creating package K_GW
 prompt =====================
 prompt
@@ -149,11 +139,6 @@ prompt ============================
 prompt
 @@k_type_tool.spc
 prompt
-prompt Creating package LOB_TEST
-prompt =========================
-prompt
-@@lob_test.spc
-prompt
 prompt Creating package OUTPUT
 prompt =======================
 prompt
@@ -183,11 +168,6 @@ prompt Creating package RS
 prompt ===================
 prompt
 @@rs.spc
-prompt
-prompt Creating package TESTS
-prompt ======================
-prompt
-@@tests.spc
 prompt
 prompt Creating package TMP
 prompt ====================
@@ -254,11 +234,6 @@ prompt ==============================
 prompt
 @@k_filter.bdy
 prompt
-prompt Creating package body K_GC
-prompt ==========================
-prompt
-@@k_gc.bdy
-prompt
 prompt Creating package body K_GW
 prompt ==========================
 prompt
@@ -289,11 +264,6 @@ prompt =================================
 prompt
 @@k_type_tool.bdy
 prompt
-prompt Creating package body LOB_TEST
-prompt ==============================
-prompt
-@@lob_test.bdy
-prompt
 prompt Creating package body OUTPUT
 prompt ============================
 prompt
@@ -308,11 +278,6 @@ prompt Creating package body RS
 prompt ========================
 prompt
 @@rs.bdy
-prompt
-prompt Creating package body TESTS
-prompt ===========================
-prompt
-@@tests.bdy
 prompt
 
 prompt Creating package STS
@@ -334,7 +299,7 @@ prompt
 prompt Creating function url
 prompt ========================
 prompt
-@@url.func
+@@url.fnc
 
 prompt Creating package TAG
 prompt ========================
