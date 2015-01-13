@@ -420,11 +420,11 @@ create or replace package body k_http is
 		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
 	) is
 	begin
-		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
-		location(url);
+		redirect(url, status);
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
 		print_init(true);
+		raise pv.ex_resp_done;
 	end;
 
 	procedure gol
@@ -433,11 +433,7 @@ create or replace package body k_http is
 		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
 	) is
 	begin
-		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
-		location(l(url));
-		pv.headers.delete('Content-Type');
-		pv.headers('Content-Length') := '0';
-		print_init(true);
+		go(l(url), status);		
 	end;
 
 	procedure retry_after(delta number) is
