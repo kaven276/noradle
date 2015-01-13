@@ -79,7 +79,7 @@ create or replace package body k_gw is
 			when pv.ex_fltr_done then
 				null;
 			when pv.ex_resp_done then
-				return;
+				goto after;
 			when others then
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
@@ -111,13 +111,14 @@ create or replace package body k_gw is
 			when pv.ex_no_subprog then
 				error_no_subprog;
 			when pv.ex_resp_done then
-				null;
+				goto after;
 			when others then
 				k_debug.trace(st('k_gw.do core', sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
 		end;
 	
+	  <<after>>
 		begin
 			if v_after is not null then
 				execute immediate 'call ' || v_after || '()';
@@ -128,7 +129,7 @@ create or replace package body k_gw is
 			when pv.ex_fltr_done then
 				null;
 			when pv.ex_resp_done then
-				return;
+				null;
 			when others then
 				error_execute(sqlcode, sqlerrm, dbms_utility.format_error_backtrace, dbms_utility.format_error_stack);
 				rollback;
