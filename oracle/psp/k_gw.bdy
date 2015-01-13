@@ -90,7 +90,6 @@ create or replace package body k_gw is
 		<<retry_prog>>
 		begin
 			execute immediate 'call ' || r.prog || '()';
-			commit;
 		exception
 			when pv.ex_package_state_invalid then
 				if v_tried then
@@ -139,6 +138,7 @@ create or replace package body k_gw is
 		if sts.stack is not null then
 			output.line(sts.stack, '');
 		end if;
+			commit;
 
 	end;
 
