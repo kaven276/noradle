@@ -29,9 +29,9 @@ create or replace package body session_b is
 	begin
 		r.setc('s$user', p_user);
 		if p_user is not null then
-			h.redirect(l('@b.user_page'), 303);
+			h.gol('@b.user_page', 303);
 		else
-			h.redirect(l('@b.logout_info'), 303);
+			h.gol('@b.logout_info', 303);
 		end if;
 	end;
 
@@ -57,7 +57,7 @@ create or replace package body session_b is
 		if not r.is_null('s$IDLE') then
 			r.setc('s$BSID', '');
 		end if;
-		h.redirect(l('@b.logout_info'), 303);
+		h.gol('@b.logout_info', 303);
 	end;
 
 end session_b;

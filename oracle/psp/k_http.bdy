@@ -412,9 +412,6 @@ create or replace package body k_http is
 	begin
 		status_line(nvl(status, case r.type when 'c' then 303 else 302 end));
 		location(url);
-		pv.headers.delete('Content-Type');
-		pv.headers('Content-Length') := '0';
-		print_init(true);
 	end;
 
 	procedure go
