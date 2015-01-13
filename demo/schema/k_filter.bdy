@@ -4,7 +4,6 @@ create or replace package body k_filter is
 	begin
 		if substrb(r.dir, -1) != '/' then
 			h.go(r.dir || '/');
-			g.cancel;
 		end if;
 	
 		-- h.set_line_break(null);
