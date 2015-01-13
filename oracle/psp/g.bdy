@@ -1,5 +1,10 @@
 create or replace package body g is
 
+	procedure jumpout is
+	begin
+		raise pv.ex_resp_done;
+	end;
+
 	procedure finish is
 	begin
 		commit;
