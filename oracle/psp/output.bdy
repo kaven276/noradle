@@ -94,17 +94,6 @@ create or replace package body output is
 		pv.pg_css := pv.pg_css || str;
 	end;
 
-	function prevent_flush(text varchar2) return boolean is
-	begin
-		if pv.flushed then
-			k_debug.trace(st('prevent flush ignored', text, r.dbu, r.prog));
-			return false;
-		else
-			pv.use_stream := false;
-			return true;
-		end if;
-	end;
-
 	-- private, called by .flush or .finish
 	procedure write_buf(p_len pls_integer := get_len) is
 	begin

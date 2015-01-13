@@ -25,7 +25,7 @@ create or replace package body g is
 	procedure feedback(value boolean := true) is
 	begin
 		if value then
-			if output.prevent_flush('g.feedback') then
+			if k_http.prevent_flush('g.feedback') then
 				pv.feedback := true;
 				raise pv.ex_resp_done;
 			end if;

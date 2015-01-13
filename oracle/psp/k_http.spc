@@ -11,6 +11,8 @@ create or replace package k_http is
 	procedure force_stream;
 	procedure flush;
 	function flushed return boolean;
+	function prevent_flush(text varchar2) return boolean;
+
 	function written return pls_integer;
 	function inc_buf_cnt return pls_integer;
 	procedure use_bom(value varchar2);

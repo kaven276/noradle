@@ -37,7 +37,7 @@ create or replace package body style is
 
 	procedure embed(tag varchar2) is
 	begin
-		if not output.prevent_flush('style.embed') then
+		if not k_http.prevent_flush('style.embed') then
 			return;
 		end if;
 		if tag = '<style>' then
@@ -216,7 +216,7 @@ create or replace package body style is
 	begin
 		if setting is null then
 			pv.csslink := null;
-		elsif output.prevent_flush('p.comp_css_link') then
+		elsif k_http.prevent_flush('p.comp_css_link') then
 			pv.csslink := setting;
 		end if;
 	end;

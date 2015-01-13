@@ -15,11 +15,21 @@ create or replace package body k_http is
 		pv.accum_cnt := 0;
 		output.flush;
 	end;
-	
-	function flushed return boolean
-	is
+
+	function flushed return boolean is
 	begin
 		return pv.flushed;
+	end;
+
+	function prevent_flush(text varchar2) return boolean is
+	begin
+		if pv.flushed then
+			k_debug.trace(st('prevent flush ignored', text, r.dbu, r.prog));
+			return false;
+		else
+			pv.use_stream := false;
+			return true;
+		end if;
 	end;
 
 	function written return pls_integer is
@@ -235,14 +245,12 @@ create or replace package body k_http is
 		end if;
 	end;
 
-	function charset return varchar2
-	is
+	function charset return varchar2 is
 	begin
 		return pv.charset;
 	end;
 
-	function mime_type return varchar2
-	is
+	function mime_type return varchar2 is
 	begin
 		return pv.mime_type;
 	end;
@@ -358,7 +366,7 @@ create or replace package body k_http is
 
 	procedure etag_md5_on is
 	begin
-		if output.prevent_flush('h.etag_md5_on') then
+		if prevent_flush('h.etag_md5_on') then
 			pv.etag_md5 := true;
 		end if;
 	end;
@@ -433,7 +441,7 @@ create or replace package body k_http is
 		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
 	) is
 	begin
-		go(l(url), status);		
+		go(l(url), status);
 	end;
 
 	procedure retry_after(delta number) is
