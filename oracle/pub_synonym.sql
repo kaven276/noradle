@@ -33,14 +33,15 @@ create or replace public synonym sty for style;
 create or replace public synonym c for style;
 create or replace public synonym y for style;
 create or replace public synonym tag for tag;
+
 create or replace public synonym x for tag;
 create or replace public synonym multi for multi;
 create or replace public synonym m for multi;
 
 create or replace public synonym list for list;
-create or replace public synonym tl for list;
+create or replace public synonym tb for list; -- shortcut for table print
 create or replace public synonym tree for tree;
-create or replace public synonym tr for tree;
+create or replace public synonym tr for tree; -- shortcut for tree print
 
 prompt for call-out request/response
 create or replace public synonym msg_pipe for msg_pipe;
