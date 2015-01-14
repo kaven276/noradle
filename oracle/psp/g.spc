@@ -1,7 +1,5 @@
 create or replace package g is
 
-	procedure jumpout;
-
 	procedure finish;
 
 	procedure cancel;
