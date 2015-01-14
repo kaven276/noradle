@@ -34,9 +34,10 @@ create or replace public synonym c for style;
 create or replace public synonym y for style;
 create or replace public synonym tag for tag;
 
-create or replace public synonym x for tag;
+create or replace public synonym tag for tag;
+create or replace public synonym x for tag; -- shortcut for xml/xhtml print
 create or replace public synonym multi for multi;
-create or replace public synonym m for multi;
+create or replace public synonym m for multi; -- shortcut for multiply with template and array data
 
 create or replace public synonym list for list;
 create or replace public synonym tb for list; -- shortcut for table print
