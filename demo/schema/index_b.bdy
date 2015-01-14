@@ -75,17 +75,12 @@ create or replace package body index_b is
 		x.p('<dt>', 'user_b(show processing)');
 		x.p('<dd>', x.a('<a>', 'register', 'user_b.register'));
 	
-		x.p('<dt>', 'url_b(old)');
-		x.p('<dd>', x.a('<a>', 'd', 'url_b.d'));
-		x.p('<dd>', x.a('<a>', 'proc1', 'url_b.proc1'));
-		x.p('<dd>', x.a('<a>', 'proc2', 'url_b.proc2'));
-		x.p('<dd>', x.a('<a>', './url_test1_b', './url_test1_b'));
-		x.p('<dd>', x.a('<a>', './url_test2_b', './url_test2_b'));
-	
 		x.p('<dt>', 'easy_url_b');
 		x.p('<dd>', x.a('<a>', 'd', 'easy_url_b.d'));
 		x.p('<dd>', x.a('<a>', 'proc1', 'easy_url_b.proc1'));
 		x.p('<dd>', x.a('<a>', 'proc2', 'easy_url_b.proc2'));
+		x.p('<dd>', x.a('<a>', './url_test1_b', './url_test1_b'));
+		x.p('<dd>', x.a('<a>', './url_test2_b', './url_test2_b'));
 	
 		x.p('<dt>', 'charset_b');
 		x.p('<dd>', x.a('<a>', 'form', 'charset_b.form'));
