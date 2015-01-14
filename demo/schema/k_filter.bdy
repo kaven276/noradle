@@ -14,7 +14,7 @@ create or replace package body k_filter is
 			auth_b.check_update;
 		end if;
 	
-		g.filter_pass;
+		return;
 	
 		if true then
 			pc.h;

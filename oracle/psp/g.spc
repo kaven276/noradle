@@ -6,8 +6,6 @@ create or replace package g is
 
 	procedure cancel;
 
-	procedure filter_pass;
-
 	procedure feedback(value boolean := true);
 
 	procedure interrupt(url varchar2);
