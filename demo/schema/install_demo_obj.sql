@@ -328,6 +328,8 @@ prompt adapt to different types of terminals, all screen sizes and resolutions
 prompt performance tester
 @@speed_test_e.spc
 @@speed_test_e.bdy
+@@lob_test_e.spc
+@@lob_test_e.bdy
 @@css_prof_b.spc
 @@css_prof_b.bdy
 @@result_cache_b.spc

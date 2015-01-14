@@ -1,4 +1,4 @@
-create or replace package lob_test is
+create or replace package lob_test_e is
 
 	procedure test
 	(
@@ -14,5 +14,5 @@ create or replace package lob_test is
 
 	procedure do_raw;
 
-end lob_test;
+end lob_test_e;
 /

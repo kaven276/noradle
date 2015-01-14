@@ -1,4 +1,4 @@
-create or replace package body lob_test is
+create or replace package body lob_test_e is
 
 	gv_blob blob;
 	gv_size pls_integer := 16000;
@@ -66,5 +66,5 @@ create or replace package body lob_test is
 begin
 	dbms_lob.createtemporary(gv_blob, cache => true, dur => dbms_lob.call);
 
-end lob_test;
+end lob_test_e;
 /
