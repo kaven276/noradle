@@ -22,8 +22,6 @@ grant execute on rs to public;
 
 grant execute on tag to public -- x;
 grant execute on multi to public -- m;
-grant execute on tagp to public -- tgp;
-grant execute on attr to public -- atr;
 grant execute on style to public; -- sty
 grant execute on list to public;
 grant execute on tree to public;

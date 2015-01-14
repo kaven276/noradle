@@ -36,10 +36,7 @@ create or replace public synonym tag for tag;
 create or replace public synonym x for tag;
 create or replace public synonym multi for multi;
 create or replace public synonym m for multi;
-create or replace public synonym tagp for tagp;
-create or replace public synonym tgp for tagp;
-create or replace public synonym attr for attr;
-create or replace public synonym atr for attr;
+
 create or replace public synonym list for list;
 create or replace public synonym tl for list;
 create or replace public synonym tree for tree;

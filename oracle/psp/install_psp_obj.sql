@@ -3,6 +3,8 @@
 -- Created by Administrator on 2013-4-18, 11:18:01 --
 -----------------------------------------------------
 
+set scan off
+
 prompt
 prompt Creating table DBMSHP_RUNS
 prompt ==========================
@@ -312,18 +314,6 @@ prompt ========================
 prompt
 @@multi.spc
 @@multi.bdy
-
-prompt Creating package ATTR
-prompt ========================
-prompt
-@@attr.spc
-@@attr.bdy
-
-prompt Creating package TAGP
-prompt ========================
-prompt
-@@tagp.spc
-@@tagp.bdy
 
 prompt Creating package STYLE
 prompt ========================
