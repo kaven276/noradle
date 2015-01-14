@@ -97,6 +97,7 @@ create or replace package body index_b is
 		x.p('<dt>', 'post_file_b');
 		x.p('<dd>', x.a('<a>', 'upload_form', 'post_file_b.upload_form'));
 		x.p('<dd>', x.a('<a>', 'ajax_post', 'post_file_b.ajax_post'));
+		x.p('<dd>', x.a('<a>', 'media capture', 'media_b.file_image'));
 	
 		x.p('<dt>', 'filter_b');
 		x.p('<dd>', x.a('<a>', 'filter source', '=src_b.pack?p=k_filter'));
@@ -145,6 +146,9 @@ create or replace package body index_b is
 	
 		x.p('<dt>', 'db_src_b');
 		x.p('<dd>', x.a('<a>', 'example', 'db_src_b.example'));
+	
+		x.p('<dt>', 'proformance test');
+		x.p('<dd>', x.a('<a>', 'css_prof_b', 'css_prof_b.main'));
 	
 		x.c('</dl>');
 	end;

@@ -3,6 +3,7 @@
 -- Created by Administrator on 2013-4-18, 11:16:42 --
 -----------------------------------------------------
 
+set scan off
 
 prompt
 prompt Creating table TERM_T
@@ -15,331 +16,199 @@ prompt =====================
 prompt
 @@user_t.tab
 prompt
-prompt Creating package AUTH_B
-prompt =======================
+prompt Creating table EMP_T
+prompt ==========================
 prompt
-@@auth_b.spc
+@@emp_t.tab
+
+@@pc.spc
+@@pc.bdy
+
 prompt
-prompt Creating package AUTH_S
-prompt =======================
+prompt Creating package DEFAULT_B
+prompt ==========================
 prompt
-@@auth_s.spc
+@@default_b.spc
+@@default_b.bdy
+
+prompt
+prompt Creating package SRC_B
+prompt ======================
+prompt
+@@src_b.spc
+@@src_b.bdy
+
+prompt
+prompt Creating package INDEX_B
+prompt ========================
+prompt
+@@index_b.spc
+@@index_b.bdy
+
+prompt
+prompt Creating package ORA_GOOD_B
+prompt ===========================
+prompt
+@@ora_good_b.spc
+@@ora_good_b.bdy
+
 prompt
 prompt Creating package BASIC_IO_B
 prompt ===========================
 prompt
 @@basic_io_b.spc
+@@basic_io_b.bdy
+
+
+prompt
+prompt Creating package CHARSET_B
+prompt ==========================
+prompt
+@@charset_b.spc
+@@charset_b.bdy
+prompt
+prompt Creating package NEGOTIATION_B
+prompt ==============================
+prompt
+@@negotiation_b.spc
+@@negotiation_b.bdy
+
+
+prompt
+prompt Creating package HTML_B
+prompt =======================
+prompt
+@@html_b.spc
+@@html_b.bdy
+prompt
+prompt Creating package HTTP_B
+prompt =======================
+prompt
+@@http_b.spc
+@@http_b.bdy
+
+prompt
+prompt Creating package ERROR_B
+prompt ========================
+prompt
+@@error_b.spc
+@@error_b.bdy
+prompt
+prompt Creating package LONG_OPS_B
+prompt ========================
+prompt
+@@long_ops_b.prc
+
 prompt
 prompt Creating package CACHE_B
 prompt ========================
 prompt
 @@cache_b.spc
 prompt
-prompt Creating package CHARSET_B
-prompt ==========================
+prompt Creating package body CACHE_B
+prompt =============================
 prompt
-@@charset_b.spc
+@@cache_b.bdy
+
 prompt
-prompt Creating package DB_SRC_B
-prompt =========================
+prompt Creating package TEST_B
+prompt =======================
 prompt
-@@db_src_b.spc
+@@test_b.spc
+@@test_b.bdy
 prompt
-prompt Creating package DEFAULT_B
-prompt ==========================
+prompt Creating package TEST_C
+prompt =======================
 prompt
-@@default_b.spc
-prompt
-prompt Creating package ERROR_B
-prompt ========================
-prompt
-@@error_b.spc
+@@test_c.spc
+@@test_c.bdy
+
+
 prompt
 prompt Creating package FILE_DL_B
 prompt ==========================
 prompt
 @@file_dl_b.spc
-prompt
-prompt Creating package FILTER_B
-prompt =========================
-prompt
-@@filter_b.spc
-prompt
-prompt Creating package HTML_B
-prompt =======================
-prompt
-@@html_b.spc
-prompt
-prompt Creating package HTTP_B
-prompt =======================
-prompt
-@@http_b.spc
-prompt
-prompt Creating package INDEX_B
-prompt ========================
-prompt
-@@index_b.spc
-prompt
-prompt Creating package K_FILTER
-prompt =========================
-prompt
-@@k_filter.spc
-prompt
-prompt Creating package NEGOTIATION_B
-prompt ==============================
-prompt
-@@negotiation_b.spc
-prompt
-prompt Creating package ORA_GOOD_B
-prompt ===========================
-prompt
-@@ora_good_b.spc
+@@file_dl_b.bdy
 prompt
 prompt Creating package POST_B
 prompt =======================
 prompt
 @@post_b.spc
+@@post_b.bdy
 prompt
 prompt Creating package POST_FILE_B
 prompt ============================
 prompt
 @@post_file_b.spc
+@@post_file_b.bdy
 prompt
-prompt Creating package PROFILE_S
-prompt ==========================
+prompt Creating package UPLOAD_B
+prompt =========================
 prompt
+@@upload_b.spc
+@@upload_b.bdy
+prompt
+prompt Creating package MEDIA_B
+prompt =========================
+prompt
+@@media_b.spc
+@@media_b.bdy
+
+
+@@t_user.trg
+
+@@user_b.spc
+@@user_c.spc
+@@auth_s.spc
 @@profile_s.spc
+@@auth_b.spc
+
+@@user_b.bdy
+@@user_c.bdy
+@auth_s.bdy
+@@profile_s.bdy
+@@auth_b.bdy
+
+
 prompt
-prompt Creating package PV
-prompt ===================
+prompt Creating package TERM_B
+prompt =======================
 prompt
-@@pv.spc
-prompt
-prompt Creating package RC
-prompt ===================
-prompt
-@@rc.spc
+@@term_b.spc
+@@term_b.bdy
+
 prompt
 prompt Creating package RCPV
 prompt =====================
 prompt
 @@rcpv.spc
 prompt
-prompt Creating package SRC_B
-prompt ======================
+prompt Creating package RC
+prompt ===================
 prompt
-@@src_b.spc
-prompt
-prompt Creating package TERM_B
-prompt =======================
-prompt
-@@term_b.spc
-prompt
-prompt Creating package TEST_B
-prompt =======================
-prompt
-@@test_b.spc
-prompt
-prompt Creating package TEST_C
-prompt =======================
-prompt
-@@test_c.spc
-prompt
-prompt Creating package UPLOAD_B
-prompt =========================
-prompt
-@@upload_b.spc
-prompt
-prompt Creating package URL_B
-prompt ======================
-prompt
-@@url_b.spc
-prompt
-prompt Creating package USER_B
-prompt =======================
-prompt
-@@user_b.spc
-prompt
-prompt Creating package USER_C
-prompt =======================
-prompt
-@@user_c.spc
-prompt
-prompt Creating package XML_PAGE_B
-prompt ===========================
-prompt
-@@xml_page_b.spc
-prompt
-prompt Creating procedure DAD_AUTH_ENTRY
-prompt =================================
-prompt
-@@dad_auth_entry.prc
-prompt
-prompt Creating procedure URL_TEST1_B
-prompt ==============================
-prompt
-@@url_test1_b.prc
-prompt
-prompt Creating procedure URL_TEST2_B
-prompt ==============================
-prompt
-@@url_test2_b.prc
-prompt
-prompt Creating package body AUTH_B
-prompt ============================
-prompt
-@@auth_b.bdy
-prompt
-prompt Creating package body AUTH_S
-prompt ============================
-prompt
-@@auth_s.bdy
-prompt
-prompt Creating package body BASIC_IO_B
-prompt ================================
-prompt
-@@basic_io_b.bdy
-prompt
-prompt Creating package body CACHE_B
-prompt =============================
-prompt
-@@cache_b.bdy
-prompt
-prompt Creating package body CHARSET_B
-prompt ===============================
-prompt
-@@charset_b.bdy
-prompt
-prompt Creating package body DB_SRC_B
-prompt ==============================
-prompt
-@@db_src_b.bdy
-prompt
-prompt Creating package body DEFAULT_B
-prompt ===============================
-prompt
-@@default_b.bdy
-prompt
-prompt Creating package body ERROR_B
-prompt =============================
-prompt
-@@error_b.bdy
-prompt
-prompt Creating package body FILE_DL_B
-prompt ===============================
-prompt
-@@file_dl_b.bdy
-prompt
-prompt Creating package body FILTER_B
-prompt ==============================
-prompt
-@@filter_b.bdy
-prompt
-prompt Creating package body HTML_B
-prompt ============================
-prompt
-@@html_b.bdy
-prompt
-prompt Creating package body HTTP_B
-prompt ============================
-prompt
-@@http_b.bdy
-prompt
-prompt Creating package body INDEX_B
-prompt =============================
-prompt
-@@index_b.bdy
-prompt
-prompt Creating package body K_FILTER
-prompt ==============================
-prompt
-@@k_filter.bdy
-prompt
-prompt Creating package body NEGOTIATION_B
-prompt ===================================
-prompt
-@@negotiation_b.bdy
-prompt
-prompt Creating package body ORA_GOOD_B
-prompt ================================
-prompt
-@@ora_good_b.bdy
-prompt
-prompt Creating package body POST_B
-prompt ============================
-prompt
-@@post_b.bdy
-prompt
-prompt Creating package body POST_FILE_B
-prompt =================================
-prompt
-@@post_file_b.bdy
-prompt
-prompt Creating package body PROFILE_S
-prompt ===============================
-prompt
-@@profile_s.bdy
-prompt
-prompt Creating package body RC
-prompt ========================
-prompt
+@@rc.spc
 @@rc.bdy
-prompt
-prompt Creating package body SRC_B
-prompt ===========================
-prompt
-@@src_b.bdy
-prompt
-prompt Creating package body TERM_B
-prompt ============================
-prompt
-@@term_b.bdy
-prompt
-prompt Creating package body TEST_B
-prompt ============================
-prompt
-@@test_b.bdy
-prompt
-prompt Creating package body TEST_C
-prompt ============================
-prompt
-@@test_c.bdy
-prompt
-prompt Creating package body UPLOAD_B
-prompt ==============================
-prompt
-@@upload_b.bdy
-prompt
-prompt Creating package body URL_B
-prompt ===========================
-prompt
-@@url_b.bdy
-prompt
-prompt Creating package body USER_B
-prompt ============================
-prompt
-@@user_b.bdy
-prompt
-prompt Creating package body USER_C
-prompt ============================
-prompt
-@@user_c.bdy
-prompt
-prompt Creating package body XML_PAGE_B
-prompt ================================
-prompt
-@@xml_page_b.bdy
-prompt
-prompt Creating trigger T_USER
-prompt =======================
-prompt
-@@t_user.trg
+
 
 prompt
-prompt Creating table EMP_T
-prompt =====================
+prompt Creating package PV
+prompt ===================
 prompt
-@@emp_t.tab
+@@pv.spc
+prompt
+prompt Creating package FILTER_B
+prompt =========================
+prompt
+@@filter_b.spc
+@@filter_b.bdy
+prompt
+prompt Creating package K_FILTER
+prompt =========================
+prompt
+@@k_filter.spc
+@@k_filter.bdy
+
 
 prompt
 prompt Creating package PG_TEST_B
@@ -349,11 +218,23 @@ prompt
 @@pg_test_b.bdy
 
 prompt
-prompt Creating package ATTR_TAGX_DEMO_B
-prompt ==========================
+prompt Creating package DB_SRC_B
+prompt =========================
 prompt
-@@attr_tagx_demo.spc
-@@attr_tagx_demo.bdy
+@@db_src_b.spc
+@@db_src_b.bdy
+
+prompt
+prompt Creating procedure URL_TEST1_B
+prompt ==============================
+prompt
+@@url_test1_b.prc
+
+prompt
+prompt Creating procedure URL_TEST2_B
+prompt ==============================
+prompt
+@@url_test2_b.prc
 
 prompt
 prompt Creating package EASY_URL_B
@@ -373,15 +254,15 @@ prompt
 prompt Creating package LIST_B
 prompt ==========================
 prompt
-@@list.spc
-@@list.bdy
+@@list_b.spc
+@@list_b.bdy
 
 prompt
 prompt Creating package TREE_B
 prompt ==========================
 prompt
-@@tree.spc
-@@tree.bdy
+@@tree_b.spc
+@@tree_b.bdy
 
 prompt
 prompt Creating package LAYOUT_B
@@ -389,3 +270,74 @@ prompt ==========================
 prompt
 @@layout_b.spc
 @@layout_b.bdy
+
+
+prompt css framework integration demos
+
+prompt
+prompt Creating package BOOTSTRAP_B
+prompt ==========================
+prompt
+@@bootstrap_b.spc
+@@bootstrap_b.bdy
+
+prompt
+prompt Creating package JQM_B
+prompt ==========================
+prompt
+@@jqm_b.spc
+@@jqm_b.bdy
+
+
+prompt
+prompt Creating package XML_PAGE_B
+prompt ===========================
+prompt
+@@xml_page_b.spc
+@@xml_page_b.bdy
+
+prompt
+prompt Creating package JSON_B
+prompt ===========================
+prompt
+@@json_b.spc
+@@json_b.bdy
+
+prompt leverage oracle types and subtype
+@@tool.tps
+@@tool.tpb
+@@tool2.tps
+@@tool2.tpb
+@@user_type_b.spc
+@@user_type_b.bdy
+
+prompt reuse js/css resource in container page, reduce repeated load of same url
+@@po_ajaxload_b.spc
+@@po_ajaxload_b.bdy
+@@po_content_b.spc
+@@po_content_b.bdy
+@@po_frameset_b.spc
+@@po_frameset_b.bdy
+@@po_iframe_b.spc
+@@po_iframe_b.bdy
+
+prompt adapt to different types of terminals, all screen sizes and resolutions
+@@scale_b.spc
+@@scale_b.bdy
+
+prompt performance tester
+@@speed_test_e.spc
+@@speed_test_e.bdy
+@@css_prof_b.spc
+@@css_prof_b.bdy
+@@result_cache_b.spc
+@@result_cache_b.bdy
+
+@@session_b.spc
+@@session_b.bdy
+
+@@msg_b.spc
+@@msg_b.bdy
+@@msg_c.spc
+@@msg_c.bdy
+
