@@ -428,6 +428,7 @@ create or replace package body k_http is
 		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
 	) is
 	begin
+		commit;
 		redirect(url, status);
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
