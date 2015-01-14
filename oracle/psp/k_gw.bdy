@@ -76,8 +76,6 @@ create or replace package body k_gw is
 				end if;
 			when pv.ex_no_filter or pv.ex_invalid_proc then
 				null;
-			when pv.ex_fltr_done then
-				null;
 			when pv.ex_resp_done then
 				goto after;
 			when others then
@@ -117,15 +115,13 @@ create or replace package body k_gw is
 				rollback;
 		end;
 	
-	  <<after>>
+		<<after>>
 		begin
 			if v_after is not null then
 				execute immediate 'call ' || v_after || '()';
 			end if;
 		exception
 			when pv.ex_no_filter or pv.ex_invalid_proc then
-				null;
-			when pv.ex_fltr_done then
 				null;
 			when pv.ex_resp_done then
 				null;
@@ -138,8 +134,8 @@ create or replace package body k_gw is
 		if sts.stack is not null then
 			output.line(sts.stack, '');
 		end if;
-			commit;
-
+	
+		commit;
 	end;
 
 end k_gw;

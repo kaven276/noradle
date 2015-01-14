@@ -98,7 +98,6 @@ create or replace package pv is
 	ex_quit                  exception;
 	ex_dummy                 exception;
 	ex_resp_done             exception;
-	ex_fltr_done             exception;
 	ex_no_prog               exception;
 	ex_no_subprog            exception; -- user.table.column, table.column 
 	ex_no_filter             exception;
@@ -109,7 +108,6 @@ create or replace package pv is
 	pragma exception_init(ex_quit, -20996);
 	pragma exception_init(ex_dummy, -20997);
 	pragma exception_init(ex_resp_done, -20998);
-	pragma exception_init(ex_fltr_done, -20999);
 	pragma exception_init(ex_no_prog, -6576);
 	pragma exception_init(ex_no_subprog, -01747);
 	pragma exception_init(ex_no_filter, -06550); -- Usually a PL/SQL compilation error.
