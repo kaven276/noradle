@@ -166,6 +166,11 @@ prompt ===================
 prompt
 @@rb.spc
 prompt
+prompt Creating package RC
+prompt ===================
+prompt
+@@rc.spc
+prompt
 prompt Creating package RS
 prompt ===================
 prompt
