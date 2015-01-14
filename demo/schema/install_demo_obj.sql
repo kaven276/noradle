@@ -264,14 +264,6 @@ prompt
 @@tree_b.spc
 @@tree_b.bdy
 
-prompt
-prompt Creating package LAYOUT_B
-prompt ==========================
-prompt
-@@layout_b.spc
-@@layout_b.bdy
-
-
 prompt css framework integration demos
 
 prompt
@@ -321,7 +313,9 @@ prompt reuse js/css resource in container page, reduce repeated load of same url
 @@po_iframe_b.spc
 @@po_iframe_b.bdy
 
-prompt adapt to different types of terminals, all screen sizes and resolutions
+prompt adapt to different types of terminals, all screen sizes and resolutions, be responsive
+@@layout_b.spc
+@@layout_b.bdy
 @@scale_b.spc
 @@scale_b.bdy
 
