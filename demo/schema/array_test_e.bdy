@@ -1,4 +1,4 @@
-create or replace package body tests is
+create or replace package body array_test_e is
 	pragma serially_reusable;
 
 	val pls_integer := 0;
@@ -145,5 +145,5 @@ create or replace package body tests is
 		dbms_output.put_line('v(a)=' || v('a'));
 	end;
 
-end tests;
+end array_test_e;
 /

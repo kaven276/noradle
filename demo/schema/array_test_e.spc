@@ -1,4 +1,4 @@
-create or replace package tests is
+create or replace package array_test_e is
 	pragma serially_reusable;
 
 	procedure arr_compare(amount pls_integer := 100);
@@ -9,5 +9,5 @@ create or replace package tests is
 	procedure serial_reuse_inner;
 	
 	procedure indexby_exist;
-end tests;
+end array_test_e;
 /
