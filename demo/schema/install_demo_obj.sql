@@ -7,13 +7,6 @@ set define off
 set echo on
 
 whenever sqlerror continue
-prompt Notice: all the drop objects errors can be ignored, do not care about it
-drop table TERM_T cascade constraints;
-drop table USER_T cascade constraints;
-drop table PASSWD_HIS_T cascade constraints;
-drop table EMP_T cascade constraints;
-whenever sqlerror exit
-
 prompt
 prompt Creating table TERM_T
 prompt =====================
@@ -34,6 +27,7 @@ prompt Creating table EMP_T
 prompt ==========================
 prompt
 @@emp_t.tab
+whenever sqlerror exit
 
 @@pc.spc
 @@pc.bdy
@@ -318,10 +312,12 @@ prompt
 -------------------------------------------
 
 prompt leverage oracle types and subtype
+whenever sqlerror continue
 @@tool.tps
 @@tool.tpb
 @@tool2.tps
 @@tool2.tpb
+whenever sqlerror exit
 @@user_type_b.spc
 @@user_type_b.bdy
 
