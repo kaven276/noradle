@@ -11,8 +11,6 @@ set define on
 prompt Installing objects in sys,
 pause press enter to continue ...
 remark install on sys
-prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path first.
-CREATE or replace DIRECTORY PLSHPROF_DIR AS '';
 @@pw.pck
 
 prompt xmldb must be installed already
@@ -50,19 +48,21 @@ alter session set current_schema = &pspdbu;
 @@grant2psp.sql
 
 whenever sqlerror continue
+remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
+prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path afterward.
+CREATE or replace DIRECTORY PLSHPROF_DIR AS '';
+rem @?/rdbms/admin/dbmshptab.sql
+@dbmshptab.sql
+whenever sqlerror exit
+
+whenever sqlerror continue
 prompt Notice: all the drop objects errors can be ignored, do not care about it
 create table SERVER_CONTROL_BAK as select * from SERVER_CONTROL_T;
 create table EXT_URL_BAK as select * from EXT_URL_T;
-drop sequence GAC_CID_SEQ;
 drop table SERVER_CONTROL_T cascade constraints;
 drop table EXT_URL_T cascade constraints;
-drop table DBMSHP_RUNS cascade constraints;
-drop table DBMSHP_FUNCTION_INFO cascade constraints;
-drop table DBMSHP_PARENT_CHILD_INFO cascade constraints;
-drop sequence DBMSHP_RUNNUMBER;
 whenever sqlerror exit
 
-remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
 prompt begin to install Noradle system schema objects
 @psp/install_psp_obj.sql
 exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&pspdbu'),false);
