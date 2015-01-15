@@ -1,4 +1,4 @@
-﻿create or replace package body json_b is
+create or replace package body json_b is
 
 	procedure t1 is
 		obj json_list;
@@ -16,7 +16,7 @@
 		obj.append(json_value);
 		x.p('<p>', obj.to_char);
 		x.p('<p>', 'add with position ');
-		obj.append('Wow thats great! ��', 5);
+		obj.append('Wow thats great!', 5);
 		x.p('<p>', obj.to_char);
 		x.p('<p>', 'remove with position');
 		obj.remove(4);
