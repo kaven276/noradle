@@ -20,3 +20,4 @@ grant create any context to &pspdbu;
 grant create job to &pspdbu;
 grant create session to &pspdbu;
 grant create view to &pspdbu;
+grant select any dictionary to &pspdbu;
