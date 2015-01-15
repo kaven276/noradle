@@ -63,7 +63,7 @@ create or replace package body http_b is
 		h.line('</form>');
 		h.line('When this page is print out at this point, it will wait a while for big data processing.<br/>');
 		h.line('So it should use "h.flush" API to send the already generated part to client/browser.<br/>');
-		h.line('You call h.flush after <head><script><link> to load referenced files early, before body is generated.<br/>');
+		h.line(x.e('You call h.flush after <head><script><link> to load referenced files early, before body is generated.<br/>'));
 		h.line('Call h.flush will use chunked transfer-encode mode instead of the default Content-Length mode<br/>');
 	
 		if r.getc('use', 'on') = 'on' then
