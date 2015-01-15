@@ -6,6 +6,14 @@
 set define off
 set echo off
 
+whenever sqlerror continue
+prompt Notice: all the drop objects errors can be ignored, do not care about it
+create table SERVER_CONTROL_BAK as select * from SERVER_CONTROL_T;
+create table EXT_URL_BAK as select * from EXT_URL_T;
+drop table SERVER_CONTROL_T cascade constraints;
+drop table EXT_URL_T cascade constraints;
+whenever sqlerror exit
+
 --------------------------------------------------------------------------------
 
 prompt
@@ -269,6 +277,18 @@ prompt
 @@k_auth.bdy
 
 --------------------------------------------------------------------------------
+
+whenever sqlerror continue
+prompt Notice: restore old config data
+insert into SERVER_CONTROL_T select * from SERVER_CONTROL_BAK;
+insert into EXT_URL_T select * from EXT_URL_BAK;
+drop table SERVER_CONTROL_BAK cascade constraints;
+drop table EXT_URL_BAK cascade constraints;
+desc SERVER_CONTROL_T
+insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,IDLE_TIMEOUT)
+values ('demo', '127.0.0.1', 1522, 4, 12, 1000, '+0001 00:00:00', 300);
+commit;
+whenever sqlerror exit
 
 set echo off
 set define on

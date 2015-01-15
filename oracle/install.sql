@@ -13,6 +13,11 @@ pause press enter to continue ...
 remark install on sys
 @@pw.pck
 
+remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
+remark create directory in SYS, grant read to psp
+prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path afterward.
+CREATE DIRECTORY PLSHPROF_DIR AS '';
+
 prompt xmldb must be installed already
 prompt see and run $ORACLE_HOME/rdbms/admin/catqm.sql
 Rem    NAME
@@ -45,41 +50,12 @@ accept pspdbu char default 'psp' prompt 'Enter the schema/User(must already exis
 prompt Installing Noradle(psp.web) engine software to schema "&pspdbu",
 pause press enter to continue ...
 alter session set current_schema = &pspdbu;
-@@grant2psp.sql
-
-whenever sqlerror continue
-remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
-remark create directory in SYS, grant read to psp
-prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path afterward.
-CREATE DIRECTORY PLSHPROF_DIR AS '';
-rem @?/rdbms/admin/dbmshptab.sql
-@dbmshptab.sql
-whenever sqlerror exit
-
-whenever sqlerror continue
-prompt Notice: all the drop objects errors can be ignored, do not care about it
-create table SERVER_CONTROL_BAK as select * from SERVER_CONTROL_T;
-create table EXT_URL_BAK as select * from EXT_URL_T;
-drop table SERVER_CONTROL_T cascade constraints;
-drop table EXT_URL_T cascade constraints;
-whenever sqlerror exit
-
 prompt begin to install Noradle system schema objects
-@psp/install_psp_obj.sql
+@@grant2psp.sql
+rem @?/rdbms/admin/dbmshptab.sql
+@@dbmshptab.sql
+@@psp/install_psp_obj.sql
 exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&pspdbu'),false);
-
-whenever sqlerror continue
-prompt Notice: restore old config data
-insert into SERVER_CONTROL_T select * from SERVER_CONTROL_BAK;
-insert into EXT_URL_T select * from EXT_URL_BAK;
-drop table SERVER_CONTROL_BAK cascade constraints;
-drop table EXT_URL_BAK cascade constraints;
-desc SERVER_CONTROL_T
-insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,IDLE_TIMEOUT)
-values ('demo', '127.0.0.1', 1522, 4, 12, 1000, '+0001 00:00:00', 300);
-commit;
-whenever sqlerror exit
-
 @@contexts.sql
 @@grant_api.sql
 @@pub_synonym.sql
@@ -101,7 +77,7 @@ alter session set current_schema = &demodbu;
 @@grant2demo.sql
 
 prompt begin to install Noradle demo schema objects
-@../demo/schema/install_demo_obj.sql
+@@../demo/schema/install_demo_obj.sql
 
 whenever sqlerror continue
 exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&demodbu'),false);
