@@ -16,7 +16,9 @@ remark install on sys
 remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
 remark create directory in SYS, grant read to psp
 prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path afterward.
+whenever sqlerror continue
 CREATE DIRECTORY PLSHPROF_DIR AS '';
+whenever sqlerror exit
 
 prompt xmldb must be installed already
 prompt see and run $ORACLE_HOME/rdbms/admin/catqm.sql
@@ -70,7 +72,6 @@ prompt create user demo identified by demo default tablespace users;;
 pause if not, create empty DEMO db users beforehand, and then press enter to continue
 accept demodbu char default 'demo' prompt 'Enter the schema/User(must already exist) for noradle demo (demo) : '
 
-whenever sqlerror continue
 prompt Installing Noracle(psp.web) demo app to schema "&demodbu"
 pause press enter to continue ...
 alter session set current_schema = &demodbu;
@@ -78,11 +79,12 @@ alter session set current_schema = &demodbu;
 
 prompt begin to install Noradle demo schema objects
 @@../demo/schema/install_demo_obj.sql
+exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&demodbu'),false);
 
 whenever sqlerror continue
-exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&demodbu'),false);
 insert into ext_url_v(key,prefix) values('myself','/f');
 commit;
+whenever sqlerror exit
 
 prompt Noradle bundle in oracle db part have been installed successfully!
 prompt Please follow the steps below to learn from demo
