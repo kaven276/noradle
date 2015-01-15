@@ -7,7 +7,7 @@ create table SERVER_CONTROL_T
   max_servers  NUMBER(4),
   max_requests NUMBER(9),
   max_lifetime INTERVAL DAY(4) TO SECOND(0),
-	idle_timeout number(8)
+  idle_timeout NUMBER(8)
 )
 ;
 comment on column SERVER_CONTROL_T.cfg_id
@@ -28,3 +28,4 @@ comment on column SERVER_CONTROL_T.idle_timeout
   is 'maximum idle seconds to wait for disconnect and reconnect';
 alter table SERVER_CONTROL_T
   add constraint PK_SVR_CFG primary key (CFG_ID);
+

@@ -10,6 +10,7 @@ grant execute on SYS.DBMS_PIPE to &pspdbu;
 grant execute on SYS.DBMS_SCHEDULER to &pspdbu;
 grant execute on SYS.UTL_TCP to &pspdbu;
 grant execute on SYS.DBMS_HPROF to PSP;
+grant execute on SYS.DBMS_SESSION to PSP;
 
 -- Grant/Revoke role privileges
 grant resource to &pspdbu;

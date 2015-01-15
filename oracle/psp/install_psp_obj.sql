@@ -3,7 +3,8 @@
 -- Created by Administrator on 2013-4-18, 11:18:01 --
 -----------------------------------------------------
 
-set scan off
+set define off
+set echo on
 
 prompt
 prompt Creating table DBMSHP_RUNS
@@ -21,6 +22,13 @@ prompt =======================================
 prompt
 @@dbmshp_parent_child_info.tab
 prompt
+prompt Creating sequence DBMSHP_RUNNUMBER
+prompt ==================================
+prompt
+@@dbmshp_runnumber.seq
+
+
+prompt
 prompt Creating table EXT_URL_T
 prompt ========================
 prompt
@@ -30,11 +38,6 @@ prompt Creating table SERVER_CONTROL_T
 prompt ===============================
 prompt
 @@server_control_t.tab
-prompt
-prompt Creating sequence DBMSHP_RUNNUMBER
-prompt ==================================
-prompt
-@@dbmshp_runnumber.seq
 prompt
 prompt Creating view EXT_URL_V
 prompt =======================
@@ -343,3 +346,6 @@ prompt ========================
 prompt
 @@msg_pipe.spc
 @@msg_pipe.bdy
+
+set echo off
+set define on

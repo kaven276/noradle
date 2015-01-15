@@ -3,7 +3,8 @@
 -- Created by Administrator on 2013-4-18, 11:16:42 --
 -----------------------------------------------------
 
-set scan off
+set define off
+set echo on
 
 prompt
 prompt Creating table TERM_T
@@ -128,6 +129,7 @@ prompt
 @@test_c.spc
 @@test_c.bdy
 
+-- download/upload, direct reqeust/response entity body ---
 
 prompt
 prompt Creating package FILE_DL_B
@@ -160,28 +162,7 @@ prompt
 @@media_b.spc
 @@media_b.bdy
 
-
-@@t_user.trg
-
-@@user_b.spc
-@@user_c.spc
-@@auth_s.spc
-@@profile_s.spc
-@@auth_b.spc
-
-@@user_b.bdy
-@@user_c.bdy
-@auth_s.bdy
-@@profile_s.bdy
-@@auth_b.bdy
-
-
-prompt
-prompt Creating package TERM_B
-prompt =======================
-prompt
-@@term_b.spc
-@@term_b.bdy
+--------------------------------------
 
 prompt
 prompt Creating package RCPV
@@ -194,6 +175,31 @@ prompt ===================
 prompt
 @@rc.spc
 @@rc.bdy
+
+prompt
+prompt Creating package TERM_B
+prompt =======================
+prompt
+@@term_b.spc
+@@term_b.bdy
+
+---------  user auth & session  ------
+
+@@t_user.trg
+
+@@user_b.spc
+@@user_c.spc
+@@auth_s.spc
+@@profile_s.spc
+@@auth_b.spc
+@@session_b.spc
+
+@@user_b.bdy
+@@user_c.bdy
+@@auth_s.bdy
+@@profile_s.bdy
+@@auth_b.bdy
+@@session_b.bdy
 
 
 prompt
@@ -214,6 +220,7 @@ prompt
 @@k_filter.spc
 @@k_filter.bdy
 
+---------  print/output/response API demos ------------
 
 prompt
 prompt Creating package PG_TEST_B
@@ -300,6 +307,8 @@ prompt
 @@json_b.spc
 @@json_b.bdy
 
+-------------------------------------------
+
 prompt leverage oracle types and subtype
 @@tool.tps
 @@tool.tpb
@@ -336,11 +345,10 @@ prompt performance tester
 @@result_cache_b.spc
 @@result_cache_b.bdy
 
-@@session_b.spc
-@@session_b.bdy
-
 @@msg_b.spc
 @@msg_b.bdy
 @@msg_c.spc
 @@msg_c.bdy
 
+set define on
+set echo off

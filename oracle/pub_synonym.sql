@@ -20,8 +20,8 @@ create or replace public synonym rb for rb;
 
 prompt for output/response
 create or replace public synonym ext_url_v for ext_url_v;
-create or replace public synonym l for url;
-create or replace public synonym e for e; -- tobe removed
+create or replace public synonym l for url -- shortcut for link to url;
+create or replace public synonym e for e -- tobe removed;
 create or replace public synonym g for g;
 create or replace public synonym k_http for k_http;
 create or replace public synonym h for k_http;
@@ -35,14 +35,14 @@ create or replace public synonym y for style;
 create or replace public synonym tag for tag;
 
 create or replace public synonym tag for tag;
-create or replace public synonym x for tag; -- shortcut for xml/xhtml print
+create or replace public synonym x for tag -- shortcut for xml/xhtml print;
 create or replace public synonym multi for multi;
-create or replace public synonym m for multi; -- shortcut for multiply with template and array data
+create or replace public synonym m for multi -- shortcut for multiply with template and array data;
 
 create or replace public synonym list for list;
-create or replace public synonym tb for list; -- shortcut for table print
+create or replace public synonym tb for list -- shortcut for table print;
 create or replace public synonym tree for tree;
-create or replace public synonym tr for tree; -- shortcut for tree print
+create or replace public synonym tr for tree -- shortcut for tree print;
 
 prompt for call-out request/response
 create or replace public synonym msg_pipe for msg_pipe;

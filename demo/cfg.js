@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-  http_port : 8522,
+  http_port : 8888,
   oracle_port : 1522,
   oracle_keep_alive : 60,
   demo_dbu : 'demo1',
