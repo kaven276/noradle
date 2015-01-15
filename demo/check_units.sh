@@ -13,3 +13,6 @@ rm ./unit_list.txt
 
 # select * from user_dependencies a where a.referenced_owner = 'DEMO1'
 # and a.referenced_name != a.name and a.referenced_name not in ('SRC_B', 'PC');
+
+# check if unit have bom, show have
+head -n 1 * | grep ate | cut -b "4-" | grep create

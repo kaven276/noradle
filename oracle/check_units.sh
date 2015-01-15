@@ -10,3 +10,6 @@ git diff -- ./unit_list.txt
 
 git checkout -- ./unit_list.txt
 rm ./unit_list.txt
+
+# check if unit have bom, show have
+head -n 1 * | grep ate | cut -b "4-" | grep create
