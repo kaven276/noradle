@@ -5,10 +5,15 @@ notes/*
 *Thumbs.db
 oracle/json/*
 doc/notes/*
-pem/*
 .idea/*
 */*.out
 */*.log
 doc/history/*
-refs/*
+doc/site/*
 node_modules/*
+oracle/.idea/*
+doc/
+doc/refs/
+test1/
+dochtml/
+upload/
