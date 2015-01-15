@@ -16,6 +16,11 @@ prompt =====================
 prompt
 @@user_t.tab
 prompt
+prompt Creating table PASSWD_HIS_T
+prompt =====================
+prompt
+@@passwd_his_t.tab
+prompt
 prompt Creating table EMP_T
 prompt ==========================
 prompt
