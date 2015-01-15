@@ -6,6 +6,14 @@
 set define off
 set echo on
 
+whenever sqlerror continue
+prompt Notice: all the drop objects errors can be ignored, do not care about it
+drop table TERM_T cascade constraints;
+drop table USER_T cascade constraints;
+drop table PASSWD_HIS_T cascade constraints;
+drop table EMP_T cascade constraints;
+whenever sqlerror exit
+
 prompt
 prompt Creating table TERM_T
 prompt =====================
