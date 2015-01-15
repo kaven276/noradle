@@ -55,7 +55,9 @@ alter session set current_schema = &pspdbu;
 prompt begin to install Noradle system schema objects
 @@grant2psp.sql
 rem @?/rdbms/admin/dbmshptab.sql
+whenever sqlerror continue
 @@dbmshptab.sql
+whenever sqlerror exit
 @@psp/install_psp_obj.sql
 exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&pspdbu'),false);
 @@contexts.sql
