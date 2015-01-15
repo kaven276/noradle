@@ -65,7 +65,7 @@ whenever sqlerror exit
 remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
 prompt begin to install Noradle system schema objects
 @psp/install_psp_obj.sql
-exec DBMS_UTILITY.COMPILE_SCHEMA('&pspdbu',false);
+exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&pspdbu'),false);
 
 whenever sqlerror continue
 prompt Notice: restore old config data
@@ -103,7 +103,7 @@ prompt begin to install Noradle demo schema objects
 @../demo/schema/install_demo_obj.sql
 
 whenever sqlerror continue
-exec DBMS_UTILITY.COMPILE_SCHEMA('&demodbu',false);
+exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&demodbu'),false);
 insert into ext_url_v(key,prefix) values('myself','/f');
 commit;
 
