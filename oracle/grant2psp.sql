@@ -1,5 +1,5 @@
 grant execute on SYS.PW to &pspdbu;
-grant read, write on directory SYS.PLSHPROF_DIR to PSP;
+grant read, write on directory SYS.PLSHPROF_DIR to &pspdbu;
 
 -- Grant/Revoke object privileges
 grant execute on SYS.DBMS_ALERT to &pspdbu;

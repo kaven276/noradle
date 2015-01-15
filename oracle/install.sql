@@ -52,7 +52,6 @@ remark start $ORACLE_HOME/rdbms/admin/dbmshptab.sql
 remark create directory in SYS, grant read to psp
 prompt Warning: PLSHPROF_DIR is set to '', if use oracle's hprof, set it to valid path afterward.
 CREATE DIRECTORY PLSHPROF_DIR AS '';
-grant read on directory PLSHPROF_DIR to &pspdbu;
 rem @?/rdbms/admin/dbmshptab.sql
 @dbmshptab.sql
 whenever sqlerror exit
