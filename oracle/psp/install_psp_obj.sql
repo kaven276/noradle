@@ -4,7 +4,9 @@
 -----------------------------------------------------
 
 set define off
-set echo on
+set echo off
+
+--------------------------------------------------------------------------------
 
 prompt
 prompt Creating table DBMSHP_RUNS
@@ -27,137 +29,71 @@ prompt ==================================
 prompt
 @@dbmshp_runnumber.seq
 
+--------------------------------------------------------------------------------
 
-prompt
-prompt Creating table EXT_URL_T
-prompt ========================
-prompt
-@@ext_url_t.tab
 prompt
 prompt Creating table SERVER_CONTROL_T
 prompt ===============================
 prompt
 @@server_control_t.tab
 prompt
+prompt Creating table EXT_URL_T
+prompt ========================
+prompt
+@@ext_url_t.tab
+prompt
 prompt Creating view EXT_URL_V
 prompt =======================
 prompt
 @@ext_url_v.vw
-prompt
-prompt Creating package ANY_SERVER
-prompt ===========================
-prompt
-@@any_server.spc
-prompt
-prompt Creating package CACHE
-prompt ======================
-prompt
-@@cache.spc
-prompt
-prompt Creating package DATA_SERVER
-prompt ============================
-prompt
-@@data_server.spc
-prompt
-prompt Creating package E
-prompt ==================
-prompt
-@@e.spc
-prompt
-prompt Creating package G
-prompt ==================
-prompt
-@@g.spc
-prompt
-prompt Creating package GATEWAY
-prompt ========================
-prompt
-@@gateway.spc
-prompt
-prompt Creating package HTTP_SERVER
-prompt ============================
-prompt
-@@http_server.spc
-prompt
-prompt Creating package KV
-prompt ===================
-prompt
-@@kv.spc
-prompt
-prompt Creating package K_CCFLAG
-prompt =========================
-prompt
-@@k_ccflag.spc
-prompt
-prompt Creating package K_CFG
-prompt ======================
-prompt
-@@k_cfg.spc
+
+--------------------------------------------------------------------------------
+
 prompt
 prompt Creating type ST
 prompt ================
 prompt
 @@st.tps
 prompt
-prompt Creating package K_DEBUG
-prompt ========================
-prompt
-@@k_debug.spc
-prompt
-prompt Creating package K_FILTER
-prompt =========================
-prompt
-@@k_filter.spc
-prompt
-prompt Creating package K_GW
-prompt =====================
-prompt
-@@k_gw.spc
-prompt
-prompt Creating package K_HTTP
-prompt =======================
-prompt
-@@k_http.spc
-prompt
-prompt Creating package K_INIT
-prompt =======================
-prompt
-@@k_init.spc
-prompt
-prompt Creating package K_PMON
-prompt =======================
-prompt
-@@k_pmon.spc
-prompt
-prompt Creating package K_SESS
-prompt =======================
-prompt
-@@k_auth.spc
-prompt
 prompt Creating type NT
 prompt ================
 prompt
 @@nt.tps
 prompt
-prompt Creating package K_TYPE_TOOL
-prompt ============================
+prompt Creating package TMP
+prompt ====================
 prompt
-@@k_type_tool.spc
+@@tmp.spc
+
+--------------------------------------------------------------------------------
+
 prompt
-prompt Creating package OUTPUT
-prompt =======================
+prompt Creating package K_CCFLAG
+prompt =========================
 prompt
-@@output.spc
+@@k_ccflag.spc
 prompt
 prompt Creating package PV
 prompt ===================
 prompt
 @@pv.spc
 prompt
-prompt Creating package R
+prompt Creating package STS
+prompt ========================
+prompt
+@@sts.spc
+
+--------------------------------------------------------------------------------
+
+prompt
+prompt Creating package G
 prompt ==================
 prompt
-@@r.spc
+@@g.spc
+@@g.bdy
+
+--------------------------------------------------------------------------------
+
 prompt
 prompt Creating package RA
 prompt ===================
@@ -174,142 +110,122 @@ prompt ===================
 prompt
 @@rc.spc
 prompt
-prompt Creating package RS
-prompt ===================
+prompt Creating package R
+prompt ==================
 prompt
-@@rs.spc
+@@r.spc
+@@r.bdy
+
+--------------------------------------------------------------------------------
+
 prompt
-prompt Creating package TMP
-prompt ====================
+prompt Creating package K_TYPE_TOOL
+prompt ============================
+rem rely on r.client_addr in .gen_token
 prompt
-@@tmp.spc
+@@k_type_tool.spc
+@@k_type_tool.bdy
+prompt Creating package E
+prompt ==================
+prompt
+@@e.spc
+@@e.bdy
+prompt
+prompt Creating package K_DEBUG
+prompt ========================
+prompt
+@@k_debug.spc
+@@k_debug.bdy
+
+prompt Creating package OUTPUT
+prompt =======================
+prompt
+@@output.spc
+@@output.bdy
+prompt Creating function url
+prompt ========================
+prompt
+@@url.fnc
+prompt
+prompt Creating package K_HTTP
+prompt =======================
+prompt
+@@k_http.spc
+@@k_http.bdy
+
+--------------------------------------------------------------------------------
+
+
+prompt
+prompt Creating package K_FILTER
+prompt =======================
+prompt
+@@k_filter.spc
+@@k_filter.bdy
+prompt
+prompt Creating package K_GW
+prompt =====================
+prompt
+@@k_gw.spc
+@@k_gw.bdy
 prompt
 prompt Creating procedure DAD_AUTH_ENTRY
 prompt =================================
 prompt
 @@dad_auth_entry.prc
 prompt
-prompt Creating package body ANY_SERVER
-prompt ================================
-prompt
-@@any_server.bdy
-prompt
-prompt Creating package body CACHE
-prompt ===========================
-prompt
-@@cache.bdy
-prompt
-prompt Creating package body DATA_SERVER
-prompt =================================
-prompt
-@@data_server.bdy
-prompt
-prompt Creating package body E
+prompt Creating package K_INIT
 prompt =======================
 prompt
-@@e.bdy
-prompt
-prompt Creating package body G
-prompt =======================
-prompt
-@@g.bdy
-prompt
-prompt Creating package body GATEWAY
-prompt =============================
-prompt
-@@gateway.bdy
-prompt
-prompt Creating package body HTTP_SERVER
-prompt =================================
-prompt
-@@http_server.bdy
-prompt
-prompt Creating package body KV
-prompt ========================
-prompt
-@@kv.bdy
-prompt
-prompt Creating package body K_CFG
-prompt ===========================
-prompt
-@@k_cfg.bdy
-prompt
-prompt Creating package body K_DEBUG
-prompt =============================
-prompt
-@@k_debug.bdy
-prompt
-prompt Creating package body K_FILTER
-prompt ==============================
-prompt
-@@k_filter.bdy
-prompt
-prompt Creating package body K_GW
-prompt ==========================
-prompt
-@@k_gw.bdy
-prompt
-prompt Creating package body K_HTTP
-prompt ============================
-prompt
-@@k_http.bdy
-prompt
-prompt Creating package body K_INIT
-prompt ============================
-prompt
+@@k_init.spc
 @@k_init.bdy
 prompt
-prompt Creating package body K_PMON
+prompt Creating package HTTP_SERVER
 prompt ============================
 prompt
-@@k_pmon.bdy
+@@http_server.spc
+@@http_server.bdy
 prompt
-prompt Creating package body K_SESS
+prompt Creating package DATA_SERVER
 prompt ============================
 prompt
-@@k_auth.bdy
+@@data_server.spc
+@@data_server.bdy
 prompt
-prompt Creating package body K_TYPE_TOOL
-prompt =================================
+prompt Creating package ANY_SERVER
+prompt ===========================
 prompt
-@@k_type_tool.bdy
-prompt
-prompt Creating package body OUTPUT
-prompt ============================
-prompt
-@@output.bdy
-prompt
-prompt Creating package body R
-prompt =======================
-prompt
-@@r.bdy
-prompt
-prompt Creating package body RS
-prompt ========================
-prompt
-@@rs.bdy
-prompt
-
-prompt Creating package STS
-prompt ========================
-prompt
-@@sts.spc
-
+@@any_server.spc
+@@any_server.bdy
+@@k_cfg.spc
+@@k_cfg.bdy
 prompt Creating package K_MAPPING
 prompt ========================
 prompt
 @@k_mapping.spc
 @@k_mapping.bdy
-
+prompt
+prompt Creating package K_CFG
+prompt ======================
+prompt
+prompt Creating package GATEWAY
+prompt ========================
+prompt
+@@gateway.spc
+@@gateway.bdy
+prompt
 prompt Creating procedure kill
 prompt ========================
 prompt
 @@kill.prc
-
-prompt Creating function url
-prompt ========================
 prompt
-@@url.fnc
+prompt Creating package K_PMON
+prompt =======================
+prompt
+@@k_pmon.spc
+@@k_pmon.bdy
+
+--------------------------------------------------------------------------------
 
 prompt Creating package TAG
 prompt ========================
@@ -341,11 +257,41 @@ prompt
 @@tree.spc
 @@tree.bdy
 
+prompt
+prompt Creating package RS
+prompt ===================
+prompt
+@@rs.spc
+@@rs.bdy
+
 prompt Creating package MSG_PIPE
 prompt ========================
 prompt
 @@msg_pipe.spc
 @@msg_pipe.bdy
+
+--------------------------------------------------------------------------------
+
+prompt
+prompt Creating package KV
+prompt ===================
+prompt
+@@kv.spc
+@@kv.bdy
+prompt
+prompt Creating package CACHE
+prompt ======================
+prompt
+@@cache.spc
+@@cache.bdy
+prompt
+prompt Creating package K_AUTH
+prompt =======================
+prompt
+@@k_auth.spc
+@@k_auth.bdy
+
+--------------------------------------------------------------------------------
 
 set echo off
 set define on
