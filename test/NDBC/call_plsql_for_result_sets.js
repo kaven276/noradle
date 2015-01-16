@@ -17,7 +17,7 @@ var Noradle = require('noradle')
 
 // servlet = 'question.test_b.ds_post_tree';
 
-var dbPool = new Noradle.DBPool(1522, {
+var dbPool = new Noradle.DBPool(2522, {
   FreeConnTimeout : 60000
 });
 var dbc = new Noradle.NDBC(dbPool, {
