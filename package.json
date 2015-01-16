@@ -2,7 +2,7 @@
   "author" : "Li Yong <kaven276@vip.sina.com>",
   "name" : "noradle",
   "description" : "A NodeJS and Oracle DB integration, NodeJS act as http gateway for plsql server pages",
-  "version" : "0.9.2",
+  "version" : "0.10.0",
   "homepage" : "https://github.com/kaven276/noradle",
   "repository" : {
     "type" : "git",
