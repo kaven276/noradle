@@ -4,7 +4,7 @@
 -----------------------------------------------------
 
 set define off
-set echo off
+set echo on
 
 whenever sqlerror continue
 prompt Notice: all the drop objects errors can be ignored, do not care about it

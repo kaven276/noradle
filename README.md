@@ -1,5 +1,8 @@
 Noradle is for Node & Oracle integration. Noradle has three large parts.
 
+The formal repository name is 'noradle',
+see [noradle](https://github.com/kaven276/noradle) for latest version.
+
 
 The work at Now
 ==========
@@ -60,6 +63,15 @@ and convert them into javascript objects.
 or see ready demo server at http://unidialbook.com/demo.
 All noradle features are shown in demo app.
 
+### Minimal Prequirement
+
+All you need to install is just node and oracle, no any type of oracle client driver required,
+no oracle instant client required.
+If you can install node and oracle on your server, any OS, you can install noradle on your server.
+
+Noradle will install two parts,
+one is node javascript code, run on top of node,
+the other is oracle schema units, install/run on top of oracle database.
 Part 1 : psp.web (plsql http servlet)
 ==========
 
