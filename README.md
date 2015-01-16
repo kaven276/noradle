@@ -98,7 +98,7 @@ see demo app for all of above.
 
 ## documentation links
 
-_Note: doc content may be old or obsolete.
+_Note: doc content may be old or obsolete._
 
 please see [Introduction](doc/introduction.md) at doc/introduction.md on github (format will lose)
 
@@ -360,6 +360,8 @@ end;
 ```
 
 ## use default named pipe, sep by line message format, use standard print API to generate request demo
+
+### The node javascript client who listen call-out message from oracle plsql servlet
 
 ``` javascript
 
