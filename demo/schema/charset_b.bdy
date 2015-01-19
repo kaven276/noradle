@@ -1,8 +1,11 @@
 create or replace package body charset_b is
 
+	-- utl_i18n.string_to_raw(n'none-ascii string', 'AL32UTF8')
+
 	procedure form is
 		v_src varchar2(200) := 'E3818DCEA609D8A6D985D8B9D8AAD8AFD984E184ACE1B4ABE1BC8EE3818EE3839E';
 		ncstr nvarchar2(100) := utl_i18n.raw_to_nchar(hextoraw(v_src), 'AL32UTF8');
+		v_ch  nvarchar2(100) := utl_i18n.raw_to_nchar('E4B8ADE69687', 'AL32UTF8');
 		v_raw raw(4000);
 		vc    varchar2(100);
 		nvc   nvarchar2(100);
@@ -87,7 +90,7 @@ create or replace package body charset_b is
 		-- basic_io_b.req_info
 		x.o('<form name=f,action=charset_b.form,method=post>'); -- accept-charset="gbk"
 		x.v(' <input type=text,name=url>', 'http://www.google.com?q=HELLO');
-		x.v(' <input type=ch,name=url>', 'ÖÐÎÄ');
+		x.v(' <input type=ch,name=url>', v_ch);
 		x.v(' <input type=text,name=en>', 'english');
 		x.v(' <input type=text,name=utf>', ncstr);
 		x.s(' <input type=submit>');
@@ -97,6 +100,7 @@ create or replace package body charset_b is
 	end;
 
 	procedure test is
+		v_liyong nvarchar2(100) := utl_i18n.raw_to_nchar('E69D8EE58B87', 'AL32UTF8');
 	begin
 		--h.content_type('text/html', 'utf-8');
 		h.content_type('text/html', 'GBK');
@@ -105,7 +109,7 @@ create or replace package body charset_b is
 		pc.h;
 		for i in 1 .. 1000 loop
 			for j in 1 .. 20 loop
-				x.p('<p>', 'ÀîÓÂ');
+				x.p('<p>', v_liyong);
 			end loop;
 			h.line('<br/>');
 			-- h.flush;
