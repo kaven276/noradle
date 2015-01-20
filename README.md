@@ -63,15 +63,39 @@ and convert them into javascript objects.
 or see ready demo server at http://unidialbook.com/demo.
 All noradle features are shown in demo app.
 
-### Minimal Prequirement
+Installation
+===========================
 
-All you need to install is just node and oracle, no any type of oracle client driver required,
-no oracle instant client required.
-If you can install node and oracle on your server, any OS, you can install noradle on your server.
+### Prequirement
 
-Noradle will install two parts,
-one is node javascript code, run on top of node,
-the other is oracle schema units, install/run on top of oracle database.
+* Oracle Instant Client or Any Oracle Client is installed first
+* Python, used by node-gyp
+* C++ Compiler toolchain (GCC, Visual Studio or similar)
+* set ENV variables OCI_LIB_DIR, OCI_INCLUDE_DIR, OCI_VERSION, NLS_LANG
+* Create symlinks for libclntsh and libocci
+* (Linux) Install libaio
+* Configure the dynamic library path on your platform to include $OCI_LIB_DIR
+
+<p style="color:red;">*No No No*, all item in the above list is not required at all.</p>
+
+  All you need to install on is just node and oracle,
+there are no any types of oracle client driver required,
+nor oracle instant client required.
+If you can install node and oracle on your server on any OS,
+you can install noradle on your server.
+
+### install on OS filesystem and ORACLE database
+
+  Noradle will install two parts:
+
+* one is node javascript code,
+run on top of node,
+`npm -g install noradle` is ok.
+* the other is oracle schema units,
+install/run on top of oracle database.
+`cd oracle && sqlplus "/ as sysdba" @install.sql` will create supporting schema and its objects in oracle database.
+
+
 Part 1 : psp.web (plsql http servlet)
 ==========
 
