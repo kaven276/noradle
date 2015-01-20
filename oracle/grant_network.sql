@@ -7,7 +7,7 @@ begin
 	begin
 		dbms_network_acl_admin.create_acl(acl         => 'noradle.xml',
 																			description => 'oracle2nodejs',
-																			principal   => 'PSP',
+																			principal   => '&pspdbu',
 																			is_grant    => true,
 																			privilege   => 'connect');
 	exception
@@ -17,11 +17,11 @@ begin
 	-- when acl "noradle.xml" exists, execute .add_privilege is ok,
 	-- for example, when you reinstall psp schema
 	dbms_network_acl_admin.add_privilege(acl       => 'noradle.xml',
-																			 principal => 'PSP',
+																			 principal => '&pspdbu',
 																			 is_grant  => true,
 																			 privilege => 'connect');
 	-- for each record in server_control_t, call assign_acl to grant network access right from oracle to nodejs
-	dbms_network_acl_admin.assign_acl(acl => 'noradle.xml', host => '127.0.0.1');
+	dbms_network_acl_admin.assign_acl(acl => 'noradle.xml', host => '*');
 	commit;
 end;
 /
