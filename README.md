@@ -470,3 +470,8 @@ begin
   x.t('temperature is ' || r.getn('temperature') || ' degree');
 end;
 ```
+
+### ECO-System
+
+* see [noradle-cm](https://github.com/kaven276/noradle-cm)
+for how to do *Software Configuration Management* with noradle app(PLSQL app).
