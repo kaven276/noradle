@@ -1,6 +1,0 @@
-create table RAND_T
-(
-  V VARCHAR2(32)
-)
-;
-
