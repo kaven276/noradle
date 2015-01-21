@@ -36,7 +36,8 @@
   "dependencies" : {},
   "devDependencies" : {},
   "optionalDependencies" : {
-    "formidable" : ">1.0.11"
+    "formidable" : ">1.0.11",
+    "debug" : "~2.1.1"
   },
   "bugs" : {
     "url" : "https://github.com/kaven276/noradle/issues",
