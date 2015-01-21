@@ -6,6 +6,11 @@ prompt Are you sure that you are in the Noradle(psp.web) project's oracle subdir
 pause if not, break(CTRL-C) and cd it and retry ...
 whenever sqlerror exit
 
+rem drop user psp cascade;
+rem create user psp identified by psp default tablespace sysaux temporary tablespace temp;
+rem drop user demo cascade;
+rem create user demo identified by demo default tablespace sysaux temporary tablespace temp;
+
 set define on
 
 prompt Installing objects in sys,

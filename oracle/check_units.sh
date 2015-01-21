@@ -13,3 +13,5 @@ rm ./unit_list.txt
 
 # check if unit have bom, show have
 head -n 1 * | grep ate | cut -b "4-" | grep create
+
+# select lower(a.object_name) from user_objects a where a.object_name not like 'SYS_%' order by 1 asc

@@ -14,7 +14,7 @@
     "ndbc",
     "pool"
   ],
-  "version" : "0.10.2",
+  "version" : "0.10.3",
   "homepage" : "https://github.com/kaven276/noradle",
   "repository" : {
     "type" : "git",
@@ -22,7 +22,6 @@
   },
   "main" : "server.js",
   "bin" : {
-    "noradleCombined" : "./bin/noradleCombined"
   },
   "scripts" : {
     "start" : "node demo/server.js",
