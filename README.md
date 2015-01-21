@@ -473,5 +473,8 @@ end;
 
 ### ECO-System
 
+* see [noradle-demo](https://github.com/kaven276/noradle-demo)
+for example app of noradle
+that use http servlet, NDBC call, call-out features.
 * see [noradle-cm](https://github.com/kaven276/noradle-cm)
 for how to do *Software Configuration Management* with noradle app(PLSQL app).
