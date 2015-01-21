@@ -478,3 +478,8 @@ for example app of noradle
 that use http servlet, NDBC call, call-out features.
 * see [noradle-cm](https://github.com/kaven276/noradle-cm)
 for how to do *Software Configuration Management* with noradle app(PLSQL app).
+* see [unidialbook](http://unidialbook.com)
+for a noradle based production app.
+It's a chinese language SAAS web app that serve address book for group customers,
+developed for China Unicom(Tianjin).
+And unidialbook have some shared plugin app like EXAM, they are all noradle based.
