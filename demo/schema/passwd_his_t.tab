@@ -1,8 +1,0 @@
-create table PASSWD_HIS_T
-(
-  name     VARCHAR2(30),
-  passwd   VARCHAR2(30),
-  chg_time DATE
-)
-;
-

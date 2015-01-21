@@ -1,1 +1,0 @@
-  By default setting, all upload file will be placed in this directory.

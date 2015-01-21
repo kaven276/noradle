@@ -1,1 +1,0 @@
-console.log('url_test2_b/proc.js executed!');
