@@ -14,7 +14,17 @@ Object.defineProperties(exports, {
 
   servlet : {
     get : function(){
-      return require('./lib/servlet.js');
+      return require('./lib/handlerHTTP.js');
+    }
+  },
+  handlerHTTP : {
+    get : function(){
+      return require('./lib/handlerHTTP.js');
+    }
+  },
+  handlerFastCGI : {
+    get : function(){
+      return null;
     }
   },
   NDBC : {
