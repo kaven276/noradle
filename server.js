@@ -14,7 +14,7 @@ Object.defineProperties(exports, {
 
   servlet : {
     get : function(){
-      return require('./lib/server.js');
+      return require('./lib/servlet.js');
     }
   },
   NDBC : {
