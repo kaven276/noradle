@@ -1,6 +1,6 @@
 <script src="header.js"></script>
 
-<div id="title"> Introduction to Noradle(PSP.WEB)   </div>
+<div id="title"> Introduction to Noradle </div>
 
 <style>
 div.path{display:inline-block;font-size:smaller;}
