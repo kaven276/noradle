@@ -113,8 +113,11 @@ span.psp_logo {
 }
 
 span.psp_logo b,
+span.psp_logo s,
 span.psp_logo i {
     font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
 }
 
 span.psp_logo b {
@@ -123,6 +126,10 @@ span.psp_logo b {
 
 span.psp_logo i {
     color: red /*#2A3FAA*/;
+}
+
+span.psp_logo s {
+    color: red;
 }
 
 span.footer {
@@ -134,7 +141,7 @@ dl {
     line-height: 1.3em;
 }
 
-dl>dt {
+dl > dt {
     margin-bottom: 0.4em;
     margin-top: 0.6em;
 }
