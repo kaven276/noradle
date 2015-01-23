@@ -7,8 +7,19 @@ div.path{display:inline-block;font-size:smaller;}
 </style>
 
 
-What's PSP.WEB
+What's NORADLE
 ===============
+
+  <span class="psp_logo"><b>N</b><s>O</s></b><i>RA</i><b>D</b><i>L</i><s>E</s></span>
+is fertilized from <span class="psp_logo"><b>NODE</b></span> and <span class="psp_logo"><i>ORACLE</i></span>,
+node's color is green,
+oracle' colore is red,
+the first green char <span class="psp_logo">**<b>N</b>**</span> say that the node in front of oracle, will conduct http/ndbc access to oracle,
+this middle green char <span class="psp_logo">**<b>D</b>**</span> say that in oracle PL/SQL code, you can call out with support of node.
+
+  Noradle is former named **PSP.WEB**,
+PSP.WEB is focused on access PL/SQL servlet from HTTP,
+but noradle is now extended with NDBC and call-out support.
 
   PSP.WEB is the short term   
 of "PL/SQL Stored Procedure for WEB"   
@@ -37,11 +48,51 @@ or "PAGE of Stored Procedure for WEB".
    url will map to the target PL/SQL unit( packaged procedure or standalone procedure),
    that PL/SQL unit is just a servlet.
 
-Why invent PSP.WEB
+
+one look
 ===============
 
-  I prefer to put all logic that deals with data in PLSQL. There is no more natural language to interact with SQL
-  data than PLSQL, None. PL/SQL has natural advantages, using PL/SQL to develop web site/application is seductive. But naturally, PL/SQL have no touch with http protocol, If we provide a http listener (such as nodeJS based) that can communicate with oracle PL/SQL, we can invent a whole new stored-procedure based web platform that is the most integrated and convenient platform taking both application layer and database layer together. That is just the way PSP.WEB do. Now PL/SQL leverage its power to web development in it's most. All the sections below will tell you the unique features of PSP.WEB that other web-dev techs do not reach.
+```plsql
+procedure demo is
+  v_uid varchar2(30);
+  v emp_t%rowtype;
+begin
+  v_uid := r.getc('uid');
+  select a.* into v from emp_t a where a.uid = v_uid;
+  x.t('<!DOCTYPE html');
+  x.o('<html>');
+  x.o('<body');
+  x.p('<h1>', v.user_name);
+  x.p('<p>', v.xxx);
+  ...
+  x.c('</body>');
+  x.c('</html>');
+end;
+```
+
+Why invent NORADLE
+==================
+
+  I prefer to put all logic that deals with data in PLSQL.
+There is no more natural language to interact with SQL data than PLSQL, None.
+PL/SQL has natural advantages,
+using PL/SQL to develop web site/application is seductive.
+
+  But naturally, PL/SQL have no touch with http protocol,
+If we provide a http listener (such as nodeJS based) that can communicate with oracle PL/SQL,
+we can invent a whole new stored-procedure based web platform.
+
+  And nodejs is raising as a powerful creative web platform,
+but node doesn't have a good way to access ORACLE yet,
+ (note: there is [node-oracle](https://www.npmjs.com/package/oracle), but its a bit of awkward, complex to install)
+
+  With aid of NODE,
+NORACLE is born,
+all business logic in a information system is implemented in PL/SQL code,
+That is the most integrated and convenient platform taking both application layer and database access/data layer together.
+That is just the way PSP.WEB do.
+Now PL/SQL leverage its power to web development in it's most.
+All the sections below will tell you the unique features of PSP.WEB that other web-dev techs do not reach.
 
 ## avoid database connection related work
 
@@ -81,9 +132,9 @@ What is Noradle
 use cases:
 
 1. psp.web: nodejs as http reverse proxy, oracle implement the http server as a servlet container
-2. DBCall : nodejs db access driver, get sql result sets, post changes, by specify target procedure and send parameters
+2. NDBC : nodejs db access connectivity, get sql result sets, post changes, by specify target procedure and request parameters
 3. Ajax/WS data src : browser can feed sql results sets and JSON for ajax or websocket request
-3. DCO: oracle can call nodejs worker proxy through ext-hub, extending oracle's capability
+3. Call-Out: oracle can send message to node, implemented by repeated NDBC call, extending oracle's capability
 
 Compare to other platforms
 =================
@@ -121,8 +172,9 @@ Compare to Oracle's APEX
 
   The good to use PL/SQL for web is for write data processing ode in IDE like "PL/SQL Developer", intelligent code assistant is there, but when you use APEX, all the goods are lost. I's difficult to write a simple sql or pl/sql. Apex just throw away the only real valuable feature (stuck to easy data process coding) of oracle development, and trade it for the self pleased so limited wizard, predefined design patterns. 
 
-Compare to J2EE (and other platforms that a language different than PL/SQL to do logic and connect to db for data processing)
+Compare to J2EE
 ------------------
+(and other platforms that a language different than PL/SQL to do logic and connect to db for data processing)
 
   For J2EE, I never felt I need anything beyond tomcat and JDBC connection to the database. All these
 Enterprise Beans, OR-Mapping, eXtremely Messy Language, SOAP, etc are for SQL challenged developers only.

@@ -76,7 +76,7 @@ Installation
 * (Linux) Install libaio
 * Configure the dynamic library path on your platform to include $OCI_LIB_DIR
 
-<p style="color:red;">*No No No*, all item in the above list is not required at all.</p>
+<p style="color:red;">*No No No*, all items in the above list is not required at all.</p>
 
   All you need to install on is just node and oracle,
 there are no any types of oracle client driver required,
@@ -119,7 +119,8 @@ call `h.write` to print response body.
 
 ```
 
-see './demo/server.js' for how to integrate a noradle servlet engine to a node http server.
+see [noradle-demo](https://github.com/kaven276/noradle-demo) 'server.js'
+for how to integrate a noradle servlet engine to a node http server.
 
 ##  Noradle support concise printing API as below:
 
