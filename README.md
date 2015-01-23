@@ -1,8 +1,17 @@
-Noradle is for Node & Oracle integration. Noradle has three large parts.
+Noradle is for Node & Oracle integration,
+with the aid of Node,
+just write nearly all business logic in a infomation system in PL/SQL store procedure code,
+node, in front of oracle, provide access to oracle by HTTP,
+and node javascript code can access oracle directly by noradle NDBC,
+oracle plsql can send out message to node by repeat NDBC call.
 
 The formal repository name is 'noradle',
-see [noradle](https://github.com/kaven276/noradle) for latest version.
+**all-node-oracle** is just a synonym used for npm search and github search,
+never `npm install all-node-oracle`.
 
+see [noradle](https://github.com/kaven276/noradle) for latest version in github.
+
+see [noradle](https://www.npmjs.com/package/noradle) for latest npm publishment in npm registry.
 
 The work at Now
 ==========
@@ -38,7 +47,7 @@ use repeated NDBC call-in to listen to pipe message(as call-out request header/b
 
 
 
-##  The noradle project is now advanced to v0.10 release.
+##  The noradle project is now advanced to v0.10.x release.
 
 ## Roadmap:
 
@@ -59,6 +68,8 @@ and receive and transfer back what the PL/SQL produce.
 and convert them into javascript objects.
 3. call out facility as repeated call in listen for new messages.
 
+see [Introduction](http://docs.noradle.com/introduction.html) for more intro.
+
 `cd ./demo && node server.js` will start demo server.
 or see ready demo server at http://unidialbook.com/demo.
 All noradle features are shown in demo app.
@@ -76,7 +87,7 @@ Installation
 * (Linux) Install libaio
 * Configure the dynamic library path on your platform to include $OCI_LIB_DIR
 
-<p style="color:red;">*No No No*, all items in the above list is not required at all.</p>
+**No No No, all items in the above list is not required at all.**
 
   All you need to install on is just node and oracle,
 there are no any types of oracle client driver required,
@@ -95,6 +106,7 @@ run on top of node,
 install/run on top of oracle database.
 `cd oracle && sqlplus "/ as sysdba" @install.sql` will create supporting schema and its objects in oracle database.
 
+see [Deployment](http://docs.noradle.com/deployment.html) for detailed info.
 
 Part 1 : psp.web (plsql http servlet)
 ==========
