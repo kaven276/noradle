@@ -309,6 +309,14 @@ var server = http.createServer(plsqlServletHandler).listen(cfg.http_port, functi
 
 ## use noradle NDBC to access oracle
 
+`var dbc = new Noradle.NDBC(dbPool, defaultParams)`
+
+`dbc.call(procedureName, parameters)`
+
+internal control parameters
+
+* __parse : if parse response according to **Content-type**
+* __repeat : if repeat the call to the same procedure with same parameter
 
 ```javascript
 var Noradle = require('noradle')

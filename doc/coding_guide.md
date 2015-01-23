@@ -4,6 +4,23 @@
 
   I'm sorry that this programming guide is just a skeleton, I'll write details later, but the demo can tell your how to use the API PSP.WEB provide because most of features this doc describe is also covered in DEMO.
 
+Brief Coding Considerations
+============================
+* use package, not standalone procedure
+  - this bring group of pages to reference each other easy
+  - this bring group of pages to share common private sub-procedures more easy
+  - this support package variables and type definition and packaged cursors
+* do not use input parameter, use env parameter by r.xxx API
+  - this keep package spec static, not affected by parameter change, isolate recompilation of dependent units
+  - this reduce the definition of parameter variables, use r.xxx directly, so reduce code lines
+  - this encourage use of filter and common components, they do not to transfer parameters any more
+* use %rowtype to easy define local variable, and SQL bind to %rowtype var is concise
+* use common reused component that accept sys_refcursor input parameter
+* use _ prefixed http parameter for deep parse
+* for loop once / exit to quit block immediately
+* plan the tag structure of you Noradle page, so pl/sql code need not modified for tag structure change.
+
+
 Basic PL/SQL programming
 ==============
 
@@ -15,20 +32,22 @@ features that save the amount of code
 
   Using table%rowtype will eliminate most of the data-structure matching variable declarations, it greatly ease your development than other web development language.
 
-	procedure a
-	is
-		v table1%rowtype;
-		u table2%rowtype;
-		w table3%rowtype;
-		-- normally 3 rowtype variables is enough
-	begin
-		v.col1 := xxx;
-		u.col2 := xxx;
-		insert into table1 values v;
-		update table2 a set row = u where a.col2 = u.col2;
-		w.col1 := v.col1;
-		w.col2 := u.col2;
-	end;
+```plsql
+procedure a
+is
+  v table1%rowtype;
+  u table2%rowtype;
+  w table3%rowtype;
+  -- normally 3 rowtype variables is enough
+begin
+  v.col1 := xxx;
+  u.col2 := xxx;
+  insert into table1 values v;
+  update table2 a set row = u where a.col2 = u.col2;
+  w.col1 := v.col1;
+  w.col2 := u.col2;
+end;
+```
 
 	declaration
 	sql binding
@@ -37,19 +56,20 @@ features that save the amount of code
 
   Using tmp.xxx, you don't need to declare your own local variables for temporary work, such save declaration lines, If you need to a variable to hold the temporary result or staging info, using tmp.xxx is very handy.
 
-	select count(*) into tmp.cnt from table;
-	tmp.s := 'This is ';
-	tmp.s := tmp.s || ' a exmample';
-	p.p(tmp.s);
-	tmp.i = 0;
-	loop
-		tmp.i := tmp.i + 1;
-		exit when ???
-		...
-	end loop;
-	tmp.st := st(1,2,3);
-	p.ps(tmp.s, tmp.st);
-	
+```plsql
+select count(*) into tmp.cnt from table;
+tmp.s := 'This is ';
+tmp.s := tmp.s || ' a exmample';
+p.p(tmp.s);
+tmp.i = 0;
+loop
+  tmp.i := tmp.i + 1;
+  exit when ???
+  ...
+end loop;
+tmp.st := st(1,2,3);
+p.ps(tmp.s, tmp.st);
+```
 	
 advanced sql parameter binding
 -------------------
@@ -103,60 +123,33 @@ common sql writing skill
 
   If we scan all rows for existence check, we do waste computing resource, we can break if we meet the first matching row, there are two ways for that, see below:
 
-	select count(*) into tmp.cnt from table a where a.xxx='???' and rownum=1;
-	if tmp.cnt=0 then
-		-- none exist
-	else
-		-- exist
-	end if;
-	
-	or
-	
-	for i in (select /*+ first_rows */ from table a where a.xxx='???') loop
-		-- exist
-		exit; -- quit loop
-	end loop;
+```plsql
+select count(*) into tmp.cnt from table a where a.xxx='???' and rownum=1;
+if tmp.cnt=0 then
+  -- none exist
+else
+  -- exist
+end if;
+```
+or
+```plsql
+for i in (select /*+ first_rows */ from table a where a.xxx='???') loop
+  -- exist
+  exit; -- quit loop
+end loop;
+```
 
   If we want a matching row together, see below:
 
-	begin
-		select a.* into v_row_type_val from table a where a.xxx = '???' and rownum = 1;
-		-- exist
-	exception
-		when no_data_found then
-			-- none exist
-	end;
-
-Naming convention
-==============
-
-### unit(package or standalone procedure) suffix naming convention (_b, _c, _h, _e)
-
-* _b is for unit that is read only and generating http result page
-* _c is for unit that do data process according to http request info, and guide user to feedback page or next page
-* _h is for unit that accept ajax http requests
-* _e is for internal(not accessible from url) data manipulation
-
-### specialized package (pv, rcpv, rc)
-
-  Use package pv (or some other short name) to hold package variables.
-
-  Use package rcv to hold any result-cached table rows for the current request
-
-  Use package rc for populating rcv data
-
-### local variable (v,u,w, v_xxx)
-
-* v,u,w for %rowtype
-* v_xxx for other local variables
-
-### package variable (gv_xxx)
-
-  PSP.WEB doesn't recommand use of package variables with package body or package code, if you need package variables, do define them in dedicated package specification that do not have a package body. But if you do want it, name it gv_xxx, gv stand for global varaible.
-
-### parameter (p_xxx)
-
-  All DHC layer unit will not have any parameter, then get the http request into through API r, but entity layer unit do have parameters, because entity layer unit will including lot of sql text that will use the parameter as bind variable, to avoid the naming conflicts of table's column names and procedure parameters, PSP.WEB recommand using p_xxx to name parameters, prefix *p_* stand for parameter
+```plsql
+begin
+  select a.* into v_row_type_val from table a where a.xxx = '???' and rownum = 1;
+  -- exist
+exception
+  when no_data_found then
+    -- none exist
+end;
+```
 
 layers of code
 ==============
@@ -200,6 +193,37 @@ _s (session) layer
 Because oracle require any GAC namespace to be accessed from specified plsql unit, "_s" suffixed unit should be given
  the right. So any of the browser session data such as login-name, last-access-time can be get/set by "_s" unit.
 
+Naming convention
+==============
+
+### unit(package or standalone procedure) suffix naming convention (_b, _c, _h, _e)
+
+* _b is for unit that is read only and generating http result page
+* _c is for unit that do data process according to http request info, and guide user to feedback page or next page
+* _h is for unit that accept ajax http requests
+* _e is for internal(not accessible from url) data manipulation
+
+### specialized package (pv, rcpv, rc)
+
+  Use package pv (or some other short name) to hold package variables.
+
+  Use package rcv to hold any result-cached table rows for the current request
+
+  Use package rc for populating rcv data
+
+### local variable (v,u,w, v_xxx)
+
+* v,u,w for %rowtype
+* v_xxx for other local variables
+
+### package variable (gv_xxx)
+
+  PSP.WEB doesn't recommand use of package variables with package body or package code, if you need package variables, do define them in dedicated package specification that do not have a package body. But if you do want it, name it gv_xxx, gv stand for global varaible.
+
+### parameter (p_xxx)
+
+  All DHC layer unit will not have any parameter, then get the http request into through API r, but entity layer unit do have parameters, because entity layer unit will including lot of sql text that will use the parameter as bind variable, to avoid the naming conflicts of table's column names and procedure parameters, PSP.WEB recommand using p_xxx to name parameters, prefix *p_* stand for parameter
+
 basic web developing
 ==============
 
@@ -221,8 +245,46 @@ procedure set_line_break(nlbr varchar2);
 * h.set_line_break(nlbr) : set the newline break character(s), usually LF,CR,CRLF
 * by default new line use LF or chr(10)
 
-basic html printing by p.xxx API
+tag/html/xml printing
 --------------
+
+* `p.*` : old complex deprecate API
+* `x.* (tag.*)` : concise basic tag output, recommended
+* `m.* (multi.*)` : concise template repeater, recommended
+* `attr.*` : pre set following tag's attributes
+* `tagp.*` : use attr.* to fill in its tag's attributes
+
+
+They are all based on the above h.xxx basic output API.
+
+You can reference their respective documents.
+
+how to write URL
+--------------
+
+l(origin_url) -> prefix converted url
+
+### @ stand for name of the current package or standalone procedure, but cut the one type suffix character.
+for example, default_b.d is executing,
+l('@b.proc1') get default_b.proc1
+l('@b/script1.js') get static file for packs/default_b/script1.js
+
+### * stand for the whole name of the pack.proc, but "." is replace with "/"
+for example, default_b.d is executing,
+l('*.css') get static file for packs/default_b/d.css
+
+### ^ stand for the app/schema's static root
+for example, default_b.d is executing,
+l('^pub/img/img1.png') get static file for pub/img/img1.png
+
+### \ stand for the site's static root
+l('\demo/pub/img/img1.png') get static file for /demo/pub/img/img1.png
+
+### = stand for not change
+l('=http://xxx/xxx') converted to http://xxx/xxx
+
+### [key] stand for key/full url lookup in ext_url_v view
+
 
 get request info by r.xxx API
 --------------
@@ -417,264 +479,6 @@ http header control with h.xxx API
 ### ensure response entity's integrity with content-md5
 
 ### control request method match the requested PL/SQL unit
-
-how to write URL
---------------
-
-advanced p.xxx APIs
---------------
-
-### bulk binding
-
-### extension APIs 
-
-### component css
-
-### scalable css
-
-
-HTML Printing API
-====================
-
-### API classification
-
-
-### in header
-
-	p.script(s), p.link(s)
-	p.script_text, p.style_text
-	p.style_open, p.style_close;
-	p.script_open, p.script_close;
-	p.js
-	p.css
-	p.meta_http_equiv
-	p.meta_name
-	p.base(base,target)
-
-If p.js is in `<script>`, It is the same as p.line. If p.css is in `<style>`, It is the same as p.css.
-
-### standalone empty content tags
-
-	p.br, p.hr
-	p.img, p.input
-	p.script(s), p.link(s)
-	p.iframe, p.frame(oc)
-
-### element with url link
-
-	link(href, ...)
-	script(src, ...)
-
-	form ( name, action, ...)
-	frame ( name, src, ...)
-	iframe( name, src, ...)
-	xml ( id, src, ...)
-
-	a ( text, href , ...)
-	img ( src, ... )
-
-### form
-
-support left/right formatted layout with div/span wrapper
-
-	p.fieldset_open;
-	p.legend;
-	p.form_open;
-	p.label;
-	... (as form input below)
-	p.form_close;
-	p.fieldset_close;
-
-The result may be
-
-	<fieldset>
-	<form>
-		<dl>
-			<dt>xxx</dt>
-			<dd><input type="text"/></dd>
-		</dl>
-		<dl>
-			<dt>xxx</dt>
-			<dd>
-				<label><input type='checkbox|radio' value="xxx" /></label>
-				<label><input type='checkbox|radio' value="xxx"" /></label>
-				<label><input type='checkbox|radio' value="xxx" /></label>
-			</dd>
-		</dl>
-	</form>
-	</fieldset>
-
-
-<label>this is <input type='checkbox' value='1' /></label>
-
-### form input
-
-	p.in_hidden
-	p.in_text
-	p.in_password
-	p.in_file
-	p.in_image (will submit name.x name.y)
-	p.in_checkbox
-	p.in_radio
-	p.in_sumit;
-	p.in_reset;
-	p.in_button;
-	p.button;
-	p.select_open, p.select_close;
-	p.select;
-	p.option(s);
-	p.opt_group;
-
-form input name can be alias.colname
-so we can auto gen code that's like this:
-
-	v.colname1 = r.getn('v.colname1')
-	or
-	r.getc(v.colname1, 'v.colname1');
-
-we can copy the result and paste in control layer package
-As you see, all form input element may correspond to a plsql record type varaible,
-that record var will used to insert or update the tables.
-
-**[extension]**
-Since all input element type have the same tag *input*, some browser may not support [attr=xxx] css selector,
-Such as iOS,Android support it, but Nokia,Microsoft mobile phone may not support it.
-So you can tell PSP.WEB to automatically add class=type as well,
-So that you can use input.type to select certain type of input elements.
-To minimize the html size, PSP.WEB use single character to stand for the types,
-That is
-
-	t:	text
-	p:	password
-	f:	file
-	b:	button
-	b:	submit
-	b:	reset (erase)
-	r:	radio
-	c:	checkbox
-
-You see button/submit/reset have common classname b.
-You can use *"p.auto_input_class"* to tell PSP.WEB you want to automatically add the classnames.
-You can call it in k_filter or any other spot.
-
-### tables
-
-	p.table_open;
-	p.caption;
-	p.col;
-	p.col_group;
-
-	p.thead_open;
-	p.tr_open;
-	p.th, p.td
-	p.tr_close;
-	p.thead_close;
-
-	p.tbody_open;
-	p.tr_open;
-	p.th, p.td, ...
-	p.tr_close;
-	p.tr(p.tds(st(...,...,...)));
-	p.tbody_close
-	p.table_close;
-
-### tables with extention
-
-	-- bulk operation support
-	p.ths(st(xxx, xxx, ...));
-	p.tds(st(xxx, xxx, ...));
-
-	-- head/cols set
-	p.
-
-### list
-
-	p.ul_open, p.ol_open
-	p.li
-	p.ul_close, p.ol_close
-
-	p.dl_open;
-	p.dt;
-	p.dd;
-	p.dl_close;
-
-### text
-	p.hn(1-6, text);
-	p.p;
-	p.div;
-	p.span;
-	p.a;
-	p.b;
-
-### universal
-
-	p.tag
-	p.tag_open;
-	p.tag_close;
-
-### html5
-
-	p.section
-	p.sidebar
-
-print API
-=========
-
-## basic tag output
-
-* table: table caption thead tbody tfoot tr td trs tds
-* form: form fieldset lengend input_xxx button textarea select-single select-multiple option options
-* doc: h1-h6 p i b
-* layout : div span
-* head : head body script link style meta-http-equiv meta-name base h
-
-## extent functions
-
-### p.h
-
-  all header can be included in this one API call
-
-  scripts,links,base,title
-
-### table print
-
-  can layout form up-side-down or left-right side-by-side
-
-### form input
-
-  can add class by input.type, so browsers that do not support input[type=xxx] can just use input.type_xxx to select
-
-  p.auto_input_class(boolean)
-
-### radio,checkbox,select-option,options bulk output
-
-  can output text/value with name_arr,val_arr params
-
-### ths,tds
-
-  can output
-
-### input can append/prepend label,td,tr
-
-```
-p.input_text('display text', 'default value', lable=>'your name:');
-```
-  will output
-```
-  <label>your name:<input type="text" value="default value"/></label>
-  or <tr><th><label>your name:</label></th><td><input type="text" value="default value"/></td></tr>
-  or <tr><th><label>your name:</label></th></tr><tr><td><input type="text" value="default value"/></td></tr>
-```
-## version difference
-
-  原先的版本注重将tag的常用属性做成属性参数，p2(q) 版本不再支持所谓常见参数，需要用户自己写对参数名称。主要是一下考虑
-
-1. 侧重于简化 API
-	* 没有 tag/tag_open/tag_close 多个版本，无需 p.el_open, p.el_close
-	* id class attr 都通过一行完成
-	* 动态绑定一律通过 :n 替换
-2. 并减少应用代码量
-3. 对常量字符串减少 param => "value" 的写法，更为紧凑，因为没有了 => "" 这些额外的字符，
 
 
 <script src="footer.js"></script>

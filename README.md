@@ -70,9 +70,9 @@ and convert them into javascript objects.
 
 see [Introduction](http://docs.noradle.com/introduction.html) for more intro.
 
-see [Noradle's Goal](http://docs.noradle.com/NoradleGoal.html) to understand what noradle aim for.
+see [Noradle's Goal](http://docs.noradle.com/NoradleGoal.html)(in chinese) to understand what noradle aim for.
 
-`cd ./demo && node server.js` will start demo server.
+see [noradle-demo](https://github.com/kaven276/noradle-demo) for example app of noradle
 or see ready demo server at http://unidialbook.com/demo.
 All noradle features are shown in demo app.
 

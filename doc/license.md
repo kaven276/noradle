@@ -1,6 +1,6 @@
 <script src="header.js"></script>
 
-<div id="title"> License of Noradle(PSP.WEB)  </div>
+<div id="title"> License of Noradle  </div>
 
   This is the license plan for the formal release of Noradle in the futher.
   By now, if everyone want it for commercial purpose, is's free.

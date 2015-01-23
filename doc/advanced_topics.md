@@ -2,34 +2,43 @@
 
 <div id="title"> Noradle topics </div>
 
-servlet flow control
+servlet processing flow control
 =====================
 
 before & after filter
 -----------------------------------
 
-In Noradle, you can execute code before/after the main servlet procedure (target url-mapped-to procedure).
-Before execute the target servlet procedure, Noradle will find and execute `k_filter.before` in the same schema.
-You can code security check, preparation there, you can call the following API to do the right control.
+  In Noradle, you can execute code before/after the main servlet procedure (url-mapped-to target procedure).
+Before the target servlet procedure execute, Noradle will find and execute `y$before(default to k_filter.before)` in the same schema.
+You can do security check, preparation work there, you can call the following API to do the right control.
 
-* `h.go`
-* `g.finish`
-* `g.cancel`
-* `g.filter_pass`
+* `h.go` clear generated page, jump out servlet execution, and redirect to another URL using old linking scheme
+* `h.redirect` redirect to a URL
+* `h.gol` redirect to a URL using concise link scheme
+* `g.finish` commit current transaction and jump out of servlet execution immediately
+* `g.cancel` rollback current transaction and jump out of servlet execution immediately
+* `g.filter_pass` only used in k_filter.before to jump out of before filter immediately
 
-After executed the servlet procedure, Noradle will execute `k_filter.after`.
-You can do log, gather run statics, or anything you need there.
 
-Note: If no `k_filter` package exists in the servlet' schema, Noradle simply do nothing before and after the servlet
-procedure execute, no exception will be raised.
+  After the servlet procedure executed, Noradle will execute `y$after(default to k_filter.after)`.
+You can do logging, gather runtime statics, or anything you need there.
+
+  Note that before/after filter is set in ReqBase in nodejs side, you can set y$before/y$after request
+name-value pair to oracle to assign what's the before/after filter stored PL/SQL procedure,
+or you can just left it not assigned to any procedure to just ignore before/after filter.
+
+  Note: If no `k_filter` package exists in the servlet' schema, Noradle simply do nothing,
+no exception will be raised.
 
 instant jump out
 ----------------------------------------------------------------
 
-Instant jump out of servlet processing is needed When the top procedlure call sub procedures,
+Instant jump out of servlet processing is needed When the top procedlure call sub procedures.
 for example, call common used checking sub procedures to do validation works.
-When first check failure occurs, sub procedure can just report error and exit further page processing, it do not need to return to the top procedure and top procedure do not need to judge if check is not passed, and goto the label at end of line of the top procedure.You code g.finished or g.cancel to instantly  and exit page processing pass control to Noradle's servlet
- container. You do instant jump out bt calling `g.finish, g.cancel`.
+When first check failure occurs, sub procedure can just report error and exit further page processing,
+it do not need to return to the top procedure and top procedure do not need to judge if check is not passed,
+and goto the label at end of line of the top procedure.You code with g.finished or g.cancel, page processing pass control to Noradle's servlet
+ container instantly. You do instant jump out of servlet by calling `g.finish, g.cancel`.
 
 ```
 package ...
@@ -72,12 +81,13 @@ flush intermediate content
 
 You can call `h.flush` to flush buffered http entity content to nodejs and maybe then to browser.
 
-The first call to `h.flush` will make response headers send, followed by the content in buffer,
-the header values if not set will be default
-value, so "transfer-encoding" will be "chunked".
+The first call to `h.flush` will make response headers send, followed by the content in buffer.
+If not set, the header values will be the default value,
+so http header "transfer-encoding" will be "chunked".
 
-When a page is made up of stages, each stage may take time to generate, at that case,
-call `h.flush` when a stage is finish will let nodejs and browser to get content pieces more quickly.
+When a page is made up of stages, each stage may take time to generate.
+At that case,
+calling `h.flush` when a stage is finished will let nodejs and browser to get pieces of http content more quickly.
 
 Another case, you can call `h.flush` in a sql fetch loop at given returned rows, so the user don't wait all rows is
 fetched and processed to see just first of rows. like this:
@@ -187,7 +197,9 @@ http protocol related
 chunked transfer and buffer flush
 ----------------------------------
 
-Whether buffer flush is allow if related with "Transfer-Encoding", "Content-MD5", "ETag", "feedback","component css".
+Whether buffer flush is allow if related with "Content-MD5", "ETag", "feedback","component css".
+
+* "Content-MD5" is
 
 GZIP
 ----------------------------
@@ -370,14 +382,23 @@ charset
 
 h.content_type(mime_type,charset)
 
-if http charset is db charset, Noradle use varchar2 for output buffer, so charset convertion is never occurred, no overhead.
+If http charset is db charset, Noradle use varchar2 for output buffer,
+so charset convertion is never occurred, no overhead.
 
-if http charset is db national charset(UTF8,AL32UTF8,AL16UTF16...), Noradle will use nvarchar2 for output buffer, so if you put your varchar2 data to the response page,  oracle will take effort to do the implicit charset convertion. But buffer data will write directly out, no further convertion will occur.
+If http charset is db national charset(UTF8,AL32UTF8,AL16UTF16...),
+Noradle will use nvarchar2 for output buffer, so if you put your varchar2 data to the response page,
+oracle will take effort to do the implicit charset convertion. But buffer data will write directly out, no further convertion will occur.
 
-if http charset is nether db charset or db national charset, Noradle will use nvarchar2 for output buffer, so every charset can be put into the buffer, converted or not converted. When flush the buffer, Noradle will convert the nvarchar2 buffer data to the specified charset. So some charset convertion work is due to occur.
+If http charset is nether db charset or db national charset, Noradle will use nvarchar2 for output buffer,
+so every charset can be put into the buffer, converted or not converted.
+When flush the buffer, Noradle will convert the nvarchar2 buffer data to the specified charset.
+So some charset convertion work is due to occur.
 
-http get/port parameter values will saved as its escaped format, what charset to parse it can be specified, default is equal to the the page specified output charset.
+Http get/post parameter values will saved as its escaped format in varchar2 variables,
+which charset to parse can be specified(You can call r.req_charset... APIs to set it),
+default is equal to the the specified page output charset.
 
+```
 r.req_charset(cs varchar2)  take specified charset(in oracle name) as the parameter's charset
 r.req_charset_db  take db charset as the parameter's charset
 r.req_charset_ndb take db national charset as the parameter's charset
@@ -385,6 +406,7 @@ r.req_charset_utf8 take AL32UTF8 as the parameter's charset
 
 procedure r.getc can give parameter value in ether varchar2 or nvarchar2 inout nocopy variables
 function r.getc will return parameter as nvarchar2 value
+```
 
 h.use_bom will output bom(EFBBBF) following the http response headers
 It can be used to provide none-html mime-type download utf-8 files like excel that can be viewed in excel on windows OS.
@@ -409,6 +431,19 @@ Noradle will buffer page in nvarchar2 index-by array. Ether case, Noradle will k
  "UTF-8" http encoding, a AL32UTF8 database will never take burden to have charset conversion overhead.
 
 `pv.pg_nchar boolean` indicate if use national charset buffer.
+
+In h.content_type(mime_type,charset), determine the following:
+
+1. set pv.charset_ora, it's oracle's charset name converted from http charset name
+2. if it's going to use AL32UTF8 as oracle's output charset, and the db's nchar is UTF8,
+  then downgrade output buffer charset to use UTF8, so use nchar buffer, it will save conversion overhead.
+3. if output charset is the same as db charset, use db char type buffer,
+ otherwise, use db nchar type buffer. set pv.pg_nchar to false or true.
+4. if output charset is in db char or in db nchar charset, do not do conversion, otherwise do.
+ set pv.pg_conv to false or true.
+5. set default request charset to the same as output charset,
+ so r.getc can get the right value from url escaped form parameters.
+
 
 server cache
 ========================
