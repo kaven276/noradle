@@ -25,7 +25,6 @@ Part 1 : psp.web (`noradle.handlerHTTP`)
 * [App dialbook developed on PSP.WEB](http://unidialbook.com/com) at production site (you can use 18602247741 to
 login)
 * [ORACLE10G Support](support10g.html)
-* [License of PSP.WEB](license.html)
 
 Part 2 : call in db driver (`noradle.NDBC`)
 ======

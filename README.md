@@ -169,8 +169,6 @@ please see [Basic Coding Guide of Noradle](http://docs.noradle.com/coding_guide.
 please see [SAAS app "dialbook" developed on Noradle](http://unidialbook.com/com)  (you can use any mobile number
 11digits to login)
 
-please see [License of PSP.WEB](http://docs.noradle.com/license.html) at doc/license.md
-
 
 Part 2 : NDBC (node database connectivity)
 ======
