@@ -8,6 +8,8 @@ I'm doing hard to improve the docs.
 * [Noradle's Goal](NoradleGoal.html)
 * [Introduction of Noradle](introduction.html)
 * [Deployment of Noradle](deployment.html)
+* [Noradle meta introduction PPT](http://docs.noradle.com/noradle_meta_intro.pptx)(in chinese)
+to understand thinking or noradle.
 
 Part 1 : psp.web (`noradle.handlerHTTP`)
 ==========
