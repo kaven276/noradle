@@ -216,7 +216,7 @@ create or replace package body output is
 			if r.type = 'c' and pv.status_code = 200 then
 				-- for _c, if no content, just return back to previous page;
 				if r.header('referer') is not null then
-					h.go(r.header('referer'));
+					h.redirect(r.header('referer'));
 				else
 					h.content_type;
 					h.line('<script>history.back();</script>');
