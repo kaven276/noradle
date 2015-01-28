@@ -224,7 +224,7 @@ create or replace package body output is
 				end if;
 			end if;
 			goto print_http_headers;
-		elsif pv.feedback or (pv.feedback is null and r.type = 'c' and pv.status_code = 200) then
+		elsif pv.feedback or (pv.protocol = 'HTTP' and pv.feedback is null and r.type = 'c' and pv.status_code = 200) then
 			-- have content, but have feedback indication or _c sts=200
 			declare
 				v  varchar2(4000);
