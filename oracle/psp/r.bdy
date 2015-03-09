@@ -165,7 +165,7 @@ create or replace package body r is
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if pv.protocol = 'HTTP' and v_method = 'POST' then
 			if header('content-type') like 'application/x-www-form-urlencoded%' or
-				 header('content-type') like 'multipart/form-data%' then
+				 header('content-type') like 'application/json%' or header('content-type') like 'multipart/form-data%' then
 				null; -- form key-value pairs already got
 			else
 				if not is_null('y$instream') then
