@@ -9,10 +9,10 @@ create or replace package body rs is
 		descrec dbms_sql.desc_rec;
 		desctab dbms_sql.desc_tab;
 		colcnt  number;
-		namevar varchar2(50);
+		namevar varchar2(4000);
 		numvar  number;
 		datevar date;
-		vsize   number := 50;
+		vsize   number := 4000;
 		sep     varchar2(2);
 		lsep    varchar2(2) := chr(30) || chr(10);
 		csep    varchar2(2) := chr(31) || ',';
