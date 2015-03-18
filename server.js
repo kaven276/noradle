@@ -34,7 +34,7 @@ Object.defineProperties(exports, {
   },
   DBPool : {
     get : function(){
-      return require('./lib/DBPool.js').DBPool;
+      return require('./lib/DBClient.js').DBPool;
     }
   },
   poolMonitor : {
