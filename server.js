@@ -42,6 +42,11 @@ Object.defineProperties(exports, {
       return require('./lib/poolMonitor.js');
     }
   },
+  inHub : {
+    get : function(){
+      return require('./lib/inHub.js');
+    }
+  },
 
   RSParser : {
     get : function(){
