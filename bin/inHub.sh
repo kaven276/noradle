@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('..').inHub.start();
+require('..').inHub.startShell();
