@@ -63,6 +63,7 @@ create or replace package body gateway is
 				return utl_raw.cast_from_binary_integer(i);
 			end;
 		begin
+			dbms_application_info.set_module('utl_tcp', 'open_connection');
 			c := utl_tcp.open_connection(remote_host     => v_cfg.gw_host,
 																	 remote_port     => v_cfg.gw_port,
 																	 charset         => null,
@@ -145,6 +146,7 @@ create or replace package body gateway is
 		end;
 	
 		v_quitting := false;
+		dbms_application_info.set_module('utl_tcp', 'get_line');
 	
 		loop
 			-- accept arrival of new request
@@ -274,7 +276,7 @@ create or replace package body gateway is
 		
 			output.finish;
 			utl_tcp.flush(pv.c);
-			dbms_application_info.set_module('free', null);
+			dbms_application_info.set_module('utl_tcp', 'get_line');
 			dbms_session.set_identifier(v_clinfo);
 			dbms_session.clear_context('SERVER_PROCESS', v_clinfo);
 		
