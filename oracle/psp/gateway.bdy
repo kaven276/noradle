@@ -27,6 +27,7 @@ create or replace package body gateway is
 		v_last_time date;
 		v_count     pls_integer;
 		v_sts       number;
+		v_open      boolean;
 	
 		v_quitting    boolean := false;
 		v_reconnect   boolean := false;
@@ -38,7 +39,10 @@ create or replace package body gateway is
 		-- private 
 		procedure close_conn is
 		begin
-			utl_tcp.close_connection(pv.c);
+			if v_open then
+				v_open := false;
+				utl_tcp.close_connection(pv.c);
+			end if;
 		exception
 			when utl_tcp.network_error then
 				null;
@@ -90,6 +94,7 @@ create or replace package body gateway is
 																									pi2r(v_inst),
 																									pi2r(lengthb(v_all))));
 			pv.wlen := utl_tcp.write_text(pv.c, v_all);
+			v_open  := true;
 		end;
 	
 		function get_alert_quit return boolean is
