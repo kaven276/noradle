@@ -146,7 +146,6 @@ create or replace package body gateway is
 				if get_alert_quit then
 					quit; -- prevent endless connect fail&retry, allow quit
 				end if;
-				dbms_lock.sleep(3);
 				if sysdate > v_svr_stime + v_cfg.max_lifetime then
 					quit;
 				end if;
