@@ -105,6 +105,7 @@ create or replace package body gateway is
 	
 		procedure quit is
 		begin
+			k_debug.trace(st('call quit', v_trc, 'raise_application_error'), 'keep_conn');
 			raise_application_error(-20526, '');
 		end;
 	
@@ -137,13 +138,16 @@ create or replace package body gateway is
 		begin
 			close_conn;
 			if v_quitting then
+				k_debug.trace(st('v_quitting=true', v_trc, 'quit indirect in conn loop'), 'keep_conn');
 				quit;
 			end if;
 			make_conn(pv.c, 1);
+			k_debug.trace(st('conn:utl_tcp.connect ok', v_trc), 'keep_conn');
 			v_last_time := sysdate;
 		exception
 			when utl_tcp.network_error then
 				if get_alert_quit then
+					k_debug.trace(st('conn:utl_tcp.network_error', v_trc, 'quit direct in conn loop'), 'keep_conn');
 					quit; -- prevent endless connect fail&retry, allow quit
 				end if;
 				if sysdate > v_svr_stime + v_cfg.max_lifetime then
@@ -168,12 +172,14 @@ create or replace package body gateway is
 			if v_quitting then
 				-- close connected connection and quit process
 				close_conn;
+				k_debug.trace(st('v_quitting=true', v_trc, 'quit in read loop'), 'keep_conn');
 				quit;
 			elsif sysdate > v_svr_stime + v_cfg.max_lifetime or v_svr_req_cnt >= v_cfg.max_requests or get_alert_quit then
 				-- signal quit, but allow this loop of read request
 				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(-1));
 				utl_tcp.flush(pv.c);
 				v_quitting := true;
+				k_debug.trace(st('>max_lifetime', v_trc, 'got quit'), 'keep_conn');
 			end if;
 		
 			begin
@@ -191,23 +197,24 @@ create or replace package body gateway is
 					-- when they restart, ogw will not know and wait silly forever
 					-- so timeout and reconnect design is needed
 					if (sysdate - v_last_time) * 24 * 60 * 60 > v_cfg.idle_timeout then
-						k_debug.trace(st('utl_tcp.transfer_timeout', v_trc, 'reconnect'), 'keep_conn');
+						k_debug.trace(st('read:utl_tcp.transfer_timeout', v_trc, 'reconnect'), 'keep_conn');
 						if v_reconnect then
 							v_reconnect := false;
 							goto make_connection;
 						end if;
+						-- may received by free oraSock or a sending in-the-way oraSock
 						pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(-1));
 						utl_tcp.flush(pv.c);
 						v_reconnect := true;
 					end if;
 					goto read_request;
 				when utl_tcp.end_of_input then
-					k_debug.trace(st('utl_tcp.end_of_input', v_trc), 'keep_conn');
+					k_debug.trace(st('read:utl_tcp.end_of_input', v_trc), 'keep_conn');
 					-- not sleep will cause reconnect raise ORA-29260 TNS no listener
 					dbms_lock.sleep(1);
 					goto make_connection;
 				when utl_tcp.network_error then
-					k_debug.trace(st('utl_tcp.network_error', v_trc), 'keep_conn');
+					k_debug.trace(st('read:utl_tcp.network_error', v_trc), 'keep_conn');
 					goto make_connection;
 			end;
 		
@@ -303,6 +310,7 @@ create or replace package body gateway is
 	
 	exception
 		when others then
+			k_debug.trace(st('quit at end', v_trc), 'keep_conn');
 			dbms_application_info.set_module('killed', 'server quit');
 			utl_tcp.close_all_connections;
 			if v_sts = 0 then
