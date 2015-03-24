@@ -149,6 +149,7 @@ create or replace package body gateway is
 				if sysdate > v_svr_stime + v_cfg.max_lifetime then
 					quit;
 				end if;
+				pv.c := null;
 				goto make_connection;
 		end;
 	
