@@ -193,6 +193,7 @@ create or replace package body gateway is
 					if (sysdate - v_last_time) * 24 * 60 * 60 > v_cfg.idle_timeout then
 						k_debug.trace(st('utl_tcp.transfer_timeout', v_trc, 'reconnect'), 'keep_conn');
 						if v_reconnect then
+							v_reconnect := false;
 							goto make_connection;
 						end if;
 						pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(-1));
