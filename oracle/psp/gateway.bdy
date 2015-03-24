@@ -166,7 +166,8 @@ create or replace package body gateway is
 			-- check if stop singal arrived
 			-- after previous process and wait timeout
 			if v_quitting then
-				-- quit immediately
+				-- close connected connection and quit process
+				close_conn;
 				quit;
 			elsif sysdate > v_svr_stime + v_cfg.max_lifetime or v_svr_req_cnt >= v_cfg.max_requests or get_alert_quit then
 				-- signal quit, but allow this loop of read request
