@@ -136,6 +136,9 @@ create or replace package body gateway is
 		<<make_connection>>
 		begin
 			close_conn;
+			if v_quitting then
+				quit;
+			end if;
 			make_conn(pv.c, 1);
 			v_last_time := sysdate;
 		exception
