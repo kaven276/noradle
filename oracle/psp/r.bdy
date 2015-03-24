@@ -165,7 +165,7 @@ create or replace package body r is
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if pv.protocol = 'HTTP' and v_method = 'POST' then
 			if header('content-type') like 'application/x-www-form-urlencoded%' or
-				 header('content-type') like 'multipart/form-data%' then
+				 header('content-type') like 'application/json%' or header('content-type') like 'multipart/form-data%' then
 				null; -- form key-value pairs already got
 			else
 				if not is_null('y$instream') then
@@ -490,11 +490,11 @@ create or replace package body r is
 	) return varchar2 is
 	begin
 		if name not like '_$%' then
-			return utl_url.unescape(ra.params(name) (idx), pv.cs_req);
+			return nvl(utl_url.unescape(ra.params(name) (idx), pv.cs_req), defval);
 		elsif substrb(name, 1, 1) = 's' then
-			return utl_url.unescape(ra.params(name) (idx), 'AL32UTF8');
+			return nvl(utl_url.unescape(ra.params(name) (idx), 'AL32UTF8'), defval);
 		else
-			return ra.params(name)(idx);
+			return nvl(ra.params(name) (idx), defval);
 		end if;
 	exception
 		when no_data_found then
@@ -509,11 +509,11 @@ create or replace package body r is
 	) return nvarchar2 is
 	begin
 		if name not like '_$%' then
-			return utl_url.unescape(to_nchar(ra.params(name) (idx)), pv.cs_req);
+			return nvl(utl_url.unescape(to_nchar(ra.params(name) (idx)), pv.cs_req), defval);
 		elsif substrb(name, 1, 1) = 's' then
-			return utl_url.unescape(to_nchar(ra.params(name) (idx)), 'AL32UTF8');
+			return nvl(utl_url.unescape(to_nchar(ra.params(name) (idx)), 'AL32UTF8'), defval);
 		else
-			return ra.params(name)(idx);
+			return nvl(ra.params(name) (idx), defval);
 		end if;
 	exception
 		when no_data_found then
@@ -529,9 +529,9 @@ create or replace package body r is
 	) return number is
 	begin
 		if format is null then
-			return to_number(ra.params(name) (idx));
+			return nvl(to_number(ra.params(name) (idx)), defval);
 		else
-			return to_number(ra.params(name) (idx), format);
+			return nvl(to_number(ra.params(name) (idx), format), defval);
 		end if;
 	exception
 		when no_data_found then
@@ -547,9 +547,9 @@ create or replace package body r is
 	) return date is
 	begin
 		if format is null then
-			return to_date(utl_url.unescape(ra.params(name) (idx)), gc_date_fmt);
+			return nvl(to_date(utl_url.unescape(ra.params(name) (idx)), gc_date_fmt), defval);
 		else
-			return to_date(utl_url.unescape(ra.params(name) (idx)), format);
+			return nvl(to_date(utl_url.unescape(ra.params(name) (idx)), format), defval);
 		end if;
 	exception
 		when no_data_found then

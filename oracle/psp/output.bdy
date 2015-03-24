@@ -224,8 +224,9 @@ create or replace package body output is
 				end if;
 			end if;
 			goto print_http_headers;
-		elsif pv.feedback or (pv.protocol = 'HTTP' and pv.feedback is null and r.type = 'c' and pv.status_code = 200) then
-			-- have content, but have feedback indication or _c sts=200
+		elsif pv.feedback or (pv.protocol = 'HTTP' and pv.feedback is null and r.type = 'c' and pv.status_code = 200 and
+					pv.headers('Content-Type') like 'text/html;%' and r.header('x-requested-with') is null) then
+			-- have content, but have feedback indication or _c sts=200, not XMLHttpRequest
 			declare
 				v  varchar2(4000);
 				nl varchar2(2) := chr(13) || chr(10);

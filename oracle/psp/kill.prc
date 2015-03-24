@@ -13,9 +13,15 @@ begin
 	else
 		v_clinfo := 'Noradle-' || cfg || '#' || slot;
 	end if;
-	for i in (select a.client_info from v$session a where a.client_info like v_clinfo) loop
-		dbms_pipe.pack_message('SIGKILL');
-		v_return := dbms_pipe.send_message(i.client_info);
+	for i in (select a.client_info, a.module, a.action, a.sid, a.serial#
+							from v$session a
+						 where a.client_info like v_clinfo) loop
+		if i.module = 'utl_tcp' and i.action = 'open_connection' then
+			sys.pw.kill_session(i.sid, i.serial#);
+		else
+			dbms_pipe.pack_message('SIGKILL');
+			v_return := dbms_pipe.send_message(i.client_info);
+		end if;
 	end loop;
 end kill;
 /
