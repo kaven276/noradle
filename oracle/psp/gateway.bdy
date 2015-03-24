@@ -182,6 +182,9 @@ create or replace package body gateway is
 				v_reconnect := false;
 			exception
 				when utl_tcp.transfer_timeout then
+					if v_quitting then
+						goto read_request;
+					end if;
 					k_cfg.server_control(v_cfg);
 					-- if target node or NATs suddenly abort, like lost of power
 					-- they will not send fin to socket
