@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('..').inHub.startShell();
+require(require('path').join(__dirname,'..')).inHub.startShell();
