@@ -9,8 +9,8 @@ grant execute on SYS.DBMS_OBFUSCATION_TOOLKIT_FFI to &pspdbu;
 grant execute on SYS.DBMS_PIPE to &pspdbu;
 grant execute on SYS.DBMS_SCHEDULER to &pspdbu;
 grant execute on SYS.UTL_TCP to &pspdbu;
-grant execute on SYS.DBMS_HPROF to PSP;
-grant execute on SYS.DBMS_SESSION to PSP;
+grant execute on SYS.DBMS_HPROF to &pspdbu;
+grant execute on SYS.DBMS_SESSION to &pspdbu;
 
 -- Grant/Revoke role privileges
 grant resource to &pspdbu;
