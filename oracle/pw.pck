@@ -43,6 +43,9 @@ create or replace package body sys.pw is
 	) is
 	begin
 		execute immediate 'alter system kill session ''' || p_sid || ',' || p_serial || ''' immediate';
+	exception
+		when others then
+			null;
 	end;
 
 end pw;
