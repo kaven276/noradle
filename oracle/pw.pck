@@ -45,7 +45,7 @@ create or replace package body sys.pw is
 		execute immediate 'alter system kill session ''' || p_sid || ',' || p_serial || ''' immediate';
 	exception
 		when others then
-			null;
+			dbms_output.put_line( 'alter system kill session ''' || p_sid || ',' || p_serial || ''' immediate;');
 	end;
 
 end pw;
