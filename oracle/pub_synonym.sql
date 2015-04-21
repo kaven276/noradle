@@ -1,3 +1,5 @@
+-- note: p f v z ns ws is reserved for oracle apex
+
 prompt framework
 create or replace public synonym k_gw for k_gw;
 create or replace public synonym k_filter for k_filter;
