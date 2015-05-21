@@ -7,11 +7,11 @@ create or replace procedure kill
 	v_return integer;
 begin
 	if cfg is null then
-		v_clinfo := 'Noradle-%#%';
+		v_clinfo := 'Noradle-%:%';
 	elsif slot is null then
-		v_clinfo := 'Noradle-' || cfg || '#%';
+		v_clinfo := 'Noradle-' || cfg || ':%';
 	else
-		v_clinfo := 'Noradle-' || cfg || '#' || slot;
+		v_clinfo := 'Noradle-' || cfg || ':' || ltrim(to_char(slot, '0000'));
 	end if;
 	for i in (select a.client_info, a.module, a.action, a.sid, a.serial#
 							from v$session a

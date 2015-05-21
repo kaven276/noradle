@@ -2,18 +2,19 @@ create or replace package body k_pmon is
 
 	function job_prefix(cfg varchar2) return varchar2 deterministic is
 	begin
-		return 'PSP.WEB_' ||(cfg) || ':';
+		return 'Noradle-' ||(cfg) || ':';
 	end;
 
 	procedure start_one_server_process
 	(
 		cfg varchar2,
-		no  pls_integer
+		no  pls_integer,
+		ent varchar2
 	) is
 	begin
 		dbms_scheduler.create_job('"' || job_prefix(cfg) || ltrim(to_char(no, '0000')) || '"',
 															job_type => 'STORED_PROCEDURE',
-															job_action => 'gateway.listen',
+															job_action => ent,
 															start_date => sysdate,
 															enabled => true,
 															auto_drop => true);
@@ -24,6 +25,7 @@ create or replace package body k_pmon is
 	begin
 		for c in (select * from server_control_t) loop
 			v_prefix := job_prefix(c.cfg_id);
+			c.entry  := nvl(c.entry, 'gateway.listen');
 			for i in (select rownum no
 									from dual
 								 where rownum <= c.min_servers
@@ -31,9 +33,10 @@ create or replace package body k_pmon is
 								minus
 								select to_number(substrb(a.job_name, -4))
 									from user_scheduler_jobs a
-								 where a.job_action = 'gateway.listen'
+								 where a.job_action = c.entry
 									 and a.job_name like v_prefix || '%') loop
-				start_one_server_process(c.cfg_id, i.no);
+				k_debug.trace(st('k_pmon.adjust', c.cfg_id, i.no, c.entry), 'dispatcher');
+				start_one_server_process(c.cfg_id, i.no, c.entry);
 			end loop;
 		end loop;
 	end;

@@ -7,7 +7,8 @@ create table SERVER_CONTROL_T
   max_servers  NUMBER(4),
   max_requests NUMBER(9),
   max_lifetime INTERVAL DAY(4) TO SECOND(0),
-  idle_timeout NUMBER(8)
+  idle_timeout NUMBER(8),
+  entry        VARCHAR2(60) default 'gateway.listen'
 )
 ;
 comment on column SERVER_CONTROL_T.cfg_id
@@ -26,6 +27,8 @@ comment on column SERVER_CONTROL_T.max_lifetime
   is 'when the minutes of a server''s life time reach this limit, the server should/will quit';
 comment on column SERVER_CONTROL_T.idle_timeout
   is 'maximum idle seconds to wait for disconnect and reconnect';
+comment on column SERVER_CONTROL_T.entry
+  is 'server process entry stored procedure name';
 alter table SERVER_CONTROL_T
   add constraint PK_SVR_CFG primary key (CFG_ID);
 
