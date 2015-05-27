@@ -23,7 +23,7 @@ create or replace package body k_pmon is
 	procedure adjust is
 		v_prefix varchar2(30);
 	begin
-		for c in (select * from server_control_t) loop
+		for c in (select a.* from server_control_t a where a.disabled is null) loop
 			v_prefix := job_prefix(c.cfg_id);
 			c.entry  := nvl(c.entry, 'gateway.listen');
 			for i in (select rownum no

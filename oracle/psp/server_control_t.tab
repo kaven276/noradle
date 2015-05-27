@@ -8,7 +8,8 @@ create table SERVER_CONTROL_T
   max_requests NUMBER(9),
   max_lifetime INTERVAL DAY(4) TO SECOND(0),
   idle_timeout NUMBER(8),
-  entry        VARCHAR2(60) default 'gateway.listen'
+  entry        VARCHAR2(60) default 'gateway.listen',
+  disabled     VARCHAR2(1)
 )
 ;
 comment on column SERVER_CONTROL_T.cfg_id
@@ -29,6 +30,8 @@ comment on column SERVER_CONTROL_T.idle_timeout
   is 'maximum idle seconds to wait for disconnect and reconnect';
 comment on column SERVER_CONTROL_T.entry
   is 'server process entry stored procedure name';
+comment on column SERVER_CONTROL_T.disabled
+  is 'none null or N indicate cfg is disabled, pmon will not start server process';
 alter table SERVER_CONTROL_T
   add constraint PK_SVR_CFG primary key (CFG_ID);
 
