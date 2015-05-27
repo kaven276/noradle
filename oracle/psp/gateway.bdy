@@ -112,18 +112,19 @@ create or replace package body gateway is
 	begin
 		execute immediate 'alter session set nls_date_format="yyyy-mm-dd hh24:mi:ss"';
 		if cfg_id is null then
-			select substr(a.job_name, 9, lengthb(a.job_name) - 8 - 5), to_number(substr(a.job_name, -4))
-				into pv.cfg_id, pv.in_seq
+			select a.job_name
+				into v_clinfo
 				from user_scheduler_running_jobs a
 			 where a.session_id = sys_context('userenv', 'sid');
+			pv.cfg_id := substr(v_clinfo, 9, lengthb(v_clinfo) - 8 - 5);
+			pv.in_seq := to_number(substr(v_clinfo, -4));
 		else
 			pv.cfg_id := cfg_id;
 			pv.in_seq := slot_id;
 		end if;
 	
 		---dbms_alert.register('PW_STOP_SERVER');
-		v_trc    := pv.cfg_id || '-' || pv.in_seq || '.trc';
-		v_clinfo := 'Noradle-' || pv.cfg_id || '#' || pv.in_seq;
+		v_trc := pv.cfg_id || '-' || pv.in_seq || '.trc';
 		select count(*) into v_count from v$session a where a.client_info = v_clinfo;
 		if v_count > 0 then
 			dbms_output.put_line('Noradle Server Status:inuse.');
