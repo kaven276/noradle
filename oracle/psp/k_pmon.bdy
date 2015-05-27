@@ -63,7 +63,7 @@ create or replace package body k_pmon is
 
 	procedure run_job is
 	begin
-		if user != sys_context('userenv', 'current_schema') then
+		if user != 'SYS' and user != sys_context('userenv', 'current_schema') then
 			raise_application_error(-20000, 'only psp user can start noradle service.');
 		end if;
 		dbms_scheduler.create_job('"PSP.WEB_PMON"',

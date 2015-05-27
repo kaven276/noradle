@@ -21,3 +21,4 @@ grant create job to &pspdbu;
 grant create session to &pspdbu;
 grant create view to &pspdbu;
 grant select any dictionary to &pspdbu;
+grant administer database trigger to &pspdbu;
