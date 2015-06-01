@@ -20,7 +20,7 @@ create or replace package output is
 
 	procedure finish;
 
-	function get_len return pls_integer;
+	function get_buf_byte_len return pls_integer;
 
 end output;
 /

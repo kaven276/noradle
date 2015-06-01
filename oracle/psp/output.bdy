@@ -24,7 +24,7 @@ create or replace package body output is
 	end;
 
 	-- private
-	function get_len return pls_integer is
+	function get_buf_byte_len return pls_integer is
 	begin
 		if pv.pg_nchar then
 			return pv.pg_len + nvl(lengthb(pv.pg_buf), 0) + nvl(lengthb(pv.bom) / 2, 0);

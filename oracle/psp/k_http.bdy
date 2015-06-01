@@ -34,7 +34,7 @@ create or replace package body k_http is
 
 	function written return pls_integer is
 	begin
-		return output.get_len;
+		return output.get_buf_byte_len;
 	end;
 
 	function inc_buf_cnt return pls_integer is
