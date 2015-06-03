@@ -51,8 +51,13 @@ create or replace package body http_server is
 
 	procedure serv is
 	begin
-		k_init.by_request;
-		r."_init"(pv.c, 80526);
+		case pv.entry
+			when 'gateway.listen' then
+				k_init.by_request;
+				r."_init"(pv.c, 80526);
+			when 'framework.entry' then
+				null;
+		end case;
 		style.init_by_request;
 		dbms_session.set_identifier(r.bsid);
 	

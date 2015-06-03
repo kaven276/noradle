@@ -63,9 +63,14 @@ create or replace package body output is
 			v := v || n || ': ' || t.join(rc.params(n), '~') || nl;
 			n := rc.params.next(n);
 		end loop;
-		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
-		pv.wlen := utl_tcp.write_text(pv.c, v);
-		pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
+		case pv.entry
+			when 'gateway.listen' then
+				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
+				pv.wlen := utl_tcp.write_text(pv.c, v);
+				pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
+			when 'framework.entry' then
+				bios.write_head;
+		end case;
 	end;
 
 	procedure switch_css is
@@ -95,14 +100,21 @@ create or replace package body output is
 	end;
 
 	-- private, called by .flush or .finish
-	procedure write_buf(p_len pls_integer := get_len) is
+	procedure write_buf(p_len pls_integer := get_buf_byte_len) is
 	begin
 		if p_len = 0 then
 			return;
 		end if;
-		if pv.flushed then
-			pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(p_len));
-		end if;
+		case pv.entry
+			when 'gateway.listen' then
+				if pv.flushed then
+					pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(p_len));
+				end if;
+			when 'framework.entry' then
+				bios.wpi(pv.cslot_id * 256 * 256 + 1 * 256 + 0);
+				bios.wpi(p_len);
+		end case;
+	
 		if pv.pg_nchar then
 			for i in 1 .. pv.pg_index loop
 				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
@@ -210,7 +222,7 @@ create or replace package body output is
 		if pv.pg_conv then
 			pv.pg_buf := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
 		end if;
-		v_len := get_len;
+		v_len := get_buf_byte_len;
 	
 		if v_len = 0 then
 			if r.type = 'c' and pv.status_code = 200 then
@@ -220,7 +232,7 @@ create or replace package body output is
 				else
 					h.content_type;
 					h.line('<script>history.back();</script>');
-					v_len := get_len;
+					v_len := get_buf_byte_len;
 				end if;
 			end if;
 			goto print_http_headers;

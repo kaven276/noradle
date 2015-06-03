@@ -3,6 +3,7 @@ create or replace package pv is
 	/* all private process/call level state should be here */
 
 	-- process level
+	entry      varchar2(60);
 	cfg_id     varchar2(30); -- filled with current server_control_t id
 	in_seq     pls_integer; -- slot in in the current configuration
 	production boolean;
