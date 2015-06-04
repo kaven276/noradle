@@ -225,7 +225,7 @@ create or replace package body output is
 		v_len := get_buf_byte_len;
 	
 		if v_len = 0 then
-			if r.type = 'c' and pv.status_code = 200 then
+			if pv.entry = 'gateway.listen' and r.type = 'c' and pv.status_code = 200 then
 				-- for _c, if no content, just return back to previous page;
 				if r.header('referer') is not null then
 					h.redirect(r.header('referer'));
@@ -236,6 +236,8 @@ create or replace package body output is
 				end if;
 			end if;
 			goto print_http_headers;
+		elsif pv.entry != 'gateway.listen' then
+			null;
 		elsif pv.feedback or (pv.protocol = 'HTTP' and pv.feedback is null and r.type = 'c' and pv.status_code = 200 and
 					pv.headers('Content-Type') like 'text/html;%' and r.header('x-requested-with') is null) then
 			-- have content, but have feedback indication or _c sts=200, not XMLHttpRequest
