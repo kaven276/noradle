@@ -157,9 +157,16 @@ create or replace package body output is
 		v := v || 'Content-Type: text/css' || nl;
 		v := v || 'ETag: "' || pv.headers('x-css-md5') || '"' || nl;
 	
-		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
-		pv.wlen := utl_tcp.write_text(pv.c, v);
-		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
+		case pv.entry
+			when 'gateway.listen' then
+				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
+				pv.wlen := utl_tcp.write_text(pv.c, v);
+				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
+			when 'framework.entry' then
+				bios.wpi(pv.cslot_id * 256 * 256 + 3 * 256 + 0);
+				bios.wpi(lengthb(pv.pg_css));
+				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
+		end case;
 	end;
 
 	procedure switch is
