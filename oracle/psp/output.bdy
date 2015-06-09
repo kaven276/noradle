@@ -222,7 +222,9 @@ create or replace package body output is
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
 			flush;
-			pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(0));
+			if pv.entry = 'gateway.listen' then
+				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(0));
+			end if;
 			return;
 		end if;
 	
