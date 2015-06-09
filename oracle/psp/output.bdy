@@ -341,6 +341,9 @@ create or replace package body output is
 		$end
 	
 		pv.headers('Content-Length') := to_char(v_len);
+		if v_len = 0 then
+			pv.headers.delete('Content-Type');
+		end if;
 		write_head;
 		write_buf(v_len);
 		if pv.etag_md5 then
