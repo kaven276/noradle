@@ -1,0 +1,147 @@
+create or replace package body bios is
+
+	procedure init_pv is
+	begin
+		pv.status_code := 200;
+	
+	end;
+
+	procedure getblob
+	(
+		p_len  in pls_integer,
+		p_blob in out nocopy blob
+	) is
+		v_raw  raw(32767);
+		v_size pls_integer;
+		v_read pls_integer := 0;
+		v_rest pls_integer := p_len;
+	begin
+		dbms_lob.createtemporary(p_blob, cache => true, dur => dbms_lob.call);
+		loop
+			v_size := utl_tcp.read_raw(pv.c, v_raw, least(32767, v_rest));
+			v_rest := v_rest - v_size;
+			dbms_lob.writeappend(p_blob, v_size, v_raw);
+			exit when v_rest = 0;
+		end loop;
+	end;
+
+	/**
+  for request header frame
+  v_type(int8) must be 0 (head frame)
+  v_len(int32) is just ignored 
+  */
+	procedure read_request is
+		v_bytes pls_integer;
+		v_raw4  raw(4);
+		v_slot  pls_integer;
+		v_type  raw(1);
+		v_flag  raw(1);
+		v_len   pls_integer;
+		v_name  varchar2(1000);
+		v_value varchar2(32000);
+		v_hprof varchar2(30);
+		v_st    st;
+		procedure read_wrapper is
+		begin
+			v_bytes := utl_tcp.read_raw(pv.c, v_raw4, 4, false);
+			v_slot  := trunc(utl_raw.cast_to_binary_integer(v_raw4) / 65536);
+			v_type  := utl_raw.substr(v_raw4, 3, 1);
+			v_flag  := utl_raw.substr(v_raw4, 4, 1);
+			v_bytes := utl_tcp.read_raw(pv.c, v_raw4, 4, false);
+			v_len   := utl_raw.cast_to_binary_integer(v_raw4);
+			k_debug.trace(st('read_wrapper', v_slot, v_type, v_flag, v_len), 'dispatcher');
+		end;
+	begin
+		read_wrapper;
+		pv.cslot_id := v_slot;
+		pv.protocol := utl_tcp.get_line(pv.c, true);
+		v_hprof     := utl_tcp.get_line(pv.c, true);
+		pv.hp_flag  := v_hprof is not null;
+		k_debug.trace(st('protocol/hprof', pv.protocol, t.tf(pv.hp_flag, 'true', 'false')), 'dispatcher');
+		ra.params.delete;
+		rc.params.delete;
+		loop
+			v_name  := utl_tcp.get_line(pv.c, true);
+			v_value := utl_tcp.get_line(pv.c, true);
+			k_debug.trace(st('nv', v_name, v_value), 'dispatcher');
+			exit when v_name is null;
+			if v_value is null then
+				v_st := st(null);
+			else
+				t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+			end if;
+			ra.params(trim(v_name)) := v_st;
+		end loop;
+	
+		rb.charset_http := null;
+		rb.charset_db   := null;
+		rb.blob_entity  := null;
+		rb.clob_entity  := null;
+		rb.nclob_entity := null;
+	
+		loop
+			read_wrapper;
+			exit when v_len = 0;
+			k_debug.trace(st('getblob', v_len), 'dispatcher');
+			getblob(v_len, rb.blob_entity);
+		end loop;
+	
+	end;
+
+	procedure wpi(i binary_integer) is
+	begin
+		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(i));
+	end;
+
+	procedure write_frame(ftype pls_integer) is
+	begin
+		wpi(pv.cslot_id * 256 * 256 + ftype * 256 + 0);
+		wpi(0);
+	end;
+
+	procedure write_frame
+	(
+		ftype pls_integer,
+		v     in out nocopy varchar2
+	) is
+	begin
+		wpi(pv.cslot_id * 256 * 256 + ftype * 256 + 0);
+		if v is not null then
+			wpi(lengthb(v));
+			pv.wlen := utl_tcp.write_text(pv.c, v);
+		end if;
+		-- pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
+	end;
+
+	procedure write_end is
+	begin
+		wpi(pv.cslot_id * 256 * 256 + 255 * 256 + 0);
+		wpi(0);
+	end;
+
+	procedure write_head is
+		v  varchar2(4000);
+		nl varchar2(2) := chr(13) || chr(10);
+		n  varchar2(30);
+	begin
+		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
+		n := pv.headers.first;
+		while n is not null loop
+			v := v || n || ': ' || pv.headers(n) || nl;
+			n := pv.headers.next(n);
+		end loop;
+		n := pv.cookies.first;
+		while n is not null loop
+			v := v || pv.cookies(n) || nl;
+			n := pv.cookies.next(n);
+		end loop;
+		n := rc.params.first;
+		while n is not null loop
+			v := v || n || ': ' || t.join(rc.params(n), '~') || nl;
+			n := rc.params.next(n);
+		end loop;
+		write_frame(0, v);
+	end;
+
+end bios;
+/

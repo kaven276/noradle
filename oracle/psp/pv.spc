@@ -6,11 +6,13 @@ create or replace package pv is
 	entry      varchar2(60);
 	cfg_id     varchar2(30); -- filled with current server_control_t id
 	in_seq     pls_integer; -- slot in in the current configuration
+	cslot_id   pls_integer;
 	production boolean;
 	c          utl_tcp.connection; -- TCP/IP connection to the Web server
 
 	-- call level
 	protocol varchar2(30); -- call protocol (gateway.listen to branch req read and init)
+	hp_flag  boolean;
 	hp_label varchar2(2047); -- set to dbmshp run comment
 
 	$if k_ccflag.use_time_stats $then
