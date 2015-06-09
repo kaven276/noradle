@@ -111,19 +111,21 @@ create or replace package body r is
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
 	
-		ra.params.delete;
-		rc.params.delete;
-		loop
-			v_name  := utl_tcp.get_line(c, true);
-			v_value := utl_tcp.get_line(c, true);
-			exit when v_name is null;
-			if v_value is null then
-				v_st := st(null);
-			else
-				t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
-			end if;
-			ra.params(trim(v_name)) := v_st;
-		end loop;
+		if pv.entry = 'gateway.listen' then
+			ra.params.delete;
+			rc.params.delete;
+			loop
+				v_name  := utl_tcp.get_line(c, true);
+				v_value := utl_tcp.get_line(c, true);
+				exit when v_name is null;
+				if v_value is null then
+					v_st := st(null);
+				else
+					t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+				end if;
+				ra.params(trim(v_name)) := v_st;
+			end loop;
+		end if;
 	
 		-- basic input
 		case pv.protocol
@@ -149,18 +151,22 @@ create or replace package body r is
 				null;
 		end case;
 	
-		rb.charset_http := null;
-		rb.charset_db   := null;
-		rb.blob_entity  := null;
-		rb.clob_entity  := null;
-		rb.nclob_entity := null;
-	
 		dbms_session.clear_identifier;
 	
 		-- credentials
 		if pv.protocol = 'HTTP' then
 			extract_user_pass;
 		end if;
+	
+		if pv.entry != 'gateway.listen' then
+			return;
+		end if;
+	
+		rb.charset_http := null;
+		rb.charset_db   := null;
+		rb.blob_entity  := null;
+		rb.clob_entity  := null;
+		rb.nclob_entity := null;
 	
 		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
 		if pv.protocol = 'HTTP' and v_method = 'POST' then
