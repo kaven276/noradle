@@ -18,10 +18,9 @@ begin
 						 where a.client_info like v_clinfo) loop
 		if i.module = 'utl_tcp' and i.action = 'open_connection' then
 			sys.pw.kill_session(i.sid, i.serial#);
-		else
-			dbms_pipe.pack_message('SIGKILL');
-			v_return := dbms_pipe.send_message(i.client_info);
 		end if;
+		dbms_pipe.pack_message('SIGKILL');
+		v_return := dbms_pipe.send_message(i.client_info);
 	end loop;
 end kill;
 /
