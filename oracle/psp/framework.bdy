@@ -313,6 +313,7 @@ create or replace package body framework is
 			end;
 		
 			output.finish;
+			bios.write_session;
 			bios.write_end;
 			utl_tcp.flush(pv.c);
 		

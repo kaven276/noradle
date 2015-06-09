@@ -33,7 +33,7 @@ create or replace package body output is
 		end if;
 	end;
 
-	procedure write_head is
+	procedure write_head_gateway is
 		v  varchar2(4000);
 		nl varchar2(2) := chr(13) || chr(10);
 		n  varchar2(30);
@@ -63,11 +63,16 @@ create or replace package body output is
 			v := v || n || ': ' || t.join(rc.params(n), '~') || nl;
 			n := rc.params.next(n);
 		end loop;
+		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
+		pv.wlen := utl_tcp.write_text(pv.c, v);
+		pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
+	end;
+
+	procedure write_head is
+	begin
 		case pv.entry
 			when 'gateway.listen' then
-				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
-				pv.wlen := utl_tcp.write_text(pv.c, v);
-				pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
+				write_head_gateway;
 			when 'framework.entry' then
 				bios.write_head;
 		end case;

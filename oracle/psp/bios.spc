@@ -5,7 +5,7 @@ create or replace package bios is
 	-- Purpose : read request, write response
 
 	procedure read_request;
-	
+
 	procedure wpi(i binary_integer);
 
 	procedure write_frame(ftype pls_integer);
@@ -17,6 +17,8 @@ create or replace package bios is
 	);
 
 	procedure write_head;
+
+	procedure write_session;
 
 	procedure write_end;
 

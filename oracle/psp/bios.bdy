@@ -58,6 +58,7 @@ create or replace package body bios is
 		v_hprof     := utl_tcp.get_line(pv.c, true);
 		pv.hp_flag  := v_hprof is not null;
 		k_debug.trace(st('protocol/hprof', pv.protocol, t.tf(pv.hp_flag, 'true', 'false')), 'dispatcher');
+	
 		ra.params.delete;
 		rc.params.delete;
 		loop
@@ -135,12 +136,20 @@ create or replace package body bios is
 			v := v || pv.cookies(n) || nl;
 			n := pv.cookies.next(n);
 		end loop;
+		write_frame(0, v);
+	end;
+
+	procedure write_session is
+		nl varchar2(2) := chr(13) || chr(10);
+		n  varchar2(30);
+		v  varchar2(4000) := 'n: v' || nl;
+	begin
 		n := rc.params.first;
 		while n is not null loop
 			v := v || n || ': ' || t.join(rc.params(n), '~') || nl;
 			n := rc.params.next(n);
 		end loop;
-		write_frame(0, v);
+		write_frame(2, v);
 	end;
 
 end bios;
