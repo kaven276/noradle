@@ -38,11 +38,6 @@ create or replace package body output is
 		nl varchar2(2) := chr(13) || chr(10);
 		n  varchar2(30);
 	begin
-		if pv.header_writen then
-			return;
-		end if;
-		pv.header_writen := true;
-	
 		if pv.bom is not null then
 			pv.headers('x-pw-bom-hex') := pv.bom;
 		end if;
@@ -70,6 +65,10 @@ create or replace package body output is
 
 	procedure write_head is
 	begin
+		if pv.header_writen then
+			return;
+		end if;
+		pv.header_writen := true;
 		case pv.entry
 			when 'gateway.listen' then
 				write_head_gateway;
