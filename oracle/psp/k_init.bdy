@@ -32,6 +32,7 @@ create or replace package body k_init is
 		pv.msg_stream := false;
 		pv.use_stream := true;
 		pv.feedback   := null;
+		pv.csslink    := null;
 		pv.bom        := null;
 	
 		header_init;
