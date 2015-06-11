@@ -347,6 +347,7 @@ create or replace package body output is
 		pv.headers('Content-Length') := to_char(v_len);
 		if v_len = 0 then
 			pv.headers.delete('Content-Type');
+			pv.headers.delete('Content-Encoding');
 		end if;
 		write_head;
 		write_buf(v_len);
