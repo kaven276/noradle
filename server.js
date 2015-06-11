@@ -37,6 +37,11 @@ Object.defineProperties(exports, {
       return require('./lib/DBClient.js').DBPool;
     }
   },
+  DBDriver : {
+    get : function(){
+      return require('./lib/DBDriver3.js').DBDriver;
+    }
+  },
   poolMonitor : {
     get : function(){
       return require('./lib/poolMonitor.js');
