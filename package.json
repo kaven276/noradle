@@ -33,8 +33,9 @@
     "node": ">=0.8"
   },
   "dependencies": {
-    "underscore": "^1.8.2",
-    "debug": "~2.1.1"
+    "debug": "~2.1.1",
+    "dnode": "^1.2.1",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "optionalDependencies": {
