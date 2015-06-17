@@ -39,6 +39,7 @@ create or replace package body bios is
 		v_len   pls_integer;
 		v_name  varchar2(1000);
 		v_value varchar2(32000);
+		v_count pls_integer;
 		v_hprof varchar2(30);
 		v_st    st;
 		procedure read_wrapper is
@@ -62,16 +63,21 @@ create or replace package body bios is
 		ra.params.delete;
 		rc.params.delete;
 		loop
-			v_name  := utl_tcp.get_line(pv.c, true);
+			v_name  := trim(utl_tcp.get_line(pv.c, true));
 			v_value := utl_tcp.get_line(pv.c, true);
-			k_debug.trace(st('nv', v_name, v_value), 'dispatcher');
 			exit when v_name is null;
-			if v_value is null then
-				v_st := st(null);
+			if v_name like '*%' then
+				v_name  := substrb(v_name, 2);
+				v_count := to_number(v_value);
+				v_st    := st();
+				v_st.extend(v_count);
+				for i in 1 .. v_count loop
+					v_st(i) := utl_tcp.get_line(pv.c, true);
+				end loop;
 			else
-				t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+				v_st := st(v_value);
 			end if;
-			ra.params(trim(v_name)) := v_st;
+			ra.params(v_name) := v_st;
 		end loop;
 	
 		rb.charset_http := null;

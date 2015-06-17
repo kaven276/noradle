@@ -104,6 +104,7 @@ create or replace package body r is
 	) is
 		v_name  varchar2(1000);
 		v_value varchar2(32000);
+		v_count pls_integer;
 		v_st    st;
 		v_uamd5 varchar2(22);
 	begin
@@ -118,10 +119,21 @@ create or replace package body r is
 				v_name  := utl_tcp.get_line(c, true);
 				v_value := utl_tcp.get_line(c, true);
 				exit when v_name is null;
-				if v_value is null then
-					v_st := st(null);
+				if v_name like '*%' then
+					v_name  := substrb(v_name, 2);
+					v_count := to_number(v_value);
+					v_st    := st();
+					v_st.extend(v_count);
+					for i in 1 .. v_count loop
+						v_st(i) := utl_tcp.get_line(c, true);
+					end loop;
+					k_debug.trace(v_name, 'nv');
 				else
-					t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+					if v_value is null then
+						v_st := st(null);
+					else
+						t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
+					end if;
 				end if;
 				ra.params(trim(v_name)) := v_st;
 			end loop;
