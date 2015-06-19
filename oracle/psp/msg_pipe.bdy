@@ -176,7 +176,7 @@ create or replace package body msg_pipe is
 
 	procedure fetch_msg is
 		v_pipename varchar2(100) := nvl(r.getc('h$pipename'), 'nd$' || r.dbu);
-		v_timeout  number := r.getn('timeout', 2);
+		v_timeout  number := r.getn('h$timeout', 3);
 		v_headover boolean := false;
 		n          varchar2(100);
 		v          varchar2(4000);
