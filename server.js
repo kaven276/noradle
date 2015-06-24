@@ -52,6 +52,11 @@ Object.defineProperties(exports, {
       return require('./lib/inHub.js');
     }
   },
+  dispatcher : {
+    get : function(){
+      return require('./lib/dispatcher.js');
+    }
+  },
 
   RSParser : {
     get : function(){
