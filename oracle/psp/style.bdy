@@ -40,11 +40,16 @@ create or replace package body style is
 		if not k_http.prevent_flush('style.embed') then
 			return;
 		end if;
+		if pv.csslink is not null then
+			raise_application_error(-20011, 'style.embed tag must be called no more once!');
+		end if;
 		if tag = '<style>' then
 			pv.csslink := false;
+			pv.headers('x-embed-css') := 'style';
 			output.switch_css;
 		elsif tag = '<link>' then
 			pv.csslink := true;
+			pv.headers('x-embed-css') := 'link';
 			output.switch_css;
 		else
 			pv.csslink := null;
