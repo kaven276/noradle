@@ -50,7 +50,7 @@ create or replace package body bios is
 			v_flag  := utl_raw.substr(v_raw4, 4, 1);
 			v_bytes := utl_tcp.read_raw(pv.c, v_raw4, 4, false);
 			v_len   := utl_raw.cast_to_binary_integer(v_raw4);
-			k_debug.trace(st('read_wrapper', v_slot, v_type, v_flag, v_len), 'dispatcher');
+			--k_debug.trace(st('read_wrapper', v_slot, v_type, v_flag, v_len), 'dispatcher');
 		end;
 	begin
 		read_wrapper;
@@ -58,7 +58,7 @@ create or replace package body bios is
 		pv.protocol := utl_tcp.get_line(pv.c, true);
 		v_hprof     := utl_tcp.get_line(pv.c, true);
 		pv.hp_flag  := v_hprof is not null;
-		k_debug.trace(st('protocol/hprof', pv.protocol, t.tf(pv.hp_flag, 'true', 'false')), 'dispatcher');
+		--k_debug.trace(st('protocol/hprof', pv.protocol, t.tf(pv.hp_flag, 'true', 'false')), 'dispatcher');
 	
 		ra.params.delete;
 		rc.params.delete;
@@ -89,7 +89,7 @@ create or replace package body bios is
 		loop
 			read_wrapper;
 			exit when v_len = 0;
-			k_debug.trace(st('getblob', v_len), 'dispatcher');
+			--k_debug.trace(st('getblob', v_len), 'dispatcher');
 			getblob(v_len, rb.blob_entity);
 		end loop;
 	

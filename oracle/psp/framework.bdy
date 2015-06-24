@@ -98,6 +98,9 @@ create or replace package body framework is
 		function got_quit_signal return boolean is
 		begin
 			v_sts := dbms_pipe.receive_message(v_clinfo, 0);
+			if v_sts not in (0, 1) then
+				k_debug.trace(st(v_clinfo, 'got signal '||v_sts), 'dispatcher');
+			end if;
 			return v_sts = 0;
 		end;
 	
@@ -169,7 +172,7 @@ create or replace package body framework is
 	
 		loop
 			dbms_application_info.set_module('utl_tcp', 'get_line');
-			k_debug.trace(st(v_clinfo, 'wait reqeust'), 'dispatcher');
+			--k_debug.trace(st(v_clinfo, 'wait reqeust'), 'dispatcher');
 		
 			-- request quit when max requests reached
 			v_svr_req_cnt := v_svr_req_cnt + 1;
