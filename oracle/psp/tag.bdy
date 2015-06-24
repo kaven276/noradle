@@ -269,6 +269,23 @@ create or replace package body tag is
 		h.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
 	end;
 
+	function t
+	(
+		text varchar2 character set any_cs,
+		para st := null,
+		cut  boolean := false
+	) return varchar2 is
+	begin
+		if cut then
+			return '';
+		end if;
+		if para is null then
+			return text;
+		else
+			return k_type_tool.ps(text, para, ':');
+		end if;
+	end;
+
 	procedure t
 	(
 		text   varchar2 character set any_cs,
@@ -318,15 +335,6 @@ create or replace package body tag is
 	) is
 	begin
 		h.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="stylesheet" type="text/css"'));
-	end;
-
-	procedure d
-	(
-		tag  varchar2,
-		comp varchar2 := null
-	) is
-	begin
-		null;
 	end;
 
 end tag;

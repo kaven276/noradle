@@ -37,6 +37,12 @@ create or replace package tag is
 		para st := st()
 	);
 	procedure c(tag varchar2);
+	function t
+	(
+		text varchar2 character set any_cs,
+		para st := null,
+		cut  boolean := false
+	) return varchar2;
 	procedure t
 	(
 		text   varchar2 character set any_cs,
@@ -125,12 +131,6 @@ create or replace package tag is
 		tg   varchar2,
 		href varchar2,
 		para st := null
-	);
-
-	procedure d
-	(
-		tag  varchar2,
-		comp varchar2 := null
 	);
 
 end tag;
