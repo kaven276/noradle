@@ -26,29 +26,54 @@ var dbPool = Noradle.DBDriver.connect(tar, {
   cid : 'test',
   passwd : 'test'
 });
+
 var dbc = new Noradle.NDBC(dbPool, {
   param1 : 'value1',
   param2 : 'value2',
-  __parse : true
+  "h$content-type" : "application/json",
+  __parse : false
 });
+
+servlet = 'demo1.test_framework_b.use_bios';
+// servlet = 'realname.import_c.save_json';
+
+var data = {
+  a : [1, 2, 3],
+  b : {b1 : 1, b2 : 2},
+  c : [
+    {p1 : 1, p2 : 1},
+    {p1 : 2, p2 : 2}
+  ]
+};
 
 function UnitTest1(no){
   var limit = Math.pow(10, no);
-  dbc.call(servlet, {limit : limit}, function(status, headers, page){
-    console.log("no:", no);
+  dbc.call(servlet, {limit : limit}, data, function(status, headers, page){
     if (status != 200) {
       console.error('status is', status);
       console.error(page);
       console.error(headers);
       return;
     }
+    log(no, status, headers, typeof page);
+    console.log('\r\n---------\r\n');
+    log(headers);
     log(page);
-    if (page instanceof String) {
-      console.log(inspect(parse(page), {depth : 8}));
-    } else {
-      console.log(inspect(page, {depth : 8}));
-    }
+    return;
+    if (typeof page === 'string') {
+      console.log('\r\n---------\r\n');
+      if (headers['Content-Type'].substr(0, 5) === 'text/') {
+        log(page);
+      } else if (headers['Content-Type'].match(/^application\/json/)) {
+        // got json response body
+        log(JSON.stringify(JSON.parse(page), null, 2));
+      } else {
+        console.log(inspect(parse(page), {depth : 8}));
+      }
 
+    } else {
+      //console.log(inspect(page, {depth : 8}));
+    }
   });
 }
 
