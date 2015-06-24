@@ -188,7 +188,7 @@ create or replace package body msg_pipe is
 		if tmp.n = 1 then
 			h.status_line(504);
 			h.content_type('text/plain');
-			x.t('listen callout message timeout!');
+			x.t('listen callout message timeout over ' || v_timeout || ' seconds!');
 			return;
 		end if;
 	
