@@ -17,8 +17,14 @@ var Noradle = require('noradle')
 
 // servlet = 'question.test_b.ds_post_tree';
 
-var dbPool = new Noradle.DBPool(2522, {
-  FreeConnTimeout : 60000
+
+// var tar = [9001, 'localhost'];
+// var tar = [8001, 'noradle.com'];
+// var tar = ['/tmp/inhub'];
+var tar = [9009, 'localhost'];
+var dbPool = Noradle.DBDriver.connect(tar, {
+  cid : 'test',
+  passwd : 'test'
 });
 var dbc = new Noradle.NDBC(dbPool, {
   param1 : 'value1',
