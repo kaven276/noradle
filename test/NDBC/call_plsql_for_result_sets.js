@@ -46,9 +46,6 @@ function UnitTest1(no){
   });
 }
 
-setTimeout(function(){
-  for (var i = 1; i <= 1; i++) {
-    UnitTest1(i);
-  }
-}, 3000);
-
+for (var i = 1; i <= 1; i++) {
+  UnitTest1(i);
+}
