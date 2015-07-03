@@ -16,6 +16,7 @@ create or replace package body k_debug is
 	exception
 		when others then
 			dbms_pipe.purge(name);
+			tmp.i := dbms_pipe.send_message(name, 0);
 	end;
 
 	procedure trace
@@ -29,6 +30,7 @@ create or replace package body k_debug is
 	exception
 		when others then
 			dbms_pipe.purge(name);
+			tmp.i := dbms_pipe.send_message(name, 0);
 	end;
 
 	procedure trace
@@ -44,6 +46,7 @@ create or replace package body k_debug is
 	exception
 		when others then
 			dbms_pipe.purge(name);
+			tmp.i := dbms_pipe.send_message(name, 0);
 	end;
 
 	procedure set_run_comment(value varchar2) is

@@ -53,6 +53,7 @@ create or replace package body msg_pipe is
 		va         st;
 		v_sep      varchar2(2) := ',' || chr(30);
 	begin
+		dbms_pipe.reset_buffer;
 		n := ra.params.first;
 		loop
 			exit when n is null;
