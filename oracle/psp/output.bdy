@@ -69,12 +69,7 @@ create or replace package body output is
 			return;
 		end if;
 		pv.header_writen := true;
-		case pv.entry
-			when 'gateway.listen' then
-				write_head_gateway;
-			when 'framework.entry' then
-				bios.write_head;
-		end case;
+		bios.write_head;
 	end;
 
 	procedure switch_css is
@@ -226,9 +221,6 @@ create or replace package body output is
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
 			flush;
-			if pv.entry = 'gateway.listen' then
-				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(0));
-			end if;
 			return;
 		end if;
 	
@@ -238,43 +230,7 @@ create or replace package body output is
 		v_len := get_buf_byte_len;
 	
 		if v_len = 0 then
-			if pv.entry = 'gateway.listen' and r.type = 'c' and pv.status_code = 200 then
-				-- for _c, if no content, just return back to previous page;
-				if r.header('referer') is not null then
-					h.redirect(r.header('referer'));
-				else
-					h.content_type;
-					h.line('<script>history.back();</script>');
-					v_len := get_buf_byte_len;
-				end if;
-			end if;
 			goto print_http_headers;
-		elsif pv.entry != 'gateway.listen' then
-			null;
-		elsif pv.feedback or (pv.protocol = 'HTTP' and pv.feedback is null and r.type = 'c' and pv.status_code = 200 and
-					pv.headers('Content-Type') like 'text/html;%' and r.header('x-requested-with') is null) then
-			-- have content, but have feedback indication or _c sts=200, not XMLHttpRequest
-			declare
-				v  varchar2(4000);
-				nl varchar2(2) := chr(13) || chr(10);
-				n  varchar2(30);
-			begin
-				-- write fixed head
-				v := '303' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
-				v := v || 'Content-Length: 0' || nl;
-				v := v || 'Location: feedback_b?id=' || nl;
-				v := v || 'Cache-Control: no-cache' || nl;
-				n := pv.cookies.first;
-				while n is not null loop
-					v := v || pv.cookies(n) || nl;
-					n := pv.cookies.next(n);
-				end loop;
-				pv.cookies.delete;
-				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
-				pv.wlen := utl_tcp.write_text(pv.c, v);
-				pv.headers.delete('Content-Encoding');
-			end;
-			-- after above, write feedback page
 		end if;
 	
 		if pv.pg_css is not null and pv.csslink is not null then
