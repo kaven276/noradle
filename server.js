@@ -34,7 +34,7 @@ Object.defineProperties(exports, {
   },
   DBDriver : {
     get : function(){
-      return require('./lib/DBDriver3.js').DBDriver;
+      return require('./lib/DBDriver.js').DBDriver;
     }
   },
   dispatcher : {
