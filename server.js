@@ -32,24 +32,9 @@ Object.defineProperties(exports, {
       return require('./lib/NDBC.js').Class;
     }
   },
-  DBPool : {
-    get : function(){
-      return require('./lib/DBClient.js').DBPool;
-    }
-  },
   DBDriver : {
     get : function(){
       return require('./lib/DBDriver3.js').DBDriver;
-    }
-  },
-  poolMonitor : {
-    get : function(){
-      return require('./lib/poolMonitor.js');
-    }
-  },
-  inHub : {
-    get : function(){
-      return require('./lib/inHub.js');
     }
   },
   dispatcher : {
@@ -61,11 +46,6 @@ Object.defineProperties(exports, {
   RSParser : {
     get : function(){
       return RSParser || (RSParser = require('./lib/RSParser.js'));
-    }
-  },
-  gracefulExit : {
-    get : function(){
-      return require('./lib/util/util.js').gracefulExit;
     }
   }
 });
