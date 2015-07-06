@@ -77,15 +77,8 @@ create or replace package body output is
 		if p_len = 0 then
 			return;
 		end if;
-		case pv.entry
-			when 'gateway.listen' then
-				if pv.flushed then
-					pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(p_len));
-				end if;
-			when 'framework.entry' then
-				bios.wpi(pv.cslot_id * 256 * 256 + 1 * 256 + 0);
-				bios.wpi(p_len);
-		end case;
+		bios.wpi(pv.cslot_id * 256 * 256 + 1 * 256 + 0);
+		bios.wpi(p_len);
 	
 		if pv.pg_nchar then
 			for i in 1 .. pv.pg_index loop
@@ -128,17 +121,9 @@ create or replace package body output is
 		v := v || 'Content-Length: ' || lengthb(pv.pg_css) || nl;
 		v := v || 'Content-Type: text/css' || nl;
 		v := v || 'ETag: "' || pv.headers('x-css-md5') || '"' || nl;
-	
-		case pv.entry
-			when 'gateway.listen' then
-				pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
-				pv.wlen := utl_tcp.write_text(pv.c, v);
-				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
-			when 'framework.entry' then
-				bios.wpi(pv.cslot_id * 256 * 256 + 3 * 256 + 0);
-				bios.wpi(lengthb(pv.pg_css));
-				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
-		end case;
+		bios.wpi(pv.cslot_id * 256 * 256 + 3 * 256 + 0);
+		bios.wpi(lengthb(pv.pg_css));
+		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
 	end;
 
 	procedure switch is
