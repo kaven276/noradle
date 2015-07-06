@@ -33,42 +33,15 @@ create or replace package body output is
 		end if;
 	end;
 
-	procedure write_head_gateway is
-		v  varchar2(4000);
-		nl varchar2(2) := chr(13) || chr(10);
-		n  varchar2(30);
-	begin
-		if pv.bom is not null then
-			pv.headers('x-pw-bom-hex') := pv.bom;
-		end if;
-	
-		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
-		n := pv.headers.first;
-		while n is not null loop
-			v := v || n || ': ' || pv.headers(n) || nl;
-			n := pv.headers.next(n);
-		end loop;
-		n := pv.cookies.first;
-		while n is not null loop
-			v := v || pv.cookies(n) || nl;
-			n := pv.cookies.next(n);
-		end loop;
-		n := rc.params.first;
-		while n is not null loop
-			v := v || n || ': ' || t.join(rc.params(n), '~') || nl;
-			n := rc.params.next(n);
-		end loop;
-		pv.wlen := utl_tcp.write_raw(pv.c, utl_raw.cast_from_binary_integer(lengthb(v)));
-		pv.wlen := utl_tcp.write_text(pv.c, v);
-		pv.wlen := utl_tcp.write_raw(pv.c, hextoraw(pv.bom));
-	end;
-
 	procedure write_head is
 	begin
 		if pv.header_writen then
 			return;
 		end if;
 		pv.header_writen := true;
+		if pv.bom is not null then
+			pv.headers('x-pw-bom-hex') := pv.bom;
+		end if;
 		bios.write_head;
 	end;
 
