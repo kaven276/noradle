@@ -112,33 +112,6 @@ create or replace package body r is
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
 	
-		if pv.entry = 'gateway.listen' then
-			ra.params.delete;
-			rc.params.delete;
-			loop
-				v_name  := utl_tcp.get_line(c, true);
-				v_value := utl_tcp.get_line(c, true);
-				exit when v_name is null;
-				if v_name like '*%' then
-					v_name  := substrb(v_name, 2);
-					v_count := to_number(v_value);
-					v_st    := st();
-					v_st.extend(v_count);
-					for i in 1 .. v_count loop
-						v_st(i) := utl_tcp.get_line(c, true);
-					end loop;
-					k_debug.trace(v_name, 'nv');
-				else
-					if v_value is null then
-						v_st := st(null);
-					else
-						t.split(v_st, v_value, '~', substrb(v_name, 1, 1) != ' ' and substrb(v_name, -1) != ' ');
-					end if;
-				end if;
-				ra.params(trim(v_name)) := v_st;
-			end loop;
-		end if;
-	
 		-- basic input
 		case pv.protocol
 			when 'HTTP' then
@@ -169,44 +142,6 @@ create or replace package body r is
 		if pv.protocol = 'HTTP' then
 			extract_user_pass;
 		end if;
-	
-		if pv.entry != 'gateway.listen' then
-			return;
-		end if;
-	
-		rb.charset_http := null;
-		rb.charset_db   := null;
-		rb.blob_entity  := null;
-		rb.clob_entity  := null;
-		rb.nclob_entity := null;
-	
-		-- read post from application/x-www-form-urlencoded or multipart/form-data or other mime types
-		if pv.protocol = 'HTTP' and v_method = 'POST' then
-			if header('content-type') like 'application/x-www-form-urlencoded%' or
-				 header('content-type') like 'application/json%' or header('content-type') like 'multipart/form-data%' then
-				null; -- form key-value pairs already got
-			else
-				if not is_null('y$instream') then
-					return;
-				end if;
-				declare
-					v_len number(10);
-					v_pos pls_integer;
-				begin
-					v_len := to_number(header('content-length'));
-					if v_len is null or v_len = 0 then
-						return;
-					end if;
-					getblob(v_len, rb.blob_entity);
-					-- maybe for security lobs only
-					-- dbms_lob.setcontenttype(rb.blob_entity, gv_headers('content-type'));
-					v_pos           := instrb(header('content-type'), '=');
-					rb.charset_http := t.tf(v_pos > 0, trim(substr(header('content-type'), v_pos + 1)), 'UTF-8');
-					rb.charset_db   := utl_i18n.map_charset(rb.charset_http, utl_i18n.generic_context, utl_i18n.iana_to_oracle);
-				end;
-			end if;
-		end if;
-	
 	end;
 
 	procedure body2clob is
