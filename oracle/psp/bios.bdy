@@ -11,11 +11,22 @@ create or replace package body bios is
 		p_len  in pls_integer,
 		p_blob in out nocopy blob
 	) is
+		v_pos  pls_integer;
 		v_raw  raw(32767);
 		v_size pls_integer;
 		v_read pls_integer := 0;
 		v_rest pls_integer := p_len;
 	begin
+		rb.charset_http := null;
+		rb.charset_db   := null;
+		rb.blob_entity  := null;
+		rb.clob_entity  := null;
+		rb.nclob_entity := null;
+	
+		v_pos           := instrb(r.header('content-type'), '=');
+		rb.charset_http := t.tf(v_pos > 0, trim(substr(r.header('content-type'), v_pos + 1)), 'UTF-8');
+		rb.charset_db   := utl_i18n.map_charset(rb.charset_http, utl_i18n.generic_context, utl_i18n.iana_to_oracle);
+	
 		dbms_lob.createtemporary(p_blob, cache => true, dur => dbms_lob.call);
 		loop
 			v_size := utl_tcp.read_raw(pv.c, v_raw, least(32767, v_rest));
@@ -79,12 +90,6 @@ create or replace package body bios is
 			end if;
 			ra.params(v_name) := v_st;
 		end loop;
-	
-		rb.charset_http := null;
-		rb.charset_db   := null;
-		rb.blob_entity  := null;
-		rb.clob_entity  := null;
-		rb.nclob_entity := null;
 	
 		loop
 			read_wrapper;
