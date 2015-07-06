@@ -25,7 +25,6 @@ create or replace package body k_pmon is
 	begin
 		for c in (select a.* from server_control_t a where a.disabled is null) loop
 			v_prefix := job_prefix(c.cfg_id);
-			c.entry  := nvl(c.entry, 'gateway.listen');
 			for i in (select rownum no
 									from dual
 								 where rownum <= c.min_servers
@@ -33,10 +32,10 @@ create or replace package body k_pmon is
 								minus
 								select to_number(substrb(a.job_name, -4))
 									from user_scheduler_jobs a
-								 where a.job_action = c.entry
+								 where a.job_action = 'framework.entry'
 									 and a.job_name like v_prefix || '%') loop
-				k_debug.trace(st('k_pmon.adjust', c.cfg_id, i.no, c.entry), 'dispatcher');
-				start_one_server_process(c.cfg_id, i.no, c.entry);
+				k_debug.trace(st('k_pmon.adjust', c.cfg_id, i.no), 'dispatcher');
+				start_one_server_process(c.cfg_id, i.no, 'framework.entry');
 			end loop;
 		end loop;
 	end;

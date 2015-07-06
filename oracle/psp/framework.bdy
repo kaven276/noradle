@@ -145,7 +145,7 @@ create or replace package body framework is
 		dbms_application_info.set_module('free', null);
 		dbms_pipe.purge(v_clinfo);
 		k_cfg.server_control(v_cfg);
-		pv.entry := v_cfg.entry;
+		pv.entry := 'framework.entry';
 	
 		<<make_connection>>
 		dbms_application_info.set_module('utl_tcp', 'open_connection');
