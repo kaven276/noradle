@@ -99,7 +99,7 @@ create or replace package body framework is
 		begin
 			v_sts := dbms_pipe.receive_message(v_clinfo, 0);
 			if v_sts not in (0, 1) then
-				k_debug.trace(st(v_clinfo, 'got signal '||v_sts), 'dispatcher');
+				k_debug.trace(st(v_clinfo, 'got signal ' || v_sts), 'dispatcher');
 			end if;
 			return v_sts = 0;
 		end;
@@ -119,6 +119,14 @@ create or replace package body framework is
 		begin
 			k_debug.trace(st(v_clinfo, 'call quit'), 'dispatcher');
 			raise_application_error(v_qcode, '');
+		end;
+	
+		procedure show_exception is
+		begin
+			h.status_line(500);
+			h.content_type('text/plain');
+			--h.line(dbms_utility.format_error_backtrace);
+			h.line(dbms_utility.format_error_stack);
 		end;
 	
 	begin
@@ -281,6 +289,8 @@ create or replace package body framework is
 		
 			<<re_call_servlet>>
 			declare
+				no_dad_db_user exception; -- servlet db user does not exist
+				pragma exception_init(no_dad_db_user, -1435);
 				no_dad_auth_entry1 exception; -- table or view does not exist
 				pragma exception_init(no_dad_auth_entry1, -942);
 				no_dad_auth_entry2 exception;
@@ -296,11 +306,17 @@ create or replace package body framework is
 			exception
 				when no_dad_auth_entry1 or no_dad_auth_entry2 or no_dad_auth_entry_right then
 					if v_done then
-						raise;
+						show_exception;
+					else
+						begin
+							sys.pw.add_dad_auth_entry(r.dbu);
+							v_done := true;
+							goto re_call_servlet;
+						exception
+							when no_dad_db_user then
+								show_exception;
+						end;
 					end if;
-					sys.pw.add_dad_auth_entry(r.dbu);
-					v_done := true;
-					goto re_call_servlet;
 				when ora_600 or ora_7445 then
 					k_debug.trace(st('interal error', r.url, pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 					-- todo: tell dispatcher unrecoverable error occured, and then quit
