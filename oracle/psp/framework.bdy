@@ -123,9 +123,14 @@ create or replace package body framework is
 	
 		procedure show_exception is
 		begin
+			k_debug.trace(st('system exception(url,cfg_id,sqlcode,sqlerrm,error_stack)',
+											 r.url,
+											 pv.cfg_id,
+											 sqlcode,
+											 sqlerrm,
+											 dbms_utility.format_error_stack));
 			h.status_line(500);
 			h.content_type('text/plain');
-			--h.line(dbms_utility.format_error_backtrace);
 			h.line(dbms_utility.format_error_stack);
 		end;
 	
@@ -318,17 +323,14 @@ create or replace package body framework is
 						end;
 					end if;
 				when ora_600 or ora_7445 then
-					k_debug.trace(st('interal error', r.url, pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
 					-- todo: tell dispatcher unrecoverable error occured, and then quit
 					-- todo: give all request info back to dispatcher to resend to another OSP
 					-- todo: or dispatcher keep request info, prepare to resend to another OSP
+					show_exception;
 					do_quit;
 				when others then
-					-- system(not app level) exception occurred
-					-- todo: if got ora-600 ora-7445 error, then quit
-					k_debug.trace(st('page exception', r.url, pv.cfg_id, sqlcode, sqlerrm, dbms_utility.format_error_backtrace));
-					execute immediate 'call ' || pv.protocol || '_server.onex(:1,:2)'
-						using sqlcode, sqlerrm;
+					-- system(not app level at k_gw) exception occurred        
+					show_exception;
 			end;
 		
 			output.finish;
