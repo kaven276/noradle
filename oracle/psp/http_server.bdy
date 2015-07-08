@@ -28,27 +28,6 @@ create or replace package body http_server is
 		end if;
 	end;
 
-	procedure onex
-	(
-		code number,
-		errm varchar2
-	) is
-	begin
-		if pv.msg_stream then
-			h.line(r.dbu);
-			h.line(r.prog);
-			h.line(sqlcode);
-			h.line(sqlerrm);
-		else
-			h.allow_get_post;
-			h.status_line(500);
-			h.content_type('text/plain');
-			h.header_close;
-			h.line('in servlet occurred dyna sp call error for dbu : ' || r.dbu);
-			h.line('error text = ' || code || '/' || errm);
-		end if;
-	end;
-
 	procedure serv is
 	begin
 		r."_init"(pv.c, 80526);
