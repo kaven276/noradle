@@ -13,10 +13,14 @@ create or replace package body k_debug is
 		pv.elpl := dbms_utility.get_time;
 		dbms_pipe.pack_message(info);
 		tmp.i := dbms_pipe.send_message(name, 0);
+		if tmp.i != 0 then
+			dbms_pipe.purge(name);
+			dbms_pipe.reset_buffer;
+		end if;
 	exception
 		when others then
 			dbms_pipe.purge(name);
-			tmp.i := dbms_pipe.send_message(name, 0);
+			dbms_pipe.reset_buffer;
 	end;
 
 	procedure trace
@@ -27,10 +31,14 @@ create or replace package body k_debug is
 	begin
 		dbms_pipe.pack_message(info);
 		tmp.i := dbms_pipe.send_message(name, 0);
+		if tmp.i != 0 then
+			dbms_pipe.purge(name);
+			dbms_pipe.reset_buffer;
+		end if;
 	exception
 		when others then
 			dbms_pipe.purge(name);
-			tmp.i := dbms_pipe.send_message(name, 0);
+			dbms_pipe.reset_buffer;
 	end;
 
 	procedure trace
@@ -43,10 +51,14 @@ create or replace package body k_debug is
 			dbms_pipe.pack_message(info(i));
 		end loop;
 		tmp.i := dbms_pipe.send_message(name, 0);
+		if tmp.i != 0 then
+			dbms_pipe.purge(name);
+			dbms_pipe.reset_buffer;
+		end if;
 	exception
 		when others then
 			dbms_pipe.purge(name);
-			tmp.i := dbms_pipe.send_message(name, 0);
+			dbms_pipe.reset_buffer;
 	end;
 
 	procedure set_run_comment(value varchar2) is
@@ -120,8 +132,8 @@ create or replace package body k_debug is
 			end if;
 			n := ra.params.next(n);
 		end loop;
-		
-	  h.line;
+	
+		h.line;
 		h.line('[ This is all browser session data ]');
 		n := ra.params.first;
 		loop
