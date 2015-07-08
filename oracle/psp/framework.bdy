@@ -77,7 +77,7 @@ create or replace package body framework is
 				 and s.sid = sys_context('userenv', 'sid');
 			v_inst := nvl(sys_context('USER_ENV', 'INSTANCE'), -1);
 			v_all  := env('DB_NAME') || '/' || env('DB_DOMAIN') || '/' || env('DB_UNIQUE_NAME') || '/' ||
-								env('DATABASE_ROLE');
+								env('DATABASE_ROLE') || '/' || pv.cfg_id;
 		
 			wpi(v_mno);
 			wpi(pv.in_seq * 256 * 256 + 0 * 256 + 0);
