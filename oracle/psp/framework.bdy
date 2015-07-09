@@ -220,13 +220,13 @@ create or replace package body framework is
 					if v_count > v_maxwcnt then
 						-- after keep-alive time, no data arrived, think it as lost connection
 						k_debug.trace(st(v_clinfo, 'over idle timeout'), 'dispatcher');
-						goto make_connection;
+						do_quit;
 					else
 						goto read_request;
 					end if;
 				when utl_tcp.end_of_input then
 					k_debug.trace(st(v_clinfo, 'end of tcp'), 'dispatcher');
-					goto make_connection;
+					do_quit;
 			end;
 		
 			if pv.cslot_id = 0 then
