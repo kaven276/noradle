@@ -162,10 +162,12 @@ create or replace package body framework is
 	
 		<<make_connection>>
 		dbms_application_info.set_module('utl_tcp', 'open_connection');
+		loop
 		begin
 			close_conn;
 			k_debug.trace(st(v_clinfo, 'try connect to dispatcher'), 'dispatcher');
 			make_conn;
+			exit;
 			k_debug.trace(st(v_clinfo, 'connected to dispatcher'), 'dispatcher');
 		exception
 			when utl_tcp.network_error then
@@ -180,8 +182,8 @@ create or replace package body framework is
 				pv.c := null;
 				-- do not continuiously try connect to waste computing resource
 				dbms_lock.sleep(1);
-				goto make_connection;
 		end;
+		end loop;
 	
 		loop
 			dbms_application_info.set_module('utl_tcp', 'get_line');
