@@ -122,6 +122,11 @@ prompt
 @@k_debug.spc
 @@k_debug.bdy
 
+prompt Creating package BIOS
+prompt =======================
+prompt
+@@bios.spc
+@@bios.bdy
 prompt Creating package OUTPUT
 prompt =======================
 prompt
@@ -193,11 +198,11 @@ prompt
 prompt Creating package K_CFG
 prompt ======================
 prompt
-prompt Creating package GATEWAY
+prompt Creating package FRAMEWORK
 prompt ========================
 prompt
-@@gateway.spc
-@@gateway.bdy
+@@framework.spc
+@@framework.bdy
 prompt
 prompt Creating procedure kill
 prompt ========================
