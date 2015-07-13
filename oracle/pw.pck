@@ -6,12 +6,6 @@ create or replace package sys.pw is
 
 	procedure recompile(p_sql varchar2);
 
-	procedure kill_session
-	(
-		p_sid    pls_integer,
-		p_serial pls_integer
-	);
-
 end pw;
 /
 create or replace package body sys.pw is
@@ -34,18 +28,6 @@ create or replace package body sys.pw is
 		-- dbms_alert.signal('pw.package_state_invalid',p_sql);
 		-- commit;
 		execute immediate p_sql;
-	end;
-
-	procedure kill_session
-	(
-		p_sid    pls_integer,
-		p_serial pls_integer
-	) is
-	begin
-		execute immediate 'alter system kill session ''' || p_sid || ',' || p_serial || ''' immediate';
-	exception
-		when others then
-			dbms_output.put_line( 'alter system kill session ''' || p_sid || ',' || p_serial || ''' immediate;');
 	end;
 
 end pw;
