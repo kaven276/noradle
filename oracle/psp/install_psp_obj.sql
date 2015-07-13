@@ -291,7 +291,7 @@ drop table SERVER_CONTROL_BAK cascade constraints;
 drop table EXT_URL_BAK cascade constraints;
 desc SERVER_CONTROL_T
 insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,IDLE_TIMEOUT)
-values ('demo', '127.0.0.1', 1522, 4, 12, 1000, '+0001 00:00:00', 300);
+values ('dispatcher', '127.0.0.1', 1522, 4, 12, 1000, '+0001 00:00:00', 300);
 commit;
 whenever sqlerror exit
 
