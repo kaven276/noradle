@@ -113,14 +113,22 @@ create or replace package body output is
 	end;
 
 	procedure do_css_write is
-		v  varchar2(4000);
-		nl varchar2(2) := chr(13) || chr(10);
+		v     varchar2(4000);
+		nl    varchar2(2) := chr(13) || chr(10);
+		v_md5 raw(16);
 	begin
-		-- get fixed head
-		v := '200' || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
-		v := v || 'Content-Length: ' || lengthb(pv.pg_css) || nl;
-		v := v || 'Content-Type: text/css' || nl;
-		v := v || 'ETag: "' || pv.headers('x-css-md5') || '"' || nl;
+		if pv.pg_css is null then
+			pv.pg_css := ' ';
+		end if;
+		if pv.charset_ora != pv.cs_nchar then
+			pv.pg_css := convert(pv.pg_css, pv.charset_ora, pv.cs_nchar);
+		end if;
+		if pv.csslink = true then
+			v_md5 := dbms_crypto.hash(utl_raw.cast_to_raw(pv.pg_css), dbms_crypto.hash_md5);
+			bios.wpi(pv.cslot_id * 256 * 256 + 5 * 256 + 0);
+			bios.wpi(16);
+			pv.wlen := utl_tcp.write_raw(pv.c, v_md5);
+		end if;
 		bios.wpi(pv.cslot_id * 256 * 256 + 3 * 256 + 0);
 		bios.wpi(lengthb(pv.pg_css));
 		pv.wlen := utl_tcp.write_text(pv.c, pv.pg_css);
@@ -179,6 +187,9 @@ create or replace package body output is
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
 			flush;
+			if pv.csslink is not null then
+				do_css_write;
+			end if;
 			return;
 		end if;
 	
@@ -189,36 +200,6 @@ create or replace package body output is
 	
 		if v_len = 0 then
 			goto print_http_headers;
-		end if;
-	
-		if pv.pg_css is not null and pv.csslink is not null then
-			-- use pv.csslink will set pv.pg_css to '', and allow css write
-			-- so if pv.pg_css is not null,
-			case pv.csslink
-				when true then
-					if pv.charset_ora != pv.cs_nchar then
-						pv.pg_css := convert(pv.pg_css, pv.charset_ora, pv.cs_nchar);
-					end if;
-					v_md5 := rawtohex(dbms_crypto.hash(utl_raw.cast_to_raw(pv.pg_css), dbms_crypto.hash_md5));
-					pv.headers('x-css-md5') := v_md5;
-					v_tmp := '<link type="text/css" rel="stylesheet" href="css_b/' || v_md5 || '"/>';
-				when false then
-					v_tmp := n'<style>' || pv.pg_css || n'</style>';
-				else
-					null;
-			end case;
-			if pv.pg_nchar then
-				if pv.charset_ora = pv.cs_nchar then
-					pv.pg_parts(pv.pg_cssno) := v_tmp;
-				else
-					pv.pg_parts(pv.pg_cssno) := convert(v_tmp, pv.charset_ora, pv.cs_nchar);
-				end if;
-				v_len := v_len + lengthb(pv.pg_parts(pv.pg_cssno)) - lengthb(n' ');
-			else
-				pv.ph_parts(pv.pg_cssno) := to_char(v_tmp);
-				v_len := v_len + lengthb(pv.ph_parts(pv.pg_cssno)) - lengthb(' ');
-			end if;
-		
 		end if;
 	
 		-- zip is for streamed output, it's conflict with content_md5 computation
@@ -269,10 +250,6 @@ create or replace package body output is
 			if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
 				return;
 			end if;
-		end if;
-	
-		if pv.csslink = true and pv.pg_css is not null then
-			do_css_write;
 		end if;
 	
 	end;
