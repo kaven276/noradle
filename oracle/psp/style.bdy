@@ -37,17 +37,14 @@ create or replace package body style is
 
 	procedure embed(tag varchar2) is
 	begin
-		if pv.csslink is not null then
+		if pv.headers.exists('x-embed-css') then
 			raise_application_error(-20011, 'style.embed tag must be called no more once!');
 		end if;
 		if tag = '<style>' then
-			pv.csslink := false;
 			pv.headers('x-embed-css') := 'style';
 		elsif tag = '<link>' then
-			pv.csslink := true;
 			pv.headers('x-embed-css') := 'link';
 		else
-			pv.csslink := null;
 			raise_application_error(-20010, 'style.embed tag must be style or link!');
 		end if;
 		output.flush;
@@ -214,15 +211,6 @@ create or replace package body style is
 		gv_base_width := base;
 		gv_css_width  := nvl(actual, gv_base_width);
 		gv_font_width := nvl(font, gv_css_width);
-	end;
-
-	procedure comp_css_link(setting boolean) is
-	begin
-		if setting is null then
-			pv.csslink := null;
-		elsif k_http.prevent_flush('p.comp_css_link') then
-			pv.csslink := setting;
-		end if;
 	end;
 
 end style;

@@ -10,7 +10,6 @@ create or replace package body any_server is
 		pv.header_writen := true;
 		pv.content_md5   := null;
 		pv.etag_md5      := null;
-		pv.csslink       := null;
 	end;
 
 	procedure onex

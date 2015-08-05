@@ -123,7 +123,7 @@ create or replace package body output is
 		if pv.charset_ora != pv.cs_nchar then
 			pv.pg_css := convert(pv.pg_css, pv.charset_ora, pv.cs_nchar);
 		end if;
-		if pv.csslink = true then
+		if pv.headers('x-embed-css') = 'link' then
 			v_md5 := dbms_crypto.hash(utl_raw.cast_to_raw(pv.pg_css), dbms_crypto.hash_md5);
 			bios.wpi(pv.cslot_id * 256 * 256 + 5 * 256 + 0);
 			bios.wpi(16);
@@ -187,7 +187,7 @@ create or replace package body output is
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
 			flush;
-			if pv.csslink is not null then
+			if pv.headers.exists('x-embed-css') then
 				do_css_write;
 			end if;
 			return;

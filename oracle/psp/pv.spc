@@ -68,7 +68,6 @@ create or replace package pv is
 
 	-- all output variation control state
 	firstpg boolean; -- if clear and rewrite page, following PVs keep when re-init
-	csslink boolean; -- say to use component css; true:link, false:embed
 	nlbr    varchar2(2); -- set by h.set_line_break, used by output.line after all
 	nlbr0   varchar2(2);
 
