@@ -47,10 +47,8 @@ create or replace package body style is
 		else
 			raise_application_error(-20010, 'style.embed tag must be style or link!');
 		end if;
-		output.flush;
-		-- write embed_frame for insertion point
-		bios.wpi(pv.cslot_id * 256 * 256 + 4 * 256 + 0);
-		bios.wpi(0);
+		output.switch_css;
+
 	end;
 
 	procedure prn(text varchar2) is

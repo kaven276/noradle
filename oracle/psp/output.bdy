@@ -47,23 +47,10 @@ create or replace package body output is
 
 	procedure switch_css is
 	begin
-		if pv.pg_nchar then
-			if pv.pg_conv then
-				pv.pg_parts(pv.pg_index + 1) := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
-			else
-				pv.pg_parts(pv.pg_index + 1) := pv.pg_buf;
-			end if;
-			pv.pg_parts(pv.pg_index + 2) := ' ';
-			pv.pg_len := pv.pg_len + lengthb(pv.pg_parts(pv.pg_index + 1)) + lengthb(n' ');
-			pv.pg_buf := '';
-		else
-			pv.ph_parts(pv.pg_index + 1) := pv.ph_buf;
-			pv.ph_parts(pv.pg_index + 2) := ' ';
-			pv.pg_len := pv.pg_len + lengthb(pv.ph_buf) + lengthb(' ');
-			pv.ph_buf := '';
-		end if;
-		pv.pg_cssno := pv.pg_index + 2;
-		pv.pg_index := pv.pg_index + 2;
+		flush;
+		-- write embed_frame for insertion point
+		bios.wpi(pv.cslot_id * 256 * 256 + 4 * 256 + 0);
+		bios.wpi(0);
 	end;
 
 	procedure css(str varchar2 character set any_cs) is
