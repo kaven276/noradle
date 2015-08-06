@@ -65,15 +65,11 @@ create or replace package body k_pmon is
 		v_cfg_id    server_control_t.cfg_id%type;
 		v_queue_len pls_integer;
 		v_oslot_cnt pls_integer;
-		v_new_quota pls_integer;
 	begin
 		dbms_pipe.unpack_message(v_cfg_id);
 		dbms_pipe.unpack_message(v_queue_len);
 		dbms_pipe.unpack_message(v_oslot_cnt);
-		v_new_quota := v_queue_len + v_oslot_cnt;
-		select least(v_new_quota, a.max_servers) into v_new_quota from server_control_t a where a.cfg_id = v_cfg_id;
-		gv_quota(v_cfg_id) := v_new_quota;
-		--k_debug.trace(st(v_cfg_id, v_queue_len, v_oslot_cnt, v_new_quota), 'pmon');
+		gv_quota(v_cfg_id) := v_queue_len + v_oslot_cnt;
 	exception
 		when no_data_found then
 			null;
