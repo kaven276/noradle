@@ -39,6 +39,9 @@ create or replace package body k_pmon is
 			end loop;
 			kill(c.cfg_id, keep => c.min_servers);
 		end loop;
+		for c in (select a.* from server_control_t a where a.disabled is not null) loop
+			kill(c.cfg_id);
+		end loop;
 	end;
 
 	procedure run is
