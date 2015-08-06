@@ -44,20 +44,32 @@ create or replace package body k_pmon is
 		end loop;
 	end;
 
+	function got_signal return boolean is
+		v_sts  number := -1;
+		v_type varchar2(100);
+	begin
+		v_sts := dbms_pipe.receive_message('Noradle-PMON', 10);
+		if v_sts != 0 then
+			return false;
+		end if;
+		dbms_pipe.unpack_message(v_type);
+		case v_type
+			when 'SIGKILL' then
+				return true;
+			when 'ASK_OSP' then
+				return false;
+		end case;
+	end;
+
 	procedure run is
 		v_msg varchar2(100);
 		v_sts number;
 	begin
+		dbms_pipe.purge('Noradle-PMON');
 		adjust;
-		dbms_alert.register('PW_STOP_SERVER');
 		loop
-			dbms_alert.waitone('PW_STOP_SERVER', v_msg, v_sts, 10);
-			if v_sts = 1 then
-				adjust;
-				continue;
-			end if;
-			dbms_alert.remove('PW_STOP_SERVER');
-			exit;
+			exit when got_signal;
+			adjust;
 		end loop;
 	exception
 		when others then
@@ -77,9 +89,10 @@ create or replace package body k_pmon is
 	end;
 
 	procedure stop is
+		v_return integer;
 	begin
-		dbms_alert.signal('PW_STOP_SERVER', null);
-		commit;
+		dbms_pipe.pack_message('SIGKILL');
+		v_return := dbms_pipe.send_message('Noradle-PMON');
 		kill;
 	end;
 
