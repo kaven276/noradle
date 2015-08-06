@@ -1,5 +1,8 @@
 create or replace package body k_pmon is
 
+	type num_arr is table of server_control_t.cfg_id%type index by varchar2(100);
+	gv_quota num_arr;
+
 	function job_prefix(cfg varchar2) return varchar2 deterministic is
 	begin
 		return 'Noradle-' ||(cfg) || ':';
@@ -22,13 +25,27 @@ create or replace package body k_pmon is
 
 	procedure adjust is
 		v_prefix varchar2(30);
+		v_quota  server_control_t.min_servers%type;
 	begin
 		for c in (select a.* from server_control_t a where a.disabled is null) loop
 			v_prefix := job_prefix(c.cfg_id);
+			if gv_quota.exists(c.cfg_id) then
+				v_quota := gv_quota(c.cfg_id);
+				if v_quota < c.min_servers then
+					v_quota := c.min_servers;
+					gv_quota(c.cfg_id) := v_quota;
+				elsif v_quota > c.max_servers then
+					v_quota := c.max_servers;
+					gv_quota(c.cfg_id) := v_quota;
+				end if;
+			else
+				gv_quota(c.cfg_id) := c.min_servers;
+				v_quota := c.min_servers;
+			end if;
 			for i in (select rownum no
 									from dual
-								 where rownum <= c.min_servers
-								connect by rownum <= c.min_servers
+								 where rownum <= v_quota
+								connect by rownum <= v_quota
 								minus
 								select to_number(substrb(a.job_name, -4))
 									from user_scheduler_jobs a
@@ -37,11 +54,29 @@ create or replace package body k_pmon is
 				k_debug.trace(st('k_pmon.adjust', c.cfg_id, i.no), 'dispatcher');
 				start_one_server_process(c.cfg_id, i.no, 'framework.entry');
 			end loop;
-			kill(c.cfg_id, keep => c.min_servers);
+			kill(c.cfg_id, keep => v_quota);
 		end loop;
 		for c in (select a.* from server_control_t a where a.disabled is not null) loop
 			kill(c.cfg_id);
 		end loop;
+	end;
+
+	procedure inc_quota is
+		v_cfg_id    server_control_t.cfg_id%type;
+		v_queue_len pls_integer;
+		v_oslot_cnt pls_integer;
+		v_new_quota pls_integer;
+	begin
+		dbms_pipe.unpack_message(v_cfg_id);
+		dbms_pipe.unpack_message(v_queue_len);
+		dbms_pipe.unpack_message(v_oslot_cnt);
+		v_new_quota := v_queue_len + v_oslot_cnt;
+		select least(v_new_quota, a.max_servers) into v_new_quota from server_control_t a where a.cfg_id = v_cfg_id;
+		gv_quota(v_cfg_id) := v_new_quota;
+		--k_debug.trace(st(v_cfg_id, v_queue_len, v_oslot_cnt, v_new_quota), 'pmon');
+	exception
+		when no_data_found then
+			null;
 	end;
 
 	function got_signal return boolean is
@@ -57,6 +92,7 @@ create or replace package body k_pmon is
 			when 'SIGKILL' then
 				return true;
 			when 'ASK_OSP' then
+				inc_quota;
 				return false;
 		end case;
 	end;
@@ -65,6 +101,9 @@ create or replace package body k_pmon is
 		v_msg varchar2(100);
 		v_sts number;
 	begin
+		for i in (select a.cfg_id, a.min_servers from server_control_t a) loop
+			gv_quota(i.cfg_id) := i.min_servers;
+		end loop;
 		dbms_pipe.purge('Noradle-PMON');
 		adjust;
 		loop
