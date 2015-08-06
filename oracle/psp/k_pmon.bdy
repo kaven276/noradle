@@ -2,6 +2,7 @@ create or replace package body k_pmon is
 
 	type num_arr is table of server_control_t.cfg_id%type index by varchar2(100);
 	gv_quota num_arr;
+	gv_inc   boolean := false;
 
 	function job_prefix(cfg varchar2) return varchar2 deterministic is
 	begin
@@ -26,22 +27,31 @@ create or replace package body k_pmon is
 	procedure adjust is
 		v_prefix varchar2(30);
 		v_quota  server_control_t.min_servers%type;
+		v_free   server_control_t.min_servers%type;
 	begin
 		for c in (select a.* from server_control_t a where a.disabled is null) loop
 			v_prefix := job_prefix(c.cfg_id);
-			if gv_quota.exists(c.cfg_id) then
-				v_quota := gv_quota(c.cfg_id);
-				if v_quota < c.min_servers then
-					v_quota := c.min_servers;
-					gv_quota(c.cfg_id) := v_quota;
-				elsif v_quota > c.max_servers then
-					v_quota := c.max_servers;
-					gv_quota(c.cfg_id) := v_quota;
-				end if;
-			else
+			if not gv_quota.exists(c.cfg_id) then
 				gv_quota(c.cfg_id) := c.min_servers;
-				v_quota := c.min_servers;
 			end if;
+			v_quota := gv_quota(c.cfg_id);
+			if gv_inc then
+				gv_inc := false;
+			elsif v_quota > c.min_servers then
+				select count(*)
+					into v_free
+					from v$session a
+				 where a.status = 'ACTIVE'
+					 and a.client_info like 'Noradle-' || c.cfg_id || ':%'
+					 and (a.module = 'utl_tcp' and a.action = 'get_line');
+				v_quota := v_quota - floor(v_free / 2);
+			end if;
+			if v_quota < c.min_servers then
+				v_quota := c.min_servers;
+			elsif v_quota > c.max_servers then
+				v_quota := c.max_servers;
+			end if;
+			gv_quota(c.cfg_id) := v_quota;
 			for i in (select rownum no
 									from dual
 								 where rownum <= v_quota
@@ -70,6 +80,7 @@ create or replace package body k_pmon is
 		dbms_pipe.unpack_message(v_queue_len);
 		dbms_pipe.unpack_message(v_oslot_cnt);
 		gv_quota(v_cfg_id) := v_queue_len + v_oslot_cnt;
+		gv_inc := true;
 	exception
 		when no_data_found then
 			null;
