@@ -37,6 +37,7 @@ create or replace package body k_pmon is
 				k_debug.trace(st('k_pmon.adjust', c.cfg_id, i.no), 'dispatcher');
 				start_one_server_process(c.cfg_id, i.no, 'framework.entry');
 			end loop;
+			kill(c.cfg_id, keep => c.min_servers);
 		end loop;
 	end;
 

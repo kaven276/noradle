@@ -1,7 +1,8 @@
 create or replace procedure kill
 (
 	cfg  varchar2 := null,
-	slot pls_integer := null
+	slot pls_integer := null,
+	keep integer := 0
 ) is
 	v_clinfo varchar2(48);
 	v_return integer;
@@ -15,7 +16,8 @@ begin
 	end if;
 	for i in (select a.client_info, a.module, a.action, a.sid, a.serial#
 							from v$session a
-						 where a.client_info like v_clinfo) loop
+						 where a.client_info like v_clinfo
+							 and to_number(substrb(a.client_info, -4)) > keep) loop
 		dbms_pipe.pack_message('SIGKILL');
 		v_return := dbms_pipe.send_message(i.client_info);
 	end loop;
