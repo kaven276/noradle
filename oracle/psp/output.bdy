@@ -34,6 +34,8 @@ create or replace package body output is
 	end;
 
 	procedure write_head is
+		v1 number(10);
+		v2 number(10);
 	begin
 		if pv.header_writen then
 			return;
@@ -41,6 +43,11 @@ create or replace package body output is
 		pv.header_writen := true;
 		if pv.bom is not null then
 			pv.headers('x-pw-bom-hex') := pv.bom;
+		end if;
+		if not r.is_null('t$timespan') then
+			v1 := dbms_utility.get_time;
+			v2 := dbms_utility.get_cpu_time;
+			pv.headers('x-pw-timespan') := ((v1 - pv.elpt) * 10) || ' / ' || ((v2 - pv.cput) * 10) || ' ms';
 		end if;
 		bios.write_head;
 	end;
@@ -207,16 +214,6 @@ create or replace package body output is
 		end if;
 	
 		<<print_http_headers>>
-	
-		$if k_ccflag.use_time_stats $then
-		declare
-			v1 number(10) := dbms_utility.get_time;
-			v2 number(10) := dbms_utility.get_cpu_time;
-		begin
-			pv.headers('x-pw-timespan') := ((v1 - pv.elpt) * 10) || ' / ' || ((v2 - pv.cput) * 10) || ' ms';
-		end;
-		$end
-	
 		pv.headers('Content-Length') := to_char(v_len);
 		if v_len = 0 then
 			pv.headers.delete('Content-Type');
