@@ -224,12 +224,6 @@ create or replace package body output is
 		end if;
 		write_head;
 		write_buf(v_len);
-		if pv.etag_md5 then
-			if utl_tcp.get_line(pv.c, true) = 'Cache Hit' then
-				return;
-			end if;
-		end if;
-	
 	end;
 
 end output;
