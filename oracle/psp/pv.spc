@@ -76,7 +76,6 @@ create or replace package pv is
 	-- flush will be ignored when use_stream=false
 	use_stream boolean; -- 
 	flushed    boolean; -- if any flush actually occurred
-	feedback   boolean; -- manually say(g.feedback) to use feedback mechanism
 	msg_stream boolean;
 	accum_cnt  pls_integer;
 

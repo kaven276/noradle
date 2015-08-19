@@ -14,14 +14,7 @@ create or replace package body g is
 
 	procedure feedback(value boolean := true) is
 	begin
-		if value then
-			if k_http.prevent_flush('g.feedback') then
-				pv.feedback := true;
-				raise pv.ex_resp_done;
-			end if;
-		else
-			pv.feedback := false;
-		end if;
+		r.setc('f$feedback', t.tf(value, 'Y', 'N'));
 	end;
 
 	procedure interrupt(url varchar2) is
