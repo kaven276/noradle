@@ -32,7 +32,6 @@ create or replace package pv is
 	charset       varchar2(30); -- http output charset
 	charset_ora   varchar2(30); -- http output charset name in db
 	cs_req        varchar2(30); -- req param's cs, default to output cs
-	content_md5   boolean; -- if give content-md5 in response header
 	etag_md5      boolean; -- if autogen etag and 304 response, null for auto
 	max_lmt       date; -- used to autogen last-modified and 304 response
 

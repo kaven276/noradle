@@ -12,7 +12,6 @@ create or replace package body k_init is
 		pv.cookies.delete;
 		pv.status_code   := 200;
 		pv.header_writen := false;
-		pv.content_md5   := false;
 		pv.etag_md5      := false;
 		pv.max_lmt       := null;
 		pv.allow         := null;

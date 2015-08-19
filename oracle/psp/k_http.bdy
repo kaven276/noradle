@@ -383,18 +383,16 @@ create or replace package body k_http is
 	procedure content_md5_on is
 	begin
 		pv.headers('Content-MD5') := '?';
-		pv.content_md5 := true;
 	end;
 
 	procedure content_md5_off is
 	begin
 		pv.headers.delete('Content-MD5');
-		pv.content_md5 := false;
 	end;
 
 	procedure content_md5_auto is
 	begin
-		pv.content_md5 := null;
+		null;
 	end;
 
 	procedure check_if_not_modified_since is

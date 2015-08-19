@@ -8,7 +8,6 @@ create or replace package body any_server is
 	
 		output."_init"(80526);
 		pv.header_writen := true;
-		pv.content_md5   := null;
 		pv.etag_md5      := null;
 	end;
 

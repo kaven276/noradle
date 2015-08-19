@@ -189,12 +189,7 @@ create or replace package body output is
 			goto print_http_headers;
 		end if;
 	
-		-- zip is for streamed output, it's conflict with content_md5 computation
-		if pv.content_md5 and pv.headers('Content-Encoding') in ('try', '?') then
-			pv.content_md5 := false;
-		end if;
-	
-		if (pv.content_md5 or pv.etag_md5) and pv.pg_nchar and pv.status_code = 200 then
+		if pv.etag_md5 and pv.pg_nchar and pv.status_code = 200 then
 			dbms_lob.createtemporary(v_lob, true, dur => dbms_lob.call);
 			for i in 1 .. pv.pg_index loop
 				dbms_lob.writeappend(v_lob, length(pv.pg_parts(i)), pv.pg_parts(i));
@@ -202,15 +197,11 @@ create or replace package body output is
 			dbms_lob.writeappend(v_lob, length(pv.pg_buf), pv.pg_buf);
 			v_raw := dbms_crypto.hash(v_lob, dbms_crypto.hash_md5);
 			v_md5 := utl_raw.cast_to_varchar2(utl_encode.base64_encode(v_raw));
-			if pv.content_md5 then
-				pv.headers('Content-MD5') := v_md5;
-			end if;
+			h.etag(v_md5);
 			if pv.etag_md5 then
 				if r.etag = v_md5 then
 					h.status_line(304);
 					v_len := 0;
-				else
-					h.etag(v_md5);
 				end if;
 			end if;
 		end if;
