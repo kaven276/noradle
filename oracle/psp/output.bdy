@@ -175,11 +175,12 @@ create or replace package body output is
 	end;
 
 	procedure finish is
-		v_len integer;
-		v_raw raw(32767);
-		v_md5 varchar2(32);
-		v_tmp nvarchar2(32767);
-		v_lob nclob;
+		v_len   integer;
+		v_raw   raw(32767);
+		v_md5   varchar2(32);
+		v_tmp   nvarchar2(32767);
+		v_nclob nclob;
+		v_clob  clob;
 	begin
 		-- if use stream, flush the final buffered content and the end marker out
 		if pv.flushed then
@@ -199,13 +200,22 @@ create or replace package body output is
 			goto print_http_headers;
 		end if;
 	
-		if pv.etag_md5 and pv.pg_nchar and pv.status_code = 200 then
-			dbms_lob.createtemporary(v_lob, true, dur => dbms_lob.call);
-			for i in 1 .. pv.pg_index loop
-				dbms_lob.writeappend(v_lob, length(pv.pg_parts(i)), pv.pg_parts(i));
-			end loop;
-			dbms_lob.writeappend(v_lob, length(pv.pg_buf), pv.pg_buf);
-			v_raw := dbms_crypto.hash(v_lob, dbms_crypto.hash_md5);
+		if pv.etag_md5 and pv.status_code = 200 then
+			if pv.pg_nchar then
+				dbms_lob.createtemporary(v_nclob, true, dur => dbms_lob.call);
+				for i in 1 .. pv.pg_index loop
+					dbms_lob.writeappend(v_nclob, length(pv.pg_parts(i)), pv.pg_parts(i));
+				end loop;
+				dbms_lob.writeappend(v_nclob, length(pv.pg_buf), pv.pg_buf);
+				v_raw := dbms_crypto.hash(v_nclob, dbms_crypto.hash_md5);
+			else
+				dbms_lob.createtemporary(v_clob, true, dur => dbms_lob.call);
+				for i in 1 .. pv.pg_index loop
+					dbms_lob.writeappend(v_clob, length(pv.ph_parts(i)), pv.ph_parts(i));
+				end loop;
+				dbms_lob.writeappend(v_clob, length(pv.ph_buf), pv.ph_buf);
+				v_raw := dbms_crypto.hash(v_clob, dbms_crypto.hash_md5);
+			end if;
 			v_md5 := utl_raw.cast_to_varchar2(utl_encode.base64_encode(v_raw));
 			h.etag(v_md5);
 			if pv.etag_md5 then
