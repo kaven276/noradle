@@ -69,7 +69,7 @@ create or replace package body output is
 	end;
 
 	-- private, called by .flush or .finish
-	procedure write_buf(p_len pls_integer := get_buf_byte_len) is
+	procedure write_buf(p_len pls_integer) is
 	begin
 		if p_len = 0 then
 			return;
@@ -106,7 +106,7 @@ create or replace package body output is
 		if pv.pg_conv then
 			pv.pg_buf := convert(pv.pg_buf, pv.charset_ora, pv.cs_nchar);
 		end if;
-		write_buf;
+		write_buf(get_buf_byte_len);
 	end;
 
 	procedure do_css_write is
