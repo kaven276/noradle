@@ -34,6 +34,7 @@ create or replace package pv is
 	cs_req        varchar2(30); -- req param's cs, default to output cs
 	etag_md5      boolean; -- if autogen etag and 304 response, null for auto
 	max_lmt       date; -- used to autogen last-modified and 304 response
+	max_scn       number; -- used to autogen last-scn ETag and 304 response
 
 	-- all of request/response params, headers, cookies and their types
 	type vc_arr is table of varchar2(32767) index by binary_integer; -- r.na,r.va

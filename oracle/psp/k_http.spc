@@ -86,6 +86,9 @@ create or replace package k_http is
 	procedure expires(expt date);
 	procedure expires_now;
 	procedure last_modified(lmt date);
+	procedure check_if_not_modified_since;
+	procedure last_scn(scn number);
+	procedure check_if_none_match_scn;
 	procedure etag(etag varchar2);
 	procedure etag_md5_on;
 	procedure etag_md5_off;
@@ -124,8 +127,6 @@ create or replace package k_http is
 	procedure allow_post;
 	procedure allow_get_post;
 	procedure allow(methods varchar2);
-
-	procedure check_if_not_modified_since;
 
 	procedure set_cookie
 	(

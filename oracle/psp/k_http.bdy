@@ -22,6 +22,7 @@ create or replace package body k_http is
 
 	function prevent_flush(text varchar2) return boolean is
 	begin
+		return false;
 		if pv.flushed then
 			k_debug.trace(st('prevent flush ignored', text, r.dbu, r.prog));
 			return false;
@@ -348,24 +349,26 @@ create or replace package body k_http is
 	begin
 		if pv.max_lmt is null or pv.max_lmt < lmt then
 			pv.max_lmt := lmt;
+			pv.headers('Last-Modified') := t.hdt2s(pv.max_lmt);
 		end if;
-		pv.headers('Last-Modified') := t.hdt2s(pv.max_lmt);
+	end;
+
+	procedure last_scn(scn number) is
+	begin
+		if pv.max_scn is null or pv.max_scn < scn then
+			pv.max_scn := scn;
+			pv.headers('ETag') := '"w/' || pv.max_scn || '"';
+		end if;
 	end;
 
 	procedure etag(etag varchar2) is
 	begin
-		if etag = 'ddd' then
-			h.status_line(304);
-			print_init(true);
-			raise pv.ex_resp_done;
-		else
-			pv.headers('ETag') := '"' || etag || '"';
-		end if;
+		pv.headers('ETag') := '"' || etag || '"';
 	end;
 
 	procedure etag_md5_on is
 	begin
-		if prevent_flush('h.etag_md5_on') then
+		if true or prevent_flush('h.etag_md5_on') then
 			pv.etag_md5 := true;
 		end if;
 	end;
@@ -398,6 +401,15 @@ create or replace package body k_http is
 	procedure check_if_not_modified_since is
 	begin
 		if r.lmt = pv.max_lmt then
+			h.status_line(304);
+			print_init(true);
+			raise pv.ex_resp_done;
+		end if;
+	end;
+
+	procedure check_if_none_match_scn is
+	begin
+		if r.etag = 'w/' || pv.max_scn then
 			h.status_line(304);
 			print_init(true);
 			raise pv.ex_resp_done;

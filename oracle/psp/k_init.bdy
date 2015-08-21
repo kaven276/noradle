@@ -14,6 +14,7 @@ create or replace package body k_init is
 		pv.header_writen := false;
 		pv.etag_md5      := false;
 		pv.max_lmt       := null;
+		pv.max_scn       := null;
 		pv.allow         := null;
 		pv.nlbr          := chr(10);
 	
