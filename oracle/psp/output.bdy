@@ -57,6 +57,9 @@ create or replace package body output is
 
 	procedure switch_css is
 	begin
+		if pv.use_stream = false then
+			raise_application_error(-20000, 'force no stream found when switch_css');
+		end if;
 		flush;
 		-- write embed_frame for insertion point
 		bios.wpi(pv.cslot_id * 256 * 256 + 4 * 256 + 0);
@@ -98,6 +101,7 @@ create or replace package body output is
 		end if;
 		if pv.flushed = false then
 			pv.flushed := true;
+			pv.use_stream := true;
 			pv.headers('Transfer-Encoding') := 'chunked';
 		end if;
 		if not pv.header_writen then

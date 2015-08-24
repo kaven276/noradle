@@ -75,7 +75,7 @@ create or replace package pv is
 	-- use_stream will inited to true
 	-- p.comp_css_link,h.content_encoding_try_zip,g.feedback cause it to be false
 	-- flush will be ignored when use_stream=false
-	use_stream boolean; -- 
+	use_stream boolean; -- null:cache all;false:force not flush;true:force flush
 	flushed    boolean; -- if any flush actually occurred
 	msg_stream boolean;
 	accum_cnt  pls_integer;

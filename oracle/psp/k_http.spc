@@ -8,10 +8,8 @@ create or replace package k_http is
 	mime_excel constant varchar2(30) := 'application/vnd.ms-excel';
 	mime_rss   constant varchar2(30) := 'text/resultsets';
 
-	procedure force_stream;
 	procedure flush;
 	function flushed return boolean;
-	function prevent_flush(text varchar2) return boolean;
 
 	function written return pls_integer;
 	function inc_buf_cnt return pls_integer;

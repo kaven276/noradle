@@ -30,7 +30,7 @@ create or replace package body k_init is
 	begin
 		-- initialize output flow control pv   
 		pv.msg_stream := false;
-		pv.use_stream := true;
+		pv.use_stream := null;
 		pv.bom        := null;
 	
 		header_init;

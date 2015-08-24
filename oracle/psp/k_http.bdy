@@ -1,14 +1,5 @@
 create or replace package body k_http is
 
-	procedure force_stream is
-	begin
-		pv.use_stream := true;
-		-- cancel all settings that prevent stream
-		h.etag_md5_off;
-		h.content_md5_off;
-		h.content_encoding_identity;
-	end;
-
 	procedure flush is
 	begin
 		pv.accum_cnt := 0;
@@ -18,18 +9,6 @@ create or replace package body k_http is
 	function flushed return boolean is
 	begin
 		return pv.flushed;
-	end;
-
-	function prevent_flush(text varchar2) return boolean is
-	begin
-		return false;
-		if pv.flushed then
-			k_debug.trace(st('prevent flush ignored', text, r.dbu, r.prog));
-			return false;
-		else
-			pv.use_stream := false;
-			return true;
-		end if;
 	end;
 
 	function written return pls_integer is
@@ -97,10 +76,10 @@ create or replace package body k_http is
 			return;
 		end if;
 	
-		if not pv.use_stream then
-			output.line(utl_raw.cast_to_nvarchar2(data), '');
-		else
+		if pv.use_stream then
 			pv.wlen := utl_tcp.write_raw(pv.c, data);
+		else
+			output.line(utl_raw.cast_to_nvarchar2(data), '');
 		end if;
 	end;
 
@@ -368,9 +347,11 @@ create or replace package body k_http is
 
 	procedure etag_md5_on is
 	begin
-		if true or prevent_flush('h.etag_md5_on') then
-			pv.etag_md5 := true;
+		if pv.use_stream = true then
+			raise_application_error(-20000, 'force stream found when require in-db digest');
 		end if;
+		pv.etag_md5   := true;
+		pv.use_stream := false;
 	end;
 
 	procedure etag_md5_off is
