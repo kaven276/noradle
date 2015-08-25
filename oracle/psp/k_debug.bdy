@@ -23,6 +23,34 @@ create or replace package body k_debug is
 			dbms_pipe.reset_buffer;
 	end;
 
+	procedure time_header_init is
+	begin
+		pv.elpt := dbms_utility.get_time;
+		pv.cput := dbms_utility.get_cpu_time;
+		pv.tseq := 1;
+	end;
+
+	procedure time_header(name varchar2) is
+		t1 number(10);
+		t2 number(10);
+		hn varchar2(99);
+	begin
+		if pv.tseq is null then
+			return;
+		end if;
+		if pv.tseq = 1 and r.is_null('t$timespan') then
+			pv.tseq := null;
+			return;
+		end if;
+		t1 := dbms_utility.get_time;
+		t2 := dbms_utility.get_cpu_time;
+		hn := 'x-pw-otime-' || pv.tseq || '-' || name;
+		pv.headers(hn) := ((t1 - pv.elpt) * 10) || ' / ' || ((t2 - pv.cput) * 10) || ' ms';
+		pv.elpt := t1;
+		pv.cput := t2;
+		pv.tseq := pv.tseq + 1;
+	end;
+
 	procedure trace
 	(
 		info varchar2,

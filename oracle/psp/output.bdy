@@ -44,11 +44,7 @@ create or replace package body output is
 		if pv.bom is not null then
 			pv.headers('x-pw-bom-hex') := pv.bom;
 		end if;
-		if r.getc('t$timespan', 'Y') = 'Y' then
-			v1 := dbms_utility.get_time;
-			v2 := dbms_utility.get_cpu_time;
-			pv.headers('x-pw-timespan') := ((v1 - pv.elpt) * 10) || ' / ' || ((v2 - pv.cput) * 10) || ' ms';
-		end if;
+		k_debug.time_header('before-resp');
 		if pv.status_code = 200 and r.type = 'c' and r.getc('f$feedback', 'Y') = 'Y' then
 			pv.headers('x-pw-feedback') := 'Y';
 		end if;

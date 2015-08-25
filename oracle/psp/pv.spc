@@ -15,10 +15,9 @@ create or replace package pv is
 	hp_flag  boolean;
 	hp_label varchar2(2047); -- set to dbmshp run comment
 
-	$if k_ccflag.use_time_stats $then
 	elpt number(10); -- elapsed-time
 	cput number(10); -- cpu-time
-	$end
+	tseq pls_integer; -- time stats trace seq number, from 1
 
 	elpl number(10); -- elapsed-long, last record time, used for detecting long execution
 	wlen pls_integer; -- dummy pls_integer holder

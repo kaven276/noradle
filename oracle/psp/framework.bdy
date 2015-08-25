@@ -216,6 +216,8 @@ create or replace package body framework is
 			begin
 				v_count := v_count + 1;
 				bios.read_request;
+				pv.headers.delete;
+				k_debug.time_header('after-read');
 			exception
 				when utl_tcp.transfer_timeout then
 					if v_count > v_maxwcnt then
@@ -257,11 +259,6 @@ create or replace package body framework is
 				pv.hp_label := '';
 			end if;
 		
-			$if k_ccflag.use_time_stats $then
-			pv.elpt := dbms_utility.get_time;
-			pv.cput := dbms_utility.get_cpu_time;
-			$end
-		
 			-- read & parse request info and do init work
 			pv.firstpg := true;
 			begin
@@ -302,6 +299,7 @@ create or replace package body framework is
 			r.after_map;
 			dbms_application_info.set_module(r.dbu || '.' || nvl(r.pack, r.proc), t.tf(r.pack is null, 'standalone', r.proc));
 		
+			k_debug.time_header('before-exec');
 			<<re_call_servlet>>
 			declare
 				no_dad_db_user exception; -- servlet db user does not exist

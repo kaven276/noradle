@@ -65,6 +65,7 @@ create or replace package body bios is
 		end;
 	begin
 		read_wrapper;
+		k_debug.time_header_init;
 		pv.cslot_id := v_slot;
 		pv.protocol := utl_tcp.get_line(pv.c, true);
 		v_hprof     := utl_tcp.get_line(pv.c, true);
