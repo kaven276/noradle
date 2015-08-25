@@ -643,9 +643,8 @@ create or replace package body r is
 	end;
 
 	function etag return varchar2 is
-		v varchar2(100) := header('if-none-match');
 	begin
-		return substrb(v, 2, lengthb(v) - 2);
+		return header('if-none-match');
 	end;
 
 	function lmt return date is

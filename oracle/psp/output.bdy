@@ -224,7 +224,7 @@ create or replace package body output is
 		if pv.etag_md5 and pv.status_code = 200 then
 			v_md5 := compute_hash;
 			h.etag(v_md5);
-			if r.etag = v_md5 then
+			if r.etag = '"' || v_md5 || '"' then
 				h.status_line(304);
 				v_len := 0;
 			end if;

@@ -336,7 +336,7 @@ create or replace package body k_http is
 	begin
 		if pv.max_scn is null or pv.max_scn < scn then
 			pv.max_scn := scn;
-			pv.headers('ETag') := '"w/' || pv.max_scn || '"';
+			pv.headers('ETag') := 'W/"' || pv.max_scn || '"';
 		end if;
 	end;
 
@@ -390,7 +390,7 @@ create or replace package body k_http is
 
 	procedure check_if_none_match_scn is
 	begin
-		if r.etag = 'w/' || pv.max_scn then
+		if r.etag = 'W/"' || pv.max_scn || '"' then
 			h.status_line(304);
 			print_init(true);
 			raise pv.ex_resp_done;
