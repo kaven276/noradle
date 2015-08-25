@@ -40,6 +40,7 @@ create or replace package pv is
 	type str_arr is table of varchar2(1000) index by varchar2(100);
 	headers str_arr; -- output headers
 	cookies str_arr; -- output cookies
+	caches  str_arr; -- output cache parts
 
 	mp_headers str_arr; -- msg pipe headers
 

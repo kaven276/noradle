@@ -27,3 +27,4 @@ grant execute on list to public -- tb;
 grant execute on tree to public -- tr;
 
 grant execute on msg_pipe to public -- mp, mp_h;
+grant execute on cache to public;

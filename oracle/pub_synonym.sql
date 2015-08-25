@@ -50,3 +50,5 @@ prompt for call-out request/response
 create or replace public synonym msg_pipe for msg_pipe;
 create or replace public synonym mp for msg_pipe;
 create or replace public synonym mp_h for msg_pipe;
+
+create or replace public synonym cache for cache;

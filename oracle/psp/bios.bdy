@@ -136,6 +136,7 @@ create or replace package body bios is
 		v  varchar2(4000);
 		nl varchar2(2) := chr(13) || chr(10);
 		n  varchar2(30);
+		cc varchar2(100) := '';
 	begin
 		v := pv.status_code || nl || 'Date: ' || t.hdt2s(sysdate) || nl;
 		n := pv.headers.first;
@@ -148,6 +149,18 @@ create or replace package body bios is
 			v := v || pv.cookies(n) || nl;
 			n := pv.cookies.next(n);
 		end loop;
+		n := pv.caches.first;
+		while n is not null loop
+			if pv.caches(n) = 'Y' then
+				cc := cc || ', ' || n;
+			else
+				cc := cc || ', ' || n || '=' || pv.caches(n);
+			end if;
+			n := pv.caches.next(n);
+		end loop;
+		if cc is not null then
+			v := v || 'Cache-Control: ' || substrb(cc, 3) || nl;
+		end if;
 		write_frame(0, v);
 	end;
 

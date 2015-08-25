@@ -10,6 +10,7 @@ create or replace package body k_init is
 		output."_init"(80526);
 		--pv.headers.delete;
 		pv.cookies.delete;
+		pv.caches.delete;
 		pv.status_code   := 200;
 		pv.header_writen := false;
 		pv.etag_md5      := false;
