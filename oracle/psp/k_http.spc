@@ -83,6 +83,7 @@ create or replace package k_http is
 
 	procedure expires(expt date);
 	procedure expires_now;
+	procedure expires_as_maxage;
 	procedure last_modified(lmt date);
 	procedure check_if_not_modified_since;
 	procedure last_scn(scn number);

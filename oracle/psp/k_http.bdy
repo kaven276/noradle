@@ -324,6 +324,12 @@ create or replace package body k_http is
 		pv.headers('Expires') := t.hdt2s(sysdate);
 	end;
 
+	procedure expires_as_maxage is
+		expt date := sysdate + nvl(to_number(pv.caches('max-age')), 0) / 24 / 60 / 60;
+	begin
+		pv.headers('Expires') := t.hdt2s(expt);
+	end;
+
 	procedure last_modified(lmt date) is
 	begin
 		if pv.max_lmt is null or pv.max_lmt < lmt then
