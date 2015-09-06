@@ -3,16 +3,20 @@ create or replace package body cache is
 	procedure set_public is
 	begin
 		pv.caches('public') := 'Y';
+		pv.caches.delete('private');
 	end;
 
 	procedure set_private is
 	begin
 		pv.caches('private') := 'Y';
+		pv.caches.delete('public');
 	end;
 
 	procedure no_cache is
 	begin
 		pv.caches('no-cache') := 'Y';
+		max_age(0);
+		s_maxage(0);
 	end;
 
 	procedure no_store is
