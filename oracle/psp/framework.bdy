@@ -41,7 +41,6 @@ create or replace package body framework is
 		exception
 			when utl_tcp.network_error then
 				null;
-				k_debug.trace(st('close_conn_error', 'utl_tcp.network_error'), 'keep_conn');
 			when others then
 				k_debug.trace(st('close_conn_error', sqlcode, sqlerrm), 'keep_conn');
 		end;
@@ -357,7 +356,6 @@ create or replace package body framework is
 	exception
 		when others then
 			-- all quit will go here, normal quit or exception, to allow sqlplus based OPS
-			k_debug.trace(st(v_clinfo, 'quit at end'), 'keep_conn');
 			utl_tcp.close_all_connections;
 			if v_sts = 0 then
 				dbms_output.put_line('Noradle Server Status:kill.');
