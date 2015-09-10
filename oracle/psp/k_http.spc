@@ -137,5 +137,6 @@ create or replace package k_http is
 		secure  in boolean default false
 	);
 
+	procedure convert_json(callback varchar2 := null);
 end k_http;
 /
