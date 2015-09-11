@@ -17,7 +17,7 @@ create or replace package body rs is
 		lsep    varchar2(2) := chr(30) || chr(10);
 		csep    varchar2(2) := chr(31) || ',';
 	begin
-	
+		h.convert_json;
 		h.write(lsep || '[' || name || ']' || lsep);
 	
 		-- Switch from native dynamic SQL to DBMS_SQL
