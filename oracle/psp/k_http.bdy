@@ -521,11 +521,7 @@ create or replace package body k_http is
 	procedure convert_json(callback varchar2 := null) is
 	begin
 		h.content_type('text/resultsets', 'UTF-8');
-		if r.is_null('callback') and callback is null then
-			h.header('_convert', 'JSON');
-		else
-			h.header('_convert', 'JSONP');
-			h.header('_callback', nvl(callback, r.getc('callback')));
+		h.header('_callback', nvl(callback, r.getc('callback', '')));
 		end if;
 	end;
 
