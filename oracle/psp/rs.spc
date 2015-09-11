@@ -6,5 +6,7 @@ create or replace package rs authid current_user is
 		c    in out sys_refcursor
 	);
 
+	procedure use_remarks;
+
 end rs;
 /
