@@ -76,6 +76,7 @@ create or replace package body rs is
 
 	procedure print(c in out sys_refcursor) is
 	begin
+		h.header('x-nd-z$array', r.getc('z$array', 'true'));
 		print('data', c);
 	end;
 
