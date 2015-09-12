@@ -74,6 +74,11 @@ create or replace package body rs is
 		dbms_sql.close_cursor(curid);
 	end;
 
+	procedure print(c in out sys_refcursor) is
+	begin
+		print('data', c);
+	end;
+
 	procedure use_remarks is
 	begin
 		pv.nlbr := (chr(30) || chr(10));
