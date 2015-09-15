@@ -76,8 +76,17 @@ create or replace package body rs is
 
 	procedure print(c in out sys_refcursor) is
 	begin
-		h.header('x-nd-z$array', r.getc('z$array', 'true'));
-		print('data', c);
+		if r.is_lack('z$array') then
+			print('$DATA', c);
+		else
+			h.header('x-nd-z$array', r.getc('z$array'));
+			if r.getc('z$array') = 'true' then
+				print('$OBJECTS', c);
+			else
+				print('$OBJECT', c);
+			end if;
+		end if;
+	
 	end;
 
 	procedure use_remarks is
