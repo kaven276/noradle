@@ -138,5 +138,11 @@ create or replace package k_http is
 	);
 
 	procedure convert_json(callback varchar2 := null);
+	procedure convert_json_template
+	(
+		template varchar2,
+		engine   varchar2 := null
+	);
+
 end k_http;
 /

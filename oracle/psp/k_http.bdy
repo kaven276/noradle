@@ -529,6 +529,17 @@ create or replace package body k_http is
 			end if;
 		end if;
 	end;
+
+	procedure convert_json_template
+	(
+		template varchar2,
+		engine   varchar2 := null
+	) is
+	begin
+		h.content_type('text/resultsets', 'UTF-8');
+		h.header('_template', template);
+		if engine is not null then
+			h.header('_engine', engine);
 		end if;
 	end;
 
