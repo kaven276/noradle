@@ -94,5 +94,53 @@ create or replace package body rs is
 		pv.nlbr := (chr(30) || chr(10));
 	end;
 
+	procedure nv
+	(
+		n varchar2,
+		t varchar2,
+		v varchar2
+	) is
+		lsep  varchar2(2) := chr(30) || chr(10);
+		nvsep varchar2(2) := chr(31) || '=';
+	begin
+		h.write(lsep || '*' || t || '|' || n || nvsep || v || lsep);
+	end;
+
+	procedure nv
+	(
+		n varchar2,
+		v varchar2
+	) is
+	begin
+		nv(n, 's', v);
+	end;
+
+	procedure nv
+	(
+		n varchar2,
+		v number
+	) is
+	begin
+		nv(n, 'n', to_char(v));
+	end;
+
+	procedure nv
+	(
+		n varchar2,
+		v date
+	) is
+	begin
+		nv(n, 'd', to_char(v, 'yyyy-mm-dd hh24:mi:ss'));
+	end;
+
+	procedure nv
+	(
+		n varchar2,
+		v boolean
+	) is
+	begin
+		nv(n, 'b', t.tf(v, 'T', 'F'));
+	end;
+
 end rs;
 /

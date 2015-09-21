@@ -10,5 +10,29 @@ create or replace package rs authid current_user is
 
 	procedure use_remarks;
 
+	procedure nv
+	(
+		n varchar2,
+		v varchar2
+	);
+
+	procedure nv
+	(
+		n varchar2,
+		v number
+	);
+
+	procedure nv
+	(
+		n varchar2,
+		v date
+	);
+
+	procedure nv
+	(
+		n varchar2,
+		v boolean
+	);
+
 end rs;
 /
