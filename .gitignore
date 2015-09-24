@@ -11,8 +11,10 @@ doc/refs/
 dochtml/
 upload/
 
+doc/
+test/
+
 *.html
-*.ppt
 *.log
 *Thumbs.db
 */*.out
