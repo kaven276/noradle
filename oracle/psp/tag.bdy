@@ -314,7 +314,7 @@ create or replace package body tag is
 
 	function e(text varchar2 character set any_cs) return varchar2 is
 	begin
-		return replace(replace(text, '<', '&lt'), '>', '&gt');
+		return replace(replace(text, '<', '&lt;'), '>', '&gt;');
 	end;
 
 	procedure j
