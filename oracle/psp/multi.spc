@@ -38,21 +38,21 @@ create or replace package multi is
 		indent boolean := true
 	);
 
-	procedure w
+	procedure nv
 	(
 		tpl    varchar2,
 		cur    sys_refcursor,
 		sv     varchar2,
 		indent boolean := true
 	);
-	function w
+	function nv
 	(
 		tpl varchar2,
 		cur sys_refcursor,
 		sv  varchar2
 	) return varchar2;
-	
-	procedure w
+
+	procedure nv
 	(
 		tpl    varchar2,
 		ns     st,
@@ -61,15 +61,7 @@ create or replace package multi is
 		indent boolean := true
 	);
 
-	procedure c
-	(
-		tpl      varchar2,
-		cur      in out nocopy sys_refcursor,
-		fmt_date varchar2 := null,
-		flush    pls_integer := null
-	);
-
-	procedure tpl_cur
+	procedure prc
 	(
 		tpl      varchar2,
 		cur      in out nocopy sys_refcursor,
@@ -93,22 +85,6 @@ create or replace package multi is
 		cuts in out nocopy st,
 		para st
 	) return varchar2;
-
-	procedure p
-	(
-		tpl      varchar2,
-		list_tag varchar2,
-		cuts     in out nocopy st,
-		indent   boolean := true
-	);
-	procedure r
-	(
-		cuts  in out nocopy st,
-		level pls_integer,
-		para  st
-	);
-	procedure ro(pretty boolean := null);
-	procedure rc(cuts in out nocopy st);
 
 end multi;
 /

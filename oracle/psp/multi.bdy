@@ -2,31 +2,7 @@ create or replace package body multi is
 
 	type pairs_t is ref cursor;
 
-  -- split p by sep, result cuts(st)
-	procedure split
-	(
-		p    varchar2,
-		cuts in out nocopy st,
-		sep  varchar2 := ','
-	) is
-		v_pos pls_integer;
-		v_old pls_integer := 0;
-		v_cnt pls_integer := 0;
-	begin
-		cuts := st();
-		loop
-			v_pos := instr(p, sep, v_old + 1, 1);
-			exit when v_pos = 0 or v_pos is null;
-			cuts.extend;
-			v_cnt := v_cnt + 1;
-			cuts(v_cnt) := trim(substr(p, v_old + 1, v_pos - v_old - 1));
-			v_old := v_pos;
-		end loop;
-		cuts.extend;
-		cuts(v_cnt + 1) := trim(substr(p, v_old + 1));
-	end;
-
-  -- join cust by sep, return varchar2
+	-- join cust by sep, return varchar2
 	function join
 	(
 		cuts in out nocopy st,
@@ -41,7 +17,7 @@ create or replace package body multi is
 		return s;
 	end;
 
-  -- split pairs ;: to sts.gv_texts, sts.gv_values
+	-- split pairs ;: to sts.gv_texts, sts.gv_values
 	procedure split2
 	(
 		pairs varchar2,
@@ -82,7 +58,7 @@ create or replace package body multi is
 		end loop;
 	end;
 
-  -- make cur into n(st),v(st)
+	-- make cur into n(st),v(st)
 	function f
 	(
 		cur pairs_t,
@@ -109,7 +85,7 @@ create or replace package body multi is
 		return i;
 	end;
 
-  -- make cur into n(st),v(st)
+	-- make cur into n(st),v(st)
 	procedure f
 	(
 		cur pairs_t,
@@ -215,7 +191,7 @@ create or replace package body multi is
 		h.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
 	end;
 
-	procedure w
+	procedure nv
 	(
 		tpl    varchar2,
 		cur    sys_refcursor,
@@ -250,7 +226,7 @@ create or replace package body multi is
 		end loop;
 	end;
 
-	function w
+	function nv
 	(
 		tpl varchar2,
 		cur sys_refcursor,
@@ -284,7 +260,7 @@ create or replace package body multi is
 	end;
 
 	-- private, experimental
-	procedure w
+	procedure nv
 	(
 		tpl    varchar2,
 		ns     st,
@@ -323,7 +299,7 @@ create or replace package body multi is
 		indent boolean := true
 	) is
 	begin
-		split(tpl, cuts, '@');
+		t.split(cuts, tpl, '@', false);
 		if indent then
 			cuts(1) := ltrim(cuts(1));
 		end if;
@@ -356,93 +332,7 @@ create or replace package body multi is
 		return v || cuts(para.count + 1);
 	end;
 
-	-- template parser for hierachical structure
-	procedure p
-	(
-		tpl      varchar2,
-		list_tag varchar2,
-		cuts     in out nocopy st,
-		indent   boolean := true
-	) is
-		pos  pls_integer;
-		head varchar2(4000);
-		tail varchar2(30);
-	begin
-		pos  := instrb(tpl, '|');
-		head := substrb(tpl, 1, pos - 1);
-		tail := substrb(tpl, pos + 1);
-		split(head, cuts, '@');
-		if indent then
-			cuts(1) := ltrim(cuts(1));
-		end if;
-		cuts.extend;
-		cuts(cuts.count) := tail;
-		cuts.extend;
-		cuts(cuts.count) := list_tag;
-		cuts.extend;
-		cuts(cuts.count) := '</' || substrb(list_tag, 2);
-	end;
-
-	procedure ro(pretty boolean := null) is
-	begin
-		sts.olevel := null;
-		sts.pretty := pretty;
-	end;
-
-	-- repeater for gen hierachical structure
-	procedure r
-	(
-		cuts  in out nocopy st,
-		level pls_integer,
-		para  st
-	) is
-	begin
-		if sts.olevel is not null then
-			if level = sts.olevel + 1 then
-				-- enter deeper level
-				h.write(cuts(cuts.count - 1));
-				sts.olevel := level;
-			else
-				-- same level or level up
-				h.write(cuts(cuts.count - 2));
-				-- escape one or more level up
-				for j in 1 .. sts.olevel - level loop
-					-- return level
-					h.write(cuts(cuts.count - 0));
-					h.write(cuts(cuts.count - 2));
-				end loop;
-				sts.olevel := level;
-			end if;
-			if sts.pretty is null then
-				h.write(chr(10));
-			elsif sts.pretty then
-				h.write(rpad(chr(10), level, ' '));
-			end if;
-		else
-			sts.olevel := 1;
-		end if;
-	
-		for i in 1 .. para.count loop
-			h.write(cuts(i));
-			h.write(para(i));
-		end loop;
-		h.write(cuts(cuts.count - 3));
-	end;
-
-	procedure rc(cuts in out nocopy st) is
-	begin
-		if sts.olevel is null then
-			return;
-		end if;
-		h.write(cuts(cuts.count - 2));
-		for j in 1 .. sts.olevel - 1 loop
-			h.write(cuts(cuts.count - 0));
-			h.write(cuts(cuts.count - 2));
-		end loop;
-		h.line;
-	end;
-
-	procedure c
+	procedure prc
 	(
 		tpl      varchar2,
 		cur      in out nocopy sys_refcursor,
@@ -459,7 +349,7 @@ create or replace package body multi is
 		v_count    pls_integer;
 		v_cuts     st;
 	begin
-		split(tpl, v_cuts, '@');
+		t.split(v_cuts, tpl, '@', false);
 		curid := dbms_sql.to_cursor_number(cur);
 		dbms_sql.describe_columns(curid, colcnt, desctab);
 	
@@ -511,17 +401,6 @@ create or replace package body multi is
 		when no_data_found then
 			tmp.rows := v_count;
 			dbms_sql.close_cursor(curid);
-	end;
-
-	procedure tpl_cur
-	(
-		tpl      varchar2,
-		cur      in out nocopy sys_refcursor,
-		fmt_date varchar2 := null,
-		flush    pls_integer := null
-	) is
-	begin
-		c(tpl, cur, fmt_date, flush);
 	end;
 
 end multi;
