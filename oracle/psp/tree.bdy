@@ -1,6 +1,6 @@
 create or replace package body tree is
 
-	procedure cur
+	procedure rc
 	(
 		cuts     in out nocopy st,
 		cur      in out nocopy sys_refcursor,
@@ -60,18 +60,56 @@ create or replace package body tree is
 						v_fill(i - 1) := v_other;
 				end case;
 			end loop;
-			m.r(cuts, v_lvl, v_fill);
+			r(v_lvl, cuts, v_fill);
 		end loop;
 	
 		dbms_sql.close_cursor(curid);
 		tmp.rows := v_row_cnt;
 	end;
 
-	procedure o
+	procedure prc
 	(
-		pretty boolean,
-		tags   varchar2 := 'ul,li'
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		pretty   boolean := true,
+		indent   boolean := true
 	) is
+		v_stv st;
+	begin
+		p(tpl, v_stv, indent);
+		o(pretty);
+		rc(v_stv, cur, fmt_date);
+		c(v_stv);
+	end;
+
+	-- template parser for hierachical structure
+	procedure p
+	(
+		tpl    varchar2,
+		cuts   in out nocopy st,
+		indent boolean := true
+	) is
+		pos1 pls_integer;
+		pos2 pls_integer;
+		pos3 pls_integer;
+	begin
+		pos1 := instrb(tpl, '|');
+		pos2 := instrb(tpl, '|', pos1 + 1);
+		pos3 := instrb(tpl, '|', pos2 + 1);
+		t.split(cuts, substrb(tpl, 1, pos1 - 1), '@', false);
+		if indent then
+			cuts(1) := ltrim(cuts(1));
+		end if;
+		cuts.extend;
+		cuts(cuts.count) := substrb(tpl, pos3 + 1); -- </li>
+		cuts.extend;
+		cuts(cuts.count) := substrb(tpl, pos1 + 1, pos2 - pos1 - 1); -- <ul>
+		cuts.extend;
+		cuts(cuts.count) := substrb(tpl, pos2 + 1, pos3 - pos2 - 1); -- </ul>
+	end;
+
+	procedure o(pretty boolean) is
 	begin
 		sts.olevel := null;
 		sts.pretty := pretty;
@@ -79,15 +117,60 @@ create or replace package body tree is
 
 	procedure c is
 	begin
+		c(tmp.stv);
+	end;
+
+	procedure c(cuts in out nocopy st) is
+	begin
 		if sts.olevel is null then
 			return;
 		end if;
-		h.write('</li>');
+		h.write(cuts(cuts.count - 2)); -- </li>
 		for j in 1 .. sts.olevel - 1 loop
-			h.write('</ul>');
-			h.write('</li>');
+			h.write(cuts(cuts.count - 0)); -- </ul>
+			h.write(cuts(cuts.count - 2)); -- </li>
 		end loop;
 		h.line;
+	end;
+
+	-- repeater for gen hierachical structure
+	procedure r
+	(
+		level pls_integer,
+		cuts  in out nocopy st,
+		para  st
+	) is
+	begin
+		if sts.olevel is not null then
+			if level = sts.olevel + 1 then
+				-- enter deeper level
+				h.write(cuts(cuts.count - 1)); -- <li>
+				sts.olevel := level;
+			else
+				-- same level or level up
+				h.write(cuts(cuts.count - 2)); -- </li>
+				-- escape one or more level up
+				for j in 1 .. sts.olevel - level loop
+					-- return level
+					h.write(cuts(cuts.count - 0)); -- </ul>
+					h.write(cuts(cuts.count - 2)); -- </li>
+				end loop;
+				sts.olevel := level;
+			end if;
+			if sts.pretty is null then
+				h.write(chr(10));
+			elsif sts.pretty then
+				h.write(rpad(chr(10), level, ' '));
+			end if;
+		else
+			sts.olevel := 1;
+		end if;
+	
+		for i in 1 .. cuts.count - 4 loop
+			h.write(cuts(i));
+			h.write(para(i));
+		end loop;
+		h.write(cuts(cuts.count - 3));
 	end;
 
 	procedure n

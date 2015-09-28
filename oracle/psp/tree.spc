@@ -1,19 +1,38 @@
 create or replace package tree is
 
-	procedure cur
+	procedure rc
 	(
 		cuts     in out nocopy st,
 		cur      in out nocopy sys_refcursor,
 		fmt_date varchar2 := null
 	);
 
-	procedure o
+	procedure prc
 	(
-		pretty boolean,
-		tags   varchar2 := 'ul,li'
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		pretty   boolean := true,
+		indent   boolean := true
 	);
 
+	procedure p
+	(
+		tpl    varchar2,
+		cuts   in out nocopy st,
+		indent boolean := true
+	);
+
+	procedure r
+	(
+		level pls_integer,
+		cuts  in out nocopy st,
+		para  st
+	);
+
+	procedure o(pretty boolean);
 	procedure c;
+	procedure c(cuts in out nocopy st);
 
 	procedure n
 	(
