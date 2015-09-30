@@ -1,6 +1,8 @@
 Want to build solid information system solely on PL/SQL and javascript easily,
 no rely on any other programming language or technical stack? develop with NORADLE.
 
+<center>![NORADLE](noradle_span_960.png)</center>
+
 What NORADLE provide?
 =====================
 
