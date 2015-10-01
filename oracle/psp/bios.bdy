@@ -1,9 +1,15 @@
 create or replace package body bios is
 
-	procedure init_pv is
+	-- for unit test only
+	procedure init_req_pv is
 	begin
-		pv.status_code := 200;
-	
+		ra.params.delete;
+		rc.params.delete;
+		rb.charset_http := null;
+		rb.charset_db   := null;
+		rb.blob_entity  := null;
+		rb.clob_entity  := null;
+		rb.nclob_entity := null;
 	end;
 
 	procedure getblob
@@ -161,7 +167,11 @@ create or replace package body bios is
 		if cc is not null then
 			v := v || 'Cache-Control: ' || substrb(cc, 3) || nl;
 		end if;
-		write_frame(0, v);
+		if pv.entry is null then
+			dbms_output.put_line(v);
+		else
+			write_frame(0, v);
+		end if;
 	end;
 
 	procedure write_session is

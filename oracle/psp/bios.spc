@@ -3,6 +3,8 @@ create or replace package bios is
 	-- Author  : ADMINISTRATOR
 	-- Created : 2015-5-11 11:28:55
 	-- Purpose : read request, write response
+	
+	procedure init_req_pv;
 
 	procedure read_request;
 

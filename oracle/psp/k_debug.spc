@@ -25,5 +25,11 @@ create or replace package k_debug is
 
 	procedure req_info;
 
+	procedure unit_test_init;
+
+	procedure unit_test_print;
+
+	procedure print_to_ide(str in out nocopy varchar2 character set any_cs);
+
 end k_debug;
 /

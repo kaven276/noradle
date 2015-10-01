@@ -73,19 +73,35 @@ create or replace package body output is
 		if p_len = 0 then
 			return;
 		end if;
-		bios.wpi(pv.cslot_id * 256 * 256 + 1 * 256 + 0);
-		bios.wpi(p_len);
+		if pv.entry is not null then
+			bios.wpi(pv.cslot_id * 256 * 256 + 1 * 256 + 0);
+			bios.wpi(p_len);
+		end if;
 	
-		if pv.pg_nchar then
-			for i in 1 .. pv.pg_index loop
-				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
-			end loop;
-			pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+		if pv.entry is null then
+			if pv.pg_nchar then
+				for i in 1 .. pv.pg_index loop
+					k_debug.print_to_ide(pv.pg_parts(i));
+				end loop;
+				k_debug.print_to_ide(pv.pg_buf);
+			else
+				for i in 1 .. pv.pg_index loop
+					k_debug.print_to_ide(pv.ph_parts(i));
+				end loop;
+				k_debug.print_to_ide(pv.ph_buf);
+			end if;
 		else
-			for i in 1 .. pv.pg_index loop
-				pv.wlen := utl_tcp.write_text(pv.c, pv.ph_parts(i));
-			end loop;
-			pv.wlen := utl_tcp.write_text(pv.c, pv.ph_buf);
+			if pv.pg_nchar then
+				for i in 1 .. pv.pg_index loop
+					pv.wlen := utl_tcp.write_text(pv.c, pv.pg_parts(i));
+				end loop;
+				pv.wlen := utl_tcp.write_text(pv.c, pv.pg_buf);
+			else
+				for i in 1 .. pv.pg_index loop
+					pv.wlen := utl_tcp.write_text(pv.c, pv.ph_parts(i));
+				end loop;
+				pv.wlen := utl_tcp.write_text(pv.c, pv.ph_buf);
+			end if;
 		end if;
 		chunk_init;
 	end;

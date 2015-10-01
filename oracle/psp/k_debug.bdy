@@ -204,5 +204,30 @@ create or replace package body k_debug is
 		h.line('</pre>');
 	end;
 
+	procedure unit_test_init is
+	begin
+		pv.protocol := 'HTTP';
+		k_init.by_request;
+		bios.init_req_pv;
+		pv.nlbr := chr(10);
+		--dbms_output.enable(80000);
+		htp.init;
+	end;
+
+	procedure unit_test_print is
+	begin
+		dbms_output.put_line('buffered in ' || t.tf(pv.pg_nchar, 'nvarchar2', 'varchar2') || chr(10));
+		output.finish;
+		dbms_output.new_line;
+	end;
+
+	procedure print_to_ide(str in out nocopy varchar2 character set any_cs) is
+		v_len     pls_integer := length(str);
+		htbuf_len pls_integer := 255;
+	begin
+		dbms_output.put(str);
+		htp.prn(str);
+	end;
+
 end k_debug;
 /
