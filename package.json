@@ -12,9 +12,11 @@
     "driver",
     "jdbc",
     "ndbc",
-    "pool"
+    "pool",
+    "dba",
+    "ocp"
   ],
-  "version": "0.11.2",
+  "version": "0.11.3",
   "homepage": "https://github.com/kaven276/noradle",
   "repository": {
     "type": "git",
@@ -39,6 +41,7 @@
   },
   "devDependencies": {},
   "optionalDependencies": {
+    "consolidate": "^0.13.1",
     "formidable": ">1.0.11"
   },
   "bugs": {

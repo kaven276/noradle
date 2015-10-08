@@ -12,6 +12,7 @@ dochtml/
 upload/
 
 doc/
+doc_html/
 test/
 
 *.html
