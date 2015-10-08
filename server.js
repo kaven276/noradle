@@ -22,7 +22,17 @@ Object.defineProperties(exports, {
       return require('./lib/handlerHTTP.js');
     }
   },
+  HTTP : {
+    get : function(){
+      return require('./lib/handlerHTTP.js');
+    }
+  },
   handlerFastCGI : {
+    get : function(){
+      return null;
+    }
+  },
+  FCGI : {
     get : function(){
       return null;
     }
