@@ -218,7 +218,7 @@ create or replace package body multi is
 			fetch cur
 				into v, n;
 			exit when cur%notfound;
-			if instr(sw, ',' || v || ',') = 0 then
+			if instr(sw, ',' || v || ',') = 0 and instr(sw, ',' || n || ',') = 0 then
 				h.line(t1 || t2 || v || t3 || n || t4);
 			else
 				h.line(t1 || b || t2 || v || t3 || n || t4);
@@ -250,7 +250,7 @@ create or replace package body multi is
 			fetch cur
 				into v, n;
 			exit when cur%notfound;
-			if instr(sw, ',' || v || ',') = 0 then
+			if instr(sw, ',' || v || ',') = 0 and instr(sw, ',' || n || ',') = 0 then
 				rtn := rtn || (t1 || t2 || v || t3 || n || t4);
 			else
 				rtn := rtn || (t1 || b || t2 || v || t3 || n || t4);
@@ -283,7 +283,7 @@ create or replace package body multi is
 			t1 := ltrim(t1);
 		end if;
 		for i in 1 .. ns.count loop
-			if instr(sw, ',' || vs(i) || ',') = 0 then
+			if instr(sw, ',' || vs(i) || ',') = 0 and instr(sw, ',' || ns(i) || ',') = 0 then
 				h.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
 			else
 				h.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
