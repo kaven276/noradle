@@ -218,8 +218,9 @@ create or replace package body tree is
 	end;
 
 	procedure n(str varchar2) is
+		v varchar2(4000) := ltrim(str);
 	begin
-		n(lengthb(str) - length(ltrim(str)), str);
+		n(lengthb(str) - lengthb(v), v);
 	end;
 
 end tree;
