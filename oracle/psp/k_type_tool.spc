@@ -20,6 +20,12 @@ create or replace package k_type_tool is
 		p_right in out nocopy varchar2 character set p_str%charset
 	);
 
+	function inlist
+	(
+		list varchar2 character set any_cs,
+		item varchar2 character set any_cs
+	) return boolean;
+
 	function gen_token(p_algorithm binary_integer := 0) return varchar2;
 
 	function ps

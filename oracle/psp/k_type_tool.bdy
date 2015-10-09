@@ -51,6 +51,15 @@ create or replace package body k_type_tool is
 		end if;
 	end;
 
+	function inlist
+	(
+		list varchar2 character set any_cs,
+		item varchar2 character set any_cs
+	) return boolean is
+	begin
+		return instr(',' || list || ',', ',' || item || ',') > 0;
+	end;
+
 	function gen_token(p_algorithm binary_integer := 0) return varchar2 is
 		v_seed        varchar2(80) := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
 		v_algorithm   binary_integer := 2; -- 16 bytes key
