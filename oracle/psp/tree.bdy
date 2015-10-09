@@ -145,7 +145,6 @@ create or replace package body tree is
 			if level = sts.olevel + 1 then
 				-- enter deeper level
 				h.write(cuts(cuts.count - 1)); -- <li>
-				sts.olevel := level;
 			else
 				-- same level or level up
 				h.write(cuts(cuts.count - 2)); -- </li>
@@ -155,16 +154,14 @@ create or replace package body tree is
 					h.write(cuts(cuts.count - 0)); -- </ul>
 					h.write(cuts(cuts.count - 2)); -- </li>
 				end loop;
-				sts.olevel := level;
 			end if;
 			if sts.pretty is null then
 				h.write(chr(10));
 			elsif sts.pretty then
 				h.write(rpad(chr(10), level, ' '));
 			end if;
-		else
-			sts.olevel := 1;
 		end if;
+		sts.olevel := level;
 	
 		for i in 1 .. cuts.count - 4 loop
 			h.write(cuts(i));
@@ -183,7 +180,6 @@ create or replace package body tree is
 			if level = sts.olevel + 1 then
 				-- enter deeper level
 				h.write('<ul>');
-				sts.olevel := level;
 			else
 				-- same level or level up
 				h.write('</li>');
@@ -193,16 +189,14 @@ create or replace package body tree is
 					h.write('</ul>');
 					h.write('</li>');
 				end loop;
-				sts.olevel := level;
 			end if;
 			if sts.pretty is null then
 				h.write(chr(10));
 			elsif sts.pretty then
 				h.write(rpad(chr(10), level, ' '));
 			end if;
-		else
-			sts.olevel := 1;
 		end if;
+		sts.olevel := level;
 	
 		h.write(str);
 	end;
