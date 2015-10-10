@@ -55,6 +55,8 @@ create or replace package k_http is
 		value varchar2
 	);
 
+	function header(name varchar2) return varchar2;
+
 	procedure location(url varchar2);
 
 	function charset return varchar2;

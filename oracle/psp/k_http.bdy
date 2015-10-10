@@ -224,6 +224,14 @@ create or replace package body k_http is
 		end if;
 	end;
 
+	function header(name varchar2) return varchar2 is
+	begin
+		return pv.headers(name);
+	exception
+		when no_data_found then
+			return '';
+	end;
+
 	function charset return varchar2 is
 	begin
 		return pv.charset;
