@@ -1,17 +1,24 @@
-create or replace function url(str varchar2) return varchar2 authid current_user is
+create or replace function url(str varchar2) return varchar2 is
 
 	c1   char(1) := substrb(str, 1, 1);
 	c2   char(1);
 	main varchar2(30);
 	pos  pls_integer;
 	dad  varchar2(100);
-	
+
 	-- private
-	function outside(key varchar2) return varchar2 is
+	function outside(p_key varchar2) return varchar2 is
 		v_prefix ext_url_v.prefix%type;
 	begin
-		select a.prefix into v_prefix from ext_url_v a where a.key = key;
+		select a.prefix
+			into v_prefix
+			from ext_url_t a
+		 where a.dbu = r.dbu
+			 and a.key = p_key;
 		return v_prefix;
+	exception
+		when no_data_found then
+			return 'http://' || p_key || '.' || r.dbu || '.no_data_found.ext_url_v.com/';
 	end;
 
 	function base return varchar2 is
