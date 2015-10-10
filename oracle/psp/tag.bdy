@@ -331,10 +331,11 @@ create or replace package body tag is
 	(
 		tg   varchar2,
 		href varchar2,
+		rel  varchar2 := null,
 		para st := null
 	) is
 	begin
-		h.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="stylesheet" type="text/css"'));
+		h.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="' || nvl(rel, 'stylesheet') || '"'));
 	end;
 
 end tag;

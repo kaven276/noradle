@@ -130,6 +130,7 @@ create or replace package tag is
 	(
 		tg   varchar2,
 		href varchar2,
+		rel  varchar2 := null,
 		para st := null
 	);
 
