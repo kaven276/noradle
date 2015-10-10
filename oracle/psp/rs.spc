@@ -8,6 +8,8 @@ create or replace package rs authid current_user is
 
 	procedure print(c in out sys_refcursor);
 
+	procedure json(c in out sys_refcursor);
+
 	procedure use_remarks;
 
 	procedure nv
