@@ -133,6 +133,12 @@ create or replace package tag is
 		rel  varchar2 := null,
 		para st := null
 	);
+	procedure b
+	(
+		tg   varchar2,
+		href varchar2 := '^',
+		para st := null
+	);
 
 end tag;
 /

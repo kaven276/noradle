@@ -338,5 +338,15 @@ create or replace package body tag is
 		h.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="' || nvl(rel, 'stylesheet') || '"'));
 	end;
 
+	procedure b
+	(
+		tg   varchar2,
+		href varchar2 := '^',
+		para st := null
+	) is
+	begin
+		h.line(base(tg, para, chr(0), ' href="' || url(href) || '"'));
+	end;
+
 end tag;
 /
