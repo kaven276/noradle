@@ -37,13 +37,13 @@ begin
 			c2   := substrb(str, 3, 1);
 			if c2 = '.' then
 				-- @x.xxx
-				return main || substrb(str, 2);
+				return './' || main || substrb(str, 2);
 			elsif c2 = '/' then
 				-- @x/xxx
 				return base || 'packs/' || main || substrb(str, 2);
 			else
 				-- @x
-				return main || substrb(str, 2);
+				return './' || main || substrb(str, 2);
 			end if;
 		when '[' then
 			-- [key]local for external reference
