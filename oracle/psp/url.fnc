@@ -10,6 +10,9 @@ create or replace function url(str varchar2) return varchar2 is
 	function outside(p_key varchar2) return varchar2 is
 		v_prefix ext_url_v.prefix%type;
 	begin
+		if not r.is_lack('[' || p_key || ']') then
+			return r.getc('[' || p_key || ']');
+		end if;
 		select a.prefix
 			into v_prefix
 			from ext_url_t a
