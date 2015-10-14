@@ -2,29 +2,20 @@ create or replace package body r is
 
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
-	v_url    varchar2(1000);
 	v_proto  varchar2(10);
 	v_hostn  varchar2(99);
 	v_port   positive;
-	v_host   varchar2(99);
-	v_sdns   varchar2(99);
-	v_pdns   varchar2(99);
 	v_method varchar2(10);
 	v_gid    varchar2(99);
 	v_prog   varchar2(61);
 	v_pack   varchar2(30);
 	v_proc   varchar2(30);
-	v_dir    varchar2(250);
-	v_qstr   varchar2(4000);
 	v_type   char(1);
 	v_user   varchar2(30);
 	v_pass   varchar2(30);
 
 	gv_dbu  varchar2(30);
 	gv_file varchar2(1000);
-
-	gv_caddr varchar2(30);
-	gv_cport positive;
 
 	procedure getblob
 	(
@@ -119,17 +110,12 @@ create or replace package body r is
 				get('u$proto', v_proto);
 				get('u$hostname', v_hostn);
 				v_port := getn('u$port', 80);
-				get('u$url', v_url);
-				get('u$dir', v_dir);
-				get('u$qstr', v_qstr);
 			
 				get('c$BSID', pv.bsid);
 				get('c$MSID', pv.msid);
 				get('i$gid', v_gid);
 				-- get i$nid
 			
-				get('a$caddr', gv_caddr);
-				gv_cport := getn('a$cport');
 				get('a$uamd5', v_uamd5);
 			
 			when 'DATA' then
@@ -304,22 +290,22 @@ create or replace package body r is
 
 	function dir return varchar2 is
 	begin
-		return v_dir;
+		return getc('u$dir');
 	end;
 
 	function dir_full return varchar2 is
 	begin
-		return site || v_dir;
+		return site || dir;
 	end;
 
 	function qstr return varchar2 is
 	begin
-		return v_qstr;
+		return getc('u$qstr');
 	end;
 
 	function url return varchar2 is
 	begin
-		return v_url;
+		return getc('u$url');
 	end;
 
 	function url_full return varchar2 is
@@ -669,12 +655,12 @@ create or replace package body r is
 
 	function client_addr return varchar2 is
 	begin
-		return gv_caddr;
+		return getc('a$caddr');
 	end;
 
 	function client_port return pls_integer is
 	begin
-		return gv_cport;
+		return getn('a$cport');
 	end;
 
 	function server_family return varchar2 is
