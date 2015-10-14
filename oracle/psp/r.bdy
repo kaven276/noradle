@@ -289,7 +289,7 @@ create or replace package body r is
 
 	function qstr return varchar2 is
 	begin
-		return getc('u$qstr');
+		return utl_url.unescape(get('u$qstr'), pv.cs_req);
 	end;
 
 	function url return varchar2 is
