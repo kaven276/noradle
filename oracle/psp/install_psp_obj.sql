@@ -9,8 +9,10 @@ set echo on
 whenever sqlerror continue
 prompt Notice: all the drop objects errors can be ignored, do not care about it
 create table SERVER_CONTROL_BAK as select * from SERVER_CONTROL_T;
+create table CLIENT_CONTROL_BAK as select * from CLIENT_CONTROL_T;
 create table EXT_URL_BAK as select * from EXT_URL_T;
 drop table SERVER_CONTROL_T cascade constraints;
+drop table CLIENT_CONTROL_T cascade constraints;
 drop table EXT_URL_T cascade constraints;
 whenever sqlerror exit
 
@@ -21,6 +23,11 @@ prompt Creating table SERVER_CONTROL_T
 prompt ===============================
 prompt
 @@server_control_t.tab
+prompt
+prompt Creating table CLIENT_CONTROL_T
+prompt ===============================
+prompt
+@@client_control_t.tab
 prompt
 prompt Creating table EXT_URL_T
 prompt ========================
@@ -286,8 +293,10 @@ prompt
 whenever sqlerror continue
 prompt Notice: restore old config data
 insert into SERVER_CONTROL_T select * from SERVER_CONTROL_BAK;
+insert into CLIENT_CONTROL_T select * from CLIENT_CONTROL_BAK;
 insert into EXT_URL_T select * from EXT_URL_BAK;
 drop table SERVER_CONTROL_BAK cascade constraints;
+drop table CLIENT_CONTROL_BAK cascade constraints;
 drop table EXT_URL_BAK cascade constraints;
 desc SERVER_CONTROL_T
 insert into SERVER_CONTROL_T (CFG_ID, GW_HOST, GW_PORT, MIN_SERVERS, MAX_SERVERS, MAX_REQUESTS, MAX_LIFETIME,IDLE_TIMEOUT)
