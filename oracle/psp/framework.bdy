@@ -123,12 +123,12 @@ create or replace package body framework is
 	
 		procedure show_exception is
 		begin
-			k_debug.trace(st('system exception(url,cfg_id,sqlcode,sqlerrm,error_stack)',
+			k_debug.trace(st('system exception(url,cfg_id,sqlcode,sqlerrm,error_backtrace)',
 											 r.url,
 											 pv.cfg_id,
 											 sqlcode,
 											 sqlerrm,
-											 dbms_utility.format_error_stack));
+											 dbms_utility.format_error_backtrace));
 			h.status_line(500);
 			h.content_type('text/plain');
 			h.line(dbms_utility.format_error_stack);
