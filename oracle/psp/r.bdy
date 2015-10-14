@@ -2,17 +2,13 @@ create or replace package body r is
 
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
-	v_proto  varchar2(10);
-	v_hostn  varchar2(99);
-	v_port   positive;
-	v_method varchar2(10);
-	v_gid    varchar2(99);
-	v_prog   varchar2(61);
-	v_pack   varchar2(30);
-	v_proc   varchar2(30);
-	v_type   char(1);
-	v_user   varchar2(30);
-	v_pass   varchar2(30);
+	v_gid  varchar2(99);
+	v_prog varchar2(61);
+	v_pack varchar2(30);
+	v_proc varchar2(30);
+	v_type char(1);
+	v_user varchar2(30);
+	v_pass varchar2(30);
 
 	gv_dbu  varchar2(30);
 	gv_file varchar2(1000);
@@ -106,18 +102,11 @@ create or replace package body r is
 		-- basic input
 		case pv.protocol
 			when 'HTTP' then
-				get('u$method', v_method);
-				get('u$proto', v_proto);
-				get('u$hostname', v_hostn);
-				v_port := getn('u$port', 80);
-			
 				get('c$BSID', pv.bsid);
 				get('c$MSID', pv.msid);
 				get('i$gid', v_gid);
 				-- get i$nid
-			
 				get('a$uamd5', v_uamd5);
-			
 			when 'DATA' then
 				null;
 		end case;
@@ -217,12 +206,12 @@ create or replace package body r is
 
 	function method return varchar2 is
 	begin
-		return v_method;
+		return get('u$method');
 	end;
 
 	function protocol return varchar2 is
 	begin
-		return v_proto;
+		return get('u$proto');
 	end;
 
 	function pdns return varchar2 is
@@ -237,21 +226,21 @@ create or replace package body r is
 
 	function hostname return varchar2 is
 	begin
-		return v_hostn;
+		return get('u$hostname');
 	end;
 
 	function port return pls_integer is
 	begin
-		return v_port;
+		return getn('u$port', 80);
 	end;
 
 	function host return varchar2 is
 	begin
 		if is_null('h$host') then
 			if port = 80 then
-				return v_hostn;
+				return hostname;
 			else
-				return v_hostn || ':' || to_number(v_port);
+				return hostname || ':' || get('u$port', 80);
 			end if;
 		else
 			return getc('h$host');
@@ -275,7 +264,7 @@ create or replace package body r is
 
 	function site return varchar2 is
 	begin
-		return v_proto || '://' || host;
+		return protocol || '://' || host;
 	end;
 
 	function pathname return varchar2 is
