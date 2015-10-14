@@ -672,6 +672,11 @@ create or replace package body r is
 		return pv.protocol;
 	end;
 
+	function cid return varchar2 is
+	begin
+		return get('i$cid');
+	end;
+
 	function cfg return varchar2 is
 	begin
 		return pv.cfg_id;

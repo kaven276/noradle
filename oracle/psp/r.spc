@@ -157,7 +157,8 @@ create or replace package r is
 	function server_family return varchar2;
 	function server_addr return varchar2;
 	function server_port return pls_integer;
-	
+
+	function cid return varchar2;
 	function cfg return varchar2;
 	function slot return varchar2;
 
