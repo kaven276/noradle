@@ -5,7 +5,8 @@ create table CLIENT_CONTROL_T
   min_concurrency NUMBER(4) not null,
   max_concurrency NUMBER(4) not null,
   dbu_filter      VARCHAR2(2000),
-  cfg_filter      VARCHAR2(2000)
+  cfg_filter      VARCHAR2(2000),
+  allow_sql       VARCHAR2(1)
 )
 ;
 comment on column CLIENT_CONTROL_T.cid
@@ -14,6 +15,8 @@ comment on column CLIENT_CONTROL_T.dbu_filter
   is 'regexp to check which dbu can access to, null for same x$dbu';
 comment on column CLIENT_CONTROL_T.cfg_filter
   is 'regexp to check which cfg can access to, null for no restriction';
+comment on column CLIENT_CONTROL_T.allow_sql
+  is 'null for forbid, Y for allow';
 alter table CLIENT_CONTROL_T
   add constraint PK_CLIENT_CONTROL primary key (CID);
 
