@@ -98,6 +98,13 @@ create or replace package body bios is
 			ra.params(v_name) := v_st;
 		end loop;
 	
+		if pv.cslot_id > 0 then
+			-- noradle request have i$cid send without frame wrapper
+			v_value := utl_tcp.get_line(pv.c, true);
+			ra.params('i$cid') := st(v_value);
+			k_debug.trace(v_value);
+		end if;
+	
 		loop
 			read_wrapper;
 			exit when v_len = 0;
