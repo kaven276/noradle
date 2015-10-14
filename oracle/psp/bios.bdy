@@ -102,7 +102,6 @@ create or replace package body bios is
 			-- noradle request have i$cid send without frame wrapper
 			v_value := utl_tcp.get_line(pv.c, true);
 			ra.params('i$cid') := st(v_value);
-			k_debug.trace(v_value);
 		end if;
 	
 		loop

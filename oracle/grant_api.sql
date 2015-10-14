@@ -19,6 +19,7 @@ grant execute on e to public;
 grant execute on g to public;
 grant execute on k_http to public -- h;
 grant execute on rs to public;
+grant execute on k_sql to public;
 
 grant execute on tag to public -- x;
 grant execute on multi to public -- m;

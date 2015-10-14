@@ -267,6 +267,12 @@ prompt
 @@msg_pipe.spc
 @@msg_pipe.bdy
 
+prompt Creating package K_SQL
+prompt ========================
+prompt
+@@k_sql.spc
+@@k_sql.bdy
+
 --------------------------------------------------------------------------------
 
 prompt
