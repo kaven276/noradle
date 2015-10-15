@@ -529,7 +529,9 @@ create or replace package body k_http is
 	procedure convert_json(callback varchar2 := null) is
 		v_cb varchar2(4000) := nvl(callback, r.getc('callback', ''));
 	begin
-		h.content_type('text/resultsets', 'UTF-8');
+		if h.header('Content-disposition') is null then
+			h.content_type('text/resultsets', 'UTF-8');
+		end if;
 		if v_cb is not null then
 			h.header('_callback', v_cb);
 			if not r.is_lack('useraw') then
