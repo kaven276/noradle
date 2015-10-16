@@ -18,6 +18,7 @@ grant execute on url to public -- l;
 grant execute on e to public;
 grant execute on g to public;
 grant execute on k_resp_head to public -- h;
+grant execute on k_resp_body to public -- b;
 grant execute on rs to public;
 grant execute on k_sql to public;
 
