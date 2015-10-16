@@ -25,8 +25,8 @@ create or replace public synonym ext_url_v for ext_url_v;
 create or replace public synonym l for url -- shortcut for link to url;
 create or replace public synonym e for e -- tobe removed;
 create or replace public synonym g for g;
-create or replace public synonym k_http for k_http;
-create or replace public synonym h for k_http;
+create or replace public synonym k_http for k_resp_head;
+create or replace public synonym h for k_resp_head;
 create or replace public synonym rs for rs;
 create or replace public synonym k_sql for k_sql;
 
