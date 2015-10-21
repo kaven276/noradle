@@ -536,6 +536,31 @@ create or replace package body r is
 		end if;
 	end;
 
+	procedure sets
+	(
+		name varchar2,
+		vals st
+	) is
+	begin
+		ra.params(name) := vals;
+	end;
+
+	procedure sets_init(name varchar2) is
+	begin
+		ra.params(name) := st();
+	end;
+
+	procedure sets_add
+	(
+		name  varchar2,
+		value varchar2
+	) is
+		v_cnt pls_integer := ra.params(name).count;
+	begin
+		ra.params(name).extend;
+		ra.params(name)(v_cnt + 1) := value;
+	end;
+
 	procedure del(name varchar2) is
 	begin
 		ra.params.delete(name);

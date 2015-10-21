@@ -71,6 +71,17 @@ create or replace package r is
 		name  varchar2,
 		value varchar2
 	);
+	procedure sets
+	(
+		name varchar2,
+		vals st
+	);
+	procedure sets_init(name varchar2);
+	procedure sets_add
+	(
+		name  varchar2,
+		value varchar2
+	);
 	procedure del(name varchar2);
 	procedure del(names st);
 
