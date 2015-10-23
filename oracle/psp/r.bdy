@@ -215,32 +215,20 @@ create or replace package body r is
 	end;
 
 	function pdns(base_cnt pls_integer := 2) return varchar2 is
-		v_st  st;
-		v_cnt pls_integer;
-		v_rtn varchar2(100);
+		v_dns varchar2(100) := r.getc('u$hostname');
+		v_pos pls_integer := instrb(v_dns, '.', -1, base_cnt);
 	begin
-		v_st  := r.gets('u$dns');
-		v_cnt := v_st.count;
-		v_rtn := v_st(v_cnt - base_cnt + 1);
-		for i in (v_cnt - base_cnt + 2) .. v_cnt loop
-			v_rtn := v_rtn || '.' || v_st(i);
-		end loop;
-		return v_rtn;
+		return substrb(v_dns, v_pos + 1);
 	exception
 		when others then
 			return '';
 	end;
 
 	function sdns(base_cnt pls_integer := 2) return varchar2 is
-		v_st  st;
-		v_cnt pls_integer;
+		v_dns varchar2(100) := r.getc('u$hostname');
+		v_pos pls_integer := instrb(v_dns, '.', -1, base_cnt);
 	begin
-		v_st  := r.gets('u$dns');
-		v_cnt := v_st.count;
-		for i in 1 .. base_cnt loop
-			v_st.delete(v_cnt + 1 - i);
-		end loop;
-		return t.join(v_st, '.');
+		return substrb(v_dns, 1, v_pos - 1);
 	end;
 
 	function hostname return varchar2 is
