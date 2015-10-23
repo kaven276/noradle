@@ -99,6 +99,20 @@ create or replace package body r is
 			raise_application_error(-20000, 'can not call psp.web''s internal method');
 		end if;
 	
+		declare
+			pos pls_integer;
+		begin
+			get('x$prog', v_prog);
+			pos := instrb(v_prog, '.');
+			if pos >= 1 then
+				setc('x$pack', substrb(v_prog, 1, pos - 1));
+				setc('x$proc', substrb(v_prog, pos + 1));
+			else
+				setc('x$pack', '');
+				setc('x$proc', v_prog);
+			end if;
+		end;
+	
 		-- basic input
 		case pv.protocol
 			when 'HTTP' then
