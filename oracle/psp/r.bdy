@@ -727,6 +727,11 @@ create or replace package body r is
 		return pv.protocol;
 	end;
 
+	function xhr return boolean is
+	begin
+		return nvl(header('x-requested-with'), '!=') = 'XMLHttpRequest';
+	end;
+
 	function cid return varchar2 is
 	begin
 		return get('i$cid');

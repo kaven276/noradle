@@ -30,6 +30,7 @@ create or replace package r is
 	function read_line_no_more return boolean;
 
 	function call_type return varchar2;
+	function xhr return boolean;
 	function method return varchar2;
 	function protocol return varchar2;
 	function sdns(base_cnt pls_integer := 2) return varchar2;
