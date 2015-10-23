@@ -32,8 +32,8 @@ create or replace package r is
 	function call_type return varchar2;
 	function method return varchar2;
 	function protocol return varchar2;
-	function sdns return varchar2;
-	function pdns return varchar2;
+	function sdns(base_cnt pls_integer := 2) return varchar2;
+	function pdns(base_cnt pls_integer := 2) return varchar2;
 	function hostname return varchar2;
 	function port return pls_integer;
 	function host return varchar2;

@@ -214,14 +214,33 @@ create or replace package body r is
 		return get('u$proto');
 	end;
 
-	function pdns return varchar2 is
+	function pdns(base_cnt pls_integer := 2) return varchar2 is
+		v_st  st;
+		v_cnt pls_integer;
+		v_rtn varchar2(100);
 	begin
-		return r.getc('u$pdns');
+		v_st  := r.gets('u$dns');
+		v_cnt := v_st.count;
+		v_rtn := v_st(v_cnt - base_cnt + 1);
+		for i in (v_cnt - base_cnt + 2) .. v_cnt loop
+			v_rtn := v_rtn || '.' || v_st(i);
+		end loop;
+		return v_rtn;
+	exception
+		when others then
+			return '';
 	end;
 
-	function sdns return varchar2 is
+	function sdns(base_cnt pls_integer := 2) return varchar2 is
+		v_st  st;
+		v_cnt pls_integer;
 	begin
-		return r.getc('u$sdns');
+		v_st  := r.gets('u$dns');
+		v_cnt := v_st.count;
+		for i in 1 .. base_cnt loop
+			v_st.delete(v_cnt + 1 - i);
+		end loop;
+		return t.join(v_st, '.');
 	end;
 
 	function hostname return varchar2 is
