@@ -308,6 +308,15 @@ create or replace package body r is
 		return site || dir;
 	end;
 
+	function search return varchar2 is
+	begin
+		if is_null('u$qstr') then
+			return '';
+		else
+			return '?' || qstr;
+		end if;
+	end;
+
 	function qstr return varchar2 is
 	begin
 		return utl_url.unescape(get('u$qstr'), pv.cs_req);
