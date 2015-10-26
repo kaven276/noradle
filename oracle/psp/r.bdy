@@ -287,9 +287,9 @@ create or replace package body r is
 		return v_proc;
 	end;
 
-	function site return varchar2 is
+	function site(use_proxy boolean := true) return varchar2 is
 	begin
-		return protocol || '://' || host;
+		return protocol(use_proxy) || '://' || host;
 	end;
 
 	function pathname return varchar2 is

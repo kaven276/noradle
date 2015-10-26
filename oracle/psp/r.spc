@@ -45,7 +45,7 @@ create or replace package r is
 	function type return varchar2;
 
 	function gid return varchar2;
-	function site return varchar2;
+	function site(use_proxy boolean := true) return varchar2;
 	function url return varchar2;
 	function dir return varchar2;
 	function pathname return varchar2;
