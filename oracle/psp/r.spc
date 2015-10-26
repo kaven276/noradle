@@ -32,7 +32,7 @@ create or replace package r is
 	function call_type return varchar2;
 	function xhr return boolean;
 	function method return varchar2;
-	function protocol return varchar2;
+	function protocol(use_proxy boolean := false) return varchar2;
 	function sdns(base_cnt pls_integer := 2) return varchar2;
 	function pdns(base_cnt pls_integer := 2) return varchar2;
 	function hostname return varchar2;
@@ -165,8 +165,8 @@ create or replace package r is
 	function referer2 return varchar2;
 	function ua return varchar2;
 
-	function client_addr return varchar2;
-	function client_port return pls_integer;
+	function client_addr(use_proxy boolean := false) return varchar2;
+	function client_port(use_proxy boolean := false) return pls_integer;
 	function server_family return varchar2;
 	function server_addr return varchar2;
 	function server_port return pls_integer;

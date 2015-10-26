@@ -223,9 +223,13 @@ create or replace package body r is
 		return get('u$method');
 	end;
 
-	function protocol return varchar2 is
+	function protocol(use_proxy boolean := false) return varchar2 is
 	begin
-		return get('u$proto');
+		if not use_proxy or r.is_null('h$x-forwarded-protos') then
+			return get('u$proto');
+		else
+			return getc('h$x-forwarded-protos');
+		end if;
 	end;
 
 	function pdns(base_cnt pls_integer := 2) return varchar2 is
@@ -697,14 +701,22 @@ create or replace package body r is
 		return nullif(header('user-agent'), 'NULL');
 	end;
 
-	function client_addr return varchar2 is
+	function client_addr(use_proxy boolean := false) return varchar2 is
 	begin
-		return getc('a$caddr');
+		if not use_proxy or r.is_null('h$x-forwarded-fors') then
+			return getc('a$caddr');
+		else
+			return getc('h$x-forwarded-fors');
+		end if;
 	end;
 
-	function client_port return pls_integer is
+	function client_port(use_proxy boolean := false) return pls_integer is
 	begin
-		return getn('a$cport');
+		if not use_proxy or r.is_null('h$x-forwarded-ports') then
+			return getn('a$cport');
+		else
+			return getn('h$x-forwarded-ports');
+		end if;
 	end;
 
 	function server_family return varchar2 is
