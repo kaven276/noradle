@@ -741,7 +741,13 @@ create or replace package body r is
 
 	function xhr return boolean is
 	begin
-		return nvl(header('x-requested-with'), '!=') = 'XMLHttpRequest';
+		if nvl(header('x-requested-with'), '!=') = 'XMLHttpRequest' then
+			return true;
+		elsif not is_lack('h$origin') then
+			return true;
+		else
+			return false;
+		end if;
 	end;
 
 	function cid return varchar2 is
