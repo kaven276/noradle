@@ -51,6 +51,36 @@ create or replace package body k_type_tool is
 		end if;
 	end;
 
+	function left
+	(
+		str varchar2 character set any_cs,
+		sep varchar2 := '/'
+	) return varchar2 is
+		v_pos pls_integer;
+	begin
+		v_pos := instrb(str, sep);
+		if v_pos >= 0 then
+			return substrb(str, 1, v_pos - 1);
+		else
+			return str;
+		end if;
+	end;
+
+	function right
+	(
+		str varchar2 character set any_cs,
+		sep varchar2 := '/'
+	) return varchar2 is
+		v_pos pls_integer;
+	begin
+		v_pos := instrb(str, sep);
+		if v_pos >= 0 then
+			return substrb(str, v_pos + 1);
+		else
+			return '';
+		end if;
+	end;
+
 	function inlist
 	(
 		list varchar2 character set any_cs,

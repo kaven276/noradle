@@ -20,6 +20,18 @@ create or replace package k_type_tool is
 		p_right in out nocopy varchar2 character set p_str%charset
 	);
 
+	function left
+	(
+		str varchar2 character set any_cs,
+		sep varchar2 := '/'
+	) return varchar2;
+
+	function right
+	(
+		str varchar2 character set any_cs,
+		sep varchar2 := '/'
+	) return varchar2;
+
 	function inlist
 	(
 		list varchar2 character set any_cs,
