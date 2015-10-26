@@ -34,6 +34,7 @@ create or replace package body bios is
 		rb.charset_db   := utl_i18n.map_charset(rb.charset_http, utl_i18n.generic_context, utl_i18n.iana_to_oracle);
 		v_pos           := instrb(r.header('content-type') || ';', ';');
 		rb.mime_type    := substrb(r.header('content-type'), 1, v_pos - 1);
+		rb.length       := r.getn('h$content-length');
 	
 		dbms_lob.createtemporary(p_blob, cache => true, dur => dbms_lob.call);
 		loop

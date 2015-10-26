@@ -4,6 +4,7 @@ create or replace package rb is
 	charset_http varchar2(30);
 	charset_db   varchar2(30);
 	mime_type    varchar2(99);
+	length       pls_integer;
 
 	blob_entity  blob;
 	clob_entity  clob;
