@@ -223,7 +223,7 @@ create or replace package body r is
 		return get('u$method');
 	end;
 
-	function protocol(use_proxy boolean := false) return varchar2 is
+	function protocol(use_proxy boolean := true) return varchar2 is
 	begin
 		if not use_proxy or r.is_null('h$x-forwarded-protos') then
 			return get('u$proto');
@@ -701,7 +701,7 @@ create or replace package body r is
 		return nullif(header('user-agent'), 'NULL');
 	end;
 
-	function client_addr(use_proxy boolean := false) return varchar2 is
+	function client_addr(use_proxy boolean := true) return varchar2 is
 	begin
 		if not use_proxy or r.is_null('h$x-forwarded-fors') then
 			return getc('a$caddr');
@@ -710,7 +710,7 @@ create or replace package body r is
 		end if;
 	end;
 
-	function client_port(use_proxy boolean := false) return pls_integer is
+	function client_port(use_proxy boolean := true) return pls_integer is
 	begin
 		if not use_proxy or r.is_null('h$x-forwarded-ports') then
 			return getn('a$cport');
