@@ -1,4 +1,4 @@
-﻿create or replace package body k_resp_body is
+create or replace package body k_resp_body is
 
 	procedure flush is
 	begin

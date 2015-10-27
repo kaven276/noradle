@@ -1,4 +1,4 @@
-﻿create or replace package k_resp_body is
+create or replace package k_resp_body is
 
 	procedure flush;
 	function flushed return boolean;

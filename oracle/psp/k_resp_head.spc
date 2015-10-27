@@ -1,4 +1,4 @@
-﻿create or replace package k_resp_head is
+create or replace package k_resp_head is
 
 	mime_text  constant varchar2(30) := 'text/plain';
 	mime_xml   constant varchar2(30) := 'text/xml';
