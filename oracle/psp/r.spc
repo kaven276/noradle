@@ -148,6 +148,11 @@ create or replace package r is
 	function lat return date;
 
 	function header(name varchar2) return varchar2;
+	function negotiation
+	(
+		header   varchar2,
+		supports varchar2
+	) return varchar2;
 
 	function user return varchar2;
 	function pass return varchar2;

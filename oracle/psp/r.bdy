@@ -747,6 +747,27 @@ create or replace package body r is
 		return pv.protocol;
 	end;
 
+	function negotiation
+	(
+		header   varchar2,
+		supports varchar2
+	) return varchar2 is
+		v_reqs st := r.gets(header);
+		v_opts st;
+		v_ptn  varchar2(100);
+	begin
+		t.split(v_opts, supports, ',', true);
+		for i in 1 .. v_reqs.count loop
+			v_ptn := replace(v_reqs(i), '*', '%');
+			for j in 1 .. v_opts.count loop
+				if v_opts(j) like v_ptn then
+					return v_opts(j);
+				end if;
+			end loop;
+		end loop;
+		return null;
+	end;
+
 	function xhr return boolean is
 	begin
 		if nvl(header('x-requested-with'), '!=') = 'XMLHttpRequest' then
