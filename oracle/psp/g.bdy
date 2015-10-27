@@ -23,5 +23,33 @@ create or replace package body g is
 		h.go(url || v_sep || 'action=' || utl_url.escape(r.url || '&$referer=' || utl_url.escape(r.referer, true), true));
 	end;
 
+	procedure alert_go
+	(
+		text varchar2,
+		url  varchar2
+	) is
+	begin
+		x.o('<html>');
+		x.o('<head>');
+		x.p('<script>', 'alert("' || text || '");');
+		x.p('<script>', 'location.href="' || url || '";');
+		x.c('</head>');
+		x.c('</html>');
+	end;
+
+	procedure alert_back
+	(
+		text      varchar2,
+		back_step pls_integer := 1
+	) is
+	begin
+		x.o('<html>');
+		x.o('<head>');
+		x.p('<script>', 'alert("' || text || '");');
+		x.p('<script>', 'history.go(-' || back_step || ');');
+		x.c('</head>');
+		x.c('</html>');
+	end;
+
 end g;
 /
