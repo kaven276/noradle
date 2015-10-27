@@ -201,8 +201,8 @@ create or replace package body multi is
 		v  varchar2(4000);
 		n  varchar2(4000);
 		p1 pls_integer := instrb(tpl, '?');
-		b  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
-		p2 pls_integer := p1 + lengthb(b);
+		bv  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
+		p2 pls_integer := p1 + lengthb(bv);
 		p3 pls_integer := instrb(tpl, '@', p2 + 1);
 		p4 pls_integer := instrb(tpl, '@', p3 + 1);
 		t1 varchar2(4000) := substrb(tpl, 1, p1 - 1);
@@ -221,7 +221,7 @@ create or replace package body multi is
 			if instr(sw, ',' || v || ',') = 0 and instr(sw, ',' || n || ',') = 0 then
 				b.line(t1 || t2 || v || t3 || n || t4);
 			else
-				b.line(t1 || b || t2 || v || t3 || n || t4);
+				b.line(t1 || bv || t2 || v || t3 || n || t4);
 			end if;
 		end loop;
 	end;
@@ -269,8 +269,8 @@ create or replace package body multi is
 		indent boolean := true
 	) is
 		p1 pls_integer := instrb(tpl, '?');
-		b  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
-		p2 pls_integer := p1 + lengthb(b);
+		bv  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
+		p2 pls_integer := p1 + lengthb(bv);
 		p3 pls_integer := instrb(tpl, '@', p2 + 1);
 		p4 pls_integer := instrb(tpl, '@', p3 + 1);
 		t1 varchar2(4000) := substrb(tpl, 1, p1 - 1);
@@ -286,7 +286,7 @@ create or replace package body multi is
 			if instr(sw, ',' || vs(i) || ',') = 0 and instr(sw, ',' || ns(i) || ',') = 0 then
 				b.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
 			else
-				b.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
+				b.line(t1 || bv || t2 || vs(i) || t3 || ns(i) || t4);
 			end if;
 		end loop;
 	end;
