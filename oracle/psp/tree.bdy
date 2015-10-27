@@ -125,12 +125,12 @@ create or replace package body tree is
 		if sts.olevel is null then
 			return;
 		end if;
-		h.write(cuts(cuts.count - 2)); -- </li>
+		b.write(cuts(cuts.count - 2)); -- </li>
 		for j in 1 .. sts.olevel - 1 loop
-			h.write(cuts(cuts.count - 0)); -- </ul>
-			h.write(cuts(cuts.count - 2)); -- </li>
+			b.write(cuts(cuts.count - 0)); -- </ul>
+			b.write(cuts(cuts.count - 2)); -- </li>
 		end loop;
-		h.line;
+		b.line;
 	end;
 
 	-- repeater for gen hierachical structure
@@ -144,30 +144,30 @@ create or replace package body tree is
 		if sts.olevel is not null then
 			if level = sts.olevel + 1 then
 				-- enter deeper level
-				h.write(cuts(cuts.count - 1)); -- <li>
+				b.write(cuts(cuts.count - 1)); -- <li>
 			else
 				-- same level or level up
-				h.write(cuts(cuts.count - 2)); -- </li>
+				b.write(cuts(cuts.count - 2)); -- </li>
 				-- escape one or more level up
 				for j in 1 .. sts.olevel - level loop
 					-- return level
-					h.write(cuts(cuts.count - 0)); -- </ul>
-					h.write(cuts(cuts.count - 2)); -- </li>
+					b.write(cuts(cuts.count - 0)); -- </ul>
+					b.write(cuts(cuts.count - 2)); -- </li>
 				end loop;
 			end if;
 			if sts.pretty is null then
-				h.write(chr(10));
+				b.write(chr(10));
 			elsif sts.pretty then
-				h.write(rpad(chr(10), level, ' '));
+				b.write(rpad(chr(10), level, ' '));
 			end if;
 		end if;
 		sts.olevel := level;
 	
 		for i in 1 .. cuts.count - 4 loop
-			h.write(cuts(i));
-			h.write(para(i));
+			b.write(cuts(i));
+			b.write(para(i));
 		end loop;
-		h.write(cuts(cuts.count - 3));
+		b.write(cuts(cuts.count - 3));
 	end;
 
 	procedure n
@@ -179,26 +179,26 @@ create or replace package body tree is
 		if sts.olevel is not null then
 			if level = sts.olevel + 1 then
 				-- enter deeper level
-				h.write('<ul>');
+				b.write('<ul>');
 			else
 				-- same level or level up
-				h.write('</li>');
+				b.write('</li>');
 				-- escape one or more level up
 				for j in 1 .. sts.olevel - level loop
 					-- return level
-					h.write('</ul>');
-					h.write('</li>');
+					b.write('</ul>');
+					b.write('</li>');
 				end loop;
 			end if;
 			if sts.pretty is null then
-				h.write(chr(10));
+				b.write(chr(10));
 			elsif sts.pretty then
-				h.write(rpad(chr(10), level, ' '));
+				b.write(rpad(chr(10), level, ' '));
 			end if;
 		end if;
 		sts.olevel := level;
 	
-		h.write(str);
+		b.write(str);
 	end;
 
 	procedure n

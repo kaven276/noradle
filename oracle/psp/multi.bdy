@@ -126,9 +126,9 @@ create or replace package body multi is
 			v_head := head;
 		end if;
 		for i in 1 .. texts.count loop
-			h.write(v_head || texts(i) || tail);
+			b.write(v_head || texts(i) || tail);
 		end loop;
-		h.line;
+		b.line;
 	end;
 
 	function w
@@ -158,9 +158,9 @@ create or replace package body multi is
 			v_tpl := tpl;
 		end if;
 		for i in 1 .. texts.count loop
-			h.write(replace(v_tpl, '@', texts(i)));
+			b.write(replace(v_tpl, '@', texts(i)));
 		end loop;
-		h.line;
+		b.line;
 	end;
 
 	function w
@@ -188,7 +188,7 @@ create or replace package body multi is
 		if indent then
 			v_head := ltrim(v_head);
 		end if;
-		h.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
+		b.line(v_head || replace(texts, ',', v_tail || v_head) || v_tail);
 	end;
 
 	procedure nv
@@ -219,9 +219,9 @@ create or replace package body multi is
 				into v, n;
 			exit when cur%notfound;
 			if instr(sw, ',' || v || ',') = 0 and instr(sw, ',' || n || ',') = 0 then
-				h.line(t1 || t2 || v || t3 || n || t4);
+				b.line(t1 || t2 || v || t3 || n || t4);
 			else
-				h.line(t1 || b || t2 || v || t3 || n || t4);
+				b.line(t1 || b || t2 || v || t3 || n || t4);
 			end if;
 		end loop;
 	end;
@@ -284,9 +284,9 @@ create or replace package body multi is
 		end if;
 		for i in 1 .. ns.count loop
 			if instr(sw, ',' || vs(i) || ',') = 0 and instr(sw, ',' || ns(i) || ',') = 0 then
-				h.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
+				b.line(t1 || t2 || vs(i) || t3 || ns(i) || t4);
 			else
-				h.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
+				b.line(t1 || b || t2 || vs(i) || t3 || ns(i) || t4);
 			end if;
 		end loop;
 	end;
@@ -313,10 +313,10 @@ create or replace package body multi is
 	) is
 	begin
 		for i in 1 .. para.count loop
-			h.write(cuts(i));
-			h.write(para(i));
+			b.write(cuts(i));
+			b.write(para(i));
 		end loop;
-		h.line(cuts(para.count + 1));
+		b.line(cuts(para.count + 1));
 	end;
 
 	function r
@@ -372,23 +372,23 @@ create or replace package body multi is
 			v_count := v_count + 1;
 		
 			for i in 1 .. colcnt loop
-				h.write(v_cuts(i));
+				b.write(v_cuts(i));
 				case desctab(i).col_type
 					when 1 then
 						dbms_sql.column_value(curid, i, v_varchar2);
-						h.write(v_varchar2);
+						b.write(v_varchar2);
 					when 2 then
 						dbms_sql.column_value(curid, i, v_number);
-						h.write(to_char(v_number));
+						b.write(to_char(v_number));
 					when 12 then
 						dbms_sql.column_value(curid, i, v_date);
-						h.write(to_char(v_date, coalesce(fmt_date, 'yyyy-mm-dd')));
+						b.write(to_char(v_date, coalesce(fmt_date, 'yyyy-mm-dd')));
 					else
 						dbms_sql.column_value(curid, i, v_other);
-						h.write(v_other);
+						b.write(v_other);
 				end case;
 			end loop;
-			h.line(v_cuts(colcnt + 1));
+			b.line(v_cuts(colcnt + 1));
 			if flush is not null then
 				if mod(v_count, flush) = 0 then
 					h.flush;

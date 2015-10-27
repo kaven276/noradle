@@ -3,13 +3,13 @@ create or replace package body http_server is
 	procedure error_not_bch is
 	begin
 		if pv.msg_stream then
-			h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+			b.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
 		else
 			h.allow_get_post;
 			h.status_line(403);
 			h.content_type('text/plain');
 			h.header_close;
-			h.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
+			b.line('The requested program unit is "' || r.prog || '" , only _b/_c/_h named unit can be called from http');
 			output.finish;
 		end if;
 	end;
@@ -17,13 +17,13 @@ create or replace package body http_server is
 	procedure error_invalid_dbu is
 	begin
 		if pv.msg_stream then
-			h.line('The requested DB user "' || r.dbu || '" is not allowed to access');
+			b.line('The requested DB user "' || r.dbu || '" is not allowed to access');
 		else
 			h.allow_get_post;
 			h.status_line(403);
 			h.content_type('text/plain');
 			h.header_close;
-			h.line('The requested DB user "' || r.dbu || '" is not allowed to access');
+			b.line('The requested DB user "' || r.dbu || '" is not allowed to access');
 			output.finish;
 		end if;
 	end;

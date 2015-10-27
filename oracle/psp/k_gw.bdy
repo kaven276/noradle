@@ -5,7 +5,7 @@ create or replace package body k_gw is
 		h.status_line(404);
 		h.content_type;
 		h.header_close;
-		h.line('The program unit "' || r.prog || '" is not exist');
+		b.line('The program unit "' || r.prog || '" is not exist');
 	end;
 
 	procedure error_no_subprog is
@@ -15,7 +15,7 @@ create or replace package body k_gw is
 			h.content_type;
 			h.header_close;
 		end if;
-		h.line('The package "' || r.pack || '" exists but the sub procedure "' || r.proc || '" in it' || ' is not exist');
+		b.line('The package "' || r.pack || '" exists but the sub procedure "' || r.proc || '" in it' || ' is not exist');
 	end;
 
 	procedure error_execute
@@ -33,14 +33,14 @@ create or replace package body k_gw is
 			x.p('<title>', emsg);
 			x.p('<h3>', '[WARNING] execute with error');
 			x.o('<pre>');
-			h.line(estack);
-			h.line(ebacktrace);
+			b.line(estack);
+			b.line(ebacktrace);
 			x.c('</pre>');
 			-- x.a('<a>', 'refresh', 'javascript:window.location.reload();');
 		else
-			h.line('[WARNING] execute with error');
-			h.line(estack);
-			h.line(ebacktrace);
+			b.line('[WARNING] execute with error');
+			b.line(estack);
+			b.line(ebacktrace);
 		end if;
 	end;
 

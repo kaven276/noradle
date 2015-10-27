@@ -475,7 +475,7 @@
 		h.status_line(405); -- Method Not Allowed
 		pv.headers('Allow') := pv.allow;
 		print_init(true);
-		h.line('http method "' || r.method || '" are not allowed, accept "' || pv.allow || ' "only');
+		b.line('http method "' || r.method || '" are not allowed, accept "' || pv.allow || ' "only');
 		raise pv.ex_resp_done;
 	end;
 

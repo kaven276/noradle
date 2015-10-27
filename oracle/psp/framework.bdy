@@ -131,7 +131,7 @@ create or replace package body framework is
 											 dbms_utility.format_error_backtrace));
 			h.status_line(500);
 			h.content_type('text/plain');
-			h.line(dbms_utility.format_error_stack);
+			b.line(dbms_utility.format_error_stack);
 		end;
 	
 	begin

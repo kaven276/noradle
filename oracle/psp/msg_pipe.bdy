@@ -22,23 +22,23 @@ create or replace package body msg_pipe is
 				when 6 then
 					-- number
 					dbms_pipe.unpack_message(tmp.n);
-					h.line(to_number(tmp.n));
+					b.line(to_number(tmp.n));
 				when 9 then
 					-- varchar2
 					dbms_pipe.unpack_message(tmp.s);
-					h.line(tmp.s);
+					b.line(tmp.s);
 				when 11 then
 					-- rowid
 					dbms_pipe.unpack_message(tmp.rid);
-					h.line(rowidtochar(tmp.rid));
+					b.line(rowidtochar(tmp.rid));
 				when 12 then
 					-- date
 					dbms_pipe.unpack_message(tmp.dt);
-					h.line(to_char(tmp.dt));
+					b.line(to_char(tmp.dt));
 				when 23 then
 					-- raw
 					dbms_pipe.unpack_message(tmp.rw);
-					h.line(rawtohex(tmp.rw));
+					b.line(rawtohex(tmp.rw));
 				else
 					null;
 			end case;

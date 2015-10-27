@@ -18,7 +18,7 @@ create or replace package body rs is
 		csep    varchar2(2) := chr(31) || ',';
 	begin
 		h.convert_json;
-		h.write(lsep || '[' || name || ']' || lsep);
+		b.write(lsep || '[' || name || ']' || lsep);
 	
 		-- Switch from native dynamic SQL to DBMS_SQL
 		curid := dbms_sql.to_cursor_number(c);
@@ -39,7 +39,7 @@ create or replace package body rs is
 				else
 					dbms_sql.define_column(curid, i, namevar, vsize);
 			end case;
-			h.write(sep || descrec.col_name || ':' || descrec.col_type);
+			b.write(sep || descrec.col_name || ':' || descrec.col_type);
 			if i = 1 then
 				sep := csep;
 			end if;
@@ -53,23 +53,23 @@ create or replace package body rs is
 				case descrec.col_type
 					when 1 then
 						dbms_sql.column_value(curid, i, namevar);
-						h.write(sep || namevar);
+						b.write(sep || namevar);
 					when 2 then
 						dbms_sql.column_value(curid, i, numvar);
-						h.write(sep || numvar);
+						b.write(sep || numvar);
 					when 12 then
 						dbms_sql.column_value(curid, i, datevar);
-						h.write(sep || to_char(datevar, 'yyyy-mm-dd hh24:mi:ss'));
+						b.write(sep || to_char(datevar, 'yyyy-mm-dd hh24:mi:ss'));
 					else
 						dbms_sql.column_value(curid, i, namevar);
-						h.write(sep || namevar);
+						b.write(sep || namevar);
 				end case;
 				if i = 1 then
 					sep := csep;
 				end if;
 			end loop;
 		end loop;
-		h.write(lsep);
+		b.write(lsep);
 	
 		dbms_sql.close_cursor(curid);
 	end;
@@ -126,9 +126,9 @@ create or replace package body rs is
 		while dbms_sql.fetch_rows(curid) > 0 loop
 			if fstline then
 				fstline := false;
-				h.write('[{');
+				b.write('[{');
 			else
-				h.write(',{');
+				b.write(',{');
 			end if;
 		
 			sep := '"';
@@ -136,23 +136,23 @@ create or replace package body rs is
 				descrec := desctab(i);
 				if descrec.col_type in (1, 96) then
 					dbms_sql.column_value(curid, i, namevar);
-					h.write(sep || descrec.col_name || '":"' || namevar || '"');
+					b.write(sep || descrec.col_name || '":"' || namevar || '"');
 				elsif descrec.col_type in (2, 10, 101) then
 					dbms_sql.column_value(curid, i, numvar);
-					h.write(sep || descrec.col_name || '":' || numvar);
+					b.write(sep || descrec.col_name || '":' || numvar);
 				elsif descrec.col_type in (12) then
-					h.write(sep || descrec.col_name || '":"' || to_char(datevar, 'yyyy-mm-dd hh24:mi:ss') || '"');
+					b.write(sep || descrec.col_name || '":"' || to_char(datevar, 'yyyy-mm-dd hh24:mi:ss') || '"');
 				else
 					dbms_sql.column_value(curid, i, namevar);
-					h.write(sep || descrec.col_name || '":"' || namevar || '"');
+					b.write(sep || descrec.col_name || '":"' || namevar || '"');
 				end if;
 				if i = 1 then
 					sep := ',"';
 				end if;
 			end loop;
-			h.writeln('}');
+			b.writeln('}');
 		end loop;
-		h.write(']');
+		b.write(']');
 	
 		dbms_sql.close_cursor(curid);
 	end;
@@ -171,7 +171,7 @@ create or replace package body rs is
 		lsep  varchar2(2) := chr(30) || chr(10);
 		nvsep varchar2(2) := chr(31) || '=';
 	begin
-		h.write(lsep || '*' || t || '|' || n || nvsep || v || lsep);
+		b.write(lsep || '*' || t || '|' || n || nvsep || v || lsep);
 	end;
 
 	procedure nv
