@@ -49,6 +49,7 @@ create or replace package r is
 	function url return varchar2;
 	function dir return varchar2;
 	function pathname return varchar2;
+	function path return varchar2;
 	function subpath return varchar2;
 	function search return varchar2;
 	function qstr return varchar2;

@@ -297,6 +297,11 @@ create or replace package body r is
 		return getc('u$pathname', '');
 	end;
 
+	function path return varchar2 is
+	begin
+		return pathname || search;
+	end;
+
 	function subpath return varchar2 is
 	begin
 		return getc('u$spath', '');
