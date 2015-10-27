@@ -127,7 +127,7 @@ create or replace package body tag is
 		para st := st()
 	) is
 	begin
-		b.line(base(tag, para, '<>'));
+		k_resp_body.line(base(tag, para, '<>'));
 	end;
 
 	procedure c(tag varchar2) is
@@ -142,7 +142,7 @@ create or replace package body tag is
 			sts.stack := substrb(sts.stack, lengthb(v_tag) + 1);
 		end if;
 	
-		b.line(v_tag);
+		k_resp_body.line(v_tag);
 	end;
 
 	function p
@@ -170,7 +170,7 @@ create or replace package body tag is
 		if cut then
 			return;
 		end if;
-		b.line(base(tag, para, inner));
+		k_resp_body.line(base(tag, para, inner));
 	end;
 
 	function s
@@ -196,7 +196,7 @@ create or replace package body tag is
 		if cut then
 			return;
 		end if;
-		b.line(base(tag, para, chr(0)));
+		k_resp_body.line(base(tag, para, chr(0)));
 	end;
 
 	function a
@@ -226,7 +226,7 @@ create or replace package body tag is
 		if cut then
 			return;
 		end if;
-		b.line(base(tg, para, text, ' href="' || url(href) || '"'));
+		k_resp_body.line(base(tg, para, text, ' href="' || url(href) || '"'));
 	end;
 
 	function v
@@ -246,7 +246,7 @@ create or replace package body tag is
 		para  st := null
 	) is
 	begin
-		b.line(base(tg, para, chr(0), ' value="' || value || '"'));
+		k_resp_body.line(base(tg, para, chr(0), ' value="' || value || '"'));
 	end;
 
 	function i
@@ -266,7 +266,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		b.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
+		k_resp_body.line(base(tg, para, chr(0), ' src="' || url(src) || '"'));
 	end;
 
 	function t
@@ -299,15 +299,15 @@ create or replace package body tag is
 		end if;
 		if para is null then
 			if not indent then
-				b.line(text);
+				k_resp_body.line(text);
 			else
-				b.line(ltrim(text));
+				k_resp_body.line(ltrim(text));
 			end if;
 		else
 			if not indent then
-				b.line(k_type_tool.ps(text, para, ':'));
+				k_resp_body.line(k_type_tool.ps(text, para, ':'));
 			else
-				b.line(k_type_tool.ps(ltrim(text), para, ':'));
+				k_resp_body.line(k_type_tool.ps(ltrim(text), para, ':'));
 			end if;
 		end if;
 	end;
@@ -324,7 +324,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		b.line(base(tg, para, '', ' src="' || url(src) || '"'));
+		k_resp_body.line(base(tg, para, '', ' src="' || url(src) || '"'));
 	end;
 
 	procedure l
@@ -335,7 +335,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		b.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="' || nvl(rel, 'stylesheet') || '"'));
+		k_resp_body.line(base(tg, para, chr(0), ' href="' || url(href) || '" rel="' || nvl(rel, 'stylesheet') || '"'));
 	end;
 
 	procedure b
@@ -345,7 +345,7 @@ create or replace package body tag is
 		para st := null
 	) is
 	begin
-		b.line(base(tg, para, chr(0), ' href="' || url(href) || '"'));
+		k_resp_body.line(base(tg, para, chr(0), ' href="' || url(href) || '"'));
 	end;
 
 end tag;
