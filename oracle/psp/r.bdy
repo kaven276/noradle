@@ -538,6 +538,14 @@ create or replace package body r is
 			return st();
 	end;
 
+	function dump(name varchar2) return varchar2 is
+	begin
+		return '[' || t.join(ra.params(name), ', ') || ']';
+	exception
+		when no_data_found then
+			return '[]';
+	end;
+
 	function cnt(name varchar2) return pls_integer is
 	begin
 		return ra.params(name).count;

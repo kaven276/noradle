@@ -142,6 +142,7 @@ create or replace package r is
 	);
 	function cnt(name varchar2) return pls_integer;
 	function gets(name varchar2) return st;
+	function dump(name varchar2) return varchar2;
 	function unescape(value varchar2) return varchar2;
 	function idle return number;
 	function lat return date;
