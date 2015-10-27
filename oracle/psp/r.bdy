@@ -346,6 +346,24 @@ create or replace package body r is
 		return v_type;
 	end;
 
+	function is_readonly return boolean is
+	begin
+		case type
+			when 'b' then
+				return true;
+			when 'c' then
+				return false;
+			when 'h' then
+				return method in('GET', 'HEAD');
+			when 't' then
+				return method in('GET', 'HEAD');
+			when 'v' then
+				return method in('GET', 'HEAD');
+			else
+				return false;
+		end case;
+	end;
+
 	/*
   
   function from_prog return varchar2 is

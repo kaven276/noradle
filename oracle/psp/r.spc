@@ -43,6 +43,7 @@ create or replace package r is
 	function pack return varchar2;
 	function proc return varchar2;
 	function type return varchar2;
+	function is_readonly return boolean;
 
 	function gid return varchar2;
 	function site(use_proxy boolean := true) return varchar2;
