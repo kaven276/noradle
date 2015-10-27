@@ -768,7 +768,7 @@ create or replace package body r is
 		return null;
 	end;
 
-	function xhr return boolean is
+	function is_xhr return boolean is
 	begin
 		if nvl(header('x-requested-with'), '!=') = 'XMLHttpRequest' then
 			return true;
