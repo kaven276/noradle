@@ -183,5 +183,10 @@ create or replace package r is
 	function cfg return varchar2;
 	function slot return varchar2;
 
+	function db_env(n varchar2) return varchar2;
+	function instance return pls_integer;
+	function database_role return varchar2;
+	function db_unique_name return varchar2;
+
 end r;
 /

@@ -817,5 +817,25 @@ create or replace package body r is
 		return pv.in_seq;
 	end;
 
+	function db_env(n varchar2) return varchar2 is
+	begin
+		return sys_context('USERENV', n);
+	end;
+
+	function instance return pls_integer is
+	begin
+		return to_number(db_env('INSTANCE'));
+	end;
+
+	function database_role return varchar2 is
+	begin
+		return db_env('DATABASE_ROLE');
+	end;
+
+	function db_unique_name return varchar2 is
+	begin
+		return db_env('DB_UNIQUE_NAME');
+	end;
+
 end r;
 /
