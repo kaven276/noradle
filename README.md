@@ -16,6 +16,7 @@ the resource for NORADLE
 
 * [github project wiki](https://github.com/kaven276/noradle/wiki/README)
 * [document site](http://docs.noradle.com/) http://docs.noradle.com
+* [demo site](http://demo.noradle.com/) http://demo.noradle.com
 
 技术理想
 =======
