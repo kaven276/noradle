@@ -2,8 +2,6 @@ create or replace package body r is
 
 	gc_date_fmt constant varchar2(21) := 'yyyy-mm-dd hh24:mi:ss';
 
-	v_gid  varchar2(99);
-	v_uid  varchar2(99);
 	v_prog varchar2(61);
 	v_pack varchar2(30);
 	v_proc varchar2(30);
@@ -119,9 +117,6 @@ create or replace package body r is
 			when 'HTTP' then
 				get('c$BSID', pv.bsid);
 				get('c$MSID', pv.msid);
-				get('i$gid', v_gid);
-				get('s$uid', v_uid);
-				-- get i$nid
 				get('a$uamd5', v_uamd5);
 			when 'DATA' then
 				null;
@@ -678,7 +673,7 @@ create or replace package body r is
 
 	function gid return varchar2 is
 	begin
-		return getc('i$gid');
+		return nvl(getc('i$gid'), getc('s$gid'));
 	end;
 
 	function uid return varchar2 is
