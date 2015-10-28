@@ -26,7 +26,7 @@ create or replace function url(str varchar2) return varchar2 is
 
 	function base return varchar2 is
 	begin
-		return r.getc('y$static');
+		return r.getc('l$');
 	end;
 
 begin
