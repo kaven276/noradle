@@ -46,6 +46,7 @@ create or replace package r is
 	function is_readonly return boolean;
 
 	function gid return varchar2;
+	function uid return varchar2;
 	function site(use_proxy boolean := true) return varchar2;
 	function url return varchar2;
 	function dir return varchar2;
