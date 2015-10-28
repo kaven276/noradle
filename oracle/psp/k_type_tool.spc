@@ -62,6 +62,7 @@ create or replace package k_type_tool is
 		ch   char := '~'
 	) return varchar2 character set pat%charset;
 
+	function tf(cond boolean) return varchar2;
 	function tf
 	(
 		cond boolean,

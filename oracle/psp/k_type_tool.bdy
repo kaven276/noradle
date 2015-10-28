@@ -184,6 +184,17 @@ create or replace package body k_type_tool is
 		return v_rtn;
 	end;
 
+	function tf(cond boolean) return varchar2 is
+	begin
+		if cond then
+			return 'true';
+		elsif not cond then
+			return 'false';
+		else
+			return 'null';
+		end if;
+	end;
+
 	function tf
 	(
 		cond boolean,
