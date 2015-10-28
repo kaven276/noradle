@@ -734,19 +734,19 @@ create or replace package body r is
 
 	function client_addr(use_proxy boolean := true) return varchar2 is
 	begin
-		if not use_proxy or r.is_null('h$x-forwarded-fors') then
+		if not use_proxy or r.is_null('h$$x-forwarded-for') then
 			return getc('a$caddr');
 		else
-			return getc('h$x-forwarded-fors');
+			return getc('h$$x-forwarded-for');
 		end if;
 	end;
 
 	function client_port(use_proxy boolean := true) return pls_integer is
 	begin
-		if not use_proxy or r.is_null('h$x-forwarded-ports') then
+		if not use_proxy or r.is_null('h$$x-forwarded-port') then
 			return getn('a$cport');
 		else
-			return getn('h$x-forwarded-ports');
+			return getn('h$$x-forwarded-port');
 		end if;
 	end;
 
