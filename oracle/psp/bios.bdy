@@ -104,7 +104,9 @@ create or replace package body bios is
 		if pv.cslot_id > 0 then
 			-- noradle request have i$cid send without frame wrapper
 			v_value := utl_tcp.get_line(pv.c, true);
-			ra.params('i$cid') := st(v_value);
+			ra.params('b$cid') := st(v_value);
+			v_value := utl_tcp.get_line(pv.c, true);
+			ra.params('b$cslot') := st(v_value);
 		end if;
 	
 		loop

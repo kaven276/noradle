@@ -804,7 +804,7 @@ create or replace package body r is
 
 	function cid return varchar2 is
 	begin
-		return get('i$cid');
+		return get('b$cid');
 	end;
 
 	function cfg return varchar2 is
