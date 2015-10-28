@@ -75,7 +75,7 @@ create or replace package body framework is
 				from v$session s, v$process p
 			 where s.paddr = p.addr
 				 and s.sid = sys_context('userenv', 'sid');
-			v_inst := nvl(sys_context('USER_ENV', 'INSTANCE'), -1);
+			v_inst := nvl(env('INSTANCE'), -1);
 			v_all  := env('DB_NAME') || '/' || env('DB_DOMAIN') || '/' || env('DB_UNIQUE_NAME') || '/' ||
 								env('DATABASE_ROLE') || '/' || pv.cfg_id;
 		
