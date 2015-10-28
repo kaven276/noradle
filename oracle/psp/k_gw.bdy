@@ -47,8 +47,8 @@ create or replace package body k_gw is
 	procedure do is
 		v_sql    varchar2(100);
 		v_tried  boolean;
-		v_before varchar2(60) := r.getc('y$before', '');
-		v_after  varchar2(60) := r.getc('y$after', '');
+		v_before varchar2(60) := r.getc('x$before', '');
+		v_after  varchar2(60) := r.getc('x$after', '');
 	begin
 		v_tried := false;
 		<<retry_filter>>
