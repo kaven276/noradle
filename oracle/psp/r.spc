@@ -182,6 +182,7 @@ create or replace package r is
 	function cid return varchar2;
 	function cfg return varchar2;
 	function slot return varchar2;
+	function cslot return pls_integer;
 
 	function db_env(n varchar2) return varchar2;
 	function instance return pls_integer;

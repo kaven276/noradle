@@ -837,5 +837,10 @@ create or replace package body r is
 		return db_env('DB_UNIQUE_NAME');
 	end;
 
+	function cslot return pls_integer is
+	begin
+		return getn('b$cslot');
+	end;
+
 end r;
 /
