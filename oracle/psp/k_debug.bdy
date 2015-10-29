@@ -99,7 +99,7 @@ create or replace package body k_debug is
 		v  varchar2(999);
 		va st;
 	begin
-		h.set_line_break(chr(10));
+		b.set_line_break(chr(10));
 		b.line('<pre>');
 	
 		b.line('[ This is the basic request info derived from http request line and host http header ]');

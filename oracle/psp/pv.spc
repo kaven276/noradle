@@ -59,7 +59,7 @@ create or replace package pv is
 	pg_len   pls_integer; -- written parts's total lengthb
 	pg_lensp pls_integer; -- pg_len save point
 	pg_cssno pls_integer; -- where css should insert into pg_parts
-	pg_svptr pls_integer; -- output savepoint, used for h.save_pointer,h.appended
+	pg_svptr pls_integer; -- output savepoint, used for b.save_pointer,b.appended
 	pg_css   nvarchar2(32767); -- hold component css text
 	pg_nchar boolean;
 	pg_conv  boolean;
@@ -68,7 +68,7 @@ create or replace package pv is
 
 	-- all output variation control state
 	firstpg boolean; -- if clear and rewrite page, following PVs keep when re-init
-	nlbr    varchar2(2); -- set by h.set_line_break, used by output.line after all
+	nlbr    varchar2(2); -- set by b.set_line_break, used by output.line after all
 	nlbr0   varchar2(2);
 
 	-- stream/flush output flow control related

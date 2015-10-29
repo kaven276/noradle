@@ -391,7 +391,7 @@ create or replace package body multi is
 			b.line(v_cuts(colcnt + 1));
 			if flush is not null then
 				if mod(v_count, flush) = 0 then
-					h.flush;
+					b.flush;
 				end if;
 			end if;
 		end loop;

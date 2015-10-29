@@ -189,7 +189,7 @@ create or replace package body list is
 				end if;
 			end if;
 			if flush is not null and mod(v_row_cnt, flush) = 0 then
-				h.flush;
+				b.flush;
 			end if;
 		end loop;
 		x.c('</tbody>');

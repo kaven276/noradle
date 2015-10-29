@@ -31,7 +31,7 @@ create or replace package body e is
 			return;
 		end if;
 		h.status_line(403);
-		h.print_init(true);
+		b.print_init(true);
 		if pv.protocol = 'HTTP' then
 			h.content_type('text/html');
 			x.o('<html>');

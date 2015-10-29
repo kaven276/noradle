@@ -13,7 +13,7 @@ create or replace package body msg_pipe is
 			return;
 		end if;
 		h.content_type('text/items');
-		h.set_line_break(r.getc('lb', chr(30) || chr(10)));
+		b.set_line_break(r.getc('lb', chr(30) || chr(10)));
 		loop
 			case dbms_pipe.next_item_type
 				when 0 then
