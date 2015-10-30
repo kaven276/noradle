@@ -87,12 +87,6 @@ create or replace package k_resp_head is
 		status number := null
 	);
 
-	procedure gol
-	(
-		url    varchar2,
-		status number := null
-	);
-
 	procedure retry_after(delta number);
 	procedure retry_after(future date);
 

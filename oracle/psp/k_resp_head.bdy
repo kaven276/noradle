@@ -291,7 +291,7 @@ create or replace package body k_resp_head is
 	procedure location(url varchar2) is
 	begin
 		-- [todo] absolute URI
-		pv.headers('Location') := utl_url.escape(url, false, pv.charset_ora);
+		pv.headers('Location') := utl_url.escape(l(url), false, pv.charset_ora);
 	end;
 
 	procedure redirect
@@ -310,21 +310,11 @@ create or replace package body k_resp_head is
 		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
 	) is
 	begin
-		commit;
-		redirect(url, status);
+		redirect(url);
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
 		bdy.print_init(true);
 		raise pv.ex_resp_done;
-	end;
-
-	procedure gol
-	(
-		url    varchar2,
-		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
-	) is
-	begin
-		go(l(url), status);
 	end;
 
 	procedure retry_after(delta number) is
