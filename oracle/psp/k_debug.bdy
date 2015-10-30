@@ -38,7 +38,7 @@ create or replace package body k_debug is
 		if pv.tseq is null then
 			return;
 		end if;
-		if pv.tseq = 1 and r.is_null('t$timespan') then
+		if pv.tseq = 1 and r.getc('t$', 'false') = 'false' then
 			pv.tseq := null;
 			return;
 		end if;
@@ -225,8 +225,18 @@ create or replace package body k_debug is
 		v_len     pls_integer := length(str);
 		htbuf_len pls_integer := 255;
 	begin
+		--dbms_output.put_line(lengthb(str) || ',' || length(str) || '; ' || t.tf(length(str) = length4(str), '=', '!='));
 		dbms_output.put(str);
 		htp.prn(str);
+		return;
+		dbms_output.put_line(v_len || ', ' || ceil(v_len / htbuf_len));
+		for i in 1 .. ceil(v_len / htbuf_len) loop
+			dbms_output.put_line(i);
+			dbms_output.put_line(substr(str, (i - 1) * htbuf_len + 1, htbuf_len));
+			htp.prn(substr(str, (i - 1) * htbuf_len + 1, htbuf_len));
+		end loop;
+		-- htp.prn(str);
+		-- htp.prn(substr(str, 1, 400));
 	end;
 
 end k_debug;
