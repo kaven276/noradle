@@ -8,8 +8,6 @@ create or replace package k_resp_head is
 	mime_excel constant varchar2(30) := 'application/vnd.ms-excel';
 	mime_rss   constant varchar2(30) := 'text/resultsets';
 
-	procedure use_bom(value varchar2);
-
 	procedure status_line(code pls_integer := 200);
 	procedure sts_200_ok;
 	procedure sts_300_multiple_choices;
@@ -35,31 +33,29 @@ create or replace package k_resp_head is
 
 	function header(name varchar2) return varchar2;
 
-	procedure location(url varchar2);
+	procedure use_bom(value varchar2);
 
-	function charset return varchar2;
-	function mime_type return varchar2;
 	procedure content_type
 	(
 		mime_type varchar2 := 'text/html',
 		charset   varchar2 := 'UTF-8'
 	);
+	function charset return varchar2;
+	function mime_type return varchar2;
+
+	procedure content_language(langs varchar2);
+	procedure content_language_none;
 
 	procedure content_encoding_try_zip;
 	procedure content_encoding_identity;
 	procedure content_encoding_auto;
 
+	procedure content_md5_on;
+	procedure content_md5_off;
+	procedure content_md5_auto;
+
 	procedure content_disposition_attachment(filename varchar2);
 	procedure content_disposition_inline(filename varchar2);
-
-	procedure content_language(langs varchar2);
-	procedure content_language_none;
-
-	procedure refresh
-	(
-		seconds number,
-		url     varchar2 := null
-	);
 
 	procedure expires(expt date);
 	procedure expires_now;
@@ -72,12 +68,19 @@ create or replace package k_resp_head is
 	procedure etag_md5_on;
 	procedure etag_md5_off;
 	procedure etag_md5_auto;
-	procedure content_md5_on;
-	procedure content_md5_off;
-	procedure content_md5_auto;
-
 	procedure header_close;
 
+	procedure refresh
+	(
+		seconds number,
+		url     varchar2 := null
+	);
+	procedure location(url varchar2);
+	procedure redirect
+	(
+		url    varchar2,
+		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
+	);
 	procedure go
 	(
 		url    varchar2,
@@ -88,12 +91,6 @@ create or replace package k_resp_head is
 	(
 		url    varchar2,
 		status number := null
-	);
-
-	procedure redirect
-	(
-		url    varchar2,
-		status number := null -- maybe 302(_b),303(_c feedback),201(_c new)
 	);
 
 	procedure retry_after(delta number);

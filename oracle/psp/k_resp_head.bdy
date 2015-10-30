@@ -1,10 +1,5 @@
 create or replace package body k_resp_head is
 
-	procedure use_bom(value varchar2) is
-	begin
-		pv.bom := replace(value, ' ', '');
-	end;
-
 	procedure status_line(code pls_integer := 200) is
 	begin
 		pv.status_code := code;
@@ -109,14 +104,9 @@ create or replace package body k_resp_head is
 			return '';
 	end;
 
-	function charset return varchar2 is
+	procedure use_bom(value varchar2) is
 	begin
-		return pv.charset;
-	end;
-
-	function mime_type return varchar2 is
-	begin
-		return pv.mime_type;
+		pv.bom := replace(value, ' ', '');
 	end;
 
 	procedure content_type
@@ -149,6 +139,26 @@ create or replace package body k_resp_head is
 		-- r.unescape_parameters;
 	end;
 
+	function charset return varchar2 is
+	begin
+		return pv.charset;
+	end;
+
+	function mime_type return varchar2 is
+	begin
+		return pv.mime_type;
+	end;
+
+	procedure content_language(langs varchar2) is
+	begin
+		pv.headers('Content-Language') := langs;
+	end;
+
+	procedure content_language_none is
+	begin
+		pv.headers.delete('Content-Language');
+	end;
+
 	procedure content_encoding_try_zip is
 	begin
 		pv.headers('Content-Encoding') := 'zip';
@@ -164,10 +174,19 @@ create or replace package body k_resp_head is
 		pv.headers('Content-Encoding') := '?';
 	end;
 
-	procedure location(url varchar2) is
+	procedure content_md5_on is
 	begin
-		-- [todo] absolute URI
-		pv.headers('Location') := utl_url.escape(url, false, pv.charset_ora);
+		pv.headers('Content-MD5') := '?';
+	end;
+
+	procedure content_md5_off is
+	begin
+		pv.headers.delete('Content-MD5');
+	end;
+
+	procedure content_md5_auto is
+	begin
+		null;
 	end;
 
 	procedure content_disposition_attachment(filename varchar2) is
@@ -178,25 +197,6 @@ create or replace package body k_resp_head is
 	procedure content_disposition_inline(filename varchar2) is
 	begin
 		pv.headers('Content-Disposition') := 'inline; filename=' || filename;
-	end;
-
-	procedure content_language(langs varchar2) is
-	begin
-		pv.headers('Content-Language') := langs;
-	end;
-
-	procedure content_language_none is
-	begin
-		pv.headers.delete('Content-Language');
-	end;
-
-	procedure refresh
-	(
-		seconds number,
-		url     varchar2 := null
-	) is
-	begin
-		pv.headers('Refresh') := to_char(seconds) || t.nvl2(url, ';url=' || l(url));
 	end;
 
 	procedure expires(expt date) is
@@ -223,11 +223,29 @@ create or replace package body k_resp_head is
 		end if;
 	end;
 
+	procedure check_if_not_modified_since is
+	begin
+		if r.lmt = pv.max_lmt then
+			h.status_line(304);
+			bdy.print_init(true);
+			raise pv.ex_resp_done;
+		end if;
+	end;
+
 	procedure last_scn(scn number) is
 	begin
 		if pv.max_scn is null or pv.max_scn < scn then
 			pv.max_scn := scn;
 			pv.headers('ETag') := 'W/"' || pv.max_scn || '"';
+		end if;
+	end;
+
+	procedure check_if_none_match_scn is
+	begin
+		if r.etag = 'W/"' || pv.max_scn || '"' then
+			h.status_line(304);
+			bdy.print_init(true);
+			raise pv.ex_resp_done;
 		end if;
 	end;
 
@@ -255,42 +273,25 @@ create or replace package body k_resp_head is
 		pv.etag_md5 := null;
 	end;
 
-	procedure content_md5_on is
-	begin
-		pv.headers('Content-MD5') := '?';
-	end;
-
-	procedure content_md5_off is
-	begin
-		pv.headers.delete('Content-MD5');
-	end;
-
-	procedure content_md5_auto is
-	begin
-		null;
-	end;
-
-	procedure check_if_not_modified_since is
-	begin
-		if r.lmt = pv.max_lmt then
-			h.status_line(304);
-			bdy.print_init(true);
-			raise pv.ex_resp_done;
-		end if;
-	end;
-
-	procedure check_if_none_match_scn is
-	begin
-		if r.etag = 'W/"' || pv.max_scn || '"' then
-			h.status_line(304);
-			bdy.print_init(true);
-			raise pv.ex_resp_done;
-		end if;
-	end;
-
 	procedure header_close is
 	begin
 		check_if_not_modified_since;
+		check_if_none_match_scn;
+	end;
+
+	procedure refresh
+	(
+		seconds number,
+		url     varchar2 := null
+	) is
+	begin
+		pv.headers('Refresh') := to_char(seconds) || t.nvl2(url, ';url=' || l(url));
+	end;
+
+	procedure location(url varchar2) is
+	begin
+		-- [todo] absolute URI
+		pv.headers('Location') := utl_url.escape(url, false, pv.charset_ora);
 	end;
 
 	procedure redirect
@@ -347,6 +348,7 @@ create or replace package body k_resp_head is
 		e.raise(-20025, 'PSP.WEB have not implenment http digest authentication.');
 	end;
 
+	-- private
 	procedure return_405_not_allow is
 	begin
 		h.status_line(405); -- Method Not Allowed
