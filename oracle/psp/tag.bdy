@@ -199,6 +199,16 @@ create or replace package body tag is
 		bdy.line(base(tag, para, chr(0)));
 	end;
 
+	procedure f
+	(
+		tg     varchar2,
+		action varchar2,
+		para   st := st()
+	) is
+	begin
+		bdy.line(base(tg, para, '<>', ' action="' || url(action) || '"'));
+	end;
+
 	function a
 	(
 		tg   varchar2,

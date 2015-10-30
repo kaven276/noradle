@@ -77,7 +77,12 @@ create or replace package tag is
 		para st := null,
 		cut  boolean := false
 	);
-
+	procedure f
+	(
+		tg     varchar2,
+		action varchar2,
+		para   st := st()
+	);
 	function a
 	(
 		tg   varchar2,
