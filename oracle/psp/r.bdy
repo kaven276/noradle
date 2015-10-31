@@ -558,12 +558,30 @@ create or replace package body r is
 			return st();
 	end;
 
-	function dump(name varchar2) return varchar2 is
+	function dump
+	(
+		name    varchar2,
+		restore boolean := false
+	) return varchar2 is
+		v_cnt pls_integer;
+		v_st  st := st();
 	begin
-		return '[' || t.join(ra.params(name), ', ') || ']';
+		v_cnt := ra.params(name).count;
+		if v_cnt = 0 then
+			return '[]';
+		end if;
+		if restore then
+			v_st.extend(v_cnt);
+			for i in 1 .. v_cnt loop
+				v_st(i) := unescape(ra.params(name) (i));
+			end loop;
+			return '[' || t.join(v_st, ', ') || ']';
+		else
+			return '[' || t.join(ra.params(name), ', ') || ']';
+		end if;
 	exception
 		when no_data_found then
-			return '[]';
+			return 'null';
 	end;
 
 	function cnt(name varchar2) return pls_integer is
