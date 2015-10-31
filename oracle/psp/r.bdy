@@ -671,6 +671,26 @@ create or replace package body r is
 		return utl_url.unescape(value, pv.cs_req);
 	end;
 
+	function vqstr return varchar2 is
+		n   varchar2(100);
+		v   varchar2(999);
+		va  st;
+		rtn varchar2(32000);
+	begin
+		n := ra.params.first;
+		loop
+			exit when n is null;
+			if lengthb(n) < 2 or substrb(n, 2, 1) != '$' then
+				va := ra.params(n);
+				for i in 1 .. va.count loop
+					rtn := rtn || '&' || n || '=' || unescape(va(i));
+				end loop;
+			end if;
+			n := ra.params.next(n);
+		end loop;
+		return substrb(rtn, 2);
+	end;
+
 	function header(name varchar2) return varchar2 is
 	begin
 		return ra.params('h$' || lower(name))(1);
