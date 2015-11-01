@@ -161,11 +161,6 @@ create or replace package body bios is
 			v := v || n || ': ' || pv.headers(n) || nl;
 			n := pv.headers.next(n);
 		end loop;
-		n := pv.cookies.first;
-		while n is not null loop
-			v := v || pv.cookies(n) || nl;
-			n := pv.cookies.next(n);
-		end loop;
 		n := pv.caches.first;
 		while n is not null loop
 			if pv.caches(n) = 'Y' then
@@ -178,6 +173,14 @@ create or replace package body bios is
 		if cc is not null then
 			v := v || 'Cache-Control: ' || substrb(cc, 3) || nl;
 		end if;
+		n := pv.cookies.first;
+		if n is not null then
+			v := v || 'Set-Cookies: ' || nl;
+		end if;
+		while n is not null loop
+			v := v || pv.cookies(n) || nl;
+			n := pv.cookies.next(n);
+		end loop;
 		if pv.entry is null then
 			dbms_output.put_line(v);
 		else

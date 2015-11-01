@@ -392,7 +392,7 @@ create or replace package body k_resp_head is
 		v_str := v_str || t.nvl2(domain, ';Domain=' || domain);
 		v_str := v_str || t.nvl2(path, ';path=' || path);
 		v_str := v_str || t.nvl2(expires, ';expires=' || t.hdt2s(expires));
-		pv.cookies(name) := 'Set-Cookie: ' || name || '=' || value || v_str;
+		pv.cookies(name) := name || '=' || value || v_str;
 	end;
 
 	procedure convert_json(callback varchar2 := null) is
