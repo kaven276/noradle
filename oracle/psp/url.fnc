@@ -1,7 +1,8 @@
-create or replace function url(str varchar2) return varchar2 is
+create or replace function url(lstr varchar2) return varchar2 is
 
-	c1   char(1) := substrb(str, 1, 1);
+	c1   char(1) := substrb(lstr, 1, 1);
 	c2   char(1);
+	str  varchar2(4000);
 	main varchar2(30);
 	pos  pls_integer;
 	dad  varchar2(100);
@@ -30,6 +31,17 @@ create or replace function url(str varchar2) return varchar2 is
 	end;
 
 begin
+
+	if substrb(lstr, -1) in ('?', '&') then
+		if r.is_null('l$suffix') then
+			str := substrb(lstr, 1, lengthb(lstr) - 1);
+		else
+			str := lstr || r.getc('l$suffix');
+		end if;
+	else
+		str := lstr;
+	end if;
+
 	case c1
 		when '=' then
 			return substrb(str, 2);
