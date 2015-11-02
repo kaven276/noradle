@@ -314,6 +314,7 @@ create or replace package body k_resp_head is
 		pv.headers.delete('Content-Type');
 		pv.headers('Content-Length') := '0';
 		bdy.print_init(true);
+		commit;
 		raise pv.ex_resp_done;
 	end;
 
