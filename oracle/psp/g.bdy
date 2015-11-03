@@ -32,7 +32,8 @@ create or replace package body g is
 		x.o('<html>');
 		x.o('<head>');
 		x.p('<script>', 'alert("' || text || '");');
-		x.p('<script>', 'location.href="' || url || '";');
+		x.p('<script>', 'location.href="' || l(url) || '";');
+		--x.p('<script>', 'location.assign("' || l(url) || '");');
 		x.c('</head>');
 		x.c('</html>');
 	end;
