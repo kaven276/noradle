@@ -444,6 +444,19 @@ create or replace package body r is
 		ra.params(name) := st(to_char(value, gc_date_fmt));
 	end;
 
+	procedure setb
+	(
+		name  varchar2,
+		value boolean := true
+	) is
+		v varchar2(5) := t.tf(value);
+	begin
+		if name like 's$%' then
+			rc.params(name) := st(v);
+		end if;
+		ra.params(name) := st(v);
+	end;
+
 	function is_lack(name varchar2) return boolean is
 		v varchar2(4000);
 	begin
@@ -532,6 +545,29 @@ create or replace package body r is
 			return nvl(to_date(utl_url.unescape(ra.params(name) (idx)), gc_date_fmt), defval);
 		else
 			return nvl(to_date(utl_url.unescape(ra.params(name) (idx)), format), defval);
+		end if;
+	exception
+		when no_data_found then
+			return defval;
+	end;
+
+	function getb
+	(
+		name   varchar2,
+		defval boolean := null,
+		idx    pls_integer := 1
+	) return boolean is
+		v varchar2(30);
+	begin
+		v := upper(ra.params(name) (idx));
+		if v in ('TRUE', 'T', 'YES', 'Y', '1') then
+			return true;
+		elsif v in ('FALSE', 'F', 'NO', 'N', '0') then
+			return false;
+		elsif v in ('NULL') then
+			return null;
+		else
+			return null;
 		end if;
 	exception
 		when no_data_found then

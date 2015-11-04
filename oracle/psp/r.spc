@@ -108,6 +108,12 @@ create or replace package r is
 		value date
 	);
 
+	procedure setb
+	(
+		name  varchar2,
+		value boolean := true
+	);
+
 	function getc
 	(
 		name   varchar2,
@@ -137,6 +143,13 @@ create or replace package r is
 		format varchar2 := null,
 		idx    pls_integer := 1
 	) return date;
+
+	function getb
+	(
+		name   varchar2,
+		defval boolean := null,
+		idx    pls_integer := 1
+	) return boolean;
 
 	procedure gets
 	(
