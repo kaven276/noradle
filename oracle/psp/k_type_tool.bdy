@@ -168,6 +168,15 @@ create or replace package body k_type_tool is
 		return replace(v_str, v_chr, '');
 	end;
 
+	function ps
+	(
+		pat varchar2 character set any_cs,
+		ch  char := ':'
+	) return varchar2 character set pat%charset is
+	begin
+		return ps(pat, tmp.stv);
+	end;
+
 	-- like c's printf, use ~ for replacement by default
 	function pf
 	(

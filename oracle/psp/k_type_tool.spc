@@ -54,6 +54,12 @@ create or replace package k_type_tool is
 		ch   char := ':'
 	) return varchar2 character set pat%charset;
 
+	function ps
+	(
+		pat varchar2 character set any_cs,
+		ch  char := ':'
+	) return varchar2 character set pat%charset;
+
 	-- like c's printf, use ~ for replacement by default
 	function pf
 	(
