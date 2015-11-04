@@ -199,13 +199,18 @@ create or replace package body k_type_tool is
 	(
 		cond boolean,
 		t    varchar2 character set any_cs,
-		f    varchar2 character set t%charset := ''
+		f    varchar2 character set t%charset := '',
+		n    varchar2 character set t%charset := chr(0)
 	) return varchar2 character set t%charset is
 	begin
 		if cond then
 			return t;
-		else
+		elsif not cond then
 			return f;
+		elsif n = chr(0) then
+			return f;
+		else
+			return n;
 		end if;
 	end;
 
