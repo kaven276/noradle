@@ -165,6 +165,7 @@ create or replace package r is
 	) return varchar2;
 	function unescape(value varchar2) return varchar2;
 	function vqstr return varchar2;
+	function vqstr(names varchar2) return varchar2;
 	function idle return number;
 	function lat return date;
 

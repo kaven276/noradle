@@ -727,6 +727,26 @@ create or replace package body r is
 		return substrb(rtn, 2);
 	end;
 
+	function vqstr(names varchar2) return varchar2 is
+		n   varchar2(100);
+		v   varchar2(999);
+		ns  st;
+		va  st;
+		rtn varchar2(32000);
+	begin
+		t.split(ns, names, ',', true);
+		for j in 1 .. ns.count loop
+			n := ns(j);
+			if lengthb(n) < 2 or substrb(n, 2, 1) != '$' then
+				va := ra.params(n);
+				for i in 1 .. va.count loop
+					rtn := rtn || '&' || n || '=' || unescape(va(i));
+				end loop;
+			end if;
+		end loop;
+		return substrb(rtn, 2);
+	end;
+
 	function header(name varchar2) return varchar2 is
 	begin
 		return ra.params('h$' || lower(name))(1);
