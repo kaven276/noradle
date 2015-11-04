@@ -33,10 +33,10 @@ create or replace function url(lstr varchar2) return varchar2 is
 begin
 
 	if substrb(lstr, -1) in ('?', '&') then
-		if r.is_null('l$suffix') then
+		if r.is_null('l$?') then
 			str := substrb(lstr, 1, lengthb(lstr) - 1);
 		else
-			str := lstr || r.getc('l$suffix');
+			str := lstr || r.getc('l$?');
 		end if;
 	else
 		str := lstr;
