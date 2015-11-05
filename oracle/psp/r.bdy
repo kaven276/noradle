@@ -737,7 +737,7 @@ create or replace package body r is
 		t.split(ns, names, ',', true);
 		for j in 1 .. ns.count loop
 			n := ns(j);
-			if lengthb(n) < 2 or substrb(n, 2, 1) != '$' then
+			if (lengthb(n) < 2 or substrb(n, 2, 1) != '$') and ra.params.exists(n) then
 				va := ra.params(n);
 				for i in 1 .. va.count loop
 					rtn := rtn || '&' || n || '=' || unescape(va(i));
