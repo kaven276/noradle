@@ -2,10 +2,9 @@ create or replace function url(lstr varchar2) return varchar2 is
 
 	c1   char(1) := substrb(lstr, 1, 1);
 	c2   char(1);
-	str  varchar2(4000);
+	str  varchar2(32767);
 	main varchar2(30);
 	pos  pls_integer;
-	dad  varchar2(100);
 
 	-- private
 	function outside(p_key varchar2) return varchar2 is
@@ -32,14 +31,35 @@ create or replace function url(lstr varchar2) return varchar2 is
 
 begin
 
-	if substrb(lstr, -1) in ('?', '&') then
-		if r.is_null('l$?') then
+	if substrb(lstr, -1) = '@' then
+		declare
+			n varchar2(30);
+			m varchar2(30);
+		begin
 			str := substrb(lstr, 1, lengthb(lstr) - 1);
-		else
-			str := lstr || r.getc('l$?');
-		end if;
+			while true loop
+				n := regexp_substr(str, '{\w+}');
+				if n is null then
+					exit;
+				end if;
+				m := substrb(n, 2, lengthb(n) - 2);
+				if r.is_lack(m) then
+					str := regexp_replace(str, '(\?|&)' || n, '');
+				else
+					str := replace(str, n, m || '=' || r.getc(m));
+				end if;
+			end loop;
+		end;
 	else
 		str := lstr;
+	end if;
+
+	if substrb(str, -1) in ('?', '&') then
+		if r.is_null('l$?') then
+			str := substrb(str, 1, lengthb(str) - 1);
+		else
+			str := str || r.getc('l$?');
+		end if;
 	end if;
 
 	case c1
