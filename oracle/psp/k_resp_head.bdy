@@ -380,16 +380,18 @@ create or replace package body k_resp_head is
 
 	procedure set_cookie
 	(
-		name    in varchar2,
-		value   in varchar2,
-		expires in date default null,
-		path    in varchar2 default null,
-		domain  in varchar2 default null,
-		secure  in boolean default false
+		name     in varchar2,
+		value    in varchar2,
+		expires  in date default null,
+		path     in varchar2 default null,
+		domain   in varchar2 default null,
+		secure   in boolean default false,
+		httponly in boolean default true
 	) is
 		v_str varchar2(1000);
 	begin
 		v_str := v_str || t.tf(secure, ';secure');
+		v_str := v_str || t.tf(secure, ';HttpOnly');
 		v_str := v_str || t.nvl2(domain, ';Domain=' || domain);
 		v_str := v_str || t.nvl2(path, ';path=' || path);
 		v_str := v_str || t.nvl2(expires, ';expires=' || t.hdt2s(expires));
