@@ -560,9 +560,9 @@ create or replace package body r is
 		v varchar2(30);
 	begin
 		v := upper(ra.params(name) (idx));
-		if v in ('TRUE', 'T', 'YES', 'Y', '1') then
+		if v in ('TRUE', 'T', 'YES', 'Y', 'ON', '1') then
 			return true;
-		elsif v in ('FALSE', 'F', 'NO', 'N', '0') then
+		elsif v in ('FALSE', 'F', 'NO', 'N', 'OFF', '0') then
 			return false;
 		elsif v in ('NULL') then
 			return null;
