@@ -391,7 +391,7 @@ create or replace package body k_resp_head is
 		v_str varchar2(1000);
 	begin
 		v_str := v_str || t.tf(secure, ';secure');
-		v_str := v_str || t.tf(secure, ';HttpOnly');
+		v_str := v_str || t.tf(httponly, ';HttpOnly', '', ';HttpOnly');
 		v_str := v_str || t.nvl2(domain, ';Domain=' || domain);
 		v_str := v_str || t.nvl2(path, ';path=' || path);
 		v_str := v_str || t.nvl2(expires, ';expires=' || t.hdt2s(expires));
