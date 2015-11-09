@@ -477,6 +477,26 @@ create or replace package body r is
 			return true;
 	end;
 
+	function not_lack(name varchar2) return boolean is
+		v varchar2(4000);
+	begin
+		v := ra.params(name) (1);
+		return true;
+	exception
+		when no_data_found then
+			return false;
+	end;
+
+	function not_null(name varchar2) return boolean is
+		v varchar2(4000);
+	begin
+		v := ra.params(name) (1);
+		return v is not null;
+	exception
+		when no_data_found then
+			return false;
+	end;
+
 	function getc
 	(
 		name   varchar2,

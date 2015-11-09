@@ -65,7 +65,8 @@ create or replace package r is
 
 	function is_lack(name varchar2) return boolean;
 	function is_null(name varchar2) return boolean;
-
+	function not_lack(name varchar2) return boolean;
+	function not_null(name varchar2) return boolean;
 	function get
 	(
 		name   varchar2,
