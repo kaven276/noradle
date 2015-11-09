@@ -298,7 +298,7 @@ create or replace package body framework is
 			if substrb(r.getc('x$prog'), -2) in ('_t', '_v') then
 				r.setc('x$prog', 'k_sql.get');
 			end if;
-			r.after_map;
+			r."_after_map";
 			dbms_application_info.set_module(r.dbu || '.' || nvl(r.pack, r.proc), t.tf(r.pack is null, 'standalone', r.proc));
 		
 			k_debug.time_header('before-exec');

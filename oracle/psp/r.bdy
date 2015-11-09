@@ -70,7 +70,7 @@ create or replace package body r is
 			v_pass := null;
 	end;
 
-	procedure after_map is
+	procedure "_after_map" is
 	begin
 		get('x$dbu', gv_dbu);
 		if gv_dbu = 'public' then

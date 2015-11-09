@@ -12,7 +12,7 @@ create or replace package r is
 		passport pls_integer
 	);
 
-	procedure after_map;
+	procedure "_after_map";
 
 	procedure getblob
 	(
