@@ -101,7 +101,8 @@ create or replace package body tag is
 		end if;
 		if p4 is not null then
 			v_attrs := ' ' ||
-								 replace(replace(replace(substrb(tag, p4 + 1, p5 - p4 - 1), '=', '="'), ',', '" '), '^', 'data-') || '"';
+								 replace(replace(replace(substrb(tag, p4 + 1, p5 - p4 - 1), '=', '="'), ',', '" '), '^', 'data-') ||
+								 k_type_tool.tf(instrb(tag, '=', p4 + 1) > 0, '"', '');
 		end if;
 	
 		if para is null then
