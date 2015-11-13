@@ -359,5 +359,10 @@ create or replace package body tag is
 		bdy.line(base(tg, para, chr(0), ' href="' || url(href) || '"'));
 	end;
 
+	function stack return varchar2 is
+	begin
+		return sts.stack;
+	end;
+
 end tag;
 /

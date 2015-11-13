@@ -144,6 +144,7 @@ create or replace package tag is
 		href varchar2 := '^',
 		para st := null
 	);
+	function stack return varchar2;
 
 end tag;
 /
