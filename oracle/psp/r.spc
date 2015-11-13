@@ -169,6 +169,7 @@ create or replace package r is
 	function vqstr(names varchar2) return varchar2;
 	function idle return number;
 	function lat return date;
+	function return_before_set_this(name varchar2) return varchar2;
 
 	function header(name varchar2) return varchar2;
 	function negotiation

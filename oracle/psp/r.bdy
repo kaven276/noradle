@@ -722,6 +722,13 @@ create or replace package body r is
 		return sysdate - getn('s$IDLE') / 1000 / 24 / 60 / 60;
 	end;
 
+	function return_before_set_this(name varchar2) return varchar2 is
+		v_last varchar2(100) := r.getc('_$last', '^');
+	begin
+		r.setc('_$last', name);
+		return v_last;
+	end;
+
 	function unescape(value varchar2) return varchar2 is
 	begin
 		return utl_url.unescape(value, pv.cs_req);
