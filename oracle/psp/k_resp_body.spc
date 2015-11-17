@@ -18,6 +18,7 @@ create or replace package k_resp_body is
 	procedure set_line_break(nlbr varchar2);
 	procedure save_pointer;
 	function appended return boolean;
+	function not_appended return boolean;
 
 end k_resp_body;
 /

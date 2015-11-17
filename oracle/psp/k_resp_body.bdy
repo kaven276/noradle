@@ -103,7 +103,12 @@ create or replace package body k_resp_body is
 		output.line(text, pv.nlbr);
 	end;
 
-	procedure iline(str varchar2 character set any_cs, nl varchar2 := chr(10), indent pls_integer := null) is
+	procedure iline
+	(
+		str    varchar2 character set any_cs,
+		nl     varchar2 := chr(10),
+		indent pls_integer := null
+	) is
 	begin
 		output.line(str, nl, indent);
 	end;
@@ -115,12 +120,25 @@ create or replace package body k_resp_body is
 
 	procedure save_pointer is
 	begin
-		pv.pg_svptr := pv.pg_len + lengthb(pv.pg_buf);
+		if pv.pg_nchar then
+			pv.pg_svptr := pv.pg_len + nvl(lengthb(pv.pg_buf), 0);
+		else
+			pv.pg_svptr := pv.pg_len + nvl(lengthb(pv.ph_buf), 0);
+		end if;
 	end;
 
 	function appended return boolean is
 	begin
-		return pv.pg_svptr = pv.pg_len + lengthb(pv.pg_buf);
+		if pv.pg_nchar then
+			return pv.pg_svptr != pv.pg_len + nvl(lengthb(pv.pg_buf), 0);
+		else
+			return pv.pg_svptr != pv.pg_len + nvl(lengthb(pv.ph_buf), 0);
+		end if;
+	end;
+
+	function not_appended return boolean is
+	begin
+		return not appended;
 	end;
 
 end k_resp_body;
