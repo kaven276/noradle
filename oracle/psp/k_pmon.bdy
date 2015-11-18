@@ -122,6 +122,13 @@ create or replace package body k_pmon is
 			k_debug.trace(sqlerrm);
 	end;
 
+	procedure drop_zombie_scheduler_jobs is
+	begin
+		for i in (select * from user_scheduler_running_jobs a where a.session_id is null) loop
+			dbms_scheduler.drop_job('"' || i.job_name || '"', true);
+		end loop;
+	end;
+
 	procedure run_job is
 	begin
 		if user != 'SYS' and user != sys_context('userenv', 'current_schema') then

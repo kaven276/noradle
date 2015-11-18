@@ -6,6 +6,8 @@ create or replace package k_pmon is
 
 	procedure stop;
 
+	procedure drop_zombie_scheduler_jobs;
+
 	procedure run_job;
 	
 	procedure rerun_job;
