@@ -103,6 +103,16 @@ create or replace package body k_resp_body is
 		output.line(text, pv.nlbr);
 	end;
 
+	procedure w(text varchar2 character set any_cs) is
+	begin
+		output.line(text, '');
+	end;
+
+	procedure l(text varchar2 character set any_cs := '') is
+	begin
+		output.line(text, pv.nlbr);
+	end;
+
 	procedure iline
 	(
 		str    varchar2 character set any_cs,

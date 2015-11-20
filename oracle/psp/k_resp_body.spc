@@ -14,6 +14,8 @@ create or replace package k_resp_body is
 	procedure writeln(text varchar2 character set any_cs := '');
 	procedure string(text varchar2 character set any_cs);
 	procedure line(text varchar2 character set any_cs := '');
+	procedure w(text varchar2 character set any_cs);
+	procedure l(text varchar2 character set any_cs := '');
 	procedure iline(str varchar2 character set any_cs, nl varchar2 := chr(10), indent pls_integer := null);
 	procedure set_line_break(nlbr varchar2);
 	procedure save_pointer;
