@@ -965,5 +965,83 @@ create or replace package body r is
 		return getn('b$cslot');
 	end;
 
+	function c
+	(
+		name   varchar2,
+		defval varchar2 := null,
+		idx    pls_integer := 1
+	) return varchar2 is
+	begin
+		return getc(name, defval, idx);
+	end;
+
+	function n
+	(
+		name   varchar2,
+		defval number := null,
+		format varchar2 := null,
+		idx    pls_integer := 1
+	) return number is
+	begin
+		return getn(name, defval, format, idx);
+	end;
+
+	function d
+	(
+		name   varchar2,
+		defval date := null,
+		format varchar2 := null,
+		idx    pls_integer := 1
+	) return date is
+	begin
+		return getd(name, defval, format, idx);
+	end;
+
+	function b
+	(
+		name   varchar2,
+		defval boolean := null,
+		idx    pls_integer := 1
+	) return boolean is
+	begin
+		return getb(name, defval, idx);
+	end;
+
+	procedure set
+	(
+		name  varchar2,
+		value varchar2 character set any_cs
+	) is
+	begin
+		setc(name, value);
+	end;
+
+	procedure set
+	(
+		name  varchar2,
+		value number
+	) is
+	begin
+		setn(name, value);
+	end;
+
+	procedure set
+	(
+		name  varchar2,
+		value date
+	) is
+	begin
+		setd(name, value);
+	end;
+
+	procedure set
+	(
+		name  varchar2,
+		value boolean := true
+	) is
+	begin
+		setb(name, value);
+	end;
+
 end r;
 /

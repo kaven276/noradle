@@ -211,5 +211,59 @@ create or replace package r is
 	function database_role return varchar2;
 	function db_unique_name return varchar2;
 
+	function c
+	(
+		name   varchar2,
+		defval varchar2 := null,
+		idx    pls_integer := 1
+	) return varchar2;
+
+	function n
+	(
+		name   varchar2,
+		defval number := null,
+		format varchar2 := null,
+		idx    pls_integer := 1
+	) return number;
+
+	function d
+	(
+		name   varchar2,
+		defval date := null,
+		format varchar2 := null,
+		idx    pls_integer := 1
+	) return date;
+
+	function b
+	(
+		name   varchar2,
+		defval boolean := null,
+		idx    pls_integer := 1
+	) return boolean;
+
+	procedure set
+	(
+		name  varchar2,
+		value varchar2 character set any_cs
+	);
+
+	procedure set
+	(
+		name  varchar2,
+		value number
+	);
+
+	procedure set
+	(
+		name  varchar2,
+		value date
+	);
+
+	procedure set
+	(
+		name  varchar2,
+		value boolean := true
+	);
+
 end r;
 /
