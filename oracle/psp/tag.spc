@@ -54,14 +54,14 @@ create or replace package tag is
 	function p
 	(
 		tag   varchar2,
-		inner varchar2 character set any_cs,
+		inner varchar2 character set any_cs := '',
 		para  st := null,
 		cut   boolean := false
 	) return nvarchar2;
 	procedure p
 	(
 		tag   varchar2,
-		inner varchar2 character set any_cs,
+		inner varchar2 character set any_cs := '',
 		para  st := null,
 		cut   boolean := false
 	);

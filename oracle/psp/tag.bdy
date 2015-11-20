@@ -149,7 +149,7 @@ create or replace package body tag is
 	function p
 	(
 		tag   varchar2,
-		inner varchar2 character set any_cs,
+		inner varchar2 character set any_cs := '',
 		para  st := null,
 		cut   boolean := false
 	) return nvarchar2 is
@@ -163,7 +163,7 @@ create or replace package body tag is
 	procedure p
 	(
 		tag   varchar2,
-		inner varchar2 character set any_cs,
+		inner varchar2 character set any_cs := '',
 		para  st := null,
 		cut   boolean := false
 	) is
