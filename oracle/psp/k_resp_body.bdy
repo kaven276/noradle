@@ -151,5 +151,29 @@ create or replace package body k_resp_body is
 		return not appended;
 	end;
 
+	procedure begin_template(nl varchar2 := '') is
+	begin
+		output.switch;
+		if pv.pg_nchar then
+			pv.pg_buf := '';
+		else
+			pv.ph_buf := '';
+		end if;
+		pv.nlbr0 := pv.nlbr;
+		pv.nlbr  := nl;
+	end;
+
+	procedure end_template(tpl in out nocopy varchar2 character set any_cs) is
+	begin
+		if pv.pg_nchar then
+			tpl       := pv.pg_buf;
+			pv.pg_buf := '';
+		else
+			tpl       := pv.ph_buf;
+			pv.ph_buf := '';
+		end if;
+		pv.nlbr := pv.nlbr0;
+	end;
+
 end k_resp_body;
 /

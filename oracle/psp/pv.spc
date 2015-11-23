@@ -69,7 +69,7 @@ create or replace package pv is
 	-- all output variation control state
 	firstpg boolean; -- if clear and rewrite page, following PVs keep when re-init
 	nlbr    varchar2(2); -- set by b.set_line_break, used by output.line after all
-	nlbr0   varchar2(2);
+	nlbr0   varchar2(2); -- save nlbr for restore, used by msg_pipe, templating
 
 	-- stream/flush output flow control related
 	-- use_stream will inited to true
