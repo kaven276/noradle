@@ -144,11 +144,16 @@ prompt ========================
 prompt
 @@url.fnc
 prompt
-prompt Creating package K_HTTP
+prompt Creating package K_RESP_HEAD
 prompt =======================
 prompt
-@@k_http.spc
-@@k_http.bdy
+@@k_resp_head.spc
+@@k_resp_head.bdy
+prompt Creating package K_RESP_BODY
+prompt =======================
+prompt
+@@k_resp_body.spc
+@@k_resp_body.bdy
 
 --------------------------------------------------------------------------------
 
