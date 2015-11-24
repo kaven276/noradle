@@ -72,6 +72,10 @@ exec DBMS_UTILITY.COMPILE_SCHEMA(upper('&pspdbu'),false);
 --------------------------------------------------------------------------------
 
 prompt Noradle bundle in oracle db part have been installed successfully!
+
+prompt grant network access, for oracle to reach to dispatcher
+@@grant_network.sql
+
 prompt Please follow the steps below to learn from demo
 prompt 1. config server_config_t, let oracle known where to reverse connect to dispatcher
 prompt 2. start dispatcher
