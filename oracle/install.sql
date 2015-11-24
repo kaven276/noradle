@@ -77,11 +77,10 @@ prompt grant network access, for oracle to reach to dispatcher
 @@grant_network.sql
 
 prompt Please follow the steps below to learn from demo
+prompt 0. grant network access to the address of dispatcher, for psp user (optional, did by default in this script)
 prompt 1. config server_config_t, let oracle known where to reverse connect to dispatcher
 prompt 2. start dispatcher
 prompt 3. in oracle psp schema, exec k_pmon.run_job to start oracle server processes
-prompt 4. first, install noradle-demo
-prompt 5. run nodejs server, quick start with default cfg by "cd demo", "npm start"
-prompt 6. in your browser, access "http://localhost:8888/demo" (for example) to see the demo
+prompt 4. install and run noradle-demo app to check if server is running properly
 spool off
 exit
