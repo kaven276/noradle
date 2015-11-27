@@ -1,6 +1,6 @@
 create table EXT_URL_T
 (
-  dbu          VARCHAR2(30) default lower(sys_context('user','current_schema')) not null,
+  dbu          VARCHAR2(30) default lower(sys_context('userenv','current_schema')) not null,
   key          VARCHAR2(30) not null,
   prefix       VARCHAR2(1000) not null,
   constraint PK_EXT_URL primary key (DBU, KEY)
