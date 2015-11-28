@@ -201,7 +201,7 @@ create or replace package body multi is
 		v  varchar2(4000);
 		n  varchar2(4000);
 		p1 pls_integer := instrb(tpl, '?');
-		bv  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
+		bv varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
 		p2 pls_integer := p1 + lengthb(bv);
 		p3 pls_integer := instrb(tpl, '@', p2 + 1);
 		p4 pls_integer := instrb(tpl, '@', p3 + 1);
@@ -269,7 +269,7 @@ create or replace package body multi is
 		indent boolean := true
 	) is
 		p1 pls_integer := instrb(tpl, '?');
-		bv  varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
+		bv varchar2(99) := substrb(regexp_substr(tpl, '\?\w+ ', p1, 1), 2);
 		p2 pls_integer := p1 + lengthb(bv);
 		p3 pls_integer := instrb(tpl, '@', p2 + 1);
 		p4 pls_integer := instrb(tpl, '@', p3 + 1);
@@ -305,6 +305,20 @@ create or replace package body multi is
 		end if;
 	end;
 
+	procedure p
+	(
+		cuts   in out nocopy st,
+		indent boolean := true
+	) is
+		tpl varchar2(32767);
+	begin
+		b.end_template(tpl);
+		t.split(cuts, tpl, '@', false);
+		if indent then
+			cuts(1) := ltrim(cuts(1));
+		end if;
+	end;
+
 	-- repeater for flat structure
 	procedure r
 	(
@@ -332,9 +346,9 @@ create or replace package body multi is
 		return v || cuts(para.count + 1);
 	end;
 
-	procedure prc
+	procedure prc_
 	(
-		tpl      varchar2,
+		tpl      in out nocopy varchar2,
 		cur      in out nocopy sys_refcursor,
 		fmt_date varchar2 := null,
 		flush    pls_integer := null
@@ -401,6 +415,30 @@ create or replace package body multi is
 		when no_data_found then
 			tmp.rows := v_count;
 			dbms_sql.close_cursor(curid);
+	end;
+
+	procedure prc
+	(
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
+	) is
+		tpl_ varchar2(32767) := tpl;
+	begin
+		prc_(tpl_, cur, fmt_date, flush);
+	end;
+
+	procedure prc
+	(
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
+	) is
+		tpl varchar2(32767);
+	begin
+		b.end_template(tpl);
+		prc_(tpl, cur, fmt_date, flush);
 	end;
 
 end multi;

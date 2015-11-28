@@ -61,17 +61,14 @@ create or replace package multi is
 		indent boolean := true
 	);
 
-	procedure prc
-	(
-		tpl      varchar2,
-		cur      in out nocopy sys_refcursor,
-		fmt_date varchar2 := null,
-		flush    pls_integer := null
-	);
-
 	procedure p
 	(
 		tpl    varchar2,
+		cuts   in out nocopy st,
+		indent boolean := true
+	);
+	procedure p
+	(
 		cuts   in out nocopy st,
 		indent boolean := true
 	);
@@ -85,6 +82,19 @@ create or replace package multi is
 		cuts in out nocopy st,
 		para st
 	) return varchar2;
+	procedure prc
+	(
+		tpl      varchar2,
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
+	);
+	procedure prc
+	(
+		cur      in out nocopy sys_refcursor,
+		fmt_date varchar2 := null,
+		flush    pls_integer := null
+	);
 
 end multi;
 /
