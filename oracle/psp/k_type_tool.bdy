@@ -119,6 +119,15 @@ create or replace package body k_type_tool is
 		return v_token || v_time || v_ip_str;
 	end;
 
+	function fill
+	(
+		text varchar2,
+		dyna varchar2
+	) return varchar2 is
+	begin
+		return replace(text, '@', dyna);
+	end;
+
 	function ps
 	(
 		tpl  varchar2 character set any_cs,
@@ -323,6 +332,11 @@ create or replace package body k_type_tool is
 	) is
 	begin
 		select rownum bulk collect into ntv from dual a connect by rownum <= amount;
+	end;
+
+	function e(text varchar2 character set any_cs) return varchar2 is
+	begin
+		return replace(replace(text, '<', '&lt;'), '>', '&gt;');
 	end;
 
 	procedure loop_init is

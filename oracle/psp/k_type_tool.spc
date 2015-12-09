@@ -40,6 +40,12 @@ create or replace package k_type_tool is
 
 	function gen_token(p_algorithm binary_integer := 0) return varchar2;
 
+	function fill
+	(
+		text varchar2,
+		dyna varchar2
+	) return varchar2;
+
 	function ps
 	(
 		tpl  in varchar2 character set any_cs,
@@ -114,6 +120,8 @@ create or replace package k_type_tool is
 		amount pls_integer,
 		ntv    in out nocopy nt
 	);
+
+	function e(text varchar2 character set any_cs) return varchar2;
 
 	procedure loop_init;
 	function loop_first return boolean;
