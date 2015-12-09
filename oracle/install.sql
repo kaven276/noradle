@@ -50,6 +50,7 @@ prompt You can try the sql scripts below to achieve the preparation required abo
 prompt exec psp.k_pmon.stop;;
 prompt drop user psp cascade;;
 prompt create user psp identified by psp default tablespace sysaux temporary tablespace temp;;
+prompt alter user psp quota unlimited on sysaux;;
 pause if not, create empty PSP db user beforehand, and then press enter to continue
 accept pspdbu char default 'psp' prompt 'Enter the schema/User(must already exist) for noradle software (psp) : '
 
