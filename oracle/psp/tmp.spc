@@ -17,6 +17,7 @@ create or replace package tmp is
 	url varchar2(4000);
 	stv st;
 	ntv nt;
+	p   pv.vc_arr;
 
 	rows pls_integer;
 
