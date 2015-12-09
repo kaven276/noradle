@@ -1,12 +1,34 @@
 create or replace package z is
 
-	p pv.vc_arr;
+	procedure p
+	(
+		idx pls_integer,
+		val varchar2
+	);
+
+	procedure p
+	(
+		idx pls_integer,
+		val boolean
+	);
+
+	procedure p
+	(
+		idx pls_integer,
+		val number
+	);
 
 	procedure t
 	(
 		tag   varchar2,
 		inner varchar2 := chr(0)
 	);
+
+	function t
+	(
+		tag   varchar2,
+		inner varchar2 := chr(0)
+	) return varchar2;
 
 	procedure u
 	(

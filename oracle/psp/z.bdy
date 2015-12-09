@@ -1,5 +1,32 @@
 create or replace package body z is
 
+	procedure p
+	(
+		idx pls_integer,
+		val varchar2
+	) is
+	begin
+		tmp.p(idx) := val;
+	end;
+
+	procedure p
+	(
+		idx pls_integer,
+		val boolean
+	) is
+	begin
+		tmp.p(idx) := k_type_tool.tf(val);
+	end;
+
+	procedure p
+	(
+		idx pls_integer,
+		val number
+	) is
+	begin
+		tmp.p(idx) := to_char(val);
+	end;
+
 	/**
   * tmp.vs := st(t.tf(v1), t.tf(v2), v3);
   * <div#id.cls1.-cls2?.cls3-? checked disabled? -isnode? w=4 h=? style="border:1px solid"
@@ -30,8 +57,9 @@ create or replace package body z is
 		pr   pls_integer; -- pos right
 		pe   pls_integer := instrb(tag, '='); -- pos equal-sign only for compare
 		cls  varchar2(1000);
-		re   varchar2(10) := '[#. />"]';
+		re   varchar2(10) := '[#. "/>]';
 		sect varchar2(1000); -- current section
+		err  varchar2(1000);
 		procedure cut(more pls_integer := 0) is
 			pre char(1);
 			add boolean;
@@ -42,8 +70,8 @@ create or replace package body z is
 				add := not (ascii(pre) between 97 and 122 or ascii(pre) between 48 and 57);
 				idx := idx + 1;
 				if add then
-					sect := substrb(tag, pl + 1 - more, pr - pl - 2 + more) || p(idx);
-				elsif p(idx) = 'true' then
+					sect := substrb(tag, pl + 1 - more, pr - pl - 2 + more) || tmp.p(idx);
+				elsif tmp.p(idx) = 'true' then
 					sect := substrb(tag, pl + 1 - more, pr - pl - 2 + more);
 				else
 					sect := '';
@@ -61,7 +89,7 @@ create or replace package body z is
 			sect := replace(substrb(tag, pl, pr - pl), '=', '="') || '"';
 			if tc = '?' then
 				idx  := idx + 1;
-				sect := replace(substrb(tag, pl, pr - pl - 1), '=', '="') || p(idx) || '"';
+				sect := replace(substrb(tag, pl, pr - pl - 1), '=', '="') || tmp.p(idx) || '"';
 			elsif tc = '"' then
 				sect := substrb(tag, pl, pr - pl);
 			else
@@ -75,14 +103,21 @@ create or replace package body z is
 		end;
 	begin
 		if substrb(tag, pl + 2, 1) = '/' then
-			sts.tagn := null;
+			sts.tagn := substrb(tag, pl + 1);
 			sts.lstr := null;
 			sts.rstr := substrb(tag, pl + 1);
+			if substrb(sts.stack, 1, lengthb(sts.tagn)) != sts.tagn then
+				err := 'tag open/close mismatch for ' || sts.stack || ',' || sts.tagn;
+				raise_application_error(-20000, err);
+			else
+				sts.stack := substrb(sts.stack, lengthb(sts.tagn) + 1);
+			end if;
 			return;
 		end if;
 		if pe = 0 then
 			pe := lengthb(tag);
 		end if;
+		idx := nvl(to_number(substrb(tag, instrb(tag, '>', -1) + 1)), 1) - 1;
 		loop
 			pr := regexp_instr(tag, re, pl + 1, 1, 0);
 			exit when pr = 0;
@@ -123,7 +158,7 @@ create or replace package body z is
 						-- case: name=value, name="value"
 						if ts = '"' then
 							pr := instrb(tag, '"', pr + 1) + 1;
-							ts := ' ';
+							ts := substrb(tag, pr, 1);
 						end if;
 						rpl;
 					end if;
@@ -139,7 +174,8 @@ create or replace package body z is
 			if ls = '/' then
 				sts.rstr := '/>';
 			else
-				sts.rstr := '>';
+				sts.rstr  := '>';
+				sts.stack := '</' || sts.tagn || '>' || sts.stack;
 			end if;
 		else
 			sts.rstr := '>' || inner || '</' || sts.tagn || '>';
@@ -153,10 +189,24 @@ create or replace package body z is
 	) is
 	begin
 		base(tag, inner);
-		if sts.tagn is not null then
+		if sts.lstr is not null then
 			b.l(sts.lstr || sts.rstr);
 		else
 			b.l(sts.rstr);
+		end if;
+	end;
+
+	function t
+	(
+		tag   varchar2,
+		inner varchar2 := chr(0)
+	) return varchar2 is
+	begin
+		base(tag, inner);
+		if sts.lstr is not null then
+			return sts.lstr || sts.rstr;
+		else
+			return sts.rstr;
 		end if;
 	end;
 
