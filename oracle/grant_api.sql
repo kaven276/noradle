@@ -27,7 +27,7 @@ grant execute on multi to public -- m;
 grant execute on style to public -- sty;
 grant execute on list to public -- tb;
 grant execute on tree to public -- tr;
-grant execute on z to public;
+grant execute on ztag to public;
 
 grant execute on msg_pipe to public -- mp, mp_h;
 grant execute on cache to public;

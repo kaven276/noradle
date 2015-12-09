@@ -1,4 +1,4 @@
-create or replace package z is
+create or replace package ztag is
 
 	procedure p
 	(
@@ -74,5 +74,5 @@ create or replace package z is
 		switch boolean := null
 	) return varchar2;
 
-end z;
+end ztag;
 /

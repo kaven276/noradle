@@ -235,6 +235,12 @@ prompt
 @@tag.spc
 @@tag.bdy
 
+prompt Creating package ZTAG
+prompt ========================
+prompt
+@@ztag.spc
+@@ztag.bdy
+
 prompt Creating package multi
 prompt ========================
 prompt

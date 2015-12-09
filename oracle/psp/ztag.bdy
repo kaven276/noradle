@@ -1,4 +1,4 @@
-create or replace package body z is
+create or replace package body ztag is
 
 	procedure p
 	(
@@ -306,5 +306,5 @@ create or replace package body z is
 		return sts.lstr || ' value="' || value || '"' || bool_attr(switch) || sts.rstr;
 	end;
 
-end z;
+end ztag;
 /
