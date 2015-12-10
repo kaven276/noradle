@@ -66,10 +66,12 @@ create or replace package body ztag is
 		begin
 			if substrb(tag, pr - 1, 1) = '?' then
 				pre := substrb(tag, pr - 2, 1);
+				idx := idx + 1;
 				-- a:97 z:122 0:48 9:57
 				add := not (ascii(pre) between 97 and 122 or ascii(pre) between 48 and 57);
-				idx := idx + 1;
-				if add then
+				if pre = '+' then
+					sect := substrb(tag, pl + 1 - more, pr - pl - 3 + more) || tmp.p(idx);
+				elsif add then
 					sect := substrb(tag, pl + 1 - more, pr - pl - 2 + more) || tmp.p(idx);
 				elsif tmp.p(idx) = 'true' then
 					sect := substrb(tag, pl + 1 - more, pr - pl - 2 + more);
