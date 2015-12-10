@@ -315,5 +315,19 @@ create or replace package body ztag is
 		return sts.lstr || ' value="' || value || '"' || bool_attr(switch) || sts.rstr;
 	end;
 
+	procedure c(comment varchar2) is
+	begin
+		b.l('<!--' || comment || '-->');
+	end;
+
+	procedure d
+	(
+		unit varchar2,
+		line varchar2
+	) is
+	begin
+		b.l('<!--@' || unit || ':' || line || '-->');
+	end;
+
 end ztag;
 /

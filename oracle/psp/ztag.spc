@@ -74,5 +74,13 @@ create or replace package ztag is
 		switch boolean := null
 	) return varchar2;
 
+	procedure c(comment varchar2);
+
+	procedure d
+	(
+		unit varchar2,
+		line varchar2
+	);
+
 end ztag;
 /
