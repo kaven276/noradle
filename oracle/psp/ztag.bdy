@@ -102,7 +102,14 @@ create or replace package body ztag is
 			end if;
 		end;
 	begin
+		if pl = -1 then
+			-- case: plain text
+			sts.lstr := null;
+			sts.rstr := ltrim(tag);
+			return;
+		end if;
 		if substrb(tag, pl + 2, 1) = '/' then
+			-- case: </tag>
 			sts.tagn := substrb(tag, pl + 1);
 			sts.lstr := null;
 			sts.rstr := substrb(tag, pl + 1);
