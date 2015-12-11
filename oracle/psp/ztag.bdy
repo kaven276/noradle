@@ -27,24 +27,7 @@ create or replace package body ztag is
 		tmp.p(idx) := to_char(val);
 	end;
 
-	/**
-  * tmp.vs := st(t.tf(v1), t.tf(v2), v3);
-  * <div#id.cls1.-cls2?.cls3-? checked disabled? -isnode? w=4 h=? style="border:1px solid"
-  * .
-  */
-
 	--private
-	/**
-  * return lstr, rstr for public API to join lstr||extra||rstr
-  * x.p(1) := 'info';
-  * x.p(2) := t.tf(v_is_collapse);
-  * x.p(3) := t.tf(v_is_disabled);
-  * x.p(4) := t.tf(v_is_node);
-  * x.p(5) := v_height;
-  * x.p(6) := 'click:some_vm_func';
-  * <div#id.alert.alert-?.collapse.in? checked disabled? -isnode? width=4 height=? 
-     style="border:1px solid" -bind=?>
-  */
 	procedure base
 	(
 		tag   varchar2,
