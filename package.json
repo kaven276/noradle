@@ -38,7 +38,9 @@
     "debug": "~2.1.1",
     "dnode": "^1.2.1",
     "underscore": "^1.8.3",
-    "noradle-protocol": "^0.13.0"
+    "noradle-protocol": "^0.13.0",
+    "noradle-dispatcher": "^0.13.0",
+    "noradle-oracle-server": "^0.13.1"
   },
   "devDependencies": {},
   "optionalDependencies": {
