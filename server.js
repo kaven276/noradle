@@ -49,7 +49,7 @@ Object.defineProperties(exports, {
   },
   dispatcher : {
     get : function(){
-      return require('./lib/dispatcher.js');
+      return require('noradle-dispatcher');
     }
   },
 
