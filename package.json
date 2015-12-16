@@ -24,8 +24,8 @@
   },
   "main": "server.js",
   "bin": {
-    "noradle-dispatcher": "./lib/dispatcher.js",
-    "noradle-monitor": "./lib/dispatcher_monitor.js"
+    "noradle-dispatcher": "./node_modules/.bin/noradle-dispatcher",
+    "noradle-console": "./node_modules/.bin/noradle-console"
   },
   "scripts": {
   },
