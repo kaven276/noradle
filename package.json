@@ -28,7 +28,6 @@
     "noradle-monitor": "./lib/dispatcher_monitor.js"
   },
   "scripts": {
-    "testDBCall": "node test/call_plsql_for_result_sets.js"
   },
   "config": {},
   "engines": {
@@ -36,17 +35,17 @@
   },
   "dependencies": {
     "debug": "~2.1.1",
-    "dnode": "^1.2.1",
     "underscore": "^1.8.3",
     "noradle-protocol": "^0.13.0",
-    "noradle-dispatcher": "^0.13.0",
-    "noradle-oracle-server": "^0.13.1"
+    "noradle-oracle-server": "^0.13.1",
+    "noradle-nodejs-client": "^0.13.1",
+    "noradle-dispatcher": "^0.13.1",
+    "noradle-console": "^0.13.1",
+    "noradle-resultsets": "^0.13.1",
+    "noradle-http": "^0.13.1",
+    "noradle-ndbc": "^0.13.2"
   },
   "devDependencies": {},
-  "optionalDependencies": {
-    "consolidate": "^0.13.1",
-    "formidable": ">1.0.11"
-  },
   "bugs": {
     "url": "https://github.com/kaven276/noradle/issues",
     "email": "kaven276@vip.sina.com"

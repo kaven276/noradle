@@ -14,17 +14,17 @@ Object.defineProperties(exports, {
 
   servlet : {
     get : function(){
-      return require('./lib/handlerHTTP.js');
+      return require('noradle-http');
     }
   },
   handlerHTTP : {
     get : function(){
-      return require('./lib/handlerHTTP.js');
+      return require('noradle-http');
     }
   },
   HTTP : {
     get : function(){
-      return require('./lib/handlerHTTP.js');
+      return require('noradle-http');
     }
   },
   handlerFastCGI : {
@@ -39,12 +39,12 @@ Object.defineProperties(exports, {
   },
   NDBC : {
     get : function(){
-      return require('./lib/NDBC.js').Class;
+      return require('noradle-ndbc').Class;
     }
   },
   DBDriver : {
     get : function(){
-      return require('./lib/DBDriver.js').DBDriver;
+      return require('noradle-nodejs-client').DBDriver;
     }
   },
   dispatcher : {
@@ -55,7 +55,7 @@ Object.defineProperties(exports, {
 
   RSParser : {
     get : function(){
-      return RSParser || (RSParser = require('./lib/RSParser.js'));
+      return RSParser || (RSParser = require('noradle-resultsets'));
     }
   }
 });
