@@ -35,6 +35,8 @@
   "dependencies": {
     "debug": "~2.1.1",
     "underscore": "^1.8.3",
+    "commander": "^2.9.0",
+    "dnode": "^1.2.1",
     "noradle-protocol": "^0.13.0",
     "noradle-oracle-server": "^0.13.1",
     "noradle-nodejs-client": "^0.13.1",
