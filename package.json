@@ -42,8 +42,8 @@
     "noradle-nodejs-client": "^0.13.1",
     "noradle-dispatcher": "^0.13.1",
     "noradle-console": "^0.13.1",
-    "noradle-resultsets": "^0.13.1",
-    "noradle-http": "^0.13.1",
+    "noradle-resultsets": "^0.13.2",
+    "noradle-http": "^0.13.2",
     "noradle-ndbc": "^0.13.2"
   },
   "devDependencies": {},
