@@ -1,0 +1,3 @@
+[submodule "node_modules/noradle-ndbc"]
+	path = node_modules/noradle-ndbc
+	url = git@github.com:noradle/noradle-ndbc.git
