@@ -1,24 +1,3 @@
-[submodule "node_modules/noradle-protocol"]
-	path = node_modules/noradle-protocol
-	url = git@github.com:noradle/noradle-protocol.git
-[submodule "node_modules/noradle-oracle-server"]
-	path = node_modules/noradle-oracle-server
-	url = git@github.com:noradle/noradle-oracle-server.git
-[submodule "node_modules/noradle-dispatcher"]
-	path = node_modules/noradle-dispatcher
-	url = git@github.com:noradle/noradle-dispatcher.git
-[submodule "node_modules/noradle-console"]
-	path = node_modules/noradle-console
-	url = git@github.com:noradle/noradle-console.git
-[submodule "node_modules/noradle-resultsets"]
-	path = node_modules/noradle-resultsets
-	url = git@github.com:noradle/noradle-resultsets.git
-[submodule "node_modules/noradle-nodejs-client"]
-	path = node_modules/noradle-nodejs-client
-	url = git@github.com:noradle/noradle-nodejs-client.git
 [submodule "node_modules/noradle-ndbc"]
 	path = node_modules/noradle-ndbc
 	url = git@github.com:noradle/noradle-ndbc.git
-[submodule "node_modules/noradle-http"]
-	path = node_modules/noradle-http
-	url = git@github.com:noradle/noradle-http.git
