@@ -27,53 +27,95 @@ procedure bind_data is
        and rownum <= 5
      order by a.object_name asc;
 begin
-  pc.h;
-  src_b.header;
-  x.o('<table rules=all,cellspacing=0,cellpadding=5,style=border:1px solid silver;>');
-  x.p(' <caption>', 'bind sql data to table example');
-  x.p(' <thead>', x.p('<tr>', m.w('<th>@</th>', 'package name,created')));
-  x.o(' <tbody>');
+  b.l('<!DOCTYPE html>');
+  o.t('<html>');
+  o.t('<body>');
+  o.t('<table rules=all cellspacing=0 cellpadding=5 style="border:1px solid silver;">');
+  o.t(' <caption>', 'bind sql data to table example');
+  o.t(' <thead>', o.t('<tr>', m.w('<th>@</th>', 'package name,created')));
+  o.t(' <tbody>');
   for i in c_packages loop
-    x.o('<tr>');
-    x.p(' <td>', i.object_name);
-    x.p(' <td>', t.d2s(i.created));
-    x.c('</tr>');
+    o.t('<tr>');
+    o.t(' <td>', i.object_name);
+    o.t(' <td>', t.d2s(i.created));
+    o.t('</tr>');
   end loop;
-  x.c(' </tbody>');
-  x.c('</table>');
+  o.t(' </tbody>');
+  o.t('</table>');
+  o.t('</body>');
+  o.t('</html>');
 end;
 ```
 
 ### use json data service to populate chart
 
 ```plsql
-procedure salary_share_by_job_id is
-  cur sys_refcursor;
-begin
-  if r.is_xhr then
-    open cur for
-      select a.job_id, sum(a.salary) total from employees a group by a.job_id order by total asc;
-    rs.print(cur);
-    return;
-  end if;
+create or replace package body chart_b is
 
-  common_preface('Pie');
-  x.o('<div#links>');
-  x.a(' <a>', 'Pie', r.prog || '?chart_type=Pie');
-  x.a(' <a>', 'PolarArea', r.prog || '?chart_type=PolarArea');
-  x.a(' <a>', 'Doughnut', r.prog || '?chart_type=Doughnut');
-  x.c('</div>');
-  x.t('<script>
-  $.getJSON(location.pathname+"?data", function(data){
-    var chartData = data.$DATA.rows.map(function(v,i){
-      return {
-        value : v.total,
-        color : "#"+Math.floor(Math.random() * 256*256*256).toString(16).toUpperCase()
-      };
-    });
-    demoChart[chartType](chartData);
-  });</script>');
-end;
+	procedure common_preface(default_type varchar2) is
+		v_chart_type varchar2(30) := r.getc('chart_type', default_type);
+	begin
+		src_b.header;
+		o.u('<link rel=stylesheet/>', '[animate.css]');
+		o.u('<script>', '[chart.js]', '');
+		o.u('<script>', '[zepto.js]', '');
+		o.u('<script>', '[underscore.js]', '');
+		o.t('<canvas#cc width=600 height=400>', '');
+		o.t('<script>',
+				t.ps('
+		var ctx = document.getElementById("cc").getContext("2d")
+		 , demoChart = new Chart(ctx)
+		 , chartType=":1"
+		 ;',
+						 st(v_chart_type)));
+	end;
+
+	procedure salary_min_max_by_job_id is
+		cur sys_refcursor;
+	begin
+		if r.is_xhr then
+			open cur for
+				select a.job_id, count(*) cnt, avg(a.salary) avg, min(a.salary) min, max(a.salary) max
+					from employees a
+				 group by a.job_id
+				 order by avg asc;
+			rs.print(cur);
+			return;
+		end if;
+	
+		common_preface('Bar');
+		o.t('<div#links>');
+		o.u(' <a>', r.prog || '?chart_type=Line', 'Line');
+		o.u(' <a>', r.prog || '?chart_type=Bar', 'Bar');
+		o.u(' <a>', r.prog || '?chart_type=Radar', 'Rader');
+		o.t('</div>');
+		b.l('<script>
+		$.getJSON(location.pathname+"?data", function(data){
+			var salaries = data.$DATA.rows;
+			var chartData = {
+				labels : _.pluck(salaries, "job_id"),
+				datasets : [
+					{
+						fillColor : "rgba(220,220,220,0.5)",
+						strokeColor : "rgba(220,220,220,1)",
+						pointColor : "rgba(220,220,220,1)",
+						pointStrokeColor : "#fff",
+						data : _.pluck(salaries, "min")
+					},
+					{
+						fillColor : "rgba(151,187,205,0.5)",
+						strokeColor : "rgba(151,187,205,1)",
+						pointColor : "rgba(151,187,205,1)",
+						pointStrokeColor : "#fff",
+						data : _.pluck(salaries, "max")
+					}
+				]
+			};
+			demoChart[chartType](chartData);
+		});</script>');
+	end;
+  
+end chart_b;
 ```
 
 What NORADLE provide?
