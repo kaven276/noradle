@@ -30,7 +30,8 @@
   "scripts": {},
   "config": {},
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.10.0",
+    "oracle": ">=11"
   },
   "dependencies": {
     "debug": "~2.1.1",
