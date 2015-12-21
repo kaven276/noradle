@@ -21,3 +21,4 @@ test/
 */*.out
 */*.log
 noradle_*/
+memo.md
