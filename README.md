@@ -166,7 +166,8 @@ it's for those considerations:
 http client                                   /                      \     /
      \--------(http)-> {{proxy(nginx)}} -----/              {{noradle-dispatcher}} <------ {{oracle}}  
                               \----(SCGI)---->  {{2.noradle-scgi}} ----/ /
-                               \---(FCGI)---->  {{3.noradle-fcgi}} -----/    (note: 123 require {{noradle-nodejs-client}} )
+                               \---(FCGI)---->  {{3.noradle-fcgi}} -----/    
+                                   (note: 123 require {{noradle-nodejs-client}} )
 ```
 
 the submodule list, all under [github noradle](/noradle)
