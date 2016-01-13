@@ -150,3 +150,32 @@ the resource for NORADLE
 ### [demo site](http://demo.noradle.com/) http://demo.noradle.com
 
 
+about submodules
+=================
+
+note: from v0.14.0, noradle is split into several sub projects under <https://github.com/noradle>.
+
+it's for those considerations:
+* deploy only the sub-module you require, for example, in one server, you deploy noradle-dispatcher only
+* each submodule is focused on one goal, easy to manage
+* each submodule will evolve itself, allow contributors to improve just the submodule they are interest in
+* each submodule represent a special aspect of noradle, doc/wiki will distributed among them, no longer a mess all in the main project
+
+```text
+ {{browser}}  -----------(http)-------------->  {{1.noradle-http}} ---        / {{noradle-console}}
+http client                                   /                      \     /
+     \--------(http)-> {{proxy(nginx)}} -----/              {{noradle-dispatcher}} <------ {{oracle}}  
+                              \----(SCGI)---->  {{2.noradle-scgi}} ----/ /
+                               \---(FCGI)---->  {{3.noradle-fcgi}} -----/    (note: 123 require {{noradle-nodejs-client}} )
+```
+
+the submodule list, all under [github noradle](/noradle)
+* [noradle-protocol](/noradle/noradle-protocol)
+* [noradle-dispatcher](/noradle/noradle-dispatcher)
+* [noradle-oracle-server](/noradle/noradle-oracle-server)
+* [noradle-nodejs-client](/noradle/noradle-nodejs-client)
+* [noradle-http](/noradle/noradle-http)
+* [noradle-scgi](/noradle/noradle-scgi)  (planing)
+* [noradle-fcgi](/noradle/noradle-fcgi) (planing)
+* [noradle-resultsets](/noradle/resultsets)
+* [noradle-console](/noradle/noradle-console) (now obsolete when >=v0.14, will redesign )
